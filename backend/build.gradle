@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.zalolite'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
 	sourceCompatibility = '17'
@@ -19,7 +19,6 @@ configurations {
 
 repositories {
 	mavenCentral()
-//	mavenLocal()
 }
 
 dependencies {
@@ -28,14 +27,15 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.mockito:mockito-core'
 	implementation 'org.slf4j:slf4j-api'
 	testImplementation 'org.slf4j:slf4j-simple'
 	implementation 'net.datafaker:datafaker:2.0.2'
-//	implementation 'com.zalolite.shared.api:shared:1.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+	testImplementation 'io.projectreactor:reactor-test'
 }
 
 tasks.named('test') {
