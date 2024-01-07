@@ -32,17 +32,3 @@ frontend/App/*.pem
 frontend/App/.env*.local
 frontend/App/*.tsbuildinfo
 
-### shared ### 
-shared/api/.idea
-shared/api/*.iws
-shared/api/*.iml
-shared/api/*.ipr
-shared/api/out/
-shared/api/!**/src/main/**/out/
-shared/api/!**/src/test/**/out/
-shared/api/.gradle
-shared/api/build/
-shared/api/!gradle/wrapper/gradle-wrapper.jar
-shared/api/!**/src/main/**/build/
-shared/api/!**/src/test/**/build/
-
