@@ -29,7 +29,7 @@ function Navbar() {
           </li>
           <li>
             <Link
-              to="/"
+              to="/" 
               className={`flex justify-center p-4 py-5 ${
                 location.pathname === "/" ? "bg-[#006edc]" : ""
               }`}

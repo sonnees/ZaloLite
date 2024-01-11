@@ -4,7 +4,7 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 function Sidebar({ onItemSelected }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [item, setItem] = useState("");
+  const [item, setItem] = useState("UuTien");
 
   const handleItemSelected = (value) => {
     onItemSelected(value);
@@ -51,7 +51,7 @@ function Sidebar({ onItemSelected }) {
           }}
           className={`font-sans text-sm font-semibold text-[#7589A3] ${
             item == "UuTien"
-              ? "mb-[-9px] border-b-2 border-[#005AE0] text-[#005AE0] transition duration-300 ease-in-out"
+              ? "mb-[-9px] border-b-2 border-[#005AE0] text-[#005AE1] transition duration-300 ease-in-out"
               : ""
           }`}
         >
@@ -66,7 +66,7 @@ function Sidebar({ onItemSelected }) {
           }}
           className={`font-sans text-sm font-semibold text-[#7589A3] ${
             item == "Khac"
-              ? "mb-[-9px] border-b-2 border-[#005AE0] text-[#005AE0] transition duration-300 ease-in-out"
+              ? "mb-[-9px] border-b-2 border-[#005AE0] text-[#005AE1] transition duration-300 ease-in-out"
               : ""
           }`}
         >
