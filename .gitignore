@@ -59,7 +59,6 @@ frontend/App/*.pem
 frontend/App/.env*.local
 frontend/App/*.tsbuildinfo
 
-<<<<<<< HEAD
 ### shared ### 
 shared/api/.idea
 shared/api/*.iws
@@ -74,8 +73,3 @@ shared/api/!gradle/wrapper/gradle-wrapper.jar
 shared/api/!**/src/main/**/build/
 shared/api/!**/src/test/**/build/
 
-
-
-
-=======
->>>>>>> 56b9d4df18a6b832b4c7024c8fbc93e07771efcf
