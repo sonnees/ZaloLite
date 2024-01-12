@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.zalolite'
-version = '1.0.0'
+version = '0.0.1-SNAPSHOT'
 
 java {
     sourceCompatibility = '17'
@@ -22,18 +22,14 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-springBoot {
-    mainClass = 'com.example.YourMainClass'
-}
-
-

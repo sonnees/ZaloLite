@@ -12,6 +12,33 @@ backend/!gradle/wrapper/gradle-wrapper.jar
 backend/!**/src/main/**/build/
 backend/!**/src/test/**/build/
 
+backend/SingleChatManagementMicroservice/.idea
+backend/SingleChatManagementMicroservice/*.iws
+backend/SingleChatManagementMicroservice/*.iml
+backend/SingleChatManagementMicroservice/*.ipr
+backend/SingleChatManagementMicroservice/out/
+backend/SingleChatManagementMicroservice/!**/src/main/**/out/
+backend/SingleChatManagementMicroservice/!**/src/test/**/out/
+backend/SingleChatManagementMicroservice/.gradle
+backend/SingleChatManagementMicroservice/build/
+backend/SingleChatManagementMicroservice/!gradle/wrapper/gradle-wrapper.jar
+backend/SingleChatManagementMicroservice/!**/src/main/**/build/
+backend/SingleChatManagementMicroservice/!**/src/test/**/build/
+
+backend/UserManagementMicroservice/.idea
+backend/UserManagementMicroservice/*.iws
+backend/UserManagementMicroservice/*.iml
+backend/UserManagementMicroservice/*.ipr
+backend/UserManagementMicroservice/out/
+backend/UserManagementMicroservice/!**/src/main/**/out/
+backend/UserManagementMicroservice/!**/src/test/**/out/
+backend/UserManagementMicroservice/.gradle
+backend/UserManagementMicroservice/build/
+backend/UserManagementMicroservice/!gradle/wrapper/gradle-wrapper.jar
+backend/UserManagementMicroservice/!**/src/main/**/build/
+backend/UserManagementMicroservice/!**/src/test/**/build/
+
+
 ### frontend ###
 frontend/App/node_modules/
 frontend/App/.expo/
@@ -31,18 +58,4 @@ frontend/App/.DS_Store
 frontend/App/*.pem
 frontend/App/.env*.local
 frontend/App/*.tsbuildinfo
-
-### shared ### 
-shared/api/.idea
-shared/api/*.iws
-shared/api/*.iml
-shared/api/*.ipr
-shared/api/out/
-shared/api/!**/src/main/**/out/
-shared/api/!**/src/test/**/out/
-shared/api/.gradle
-shared/api/build/
-shared/api/!gradle/wrapper/gradle-wrapper.jar
-shared/api/!**/src/main/**/build/
-shared/api/!**/src/test/**/build/
 
