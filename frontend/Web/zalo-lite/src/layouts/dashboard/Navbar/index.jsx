@@ -7,7 +7,10 @@ function Navbar() {
   let contactImage = "/contact-book-outline.png";
   let todoImage = "/todo-outline.png";
 
-  if (location.pathname === "/") {
+  if (
+    location.pathname === "/app" ||
+    location.pathname === "/app/other-message"
+  ) {
     messageImage = "/message.png";
   }
   if (location.pathname === "/contact") {
@@ -29,9 +32,12 @@ function Navbar() {
           </li>
           <li>
             <Link
-              to="/" 
+              to="/"
               className={`flex justify-center p-4 py-5 ${
-                location.pathname === "/" ? "bg-[#006edc]" : ""
+                location.pathname === "/app" ||
+                location.pathname === "/app/other-message"
+                  ? "bg-[#006edc]"
+                  : ""
               }`}
             >
               <img
