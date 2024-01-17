@@ -41,7 +41,7 @@ function Message() {
         />
       ))}
       <div className="h-[160px]">
-        <p className="text-center text-sm mt-5">
+        <p className="mt-5 text-center text-sm">
           Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên trình
           duyệt này.
         </p>

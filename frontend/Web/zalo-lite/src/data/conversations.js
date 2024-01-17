@@ -1,7 +1,7 @@
 const conversations = [{
         userID: "2",
         userName: "Hà Anh Thảo",
-        userAvatar: "https://zpsocial-f51-org.zadn.vn/c20081221b9ef5c0ac8f.jpg",
+        userAvatar: "https://avatars.githubusercontent.com/u/81128952?v=4",
         chatID: "1",
         type: "friend",
         groupID: "",
@@ -132,7 +132,7 @@ const conversations = [{
     {
         userID: "4",
         userName: "Pé Yêu",
-        userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJBxf8tKxV_4G9YgYtoTUD_JAsie-tRlEulGtvivQIpHGsvxY7ggmzYWGcA_M6IgFzO8I&usqp=CAU",
+        userAvatar: "https://luv.vn/wp-content/uploads/2021/12/hinh-anh-gai-mat-vuong-xinh-dep-12.jpg",
         chatID: "",
         type: "friend",
         groupID: "",
@@ -240,7 +240,7 @@ const conversations = [{
         }]
     }, {
         userID: 8,
-        userAvatar: "https://ktmt.vnmediacdn.com/images/2023/02/03/13-1675396062-ong-keita-nakano-tong-giam-doc-moi-cua-toyota-viet-nam-2-20230202174612892-20230203065952262.jpg",
+        userAvatar: "https://hthaostudio.com/wp-content/uploads/2019/08/Nam-11-min.jpg",
         userName: "Tuấn Kiệt",
         chatID: "3",
         type: "group",

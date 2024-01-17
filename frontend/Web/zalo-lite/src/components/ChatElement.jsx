@@ -15,7 +15,7 @@ function ChatElement({
   userID,
   topChatActivity,
 }) {
-    const countTopChatActivity = topChatActivity.length;
+  const countTopChatActivity = topChatActivity.length;
   const a = topChatActivity.length - 1;
   console.log(a);
   const b = topChatActivity[a].chatActivity.length - 1;
@@ -82,7 +82,7 @@ function ChatElement({
     return `${Math.floor(monthsDifference)} tháng`;
   }
 
-//   const timestamp = "2024-01-17T02:43:00Z";
+  //   const timestamp = "2024-01-17T02:43:00Z";
   const timestamp = topChatActivity[a].chatActivity[b].timetamp;
   const originalDate = new Date(timestamp);
   // Trừ 7 giờ
@@ -111,8 +111,8 @@ function ChatElement({
                     {userName}
                   </span>
                 </div>
-                <div className="flex items-center text-sm font-medium text-[#081C36]">
-                  <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
+                <div className="transition-min-width duration-50 flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] md:w-[175px] md:min-w-full">
+                  <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap ">
                     {messageContent}
                   </span>
                 </div>

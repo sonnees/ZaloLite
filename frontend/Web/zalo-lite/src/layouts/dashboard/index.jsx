@@ -25,8 +25,11 @@ function DashboardLayout() {
       <div className="flex h-screen w-full">
         <Navbar />
         <div className="grid h-screen w-full grid-flow-col ">
-          <div className={`ml-16 w-[${width}px] flex-1 border md:w-[345px]`}>
-            <div className="flex-1 text-gray-500 ">
+          {console.log(width)}
+          <div
+            className={`ml-16 w-full max-w-fit flex-1 md:w-[345px]`}
+          >
+            <div className="flex-1 text-gray-500">
               <Outlet />
             </div>
           </div>
