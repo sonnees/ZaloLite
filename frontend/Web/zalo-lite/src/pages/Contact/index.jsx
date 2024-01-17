@@ -1,6 +1,6 @@
 function Contact() {
     return (
-      <div>
+      <div className="h-screen w-full overflow-auto">
         <h1>This is contact</h1>
         <p>
           1. Thể thức văn bản bắt buộc dùng phông chữ Times New Roman Nếu như

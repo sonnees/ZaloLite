@@ -17,12 +17,12 @@ function ChatElement({
 }) {
   const countTopChatActivity = topChatActivity.length;
   const a = topChatActivity.length - 1;
-  console.log(a);
+  // console.log(a);
   const b = topChatActivity[a].chatActivity.length - 1;
-  console.log(b);
+  // console.log(b);
   const c = topChatActivity[a].chatActivity[b].content.length - 1;
   const messageContent = topChatActivity[a].chatActivity[b].content[c].value;
-  console.log(messageContent);
+  // console.log(messageContent);
 
   //   const timetamp = topChatActivity[a].chatActivity[b].timetamp;
   //   console.log(timetamp);
@@ -43,15 +43,15 @@ function ChatElement({
   }
   // Sử dụng hàm với dữ liệu của bạn
   const unreadCount = countUnreadMessages(topChatActivity);
-  console.log("Số tin nhắn chưa đọc:", unreadCount);
+  // console.log("Số tin nhắn chưa đọc:", unreadCount);
   const statusRead = topChatActivity[a].chatActivity[b].status.read.length;
-  console.log(">>>>>>>>>>>>>>", statusRead);
+  // console.log(">>>>>>>>>>>>>>", statusRead);
 
   function formatTimeDifference(timestamp) {
     const currentDate = new Date();
-    console.log(currentDate);
+    // console.log(currentDate);
     const parsedTimestamp = new Date(timestamp);
-    console.log(parsedTimestamp);
+    // console.log(parsedTimestamp);
 
     const minutesDifference = differenceInMinutes(currentDate, parsedTimestamp);
 
@@ -88,12 +88,12 @@ function ChatElement({
   // Trừ 7 giờ
   const adjustedDate = new Date(originalDate.getTime() - 7 * 60 * 60 * 1000);
   const timeDifference = formatTimeDifference(adjustedDate);
-  console.log(timeDifference);
+  // console.log(timeDifference);
 
   return (
     <div
-      className={`flex h-[74px] w-full items-center ${
-        countTopChatActivity <= 10 ? "pr-4" : ""
+      className={`flex h-[74px] w-full items-center pr-2 ${
+        countTopChatActivity <= 10 ? "pr-1" : ""
       }`}
     >
       <img
@@ -111,8 +111,8 @@ function ChatElement({
                     {userName}
                   </span>
                 </div>
-                <div className="transition-min-width duration-50 flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] md:w-[175px] md:min-w-full">
-                  <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap ">
+                <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200 md:w-[175px] md:min-w-full">
+                  <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
                     {messageContent}
                   </span>
                 </div>
@@ -124,7 +124,7 @@ function ChatElement({
                 <div>
                   <span className="text-base text-[#081C36]">{userName}</span>
                 </div>
-                <div className="flex items-center text-sm text-[#7589A3]">
+                <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm text-[#7589A3] duration-200">
                   <span>Bạn:&nbsp;</span>
                   <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
                     {messageContent}
@@ -134,7 +134,7 @@ function ChatElement({
             </>
           )}
         </div>
-        <div className="mt-[-4px] grid gap-y-1">
+        <div className="mt-[-4px] grid gap-y-1 ">
           <div>
             <span className="truncate text-xs">{timeDifference}</span>
           </div>
