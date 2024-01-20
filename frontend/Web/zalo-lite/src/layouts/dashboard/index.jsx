@@ -26,13 +26,13 @@ function DashboardLayout() {
       <div className="flex h-screen w-full ">
         <Navbar />
         <div className="flex h-screen w-full grid-flow-col ">
-          <div className="ml-16 w-full max-w-fit flex-1 md:w-[345px]">
-            <div className="flex-1 text-gray-500">
+          <div className="ml-16 w-full max-w-fit flex-1 md:w-[345px] border-r">
+            <div className="flex-1 text-gray-500 ">
               <Outlet />
             </div>
           </div>
-          <div className="hidden w-full overflow-hidden border-4 border-rose-900 md:flex ">
-            <div className="w-max flex-1 ">
+          <div className="hidden w-full overflow-hidden md:flex ">
+            <div className="h-fit w-max flex-1">
               {/* <div className="text-gray-500">
                 This is content Lorem ipsum dolor sit amet consectetur
                 adipisicing elit. Nam consequuntur quae modi, quia adipisci hic

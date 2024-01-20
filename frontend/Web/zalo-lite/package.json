@@ -23,6 +23,7 @@
     "date-fns": "^3.2.0",
     "date-fns-tz": "^2.0.0",
     "react": "^18.2.0",
+    "react-custom-scrollbars-2": "^4.5.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.1",
     "styled-components": "^6.1.8"

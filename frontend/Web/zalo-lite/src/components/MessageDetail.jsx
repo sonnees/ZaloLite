@@ -4,6 +4,7 @@ import Avatar from "@mui/material/Avatar";
 
 const MessageDetail = ({ message }) => {
   const { sender, content, timestamp, avatar, hasEmotion } = message;
+  // avatar = "https://avatars.githubusercontent.com/u/81128952?v=4";
   const messageRef = useRef(null);
   const [isMyMessage, setIsMyMessage] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -25,34 +26,78 @@ const MessageDetail = ({ message }) => {
   return (
     <div
       ref={messageRef}
-      className={`relative mb-2 flex ${isHovered ? "group" : ""} ${
+      className={`relative mb-3 flex ${isHovered ? "group" : ""} ${
         sender === "me" ? "justify-end" : "justify-start"
       }`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onContextMenu={handleContextMenu}
     >
+      {sender === "me" && (
+        <div className="flex w-[155px] items-end">
+          {isHovered ? (
+            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
+              <a href="">
+                <img
+                  src="/src/assets/reply-arrow.png"
+                  alt=""
+                  srcset=""
+                  className="h-4 w-4"
+                />
+              </a>
+              <a href="">
+                <img
+                  src="/src/assets/reply.png"
+                  alt=""
+                  srcset=""
+                  className="h-4 w-4"
+                />
+              </a>
+              <a href="">
+                <img
+                  src="/src/assets/todos.png"
+                  alt=""
+                  srcset=""
+                  className="h-4 w-4"
+                />
+              </a>
+              <a href="">
+                <img
+                  src="/src/assets/option.png"
+                  alt=""
+                  srcset=""
+                  className="h-4 w-4"
+                />
+              </a>
+            </div>
+          ) : (
+            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
+          )}
+        </div>
+      )}
       {sender === "other" && (
-        <Avatar src={avatar} alt="Avatar" className="mr-2" />
+        <Avatar
+          src={"https://zpsocial-f50-org.zadn.vn/b460c9d113d8fd86a4c9.jpg"}
+          alt="Avatar"
+          className="mr-3"
+        />
       )}
       <div
         className={`${
-          sender === "me" ? "bg-blue-500" : "bg-gray-300"
+          sender === "me" ? "bg-[#E5EFFF]" : "bg-[#FFFFFF]"
         } relative flex flex-col items-start rounded-md p-3 transition-all duration-300`}
       >
         <div className="flex items-center">
-          <p className={`text-white ${sender === "other" ? "ml-2" : ""}`}>
+          <p className={`text-[#081c36] ${sender === "other" ? "" : ""}`}>
             {content}
           </p>
-          {isHovered && (
+          {/* {isHovered && (
             <span className="ml-2 rounded-md bg-blue-500 px-2 py-1 text-white">
               Tùy chọn
             </span>
-          )}
+          )} */}
         </div>
-        <span className="mt-1 text-xs text-gray-500">
-          {sender === "other" && timestamp}
-        </span>
+        <span className="mt-3 text-xs text-gray-500">{timestamp}</span>
         {hasEmotion && isHovered && isMyMessage && (
           <div className="absolute bottom-0 right-0 mb-1 mr-1">
             {/* Thêm icon cảm xúc ở đây */}
@@ -64,6 +109,44 @@ const MessageDetail = ({ message }) => {
           </div>
         )}
       </div>
+      {isHovered && sender === "other" && (
+        <div className="flex w-[155px] items-end">
+          <div className="mb-3 ml-3 mr-7 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
+            <a href="">
+              <img
+                src="/src/assets/reply-arrow.png"
+                alt=""
+                srcset=""
+                className="h-4 w-4"
+              />
+            </a>
+            <a href="">
+              <img
+                src="/src/assets/reply.png"
+                alt=""
+                srcset=""
+                className="h-4 w-4"
+              />
+            </a>
+            <a href="">
+              <img
+                src="/src/assets/todos.png"
+                alt=""
+                srcset=""
+                className="h-4 w-4"
+              />
+            </a>
+            <a href="">
+              <img
+                src="/src/assets/option.png"
+                alt=""
+                srcset=""
+                className="h-4 w-4"
+              />
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

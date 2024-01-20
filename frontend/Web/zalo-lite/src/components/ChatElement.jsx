@@ -101,7 +101,7 @@ function ChatElement({
         alt="avatar"
         className="aspect-w-1 aspect-h-1 h-12 w-12 rounded-full object-cover"
       />
-      <div className="flex grow justify-between pl-3" id="content">
+      <div className="flex grow justify-between pl-3 md:w-[342px]" id="content">
         <div className="">
           {unreadCount != 0 ? (
             <>
@@ -111,7 +111,7 @@ function ChatElement({
                     {userName}
                   </span>
                 </div>
-                <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200 md:w-[175px] md:min-w-full">
+                <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200  md:min-w-full">
                   <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
                     {messageContent}
                   </span>
@@ -122,9 +122,11 @@ function ChatElement({
             <>
               <div className="grid gap-y-1">
                 <div>
-                  <span className="text-base text-[#081C36]">{userName}</span>
+                  <span className="text-base font-semibold text-[#081C36]">
+                    {userName}
+                  </span>
                 </div>
-                <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm text-[#7589A3] duration-200">
+                <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#7589A3] duration-200 md:w-[175px] md:min-w-full">
                   <span>Bạn:&nbsp;</span>
                   <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
                     {messageContent}
@@ -154,3 +156,16 @@ function ChatElement({
 }
 
 export default ChatElement;
+
+
+{/* <div className="grid gap-y-1">
+  <div>
+    <span className="text-base text-[#081C36]">{userName}</span>
+  </div>
+  <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm text-[#7589A3] duration-200">
+    <span>Bạn:&nbsp;</span>
+    <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
+      {messageContent}
+    </span>
+  </div>
+</div>; */}
