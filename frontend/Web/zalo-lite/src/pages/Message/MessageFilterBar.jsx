@@ -4,6 +4,8 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { NavLink, Outlet } from "react-router-dom";
 import TabList from "@mui/lab/TabList";
 
+import AddFriendDialog from "../../components/models/AddFriend";
+
 function MessageFilterBar() {
   const [searchTerm, setSearchTerm] = useState("");
   const [item, setItem] = useState("UuTien");
@@ -17,7 +19,7 @@ function MessageFilterBar() {
   };
 
   return (
-    <div className="flex-1 h-full w-full flex-col">
+    <div className="h-full w-full flex-1 flex-col">
       <div className="w-full flex-1 flex-col border-b px-4">
         <div className="mb-4 flex items-center py-4 pb-3">
           <FontAwesomeIcon
@@ -77,6 +79,7 @@ function MessageFilterBar() {
           >
             Khác
           </NavLink>
+            <AddFriendDialog />
         </div>
       </div>
       <div className="flex-1 pl-4 ">
