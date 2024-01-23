@@ -41,7 +41,6 @@ const MessageDetail = ({ message }) => {
                 <img
                   src="/src/assets/reply-arrow.png"
                   alt=""
-                  srcset=""
                   className="h-4 w-4"
                 />
               </a>
@@ -49,7 +48,6 @@ const MessageDetail = ({ message }) => {
                 <img
                   src="/src/assets/reply.png"
                   alt=""
-                  srcset=""
                   className="h-4 w-4"
                 />
               </a>
@@ -57,7 +55,6 @@ const MessageDetail = ({ message }) => {
                 <img
                   src="/src/assets/todos.png"
                   alt=""
-                  srcset=""
                   className="h-4 w-4"
                 />
               </a>
@@ -65,7 +62,6 @@ const MessageDetail = ({ message }) => {
                 <img
                   src="/src/assets/option.png"
                   alt=""
-                  srcset=""
                   className="h-4 w-4"
                 />
               </a>
