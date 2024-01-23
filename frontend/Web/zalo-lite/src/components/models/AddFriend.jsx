@@ -143,13 +143,22 @@ export default function AddFriendDialog() {
 
   return (
     <Fragment>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Add Friend
-      </Button>
+      <div
+        onClick={handleClickOpen}
+        className="w-10 ml-3 mr-1 hover:bg-gray-200"
+      >
+        <img
+          src="/src/assets/user-plus.png"
+          alt=""
+          className="cursor-pointer items-center justify-center"
+          style={{ width: "100%", height: "100%"}}
+        />
+      </div>
+
       <Dialog open={open} onClose={handleClose}>
         <div className="flex items-center justify-between border p-2">
           <DialogTitle sx={{ padding: 0 }}>
-            <span className="text-tblack pl-2 text-base font-bold">
+            <span className="pl-2 text-base font-bold text-tblack">
               Thêm bạn
             </span>
           </DialogTitle>
@@ -167,10 +176,10 @@ export default function AddFriendDialog() {
                 renderValue={(selected) => {
                   return (
                     <div className="flex items-center">
-                      <span className="text-tblack -mb-1 text-3xl">
+                      <span className="-mb-1 text-3xl text-tblack">
                         {selectedCountry.flag}
                       </span>
-                      <span className="text-tblack w-[50px] pl-1 text-sm">
+                      <span className="w-[50px] pl-1 text-sm text-tblack">
                         ({selectedCountry.dial_code})
                       </span>
                     </div>

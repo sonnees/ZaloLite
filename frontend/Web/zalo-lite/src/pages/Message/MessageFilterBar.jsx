@@ -35,15 +35,11 @@ function MessageFilterBar() {
             onChange={handleSearchChange}
             className="h-8 w-full rounded-md border bg-[#EAEDF0] p-2 pl-[30px] text-sm focus:outline-none"
           />
-          <img
-            src="/src/assets/user-plus.png"
-            alt=""
-            className="cursor-pointer items-center justify-center"
-          />
+          <AddFriendDialog />
           <img
             src="/src/assets/group-user-plus.png"
             alt=""
-            className="cursor-pointer items-center justify-center"
+            className="cursor-pointer items-center justify-center w-14"
           />
         </div>
         <div className="mt-[-10px] flex flex-row gap-x-2 pb-2">
@@ -79,7 +75,6 @@ function MessageFilterBar() {
           >
             Khác
           </NavLink>
-            <AddFriendDialog />
         </div>
       </div>
       <div className="flex-1 pl-4 ">
