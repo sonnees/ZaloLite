@@ -1,7 +1,11 @@
-import React from 'react';
+import { faLock, faMobileScreen } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import QR_Test from './../../assets/QR_Test.png';
 
 export default function Login() {
+  const [isSelectQR, setIsSelectQR] = useState(true)
   const navigate = useNavigate();
   return (
     <div className='w-full'>
@@ -17,64 +21,109 @@ export default function Login() {
         </svg>
 
       </div>
-      <div className="relative flex flex-col justify-center min-h-screen overflow-hidden" >
+      <div className="relative flex flex-col overflow-hidden" >
 
-        <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
+        <div className=''>
+          <h1 className='text-center text-6xl text-blue-600 font-semibold p-3 mt-10'>Zalo</h1>
+          <h2 className='text-center font-normal'>Đăng nhập tài khoản Zalo</h2>
+          <h2 className='text-center font-normal'>để kết nối với ứng dụng Zalo Web</h2>
+        </div>
 
-          <h1 className="text-3xl font-semibold text-center text-purple-700 underline">
-            Sign in
-          </h1>
-          <form className="mt-6">
-            <div className="mb-2">
-              <label
-                htmlFor="email"
-                className="block text-sm font-semibold text-gray-800"
-              > 
-                Email
-              </label>
-              <input
-                type="email" 
-                className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-              />
-            </div>
-            <div className="mb-2">
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold text-gray-800"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-              />
-            </div>
-            <a
-              href="#"
-              className="text-xs text-purple-600 hover:underline"
-            >
-              Forget Password?
-            </a>
-            <div className="mt-6">
-              <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
-                onClick={() => navigate('/')}
-              >
-                Login
-              </button>
-            </div>
-          </form>
+        <div className=" w-full pb-6 mx-auto my-5 bg-white rounded-md shadow-md lg:max-w-96">
 
-          <p className="mt-8 text-xs font-light text-center text-gray-700">
-            {" "}
-            Don't have an account?{" "}
-            <a
-              href="#"
-              className="font-medium text-purple-600 hover:underline"
-            >
-              Sign up
-            </a>
+          {!isSelectQR ? (
+            <>
+              <ul className='flex border-b-2 py-3'>
+                <li className='text-center flex-1 font-thin' onClick={()=>setIsSelectQR(true)} >VỚI MÃ QR</li> 
+                <span className='font-thin text-slate-300'>|</span>
+                <li className='text-center flex-1 font-semibold'>VỚI SỐ ĐIỆN THOẠI</li>
+              </ul>
+
+              <form className="mt-2  px-6">
+                <div className="mb-2 mx-2 py-4 border-b-2">
+                  <FontAwesomeIcon icon={faMobileScreen} className='mx-3'/>
+                  <select id="contryOption" className='text-center mx-3'>
+                    <option value="">+84</option>
+                    <option value="option1">+1</option>
+                    <option value="option2">+2</option>
+                    <option value="option3">+3</option>
+                  </select>
+
+                  <input id="input-phone" placeholder="Số điện thoại" className='px-3'></input>
+                </div>
+
+                <div className="mb-2 mx-2 py-4 border-b-2">
+                  <FontAwesomeIcon icon={faLock}  className='mx-3'/>
+                  <input id="input-password" placeholder="Mật khẩu" className='mx-3 px-3'></input>
+                </div>
+                
+                <div className="mt-6">
+                  <button className="w-full py-2 tracking-wide text-white transition-colors duration-200 transform bg-blue-400 rounded-md"
+                    onClick={() => navigate('/')}
+                  >
+                    Đăng nhập với mật khẩu
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <button className="w-full py-2 tracking-wide text-blue-400 transition-colors duration-200 transform bg-white-700 border-2 rounded-md"
+                    onClick={() => navigate('/')}
+                  >
+                    Đăng nhập với bằng thiết bị di động
+                  </button>
+                </div>
+              </form>
+
+                
+
+              <p className="mt-8 text-xs font-light text-center text-gray-700">
+                
+                <a
+                  href="#"
+                  className="font-medium text-black-100 hover:underline"
+                >
+                  Quên mật khẩu?
+                </a>
+              </p>
+            </>  
+              ) : (
+            <>
+              <ul className='flex border-b-2 py-3'>
+                <li className='text-center flex-1 font-semibold' >VỚI MÃ QR</li> 
+                <span className='font-thin text-slate-300'>|</span>
+                <li className='text-center flex-1 font-thin'  onClick={()=>setIsSelectQR(false)}>VỚI SỐ ĐIỆN THOẠI</li>
+              </ul>
+
+              <div className='flex flex-col items-center m-6 mx-16 border-2 rounded-lg' >
+                <img src={QR_Test} alt='QR' style={{width:230, height:230, borderRadius: 5, margin:10}} />
+
+                <p className="text-base text-center font-normal text-blue-600 w-60"> 
+                  Chỉ dùng để đăng nhập
+                </p>
+
+                <p className="text-base text-center font-normal text-black-600 w-60"> 
+                  Zalo trên máy tính
+                </p>
+              </div>
+
+                
+
+              <p className="mb-6 text-xs text-center font-medium text-gray-600"> 
+                Sử dụng ứng dụng Zalo để quét mã QR
+              </p>
+            </>
+          )}
+  
+        </div>
+
+        <div className='m-3'>
+          <p className='text-center text-blue-600 text-xs m-12'> 
+            <a className='font-semibold' href="#">Tiếng Việt</a> <span> </span>
+            <a className='font-thin' href="#">English </a>
           </p>
         </div>
+
+
       </div>
     </div>
   );

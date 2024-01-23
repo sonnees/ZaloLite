@@ -4,11 +4,10 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { NavLink, Outlet } from "react-router-dom";
 import TabList from "@mui/lab/TabList";
 
-import AddFriendDialog from "../../components/models/AddFriend";
 
-function MessageFilterBar() {
+function SearchBox() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [item, setItem] = useState("UuTien");
+//   const [item, setItem] = useState("UuTien");
 
   //   const handleItemSelected = (value) => {
   //     onItemSelected(value);
@@ -19,9 +18,9 @@ function MessageFilterBar() {
   };
 
   return (
-    <div className="h-full w-full flex-1 flex-col">
+    <div className="h-[68px] w-full flex-1 flex-col">
       <div className="w-full flex-1 flex-col border-b px-4">
-        <div className="mb-4 flex items-center py-4 pb-3">
+        <div className="mb-1 flex items-center py-4">
           <FontAwesomeIcon
             icon={faMagnifyingGlass}
             size="sm"
@@ -46,7 +45,7 @@ function MessageFilterBar() {
             className="cursor-pointer items-center justify-center"
           />
         </div>
-        <div className="mt-[-10px] flex flex-row gap-x-2 pb-2">
+        {/* <div className="mt-[-10px] flex flex-row gap-x-2 pb-2">
           <NavLink
             to=""
             onClick={() => {
@@ -79,8 +78,7 @@ function MessageFilterBar() {
           >
             Khác
           </NavLink>
-            <AddFriendDialog />
-        </div>
+        </div> */}
       </div>
       <div className="flex-1 pl-4 ">
         <Outlet />
@@ -89,4 +87,4 @@ function MessageFilterBar() {
   );
 }
 
-export default MessageFilterBar;
+export default SearchBox;
