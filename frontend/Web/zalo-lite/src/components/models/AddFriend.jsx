@@ -35,16 +35,16 @@ export default function AddFriendDialog() {
   const [prefix, setPrefix] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [friendsList, setFriendsList] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState('+84');
-  console.log(selectedCountry);
+  const [selectedCountry, setSelectedCountry] = useState({
+    name: "Vietnam",
+    flag: "🇻🇳",
+    code: "VN",
+    dial_code: "+84",
+  });
   const [recentSearches, setRecentSearches] = useState(recentSearchesData);
-  const [suggestedFriends, setSuggestedFriends] =
-    useState(suggestedFriendsData);
+  const [suggestedFriends, setSuggestedFriends] = useState(suggestedFriendsData);
 
-
-    const [selectedCountryValue, setSelectedCountryValue] =
-      useState(selectedCountry);
-
+  const [selectedCountryValue, setSelectedCountryValue] = useState(selectedCountry);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -67,22 +67,13 @@ export default function AddFriendDialog() {
     // Thực hiện xử lý thêm bạn bè từ danh sách người có thể quen biết ở đây
   };
 
-  //  const handleSelectCountry = (country) => {
-  //    setSelectedCountry(country);
-  //    handleClose();
-  //  };
-
-//   const handleSelectCountry = (e) => {
-//     const selectedCountryValue = e.target.value;
-//     setSelectedCountry(selectedCountryValue);
-//     // handleClose();
-//     console.log(selectedCountryValue);
-//   };
-
   const handleSelectCountry = (e) => {
-    const selectedCountryValue = e.target.value;
-    setSelectedCountryValue(selectedCountryValue);
-    console.log(selectedCountryValue);
+     const selectedCountryCode = e.target.value;
+     const selectedCountry = countries.find(
+       (country) => country.code === selectedCountryCode,
+     );
+     setSelectedCountry(selectedCountry);
+     console.log(selectedCountry);
   };
 
   return (
@@ -105,14 +96,25 @@ export default function AddFriendDialog() {
           <div className="flex items-center border">
             <div className="w-1/3">
               <Select
-                labelId="country-label"
-                id="country"
-                value={selectedCountryValue}
+                size="small"
+                value={selectedCountry.code}
                 onChange={handleSelectCountry}
-                label="Country"
+                renderValue={(selected) => {
+                  return (
+                    <div className="flex items-center border">
+                      <span className="text-tblack text-3xl">
+                        {selectedCountry.flag}
+                      </span>
+                      <span className=" text-tblack pl-1 text-sm">
+                        ({selectedCountry.dial_code})
+                      </span>
+                    </div>
+                  );
+                }}
+                inputProps={{ "aria-label": "Without label" }}
               >
                 {countries.map((country) => (
-                  <MenuItem key={country.code} value={country.dial_code}>
+                  <MenuItem key={country.code} value={country.code}>
                     <div className="flex  w-full">
                       <div className="flex-none">
                         <span>{country.flag}</span>
