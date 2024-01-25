@@ -38,6 +38,19 @@ backend/UserManagementMicroservice/!gradle/wrapper/gradle-wrapper.jar
 backend/UserManagementMicroservice/!**/src/main/**/build/
 backend/UserManagementMicroservice/!**/src/test/**/build/
 
+backend/account-service/.idea
+backend/account-service/*.iws
+backend/account-service/*.iml
+backend/account-service/*.ipr
+backend/account-service/out/
+backend/account-service/!**/src/main/**/out/
+backend/account-service/!**/src/test/**/out/
+backend/account-service/.gradle
+backend/account-service/build/
+backend/account-service/!gradle/wrapper/gradle-wrapper.jar
+backend/account-service/!**/src/main/**/build/
+backend/account-service/!**/src/test/**/build/
+
 
 ### frontend ###
 frontend/App/node_modules/
