@@ -1,7 +1,9 @@
 import { StyleSheet, Text, View, Image, ImageBackground, TouchableOpacity } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Person() {
+  let navigation = useNavigation();
   return (
     <ImageBackground
       blurRadius={0}
@@ -9,7 +11,9 @@ export default function Person() {
       source={require("../assets/cover_Image.jpg")}
     >
       <View style={{ flex: 1,flexDirection: "row",}}>
-        <Image style={{width: "20%", height: "100%", resizeMode: "center", marginLeft: "5%", marginTop: "-17%", marginLeft: "-3%"}} source={require("../assets/back.png")}></Image>
+        <Image style={{width: "20%", height: "100%", resizeMode: "center", marginLeft: "5%", marginTop: "-17%", marginLeft: "-3%"}} source={require("../assets/back.png")}
+          onStartShouldSetResponder={() => navigation.navigate("Person")}
+        ></Image>
         <View style={{flex: 1.5}}></View>
         <Image style={{width: "20%", height: "100%", resizeMode: "center", marginLeft: "5%", marginTop: "-17%"}} source={require("../assets/more.png")}></Image>
       </View>
