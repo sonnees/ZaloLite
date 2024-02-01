@@ -11,11 +11,13 @@ export default function Person() {
       source={require("../assets/cover_Image.jpg")}
     >
       <View style={{ flex: 1,flexDirection: "row",}}>
-        <Image style={{width: "20%", height: "100%", resizeMode: "center", marginLeft: "5%", marginTop: "-17%", marginLeft: "-3%"}} source={require("../assets/back.png")}
+        <Image style={{width: "20%", height: "100%", resizeMode: "center", marginLeft: "5%", marginTop: "-21%", marginLeft: "-3%"}} source={require("../assets/back.png")}
           onStartShouldSetResponder={() => navigation.navigate("Person")}
         ></Image>
         <View style={{flex: 1.5}}></View>
-        <Image style={{width: "20%", height: "100%", resizeMode: "center", marginLeft: "5%", marginTop: "-17%"}} source={require("../assets/more.png")}></Image>
+        <Image style={{width: "20%", height: "100%", resizeMode: "center", marginLeft: "5%", marginTop: "-21%"}} source={require("../assets/more.png")}
+          onStartShouldSetResponder={() => navigation.navigate("Information")}
+        ></Image>
       </View>
       <View style={{ flex: 2, backgroundColor: "white" }}>
         <View style={{flex: 0.15}}></View>
