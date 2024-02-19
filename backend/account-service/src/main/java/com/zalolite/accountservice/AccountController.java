@@ -2,12 +2,13 @@ package com.zalolite.accountservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zalolite.accountservice.dto.AccountCreateDTO;
+import com.zalolite.accountservice.entity.Account;
+import com.zalolite.accountservice.entity.Profile;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 @RestController
@@ -40,9 +41,7 @@ public class AccountController {
     public Mono<ResponseEntity<String>> create(@RequestBody AccountCreateDTO accountCreateDTO){
         return accountRepository.insert(new Account(accountCreateDTO))
                 .flatMap(result ->{
-                    Mono.fromRunnable(()->{
-
-                    }).subscribeOn(Schedulers.boundedElastic()).subscribe();
+                    Mono.fromRunnable(()->{}).subscribeOn(Schedulers.boundedElastic()).subscribe();
                     return Mono.just(ResponseEntity.ok().body("success"));
                 })
                 .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));

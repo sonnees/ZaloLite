@@ -1,4 +1,4 @@
-package com.zalolite.accountservice;
+package com.zalolite.accountservice.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
