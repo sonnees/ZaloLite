@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
 import java.util.Date;
@@ -43,7 +44,7 @@ public class Account implements UserDetails {
     public Account(AccountCreateDTO accountCreateDTO) {
         this.id = UUID.randomUUID();
         this.phoneNumber = accountCreateDTO.getPhoneNumber();
-        this.pw = accountCreateDTO.getPassword();
+        this.pw = new BCryptPasswordEncoder().encode(accountCreateDTO.getPassword());
         this.userID = UUID.randomUUID();
         this.createAt = new Date();
         this.type = Type.personal;

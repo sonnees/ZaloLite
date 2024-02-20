@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import reactor.core.publisher.Mono;
 
 import java.util.Date;
@@ -31,7 +33,7 @@ public class AccountServiceApplication {
                 Mono<Account> save = accountRepository.save(new Account(
                         UUID.randomUUID(),
                         "0123456789",
-                        "123",
+                        new BCryptPasswordEncoder().encode("123"),
                         UUID.randomUUID(),
                         new Date(),
                         Type.personal,
@@ -49,7 +51,7 @@ public class AccountServiceApplication {
                 Mono<Account> save1 = accountRepository.save(new Account(
                         UUID.randomUUID(),
                         "0123456788",
-                        "123",
+                        new BCryptPasswordEncoder().encode("123"),
                         UUID.randomUUID(),
                         new Date(),
                         Type.personal,

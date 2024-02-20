@@ -13,7 +13,5 @@ public interface AccountRepository extends ReactiveMongoRepository<Account, UUID
 
     @Query(value = "{'phoneNumber': ?0}")
     public Mono<Account> searchByPhoneNumber(String phoneNumber);
-
-    public Mono<Account> findByPhoneNumber(String username);
 }
 
