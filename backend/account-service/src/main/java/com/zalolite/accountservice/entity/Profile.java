@@ -1,4 +1,4 @@
-package com.zalolite.accountservice;
+package com.zalolite.accountservice.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,5 +1,6 @@
-package com.zalolite.accountservice;
+package com.zalolite.accountservice.dto;
 
+import com.zalolite.accountservice.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,6 @@ public class AccountCreateDTO {
     private String userName;
     private Boolean gender;
     private Date birthday;
+    private UserRole role;
+
 }
