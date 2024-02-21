@@ -25,11 +25,14 @@ public class AccountServiceApplication {
         SpringApplication.run(AccountServiceApplication.class, args);
     }
 
-//    @Bean
+    @Bean
     CommandLineRunner commandLineRunner(){
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
+                Account account = accountRepository.searchByPhoneNumber("0123456789").block();
+                if(account!=null) return;
+
                 Mono<Account> save = accountRepository.save(new Account(
                         UUID.randomUUID(),
                         "0123456789",
