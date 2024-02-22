@@ -7,11 +7,15 @@
 
 ## API & Data Transfer Object
 ### 1. Account
+```
+ZaloLite\backend\account-service\src\main\java\com\zalolite\accountservice\AccountServiceApplication.java
+```
+  
 #### 1.1 Kiểm tra số điện thoại đã được đăng ký trong hệ thống chưa
-Link api: http://localhost:8081/api/account/check-uniqueness-phone-number/{phoneNumber} <br>
+Link api: http://localhost:8081/api/auth/check-uniqueness-phone-number/{phoneNumber} <br>
 Gửi:
 ```
-http://localhost:8081/api/account/check-uniqueness-phone-number/0123456789
+http://localhost:8081/api/v1/auth/check-uniqueness-phone-number/0123456789
 ```
   
 Nhận:
@@ -30,10 +34,10 @@ HTTP 409 Conflict
 }
 ```
 #### 1.2 Gửi yêu cầu tạo tài khoản
-Link api: http://localhost:8081/api/account/create <br>
+Link api: http://localhost:8081/api/v1/auth/register <br>
 Gửi:
 ```
-http://localhost:8081/api/account/create
+http://localhost:8081/api/v1/auth/register
 ```
 Với body:
 ```
@@ -47,11 +51,51 @@ Với body:
 ```  
 Nhận:
 ```
-# Nếu tạo tài khoản thành công
+# Thành công
 HTTP 200 OK
 "success"
 
-# Nếu tạo tài khoản thất bại
+# Thất bại
 HTTP 409 Conflict
-
 ```
+
+#### 1.3 Gửi yêu cầu cấp quyền
+Link api: http://localhost:8081/api/v1/auth/authenticate <br>
+Gửi:
+```
+http://localhost:8081/api/v1/auth/authenticate
+```
+Với body:
+```
+{
+    "phoneNumber":"0123456789",
+    "password":"123"
+}
+```  
+Nhận:
+```
+# Thành công
+HTTP 200 OK
+"{một mã token}"
+
+# Thất bại: do số điện thoại không đúng hoặc là do password không đúng
+HTTP 401 Unauthorized
+```
+
+#### 1.4 Gửi yêu cầu tạo mã qr (Máy tính, ...)
+Link api: http://localhost:8081/api/v1/auth/authenticate/qr-code <br>
+Gửi:
+```
+http://localhost:8081/api/v1/auth/authenticate/qr-code
+```
+
+Nhận:
+```
+# Thành công
+HTTP 200 OK
+"{một mã base64Image}"
+
+# Thất bại:
+HTTP 404 
+```
+
