@@ -2,6 +2,9 @@ package com.zalolite.accountservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
 import com.zalolite.accountservice.AccountRepository;
 import com.zalolite.accountservice.dto.AccountCreateDTO;
 import com.zalolite.accountservice.dto.AccountLoginDTO;
@@ -9,14 +12,22 @@ import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.entity.Profile;
 import com.zalolite.accountservice.jwt.JwtService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
+import java.util.UUID;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/auth")
+@Slf4j
 public class AuthController {
     private AccountRepository accountRepository;
     private JwtService jwtService;
@@ -62,5 +73,35 @@ public class AuthController {
                     return Mono.just(ResponseEntity.status(200).body(token));
                 })
                 .switchIfEmpty(Mono.just(ResponseEntity.status(401).body("")));
+    }
+
+    @PostMapping("/authenticate/qr-code")
+    public ResponseEntity<String> loginQRCode() {
+        UUID uuid = UUID.randomUUID();
+
+        String endpointWebSocket = "ws://localhost:8081/ws/auth/" + uuid;
+
+        try {
+            int width = 200;
+            int height = 200;
+            BitMatrix matrix = new MultiFormatWriter().encode(endpointWebSocket, BarcodeFormat.QR_CODE, width, height);
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < width; y++) {
+                    image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+                }
+            }
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", outputStream);
+            byte[] imageBytes = outputStream.toByteArray();
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+            return ResponseEntity.ok(base64Image);
+
+        } catch (Exception e) {
+            log.error("***" + e);
+        }
+        return ResponseEntity.status(404).body("");
     }
 }

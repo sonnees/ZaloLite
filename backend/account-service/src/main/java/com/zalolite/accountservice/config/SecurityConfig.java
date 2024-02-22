@@ -1,7 +1,6 @@
 package com.zalolite.accountservice.config;
 
 import com.zalolite.accountservice.jwt.AuthenticationManager;
-import com.zalolite.accountservice.jwt.CustomUserDetailsService;
 import com.zalolite.accountservice.jwt.SecurityContextRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -25,7 +23,7 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
         return http.authorizeExchange(
                         auth ->
-                                auth.pathMatchers("/api/v1/auth/**").permitAll()
+                                auth.pathMatchers("/api/v1/auth/**", "/ws/auth/**").permitAll()
                                         .anyExchange().authenticated()
                 )
                 .authenticationManager(authenticationManager)
@@ -38,10 +36,6 @@ public class SecurityConfig {
                 .build();
     }
 
-    @Bean
-    public ReactiveUserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
