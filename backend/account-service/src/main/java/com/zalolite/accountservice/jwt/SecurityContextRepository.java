@@ -29,7 +29,7 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
                 .flatMap(header ->{
                     String token = header.substring(7);
                     Authentication auth = new UsernamePasswordAuthenticationToken(token, token);
-                    return this.authenticationManager.authenticate(auth).map(authentication -> new SecurityContextImpl());
+                    return this.authenticationManager.authenticate(auth).map(SecurityContextImpl::new);
                 });
     }
 }

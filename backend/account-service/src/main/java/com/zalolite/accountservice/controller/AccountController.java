@@ -17,16 +17,13 @@ public class AccountController {
 
     @PostMapping("/profile/{phoneNumber}")
     public Mono<ResponseEntity<String>> getProfileByPhoneNumber(@PathVariable String phoneNumber){
-        System.out.println("controller");
         return accountRepository.searchByPhoneNumber(phoneNumber)
                 .flatMap(account -> {
                     if (account == null)
-                        return Mono.just(ResponseEntity.status(404).body("Not Found"));
+                        return Mono.just(ResponseEntity.status(404).body("User not found"));
                     String json = "";
-                    System.out.println(account.getProfile().getAvatar());
                     try {
                         json = objectMapper.writeValueAsString(account.getProfile());
-                        System.out.println(json);
                     } catch (JsonProcessingException e) {
                         return Mono.error(new RuntimeException(e));
                     }
