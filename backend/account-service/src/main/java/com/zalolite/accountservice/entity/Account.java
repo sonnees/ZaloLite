@@ -63,6 +63,10 @@ public class Account implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    public UserRole getRole() {
+        return role;
+    }
+
     @Override
     public String getPassword() {
         return this.getPw();

@@ -1,45 +1,44 @@
-package com.zalolite.accountservice;
+package com.zalolite.accountservice.controller;
 
-import ch.qos.logback.core.subst.Token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
+import com.zalolite.accountservice.AccountRepository;
 import com.zalolite.accountservice.dto.AccountCreateDTO;
 import com.zalolite.accountservice.dto.AccountLoginDTO;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.entity.Profile;
 import com.zalolite.accountservice.jwt.JwtService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/account")
-public class AccountController {
+@RequestMapping("/api/v1/auth")
+@Slf4j
+public class AuthController {
     private AccountRepository accountRepository;
-    private ObjectMapper objectMapper;
     private JwtService jwtService;
+    private ObjectMapper objectMapper;
 
-    /**
-     * link api: http://localhost:8081/api/account/check-uniqueness-phone-number/0123456789
-     * {"userName":"Nguyen Van Son","gender":null,"birthday":null,"avatar":null,"background":null}
-     * @param phoneNumber : 0123456789
-     * @return : "" or {"userName":"Nguyen Van Son","gender":null,"birthday":null,"avatar":null,"background":null}
-     * @throws RuntimeException :
-     */
     @PostMapping("/check-uniqueness-phone-number/{phoneNumber}")
     public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber) throws RuntimeException {
         return accountRepository.searchByPhoneNumber(phoneNumber)
                 .flatMap(account -> {
                     if (account == null)
-                        return Mono.just(ResponseEntity.ok().body(""));
+                        return Mono.just(ResponseEntity.ok(""));
                     Profile profile = new Profile();
                     profile.setUserName(account.getProfile().getUserName());
                     String json = "";
@@ -52,17 +51,18 @@ public class AccountController {
                 });
     }
 
-    @PostMapping("/create")
+    @PostMapping("/register")
     public Mono<ResponseEntity<String>> create(@RequestBody AccountCreateDTO accountCreateDTO){
         return accountRepository.insert(new Account(accountCreateDTO))
-                .flatMap(result ->{
-                    Mono.fromRunnable(()->{}).subscribeOn(Schedulers.boundedElastic()).subscribe();
-                    return Mono.just(ResponseEntity.ok().body("success"));
-                })
+                .flatMap(result -> accountRepository.searchByPhoneNumber(accountCreateDTO.getPhoneNumber())
+                        .flatMap(account -> {
+                            String token = jwtService.generateToken(account);
+                            return Mono.just(ResponseEntity.status(200).body(token));
+                        }))
                 .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));
     }
 
-    @PostMapping("/login")
+    @PostMapping("/authenticate")
     public Mono<ResponseEntity<String>> login(@RequestBody AccountLoginDTO accountLoginDTO) {
         return accountRepository.searchByPhoneNumber(accountLoginDTO.getPhoneNumber())
                 .flatMap(account -> {
@@ -75,10 +75,33 @@ public class AccountController {
                 .switchIfEmpty(Mono.just(ResponseEntity.status(401).body("")));
     }
 
-    @PostMapping("/check")
-    public ResponseEntity<String> oke(){
-        return ResponseEntity.ok("");
+    @PostMapping("/authenticate/qr-code")
+    public ResponseEntity<String> loginQRCode() {
+        UUID uuid = UUID.randomUUID();
+
+        String endpointWebSocket = "ws://localhost:8081/ws/auth/" + uuid;
+
+        try {
+            int width = 200;
+            int height = 200;
+            BitMatrix matrix = new MultiFormatWriter().encode(endpointWebSocket, BarcodeFormat.QR_CODE, width, height);
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < width; y++) {
+                    image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+                }
+            }
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", outputStream);
+            byte[] imageBytes = outputStream.toByteArray();
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+            return ResponseEntity.ok(base64Image);
+
+        } catch (Exception e) {
+            log.error("***" + e);
+        }
+        return ResponseEntity.status(404).body("");
     }
-
 }
-
