@@ -2,8 +2,12 @@ package com.zalolite.accountservice;
 
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.entity.Profile;
+import com.zalolite.accountservice.entity.Setting;
+import com.zalolite.accountservice.enums.AllowMessaging;
+import com.zalolite.accountservice.enums.ShowBirthday;
 import com.zalolite.accountservice.enums.Type;
 import com.zalolite.accountservice.enums.UserRole;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,6 +20,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @SpringBootApplication
+@Slf4j
 public class AccountServiceApplication {
 
     @Autowired
@@ -47,9 +52,13 @@ public class AccountServiceApplication {
                                 "https://cdn1.vectorstock.com/i/1000x1000/23/70/man-avatar-icon-flat-vector-19152370.jpg",
                                 "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
                         ),
-                        UserRole.USER
+                        UserRole.USER,
+                        new Setting(
+                                AllowMessaging.EVERYONE,
+                                ShowBirthday.SHOW_DMY
+                        )
                 ));
-                System.out.println(save.block().getId());
+                log.info("** create account success: "+save.block().getId());
 
                 Mono<Account> save1 = accountRepository.save(new Account(
                         UUID.randomUUID(),
@@ -65,9 +74,13 @@ public class AccountServiceApplication {
                                 "https://cdn4.iconfinder.com/data/icons/circle-avatars-1/128/050_girl_avatar_profile_woman_suit_student_officer-2-1024.png",
                                 "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
                         ),
-                        UserRole.USER
+                        UserRole.USER,
+                        new Setting(
+                                AllowMessaging.EVERYONE,
+                                ShowBirthday.SHOW_DM
+                        )
                 ));
-                System.out.println(save1.block().getId());
+                log.info("** create account success: "+save1.block().getId());
             }
         };
     }

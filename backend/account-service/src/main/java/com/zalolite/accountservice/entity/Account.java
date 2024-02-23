@@ -1,6 +1,8 @@
 package com.zalolite.accountservice.entity;
 
 import com.zalolite.accountservice.dto.AccountCreateDTO;
+import com.zalolite.accountservice.enums.AllowMessaging;
+import com.zalolite.accountservice.enums.ShowBirthday;
 import com.zalolite.accountservice.enums.Type;
 import com.zalolite.accountservice.enums.UserRole;
 import lombok.AllArgsConstructor;
@@ -40,6 +42,7 @@ public class Account implements UserDetails {
     private Type type;
     private Profile profile;
     private UserRole role;
+    private Setting setting;
 
     public Account(AccountCreateDTO accountCreateDTO) {
         this.id = UUID.randomUUID();
@@ -56,6 +59,10 @@ public class Account implements UserDetails {
                 "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
         );
         this.role = accountCreateDTO.getRole();
+        this.setting = new Setting(
+                AllowMessaging.EVERYONE,
+                ShowBirthday.SHOW_DMY
+        );
     }
 
     @Override
@@ -63,8 +70,16 @@ public class Account implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public UserRole getRole() {
-        return role;
+    public Profile getProfile(String phoneNumber){
+        if(this.phoneNumber.equals(phoneNumber))
+            return this.profile;
+
+        Profile temp = this.profile;
+        switch (this.setting.getShowBirthday()){
+            case NO -> temp.setBirthday(null);
+            case SHOW_DM -> temp.setBirthday(new Date(0,temp.getBirthday().getMonth(),temp.getBirthday().getDay()));
+        }
+        return temp;
     }
 
     @Override
