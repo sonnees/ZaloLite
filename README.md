@@ -99,3 +99,29 @@ HTTP 200 OK
 HTTP 404 
 ```
 
+#### 1.5 Gửi yêu cầu lấy profile của account nào đó bằng số điện thoại
+Link api: http://localhost:8081/api/v1/account/profile/{phoneNumber} <br>
+Gửi kèm token:
+```
+http://localhost:8081/api/v1/account/profile/0123456788
+```
+
+Nhận:
+```
+# Thành công (có account):
+HTTP 200 OK
+** Trường hợp xem thông tin của người khác: Có thể bị ẩn các thông tin theo cài đặt của người dùng
+*** Ẩn năm sinh: Năm sinh về mặc định là 1900. Khi hiển thị ở frontend thì để **, không hiện 1900
+*** Ẩn ngày tháng năm sinh: năm sinh nhận được là null
+{
+    "userName": "Nguyen Thi Son",
+    "gender": false,
+    "birthday": null,
+    "avatar": "https://cdn4.iconfinder.com/data/icons/circle-avatars-1/128/050_girl_avatar_profile_woman_suit_student_officer-2-1024.png",
+    "background": "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
+}
+
+# Thất bại (Không tìm thấy account):
+HTTP 404 
+```
+
