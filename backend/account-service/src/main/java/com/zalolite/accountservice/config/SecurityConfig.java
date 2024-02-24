@@ -3,6 +3,7 @@ package com.zalolite.accountservice.config;
 import com.zalolite.accountservice.jwt.AuthenticationManager;
 import com.zalolite.accountservice.jwt.SecurityContextRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -11,6 +12,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.client.RestTemplate;
 
 
 @Configuration
@@ -36,9 +38,14 @@ public class SecurityConfig {
                 .build();
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @LoadBalanced
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
     }
 }
