@@ -7,11 +7,13 @@ import com.zalolite.accountservice.enums.AllowMessaging;
 import com.zalolite.accountservice.enums.ShowBirthday;
 import com.zalolite.accountservice.enums.Type;
 import com.zalolite.accountservice.enums.UserRole;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import reactor.core.publisher.Mono;
@@ -19,11 +21,12 @@ import reactor.core.publisher.Mono;
 import java.util.Date;
 import java.util.UUID;
 
-@SpringBootApplication
 @Slf4j
+@SpringBootApplication
+@AllArgsConstructor
+@EnableDiscoveryClient
 public class AccountServiceApplication {
 
-    @Autowired
     private AccountRepository accountRepository;
 
     public static void main(String[] args) {
@@ -77,7 +80,7 @@ public class AccountServiceApplication {
                         UserRole.USER,
                         new Setting(
                                 AllowMessaging.EVERYONE,
-                                ShowBirthday.SHOW_DM
+                                ShowBirthday.NO
                         )
                 ));
                 log.info("** create account success: "+save1.block().getId());

@@ -1,5 +1,4 @@
 ### backend ###
-backend/.idea
 backend/*.iws
 backend/*.iml
 backend/*.ipr
@@ -12,31 +11,31 @@ backend/!gradle/wrapper/gradle-wrapper.jar
 backend/!**/src/main/**/build/
 backend/!**/src/test/**/build/
 
-backend/SingleChatManagementMicroservice/.idea
-backend/SingleChatManagementMicroservice/*.iws
-backend/SingleChatManagementMicroservice/*.iml
-backend/SingleChatManagementMicroservice/*.ipr
-backend/SingleChatManagementMicroservice/out/
-backend/SingleChatManagementMicroservice/!**/src/main/**/out/
-backend/SingleChatManagementMicroservice/!**/src/test/**/out/
-backend/SingleChatManagementMicroservice/.gradle
-backend/SingleChatManagementMicroservice/build/
-backend/SingleChatManagementMicroservice/!gradle/wrapper/gradle-wrapper.jar
-backend/SingleChatManagementMicroservice/!**/src/main/**/build/
-backend/SingleChatManagementMicroservice/!**/src/test/**/build/
+backend/gateway-service/.idea
+backend/gateway-service/*.iws
+backend/gateway-service/*.iml
+backend/gateway-service/*.ipr
+backend/gateway-service/out/
+backend/gateway-service/!**/src/main/**/out/
+backend/gateway-service/!**/src/test/**/out/
+backend/gateway-service/.gradle
+backend/gateway-service/build/
+backend/gateway-service/!gradle/wrapper/gradle-wrapper.jar
+backend/gateway-service/!**/src/main/**/build/
+backend/gateway-service/!**/src/test/**/build/
 
-backend/UserManagementMicroservice/.idea
-backend/UserManagementMicroservice/*.iws
-backend/UserManagementMicroservice/*.iml
-backend/UserManagementMicroservice/*.ipr
-backend/UserManagementMicroservice/out/
-backend/UserManagementMicroservice/!**/src/main/**/out/
-backend/UserManagementMicroservice/!**/src/test/**/out/
-backend/UserManagementMicroservice/.gradle
-backend/UserManagementMicroservice/build/
-backend/UserManagementMicroservice/!gradle/wrapper/gradle-wrapper.jar
-backend/UserManagementMicroservice/!**/src/main/**/build/
-backend/UserManagementMicroservice/!**/src/test/**/build/
+backend/eureka-server/.idea
+backend/eureka-server/*.iws
+backend/eureka-server/*.iml
+backend/eureka-server/*.ipr
+backend/eureka-server/out/
+backend/eureka-server/!**/src/main/**/out/
+backend/eureka-server/!**/src/test/**/out/
+backend/eureka-server/.gradle
+backend/eureka-server/build/
+backend/eureka-server/!gradle/wrapper/gradle-wrapper.jar
+backend/eureka-server/!**/src/main/**/build/
+backend/eureka-server/!**/src/test/**/build/
 
 backend/account-service/.idea
 backend/account-service/*.iws
