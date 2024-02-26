@@ -5,39 +5,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/gradlew.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/SingleChatManagementMicroserviceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/controller/SingleChatController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/model/SingleChat.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/reporitory/SingleChatRep.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/service/SingleChatService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/resources/banner.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/test/java/com/zalolite/singlechatmanagementmicroservice/SingleChatManagementMicroserviceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/gradlew.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/UserManagementMicroserviceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/controller/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/model/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/repository/UserRep.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/service/UserService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/resources/banner.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/test/java/com/zalolite/usermanagementmicroservice/UserManagementMicroserviceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/account-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/AccountServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/AccountServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/controller/AuthController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/account-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/qrcode.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/8.5/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/8.5/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/8.5/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/8.5/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/build/resources/main/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/build/resources/main/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/AuthenticationFilter$Config.class" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/AuthenticationFilter$Config.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/AuthenticationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/AuthenticationFilter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/JwtService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/SecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/compileTransaction/stash-dir/AuthenticationFilter$Config.class.uniqueId0" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/compileTransaction/stash-dir/AuthenticationFilter$Config.class.uniqueId0" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/compileTransaction/stash-dir/AuthenticationFilter.class.uniqueId1" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/compileTransaction/stash-dir/AuthenticationFilter.class.uniqueId1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/src/main/java/com/zalolite/gatewayservice/AuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/src/main/java/com/zalolite/gatewayservice/AuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/src/main/java/com/zalolite/gatewayservice/JwtService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/src/main/java/com/zalolite/gatewayservice/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/src/main/java/com/zalolite/gatewayservice/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,28 +108,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "sonnees",
-    "ignore.virus.scanning.warn.message": "true",
-    "jdk.selected.JAVA_MODULE": "17",
-    "last_opened_file_path": "C:/SON.admin/VIII/NewTech/ZaloLite/backend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;sonnees&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;17&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/SON.admin/VIII/NewTech/ZaloLite/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -158,7 +156,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.GatewayServiceApplication">
+  <component name="RunManager" selected="Spring Boot.AccountServiceApplication">
     <configuration name="AccountServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="account-service.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.zalolite.accountservice.AccountServiceApplication" />
@@ -214,6 +212,10 @@
       <workItem from="1708674730729" duration="8984000" />
       <workItem from="1708684527452" duration="644000" />
       <workItem from="1708753309082" duration="15025000" />
+      <workItem from="1708843880057" duration="10926000" />
+      <workItem from="1708863493215" duration="1287000" />
+      <workItem from="1708930589072" duration="1246000" />
+      <workItem from="1708943531574" duration="1119000" />
     </task>
     <servers />
   </component>

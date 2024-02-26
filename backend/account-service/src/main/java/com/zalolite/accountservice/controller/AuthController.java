@@ -75,6 +75,11 @@ public class AuthController {
                 .switchIfEmpty(Mono.just(ResponseEntity.status(401).body("")));
     }
 
+    @GetMapping("/check-token")
+    public Boolean checkToken(@RequestParam String token) {
+        return jwtService.isTokenExpired(token);
+    }
+
     @PostMapping("/authenticate/qr-code")
     public ResponseEntity<String> loginQRCode() {
         UUID uuid = UUID.randomUUID();
