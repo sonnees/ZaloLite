@@ -15,7 +15,6 @@ function App() {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
-
             if (route.name === 'Messages') {
               iconName = focused ? 'message1' : 'message1';
             } else if (route.name === 'Me') {
@@ -48,7 +47,6 @@ function App() {
             }else if (route.name === 'Contacts' && color==='blue') {
               labelText = 'Contacts';
             }
-
             return <Text style={{ color }}>{labelText}</Text>;
           },
           tabBarActiveTintColor: 'blue',
