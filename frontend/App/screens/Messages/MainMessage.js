@@ -47,7 +47,6 @@ const YourComponent = () => {
     </KeyboardAvoidingView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
