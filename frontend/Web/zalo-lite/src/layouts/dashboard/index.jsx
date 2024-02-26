@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 import OtherMessage from "../../pages/Message/OtherMessage";
 import Conversation from "../../components/Conversation";
 
-function DashboardLayout() {
+function DashboardLayout({component}) {
   const [width, setWidth] = useState(window.innerWidth);
 
   useLayoutEffect(() => {
@@ -39,7 +39,7 @@ function DashboardLayout() {
                 iure dolor dicta, dolores repellendus molestias suscipit, ipsum
                 totam. Culpa cupiditate dolor unde ipsam nobis!
               </div> */}
-              <Conversation />
+              {component}
             </div>
           </div>
         </div>
