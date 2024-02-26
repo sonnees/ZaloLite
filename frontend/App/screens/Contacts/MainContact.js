@@ -24,19 +24,16 @@ const YourComponent = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between",paddingVertical: 10,backgroundColor:'#fff'}}>
-            <View style={{flex:1, flexDirection: "row", justifyContent: "center", alignContent: "space-between"}}>
+          <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between",paddingVertical: 12,backgroundColor: "#fff"}}>
               <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
-                <Text> Focused</Text>
+                <Text> Friends</Text>
               </TouchableOpacity>
               <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
-                <Text> Other</Text>
+                <Text> Groups</Text>
               </TouchableOpacity>
-            </View>
-          
-            <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "flex-end", paddingRight:'2%'}}>
-              <Icon name='filter' size={30} color={'gray'}></Icon>
-            </TouchableOpacity>
+              <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
+                <Text> OA</Text>
+              </TouchableOpacity>
           </View>
             <View style={{borderBottomColor: 'gray',borderBottomWidth: 1,width: '100%',          }} />
           <View style={{ flex: 1, backgroundColor: "#fff" }}>
