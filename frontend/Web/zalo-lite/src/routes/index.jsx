@@ -1,4 +1,4 @@
-import LoginForm from "../pages/login/LoginForm";
+import LoginForm from "../pages/Login/LoginForm";
 import Main from "../pages/Home/MainHome";
 import Contact from "../pages/Contact";
 import Todo from "../pages/Todo";
@@ -6,8 +6,8 @@ import Message from "../pages/Message";
 import OtherMessage from "../pages/Message/OtherMessage";
 import Sidebar from "../layouts/dashboard/Sidebar";
 
-import { Suspense, lazy } from "react";
-import { Navigate, useRoutes } from "react-router-dom";
+import { Suspense, lazy, useEffect, useState } from "react";
+import { Navigate, useLocation, useRoutes } from "react-router-dom";
 // layouts
 import DashboardLayout from "../layouts/dashboard";
 import AuthLayout from "../layouts/auth";
@@ -15,6 +15,9 @@ import AuthLayout from "../layouts/auth";
 import { DEFAULT_PATH } from "../config";
 import LoadingScreen from "../components/LoadingScreen";
 import MessageFilterBar from "../pages/Message/MessageFilterBar";
+import SearchBox from "../components/SearchBox";
+import Conversation from "../components/Conversation";
+import DetailContact from "../components/DetailContact";
 
 const Loadable = (Component) => (props) => {
   return (
@@ -24,7 +27,26 @@ const Loadable = (Component) => (props) => {
   );
 };
 
+
+
 export default function Router() {
+  const [comp, setComp] = useState(<Conversation/>)
+
+  function handleComp() {
+    setComp(<DetailContact/>)
+  }
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/app") {
+      setComp(<Conversation/>);
+    } 
+    else if (location.pathname === "/contact") {
+      setComp(<DetailContact/>);
+    }
+  }, [location.pathname]);
+
   return useRoutes([
     {
       path: "/auth",
@@ -33,7 +55,7 @@ export default function Router() {
     },
     {
       path: "/",
-      element: <DashboardLayout></DashboardLayout>,
+      element: <DashboardLayout component={comp}></DashboardLayout>,
       children: [
         { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
         {
@@ -44,8 +66,9 @@ export default function Router() {
             { path: "other-message", element: <OtherMessage /> },
           ],
         },
-        { path: "contact", element: <Contact /> },
+        { path: "/contact", element: [<SearchBox/>,  <Contact/>], },
         { path: "todo", element: <Todo /> },
+        
       ],
     },
 
