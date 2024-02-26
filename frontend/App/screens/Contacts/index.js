@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import ChatApp from '../Message/ChatApp';
+import ChatApp from '../Messages/ChatScreen';
 export default function App() {
   let Stack = createStackNavigator();
   

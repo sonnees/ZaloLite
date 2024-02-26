@@ -1,10 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import Message from './screens/Message/index';
-import Person from './screens/Person/index';
-import Contact from "./screens/Contact/index"
-import Diary from "./screens/Diary/index"
+import Messages from './screens/Messages/index';
+import Me from './screens/Me/index';
+import Contacts from "./screens/Contacts/index"
+import Timeline from "./screens/Timeline/index"
 import Icon from 'react-native-vector-icons/AntDesign';
 const Tab = createBottomTabNavigator();
 import { Text } from 'react-native';
@@ -16,13 +16,13 @@ function App() {
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
 
-            if (route.name === 'Message') {
+            if (route.name === 'Messages') {
               iconName = focused ? 'message1' : 'message1';
-            } else if (route.name === 'Person') {
+            } else if (route.name === 'Me') {
               iconName = focused ? 'user' : 'user';
-            }else if (route.name === 'Contact') {
+            }else if (route.name === 'Contacts') {
               iconName = focused ? 'contacts' : 'contacts';
-            }else if (route.name === 'Diary') {
+            }else if (route.name === 'Timeline') {
               iconName = focused ? 'clockcircleo' : 'clockcircleo';
             }
 
@@ -31,36 +31,34 @@ function App() {
           tabBarLabel: ({ focused, color }) => {
             let labelText;
 
-            if (route.name === 'Message' && color==='gray') {
+            if (route.name === 'Messages' && color==='gray') {
               labelText = '';
-            }else if (route.name === 'Message' && color==='blue') {
-              labelText = 'Message';
-            } else if (route.name === 'Person' && color==='gray') {
+            }else if (route.name === 'Messages' && color==='blue') {
+              labelText = 'Messages';
+            } else if (route.name === 'Me' && color==='gray') {
               labelText = '';
-            }else if (route.name === 'Person' && color==='blue') {
-              labelText = 'Person';
-            }else if (route.name === 'Diary' && color==='gray') {
+            }else if (route.name === 'Me' && color==='blue') {
+              labelText = 'Me';
+            }else if (route.name === 'Timeline' && color==='gray') {
               labelText = '';
-            }else if (route.name === 'Diary' && color==='blue') {
-              labelText = 'Diary';
-            }else if (route.name === 'Contact' && color==='gray') {
+            }else if (route.name === 'Timeline' && color==='blue') {
+              labelText = 'Timeline';
+            }else if (route.name === 'Contacts' && color==='gray') {
               labelText = '';
-            }else if (route.name === 'Contact' && color==='blue') {
-              labelText = 'Contact';
+            }else if (route.name === 'Contacts' && color==='blue') {
+              labelText = 'Contacts';
             }
 
             return <Text style={{ color }}>{labelText}</Text>;
           },
+          tabBarActiveTintColor: 'blue',
+          tabBarInactiveTintColor: 'gray',
         })}
-        tabBarOptions={{
-          activeTintColor: 'blue',
-          inactiveTintColor: 'gray',
-        }}
       >
-        <Tab.Screen name="Message" component={Message} options={{headerShown: false}}/>
-        <Tab.Screen name="Contact" component={Contact} options={{headerShown: false}}/>
-        <Tab.Screen name="Diary" component={Diary} options={{headerShown: false}}/>
-        <Tab.Screen name="Person" component={Person} options={{headerShown: false}}/>
+        <Tab.Screen name="Messages" component={Messages} options={{headerShown: false}}/>
+        <Tab.Screen name="Contacts" component={Contacts} options={{headerShown: false}}/>
+        <Tab.Screen name="Timeline" component={Timeline} options={{headerShown: false}}/>
+        <Tab.Screen name="Me" component={Me} options={{headerShown: false}}/>
       </Tab.Navigator>
     </NavigationContainer>
   );
