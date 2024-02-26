@@ -26,6 +26,7 @@
     "react-custom-scrollbars-2": "^4.5.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.1",
+    "react-virtualized": "^9.22.5",
     "styled-components": "^6.1.8"
   },
   "devDependencies": {
