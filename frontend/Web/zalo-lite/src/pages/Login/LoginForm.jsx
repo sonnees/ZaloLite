@@ -1,14 +1,50 @@
 import { faLock, faMobileScreen } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QR_Test from './../../assets/QR_Test.png';
 
 export default function LoginForm() {
   const [isSelectQR, setIsSelectQR] = useState(true)
   const navigate = useNavigate();
+//=========================================================
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+
+  useEffect(() => {
+    // Gọi API ở đây
+    const fetchQrCode = async () => {
+      try {
+        const response = await fetch('http://localhost:8081/api/v1/auth/authenticate/qr-code', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            // Thêm các headers khác nếu cần
+          },
+          // Thêm body nếu có dữ liệu gửi kèm
+          // body: JSON.stringify({ key: 'value' }),
+        });
+        // Nếu sử dụng axios:
+        // const response = await axios.post('your_api_url_here', { key: 'value' });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch QR code');
+        }
+
+        const data = await response.json();
+        setQrCodeUrl(data.qrCodeUrl); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
+        console.log(qrCodeUrl);
+      } catch (error) {
+        console.error('Error fetching QR code:', error.message);
+      }
+    };
+
+    fetchQrCode();
+  }, []); // useEffect sẽ chạy một lần khi component được render
+//=========================================================
+  
+
   return (
-    <div className='w-full h-screen'>
+    <div className='w-full'>
       <div className="absolute inset-0">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 654" preserveAspectRatio="xMinYMin slice">
 
@@ -29,14 +65,14 @@ export default function LoginForm() {
           <h2 className='text-center font-normal'>để kết nối với ứng dụng Zalo Web</h2>
         </div>
 
-        <div className=" w-full pb-6 mx-auto my-5 bg-white rounded-md shadow-md lg:max-w-96">
+        <div className="w-full pb-6 mx-auto my-5 bg-white shadow-md lg:max-w-[400px]">
 
           {!isSelectQR ? (
             <>
               <ul className='flex border-b-2 py-3'>
                 <li className='text-center flex-1 font-thin' onClick={()=>setIsSelectQR(true)} >VỚI MÃ QR</li> 
                 <span className='font-thin text-slate-300'>|</span>
-                <li className='text-center flex-1 font-semibold'>VỚI SỐ ĐIỆN THOẠI</li>
+                <li className='text-center flex-1 font-medium'>VỚI SỐ ĐIỆN THOẠI</li>
               </ul>
 
               <form className="mt-2  px-6">
@@ -89,13 +125,13 @@ export default function LoginForm() {
               ) : (
             <>
               <ul className='flex border-b-2 py-3'>
-                <li className='text-center flex-1 font-semibold' >VỚI MÃ QR</li> 
+                <li className='text-center flex-1 font-medium' >VỚI MÃ QR</li> 
                 <span className='font-thin text-slate-300'>|</span>
                 <li className='text-center flex-1 font-thin'  onClick={()=>setIsSelectQR(false)}>VỚI SỐ ĐIỆN THOẠI</li>
               </ul>
 
               <div className='flex flex-col items-center m-6 mx-16 border-2 rounded-lg' >
-                <img src={QR_Test} alt='QR' style={{width:230, height:230, borderRadius: 5, margin:10}} />
+                <img src={qrCodeUrl} alt='QR' style={{width:230, height:230, borderRadius: 5, margin:10}} />
 
                 <p className="text-base text-center font-normal text-blue-600 w-60"> 
                   Chỉ dùng để đăng nhập
