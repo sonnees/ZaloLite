@@ -5,24 +5,24 @@
 
 <hr>
 
+# Init
+### Import module
+Cần cấu hình các `*-service` và `*-server` để IDE hiểu folder nào là module của dự án microservice.  <br>
+Đề xuất: `File > Project Structure > Modules > + > Import Module > select folder`
+### Run Application
+Chạy các file sau theo thứ tự: <br>
+- `EurekaServerApplication.java` <br>
+- `AccountServiceApplication.java` <br>
+- `GatewayServiceApplication.java` <br>
+
 ## API & Data Transfer Object
-Chạy các file sau theo thứ tự
-```
-EurekaServerApplication.java
-AccountServiceApplication.java
-GatewayServiceApplication.java
-```
-
-
 ### 1. Account 
 #### 1.1 Kiểm tra số điện thoại đã được đăng ký trong hệ thống chưa
-Link api: http://localhost:8081/api/auth/check-uniqueness-phone-number/{phoneNumber} <br>
-Method GET:
+`Method GET` : http://localhost:8081/api/auth/check-uniqueness-phone-number/{phoneNumber} <br>
 ```
 http://localhost:8081/api/v1/auth/check-uniqueness-phone-number/0123456789
 ```
-  
-Nhận:
+`Received` :
 ```
 # Nếu không tồn tại tài khoản đã đăng ký bằng số điện thoại đó
 HTTP 200 OK
@@ -38,12 +38,11 @@ HTTP 409 Conflict
 }
 ```
 #### 1.2 Gửi yêu cầu tạo tài khoản
-Link api: http://localhost:8081/api/v1/auth/register <br>
-Method POST:
+`Method POST` : http://localhost:8081/api/v1/auth/register <br>
 ```
 http://localhost:8081/api/v1/auth/register
 ```
-Với body:
+`Body` :
 ```
 {
     "phoneNumber":"0123456782",
@@ -54,7 +53,7 @@ Với body:
     "role":"USER"
 }
 ```  
-Nhận:
+`Received` :
 ```
 # Thành công
 HTTP 200 OK
@@ -65,19 +64,18 @@ HTTP 409 Conflict
 ```
 
 #### 1.3 Gửi yêu cầu cấp quyền
-Link api: http://localhost:8081/api/v1/auth/authenticate <br>
-Method GET:
+`Method GET` : http://localhost:8081/api/v1/auth/authenticate <br>
 ```
 http://localhost:8081/api/v1/auth/authenticate
 ```
-Với body:
+`Body` :
 ```
 {
     "phoneNumber":"0123456789",
     "password":"123"
 }
 ```  
-Nhận:
+`Received` :
 ```
 # Thành công
 HTTP 200 OK
@@ -88,13 +86,11 @@ HTTP 401 Unauthorized
 ```
 
 #### 1.4 Gửi yêu cầu tạo mã qr (Máy tính, ...)
-Link api: http://localhost:8081/api/v1/auth/authenticate/qr-code <br>
-Method GET:
+`Method GET` : http://localhost:8081/api/v1/auth/authenticate/qr-code <br>
 ```
 http://localhost:8081/api/v1/auth/authenticate/qr-code
 ```
-
-Nhận:
+`Received` :
 ```
 # Thành công
 HTTP 200 OK
@@ -105,13 +101,11 @@ HTTP 404
 ```
 
 #### 1.5 Gửi yêu cầu lấy profile của account nào đó bằng số điện thoại
-Link api: http://localhost:8081/api/v1/account/profile/{phoneNumber} <br>
-Method GET + TOKEN:
+`Method GET + TOKEN ` : http://localhost:8081/api/v1/account/profile/{phoneNumber} <br>
 ```
 http://localhost:8081/api/v1/account/profile/0123456788
 ```
-
-Nhận:
+`Received` :
 ```
 # Thành công (có account):
 HTTP 200 OK
@@ -131,13 +125,12 @@ HTTP 404
 ```
 
 #### 1.6 Gửi yêu cầu lấy thông tin của account bằng token
-Link api: http://localhost:8081/api/v1/account/info <br>
-Method GET + TOKEN:
+`Method GET + TOKEN` : http://localhost:8081/api/v1/account/info <br>
 ```
 http://localhost:8081/api/v1/account/info
 ```
 
-Nhận:
+`Received` :
 ```
 # Thành công (có account):
 HTTP 200 OK
