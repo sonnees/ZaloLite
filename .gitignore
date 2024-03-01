@@ -1,4 +1,7 @@
 ### backend ###
+backend/.idea/misc.xml
+backend/.idea/workspace.xml
+
 backend/*.iws
 backend/*.iml
 backend/*.ipr
