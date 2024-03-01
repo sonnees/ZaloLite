@@ -11,19 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.client.RestTemplate;
-import reactor.core.publisher.Mono;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.lang.annotation.Annotation;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Component
+@Service
 @Slf4j
-@AllArgsConstructor
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> implements Order {
 
     @Autowired
-    RestTemplate restTemplate;
+    WebClient webClient;
+
     @Autowired
     AntPathMatcher pathMatcher;
 
@@ -49,11 +48,15 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     token = token.substring(7);
 
                 AtomicReference<Boolean> isValidToken = new AtomicReference<>(false);
-                try {
-                    restTemplate.getForObject("http://ACCOUNT-SERVICE/api/v1/auth/check-token?token=" + token, Object.class);                } catch (Exception e){
+                webClient.get()
+                        .uri("http://account-service/api/v1/auth/check-toke?token=" + token)
+                        .retrieve()
+                        .bodyToMono(Boolean.class)
+                        .subscribe(isValidToken::set);
 
-                    e.printStackTrace();
-                }
+
+
+
                 if (!isValidToken.get()){
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                     return exchange.getResponse().setComplete();

@@ -76,8 +76,9 @@ public class AuthController {
     }
 
     @GetMapping("/check-token")
-    public Boolean checkToken(@RequestParam String token) {
-        return jwtService.isTokenExpired(token);
+    public Mono<Boolean> checkToken(@RequestParam String token) {
+        System.out.println(token);
+        return Mono.just(jwtService.isTokenExpired(token));
     }
 
     @PostMapping("/authenticate/qr-code")
