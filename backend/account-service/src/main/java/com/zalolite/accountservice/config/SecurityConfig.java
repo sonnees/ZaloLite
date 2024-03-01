@@ -12,7 +12,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 
 @Configuration
@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .anonymous(Customizer.withDefaults())
-                .cors(Customizer.withDefaults())
+                .cors(ServerHttpSecurity.CorsSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .build();
     }
@@ -45,7 +45,7 @@ public class SecurityConfig {
 
     @Bean
     @LoadBalanced
-    public RestTemplate restTemplate(){
-        return new RestTemplate();
+    public WebClient getWebClient(){
+        return WebClient.builder().build();
     }
 }

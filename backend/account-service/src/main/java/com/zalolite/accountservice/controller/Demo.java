@@ -6,17 +6,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @RestController
-@RequestMapping("/api/v1/auth/ws")
+@RequestMapping("/api/v1/auth/")
 @Slf4j
 @AllArgsConstructor
 public class Demo {
 
-    @PostMapping("/{romId}")
-    public Mono<String> registerWebSocket(@PathVariable String romId) {
-        log.info("*** hello controller");
-        return Mono.just("WebSocket registration successful for rom: " + romId);
+    WebClient webClient;
+
+    @PostMapping("/j{token}")
+    public void registerWebSocket(@PathVariable String token) {
+
+        webClient.get()
+                .uri("http://localhost:8081/api/v1/auth/check-token?token=" + token)
+                .retrieve()
+                .bodyToMono(Boolean.class)
+                .subscribe(aBoolean -> {
+                    log.info("** "+aBoolean);
+                });
+
     }
 }

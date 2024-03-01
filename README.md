@@ -6,14 +6,18 @@
 <hr>
 
 ## API & Data Transfer Object
-### 1. Account
+Chạy các file sau theo thứ tự
 ```
-ZaloLite\backend\account-service\src\main\java\com\zalolite\accountservice\AccountServiceApplication.java
+EurekaServerApplication.java
+AccountServiceApplication.java
+GatewayServiceApplication.java
 ```
-  
+
+
+### 1. Account 
 #### 1.1 Kiểm tra số điện thoại đã được đăng ký trong hệ thống chưa
 Link api: http://localhost:8081/api/auth/check-uniqueness-phone-number/{phoneNumber} <br>
-Gửi:
+Method GET:
 ```
 http://localhost:8081/api/v1/auth/check-uniqueness-phone-number/0123456789
 ```
@@ -35,18 +39,19 @@ HTTP 409 Conflict
 ```
 #### 1.2 Gửi yêu cầu tạo tài khoản
 Link api: http://localhost:8081/api/v1/auth/register <br>
-Gửi:
+Method POST:
 ```
 http://localhost:8081/api/v1/auth/register
 ```
 Với body:
 ```
 {
-    "phoneNumber":"0123456789",
+    "phoneNumber":"0123456782",
     "password":"123",
     "userName":"Son nees",
     "gender":"true",
-    "birthday":"2024-01-26"
+    "birthday":"2024-01-26",
+    "role":"USER"
 }
 ```  
 Nhận:
@@ -61,7 +66,7 @@ HTTP 409 Conflict
 
 #### 1.3 Gửi yêu cầu cấp quyền
 Link api: http://localhost:8081/api/v1/auth/authenticate <br>
-Gửi:
+Method GET:
 ```
 http://localhost:8081/api/v1/auth/authenticate
 ```
@@ -84,7 +89,7 @@ HTTP 401 Unauthorized
 
 #### 1.4 Gửi yêu cầu tạo mã qr (Máy tính, ...)
 Link api: http://localhost:8081/api/v1/auth/authenticate/qr-code <br>
-Gửi:
+Method GET:
 ```
 http://localhost:8081/api/v1/auth/authenticate/qr-code
 ```
@@ -101,7 +106,7 @@ HTTP 404
 
 #### 1.5 Gửi yêu cầu lấy profile của account nào đó bằng số điện thoại
 Link api: http://localhost:8081/api/v1/account/profile/{phoneNumber} <br>
-Gửi kèm token:
+Method GET + TOKEN:
 ```
 http://localhost:8081/api/v1/account/profile/0123456788
 ```
@@ -123,5 +128,22 @@ HTTP 200 OK
 
 # Thất bại (Không tìm thấy account):
 HTTP 404 
+```
+
+#### 1.6 Gửi yêu cầu lấy thông tin của account bằng token
+Link api: http://localhost:8081/api/v1/account/info <br>
+Method GET + TOKEN:
+```
+http://localhost:8081/api/v1/account/info
+```
+
+Nhận:
+```
+# Thành công (có account):
+HTTP 200 OK
+{info account}
+
+# Thất bại (Không tìm thấy account từ token hoặc token lỗi):
+HTTP 403
 ```
 
