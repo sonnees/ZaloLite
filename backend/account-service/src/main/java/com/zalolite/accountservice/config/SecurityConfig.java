@@ -2,17 +2,23 @@ package com.zalolite.accountservice.config;
 
 import com.zalolite.accountservice.jwt.AuthenticationManager;
 import com.zalolite.accountservice.jwt.SecurityContextRepository;
+import io.netty.resolver.DefaultAddressResolverGroup;
 import lombok.AllArgsConstructor;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.HttpClient;
+
+import java.util.Arrays;
 
 
 @Configuration
@@ -23,6 +29,13 @@ public class SecurityConfig {
     private SecurityContextRepository securityContextRepository;
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
+        http.cors(customizer -> {
+            CorsConfiguration corsConfiguration = new CorsConfiguration();
+            corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:19006", "http://localhost:9090"));
+            corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST"));
+            corsConfiguration.setAllowCredentials(true);
+            customizer.configurationSource(request -> corsConfiguration);
+        });
         return http.authorizeExchange(
                         auth ->
                                 auth.pathMatchers("/api/v1/auth/**", "/ws/auth/**").permitAll()
@@ -44,8 +57,14 @@ public class SecurityConfig {
     }
 
     @Bean
+    public HttpClient httpClientReactor() {
+        return HttpClient.create()
+                .resolver(DefaultAddressResolverGroup.INSTANCE);
+    }
+
+    @Bean
     @LoadBalanced
-    public WebClient getWebClient(){
-        return WebClient.builder().build();
+    public WebClient.Builder loadBalancedWebClientBuilder(HttpClient httpClient) {
+        return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
     }
 }
