@@ -21,6 +21,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "configurations": {
+        "Pixel6": {
+          "apiLevel": 34,
+          "device": "Pixel 6"
+        }
       }
     },
     "web": {
