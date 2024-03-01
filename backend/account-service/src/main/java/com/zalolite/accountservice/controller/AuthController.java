@@ -75,9 +75,8 @@ public class AuthController {
                 .switchIfEmpty(Mono.just(ResponseEntity.status(401).body("")));
     }
 
-    @GetMapping("/check-token")
-    public Mono<Boolean> checkToken(@RequestParam String token) {
-        System.out.println(token);
+    @GetMapping("/check-token/{token}")
+    public Mono<Boolean> checkToken(@PathVariable String token) {
         return Mono.just(jwtService.isTokenExpired(token));
     }
 
