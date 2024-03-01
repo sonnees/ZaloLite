@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="" />
+    <list default="true" id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/file-system.probe" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,6 +27,9 @@
       <ProjectState />
     </projectState>
     <projectState path="$PROJECT_DIR$/account-service">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/demo12">
       <ProjectState />
     </projectState>
     <projectState path="$PROJECT_DIR$/eureka-server">
@@ -86,11 +95,12 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
     &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;sonnees&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;17&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/SON.admin/VIII/NewTech/ZaloLite/backend&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/SON.admin/VIII/NewTech/ZaloLite/backend/gateway-service&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -107,10 +117,11 @@
       <recent name="com.zalolite.accountservice" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\gateway-service" />
+      <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\eureka-server" />
+      <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\account-service" />
       <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\SingleChatManagementMicroservice\src\main\java\com\zalolite\singlechatmanagementmicroservice" />
       <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\SingleChatManagementMicroservice\src\main\resources" />
-      <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\UserManagementMicroservice\src\main\java\com\zalolite\usermanagementmicroservice" />
-      <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\UserManagementMicroservice\src\main\resources" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.zalolite.gatewayservice" />
@@ -124,7 +135,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.AccountServiceApplication">
+  <component name="RunManager" selected="Spring Boot.EurekaServerApplication">
     <configuration name="account-service [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -205,6 +216,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Demo12Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="demo12.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.demo12.Demo12Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="EurekaServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="eureka-server.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.zalolite.eurekaserver.EurekaServerApplication" />
@@ -234,6 +252,10 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Gradle.account-service [build]" />
+      <item itemvalue="Gradle.account-service [clean]" />
+      <item itemvalue="Gradle.account-service [dependencies]" />
+      <item itemvalue="Spring Boot.Demo12Application" />
       <item itemvalue="Spring Boot.GatewayServiceApplication" />
       <item itemvalue="Spring Boot.AccountServiceApplication" />
       <item itemvalue="Spring Boot.EurekaServerApplication" />
@@ -275,6 +297,8 @@
       <workItem from="1709112476695" duration="319000" />
       <workItem from="1709211103907" duration="10776000" />
       <workItem from="1709251924670" duration="1289000" />
+      <workItem from="1709269177222" duration="724000" />
+      <workItem from="1709269913953" duration="57000" />
     </task>
     <servers />
   </component>
