@@ -14,15 +14,7 @@ export default function LoginForm() {
     // Gọi API ở đây
     const fetchQrCode = async () => {
       try {
-        const response = await fetch('http://localhost:8081/api/v1/auth/authenticate/qr-code', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            // Thêm các headers khác nếu cần
-          },
-          // Thêm body nếu có dữ liệu gửi kèm
-          // body: JSON.stringify({ key: 'value' }),
-        });
+        const response = await fetch('http://localhost:8081/api/v1/auth/authenticate/qr-code');
         // Nếu sử dụng axios:
         // const response = await axios.post('your_api_url_here', { key: 'value' });
 
@@ -31,7 +23,8 @@ export default function LoginForm() {
         }
 
         const data = await response.json();
-        setQrCodeUrl(data.qrCodeUrl); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
+        console.log(data);
+        setQrCodeUrl('data:image/png;base64,'+data.field); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
         console.log(qrCodeUrl);
       } catch (error) {
         console.error('Error fetching QR code:', error.message);

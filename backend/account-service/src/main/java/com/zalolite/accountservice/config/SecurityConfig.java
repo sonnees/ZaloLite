@@ -29,13 +29,7 @@ public class SecurityConfig {
     private SecurityContextRepository securityContextRepository;
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
-        http.cors(customizer -> {
-            CorsConfiguration corsConfiguration = new CorsConfiguration();
-            corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:19006", "http://localhost:5173"));
-            corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST"));
-            corsConfiguration.setAllowCredentials(true);
-            customizer.configurationSource(request -> corsConfiguration);
-        });
+
         return http.authorizeExchange(
                         auth ->
                                 auth.pathMatchers("/api/v1/auth/**", "/ws/auth/**").permitAll()
@@ -46,6 +40,13 @@ public class SecurityConfig {
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .anonymous(Customizer.withDefaults())
+                .cors(customizer -> {
+                    CorsConfiguration corsConfiguration = new CorsConfiguration();
+                    corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:19006", "http://localhost:5173"));
+                    corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST"));
+                    corsConfiguration.setAllowCredentials(true);
+                    customizer.configurationSource(request -> corsConfiguration);
+                })
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .build();
     }
