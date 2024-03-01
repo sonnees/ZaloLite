@@ -8,6 +8,7 @@ import com.google.zxing.common.BitMatrix;
 import com.zalolite.accountservice.AccountRepository;
 import com.zalolite.accountservice.dto.AccountCreateDTO;
 import com.zalolite.accountservice.dto.AccountLoginDTO;
+import com.zalolite.accountservice.dto.OneFieldDTO;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.entity.Profile;
 import com.zalolite.accountservice.jwt.JwtService;
@@ -29,6 +30,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/auth")
 @Slf4j
 public class AuthController {
+
     private AccountRepository accountRepository;
     private JwtService jwtService;
     private ObjectMapper objectMapper;
@@ -70,7 +72,14 @@ public class AuthController {
                         return Mono.just(ResponseEntity.status(401).body(""));
                     }
                     String token = jwtService.generateToken(account);
-                    return Mono.just(ResponseEntity.status(200).body(token));
+
+                    OneFieldDTO oneFieldDTO = new OneFieldDTO(token);
+
+                    try {
+                        return Mono.just(ResponseEntity.status(200).body(objectMapper.writeValueAsString(oneFieldDTO)));
+                    } catch (JsonProcessingException e) {
+                        return Mono.error(new RuntimeException(e));
+                    }
                 })
                 .switchIfEmpty(Mono.just(ResponseEntity.status(401).body("")));
     }
@@ -102,7 +111,10 @@ public class AuthController {
             ImageIO.write(image, "png", outputStream);
             byte[] imageBytes = outputStream.toByteArray();
             String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-            return ResponseEntity.ok(base64Image);
+
+            OneFieldDTO oneFieldDTO = new OneFieldDTO(base64Image);
+
+            return ResponseEntity.ok().body(objectMapper.writeValueAsString(oneFieldDTO));
 
         } catch (Exception e) {
             log.error("***" + e);
