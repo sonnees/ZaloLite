@@ -5,40 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/controller/AccountController.java" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/controller/AccountController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/controller/Demo.java" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/controller/Demo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/account-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/8.5/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/8.5/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/8.5/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/8.5/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/8.5/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/build/resources/main/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/build/resources/main/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eureka-server/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/eureka-server/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/checksums/sha1-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/8.5/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/AuthenticationFilter$Config.class" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/AuthenticationFilter$Config.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/AuthenticationFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/AuthenticationFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/classes/java/main/com/zalolite/gatewayservice/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/build/resources/main/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/resources/main/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/compileTransaction/stash-dir/AuthenticationFilter$Config.class.uniqueId0" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/compileTransaction/stash-dir/AuthenticationFilter$Config.class.uniqueId0" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/compileTransaction/stash-dir/AuthenticationFilter.class.uniqueId1" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/compileTransaction/stash-dir/AuthenticationFilter.class.uniqueId1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/src/main/java/com/zalolite/gatewayservice/AuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/src/main/java/com/zalolite/gatewayservice/AuthenticationFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/src/main/java/com/zalolite/gatewayservice/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/src/main/java/com/zalolite/gatewayservice/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gateway-service/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,7 +128,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.GatewayServiceApplication">
+  <component name="RunManager" selected="Spring Boot.AccountServiceApplication">
     <configuration name="account-service [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -309,7 +278,7 @@
       <workItem from="1708991930764" duration="1001000" />
       <workItem from="1709112476695" duration="319000" />
       <workItem from="1709211103907" duration="10776000" />
-      <workItem from="1709251924670" duration="437000" />
+      <workItem from="1709251924670" duration="1145000" />
     </task>
     <servers />
   </component>
