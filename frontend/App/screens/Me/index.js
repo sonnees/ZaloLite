@@ -16,7 +16,7 @@ export default function App() {
         <Stack.Screen name="Profile" component={Profile} options={{headerShown: false}}/>
         <Stack.Screen name="Information" component={Information} options={{headerShown: false}}/>
         <Stack.Screen name="TranferAccount" component={TranferAccount} options={{ headerShown: false }} />
-        <Stack.Screen name="Install" component={Install} options={{headerShown: false}}/>
+        {/* <Stack.Screen name="Install" component={Install} options={{headerShown: false}}/> */}
         <Stack.Screen name="InformationDetail" component={InformationDetail} options={{headerShown: false}}/>
       </Stack.Navigator>
   );
