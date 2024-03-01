@@ -15,7 +15,7 @@ export default function LoginForm() {
     const fetchQrCode = async () => {
       try {
         const response = await fetch('http://localhost:8081/api/v1/auth/authenticate/qr-code', {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             // Thêm các headers khác nếu cần
