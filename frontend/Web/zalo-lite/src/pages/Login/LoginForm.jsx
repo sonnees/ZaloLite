@@ -31,7 +31,7 @@ export default function LoginForm() {
         }
 
         const data = await response.json();
-        setQrCodeUrl(data.qrCodeUrl); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
+        setQrCodeUrl('data:image/png;base64,'+data.qrCodeUrl); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
         console.log(qrCodeUrl);
       } catch (error) {
         console.error('Error fetching QR code:', error.message);
