@@ -140,3 +140,16 @@ HTTP 200 OK
 HTTP 403
 ```
 
+
+# FRONT END
+`WEB INIT`
+```
+npm i
+npm run dev
+```
+`Login` :
+```
+http://localhost:5173/auth/login
+```
+
+
