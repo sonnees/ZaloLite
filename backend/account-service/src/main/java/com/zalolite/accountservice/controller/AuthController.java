@@ -33,7 +33,7 @@ public class AuthController {
     private JwtService jwtService;
     private ObjectMapper objectMapper;
 
-    @PostMapping("/check-uniqueness-phone-number/{phoneNumber}")
+    @GetMapping("/check-uniqueness-phone-number/{phoneNumber}")
     public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber) throws RuntimeException {
         return accountRepository.searchByPhoneNumber(phoneNumber)
                 .flatMap(account -> {
@@ -62,7 +62,7 @@ public class AuthController {
                 .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));
     }
 
-    @PostMapping("/authenticate")
+    @GetMapping("/authenticate")
     public Mono<ResponseEntity<String>> login(@RequestBody AccountLoginDTO accountLoginDTO) {
         return accountRepository.searchByPhoneNumber(accountLoginDTO.getPhoneNumber())
                 .flatMap(account -> {
@@ -81,7 +81,7 @@ public class AuthController {
         return Mono.just(jwtService.isTokenExpired(token));
     }
 
-    @PostMapping("/authenticate/qr-code")
+    @GetMapping("/authenticate/qr-code")
     public ResponseEntity<String> loginQRCode() {
         UUID uuid = UUID.randomUUID();
 
