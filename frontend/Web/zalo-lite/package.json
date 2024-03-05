@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emoji-mart/data": "^1.1.2",
+    "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
@@ -22,6 +24,7 @@
     "@mui/styled-engine-sc": "^6.0.0-alpha.12",
     "date-fns": "^3.2.0",
     "date-fns-tz": "^2.0.0",
+    "emoji-mart": "^5.5.2",
     "react": "^18.2.0",
     "react-custom-scrollbars-2": "^4.5.0",
     "react-dom": "^18.2.0",

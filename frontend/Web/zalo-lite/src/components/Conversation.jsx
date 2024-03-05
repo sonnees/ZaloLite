@@ -1,11 +1,14 @@
 import React from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import Box from "@mui/material/Box";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 
 import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
-import Stack from "@mui/material/Stack";
 import MessageDetail from "./MessageDetail";
 import MessageInput from "./MessageInput";
 
@@ -123,12 +126,15 @@ const Conversation = () => {
     },
     {
       sender: "me",
-      content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero adipisci itaque, quis fugiat dolore recusandae cum esse et ducimus blanditiis magni explicabo. Illo, architecto sed! Ad quod tempore sed quo. Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores velit, ex voluptas sint modi iste unde ipsam explicabo ducimus, animi doloremque nostrum, delectus ab suscipit aliquid cupiditate reiciendis sed architecto? Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore laudantium doloribus ullam quidem ipsa sed commodi sit quod ipsam, pariatur voluptatum minus fugit esse autem quibusdam tempore? Vel, autem inventore!",
+      content:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero adipisci itaque, quis fugiat dolore recusandae cum esse et ducimus blanditiis magni explicabo. Illo, architecto sed! Ad quod tempore sed quo. Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores velit, ex voluptas sint modi iste unde ipsam explicabo ducimus, animi doloremque nostrum, delectus ab suscipit aliquid cupiditate reiciendis sed architecto? Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore laudantium doloribus ullam quidem ipsa sed commodi sit quod ipsam, pariatur voluptatum minus fugit esse autem quibusdam tempore? Vel, autem inventore!",
       timestamp: "15:52",
       avatar: "my_avatar_url",
     },
     // Thêm tin nhắn khác nếu cần
   ];
+
+  const [openPicker, setOpenPicker] = useState(false);
 
   return (
     <div className="h-screen w-full">
@@ -168,7 +174,11 @@ const Conversation = () => {
           </div>
           <div className="flex flex-row items-center">
             <a href="" className="p-1">
-              <img src="/src/assets/group-user-plus.png" alt="" />
+              <img
+                src="/src/assets/group-user-plus.png"
+                alt=""
+                className="w-[22px] "
+              />
             </a>
             <a href="" className="p-2">
               <img
@@ -189,7 +199,7 @@ const Conversation = () => {
             </a>
           </div>
         </div>
-      </div> 
+      </div>
       {/* -68 */}
       <div className="h-[calc(100vh-174px)] w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3">
         {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
@@ -199,12 +209,91 @@ const Conversation = () => {
           <MessageDetail key={index} message={message} />
         ))}
       </div>
-      <div className="h-[47px] bg-white">
-
-      </div>
-      <div className="h-[58.5px]">
-        {/* Thêm phần nhập tin nhắn ở đây */}
-        <MessageInput onSendMessage={handleSendMessage} />
+      <div className="border-t">
+        <div className="flex h-[47px] flex-row justify-items-start bg-white">
+          <div className="flex flex-row justify-items-start pl-2">
+            <div className="mr-2 flex w-10 items-center justify-center">
+              <a
+                href="#"
+                onClick={() => {
+                  setOpenPicker(!openPicker);
+                }}
+              >
+                <img
+                  src="chatbar-sticker.png"
+                  alt=""
+                  className="h-[24px] w-[24px] opacity-65"
+                />
+              </a>
+            </div>
+            <Box
+              style={{
+                zIndex: 10,
+                position: "fixed",
+                display: openPicker ? "inline" : "none",
+                bottom: 110,
+                // right: isMobile ? 20 : sideBar.open ? 420 : 100,
+              }}
+            >
+              <Picker
+                data={data}
+                onEmojiSelect={(emoji) => {
+                  console.log(emoji.native);
+                  // handleEmojiClick(emoji.native);
+                }}
+              />
+            </Box>
+            <div className="mr-2 flex w-10 items-center justify-center">
+              <a href="#">
+                <img
+                  src="chatbar-photo.png"
+                  alt=""
+                  className="h-[24px] w-[24px] opacity-65"
+                />
+              </a>
+            </div>
+            <div className="mr-2 flex w-10 items-center justify-center">
+              <a href="#">
+                <img
+                  src="chatbar-attach.png"
+                  alt=""
+                  className="h-[24px] w-[24px] opacity-65"
+                />
+              </a>
+            </div>
+            <div className="mr-2 flex w-10 items-center justify-center">
+              <a href="#">
+                {/* prettier-ignore */}
+                <img src="chatbar-screenshotz.png"
+                  alt=""
+                  className="h-[24px] w-[24px] opacity-65"
+                />
+              </a>
+            </div>
+            <div className="mr-2 flex w-10 items-center justify-center">
+              <a href="#">
+                <img
+                  src="chatbar-reminder.png"
+                  alt=""
+                  className="h-[24px] w-[24px] opacity-65"
+                />
+              </a>
+            </div>
+            <div className="mr-2 flex w-10 items-center justify-center">
+              <a href="#">
+                <img
+                  src="chatbar-todo.png"
+                  alt=""
+                  className="h-[24px] w-[24px] opacity-65"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+        <div className="h-[58.5px]">
+          {/* Thêm phần nhập tin nhắn ở đây */}
+          <MessageInput onSendMessage={handleSendMessage} />
+        </div>
       </div>
     </div>
   );

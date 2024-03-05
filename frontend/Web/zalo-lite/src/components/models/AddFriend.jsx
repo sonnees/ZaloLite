@@ -42,9 +42,11 @@ export default function AddFriendDialog() {
     dial_code: "+84",
   });
   const [recentSearches, setRecentSearches] = useState(recentSearchesData);
-  const [suggestedFriends, setSuggestedFriends] = useState(suggestedFriendsData);
+  const [suggestedFriends, setSuggestedFriends] =
+    useState(suggestedFriendsData);
 
-  const [selectedCountryValue, setSelectedCountryValue] = useState(selectedCountry);
+  const [selectedCountryValue, setSelectedCountryValue] =
+    useState(selectedCountry);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -68,25 +70,24 @@ export default function AddFriendDialog() {
   };
 
   const handleSelectCountry = (e) => {
-     const selectedCountryCode = e.target.value;
-     const selectedCountry = countries.find(
-       (country) => country.code === selectedCountryCode,
-     );
-     setSelectedCountry(selectedCountry);
-     console.log(selectedCountry);
+    const selectedCountryCode = e.target.value;
+    const selectedCountry = countries.find(
+      (country) => country.code === selectedCountryCode,
+    );
+    setSelectedCountry(selectedCountry);
+    console.log(selectedCountry);
   };
 
   return (
     <Fragment>
       <div
         onClick={handleClickOpen}
-        className="w-10 ml-3 mr-1 hover:bg-gray-200"
+        className="ml-3 mr-1 w-10 hover:bg-gray-200"
       >
         <img
           src="/src/assets/user-plus.png"
           alt=""
-          className="cursor-pointer items-center justify-center"
-          style={{ width: "100%", height: "100%"}}
+          className="w-[22px] cursor-pointer items-center justify-center"
         />
       </div>
 
@@ -111,10 +112,10 @@ export default function AddFriendDialog() {
                 renderValue={(selected) => {
                   return (
                     <div className="flex items-center border">
-                      <span className="text-tblack text-3xl">
+                      <span className="text-3xl text-tblack">
                         {selectedCountry.flag}
                       </span>
-                      <span className=" text-tblack pl-1 text-sm">
+                      <span className=" pl-1 text-sm text-tblack">
                         ({selectedCountry.dial_code})
                       </span>
                     </div>
