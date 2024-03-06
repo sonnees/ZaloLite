@@ -124,7 +124,7 @@ export default function LoginForm() {
               </ul>
 
               <div className='flex flex-col items-center m-6 mx-16 border-2 rounded-lg' >
-                <img src={qrCodeUrl} alt='QR' style={{width:230, height:230, borderRadius: 5, margin:10}} />
+                <img src={qrCodeUrl} alt='QR' style={{width:200, height:200, borderRadius: 5}} />
 
                 <p className="text-base text-center font-normal text-blue-600 w-60"> 
                   Chỉ dùng để đăng nhập
