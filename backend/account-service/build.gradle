@@ -34,10 +34,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation 'io.projectreactor:reactor-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'io.projectreactor:reactor-test'
 
     implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
     implementation 'com.google.zxing:core:3.5.0'
@@ -48,6 +44,10 @@ dependencies {
 
     implementation 'org.imgscalr:imgscalr-lib:4.2'
 
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'io.projectreactor:reactor-test'
 }
 
 dependencyManagement {
