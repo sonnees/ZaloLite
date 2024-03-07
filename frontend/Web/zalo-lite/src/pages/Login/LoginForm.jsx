@@ -16,6 +16,7 @@ export default function LoginForm() {
     username: '',
     password: '',
   })
+  console.log(formLogin);
 
 
 
@@ -66,7 +67,10 @@ export default function LoginForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formLogin),
+        body: JSON.stringify({
+          "phoneNumber": "0123456789",
+          "password": "123"
+        }),
       });
 
       if (response.ok) {
