@@ -7,6 +7,21 @@ import QR_Test from './../../assets/QR_Test.png';
 export default function LoginForm() {
   const [isSelectQR, setIsSelectQR] = useState(true)
   const navigate = useNavigate();
+
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [password, setPassword] = useState('')
+
+
+  const [formLogin, setFormLogin] = useState({
+    username: '',
+    password: '',
+  })
+
+
+
+
+
+
 //=========================================================
   const [qrCodeUrl, setQrCodeUrl] = useState('');
 
@@ -34,7 +49,43 @@ export default function LoginForm() {
     fetchQrCode();
   }, []); // useEffect sẽ chạy một lần khi component được render
 //=========================================================
-  
+
+  async function fetchData(link) {
+    let response = await fetch(link);
+    let data = await response.json();
+    return data;
+  }
+
+//===========================================
+  const handleSubmitLogin = async (e) => {
+    
+    e.preventDefault();
+    try {
+      const response = await fetch('http://localhost:8081/api/v1/auth/authenticate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formLogin),
+      });
+
+      if (response.ok) {
+        // Xử lý khi API trả về thành công
+        navigate('/');
+        console.log('API call successful');
+      } else {
+        // Xử lý khi API trả về lỗi
+        console.error('API call failed');
+      }
+    } catch (error) {
+      // Xử lý lỗi khi gọi API
+      navigate('/');
+      console.error('Error calling API:', error);
+    }
+  };
+//===========================================
+
+
 
   return (
     <div className='w-full'>
@@ -58,7 +109,7 @@ export default function LoginForm() {
           <h2 className='text-center font-normal'>để kết nối với ứng dụng Zalo Web</h2>
         </div>
 
-        <div className="w-full pb-6 mx-auto my-5 bg-white shadow-md lg:max-w-[400px]">
+        <div className="w-full pb-6 mx-auto my-5 bg-white shadow-md lg:max-w-[388px]">
 
           {!isSelectQR ? (
             <>
@@ -68,35 +119,35 @@ export default function LoginForm() {
                 <li className='text-center flex-1 font-medium'>VỚI SỐ ĐIỆN THOẠI</li>
               </ul>
 
-              <form className="mt-2  px-6">
+              <form onSubmit={handleSubmitLogin} className="mt-2  px-6">
                 <div className="mb-2 mx-2 py-4 border-b-2">
                   <FontAwesomeIcon icon={faMobileScreen} className='mx-3'/>
-                  <select id="contryOption" className='text-center mx-3'>
+                  <select id="contryOption" className='text-center mx-3 focus:outline-none'>
                     <option value="">+84</option>
                     <option value="option1">+1</option>
                     <option value="option2">+2</option>
                     <option value="option3">+3</option>
                   </select>
 
-                  <input id="input-phone" placeholder="Số điện thoại" className='px-3'></input>
+                  <input id="input-phone" placeholder="Số điện thoại" className='px-3 focus:outline-none ' onChange={(event) => {setPhoneNumber(event.target.value); console.log(phoneNumber);}}></input>
                 </div>
 
                 <div className="mb-2 mx-2 py-4 border-b-2">
                   <FontAwesomeIcon icon={faLock}  className='mx-3'/>
-                  <input id="input-password" placeholder="Mật khẩu" className='mx-3 px-3'></input>
+                  <input id="input-password" placeholder="Mật khẩu" className='mx-3 px-3 focus:outline-none' onChange={(event) => {setPassword(event.target.value)}}></input>
                 </div>
                 
                 <div className="mt-6">
-                  <button className="w-full py-2 tracking-wide text-white transition-colors duration-200 transform bg-blue-400 rounded-md"
-                    onClick={() => navigate('/')}
+                  <button className="w-full py-2 tracking-wide text-white transition-colors duration-200 transform bg-blue-400 rounded-md" type='submit'
+                    // onClick={() => {}}
                   >
                     Đăng nhập với mật khẩu
                   </button>
                 </div>
 
                 <div className="mt-4">
-                  <button className="w-full py-2 tracking-wide text-blue-400 transition-colors duration-200 transform bg-white-700 border-2 rounded-md"
-                    onClick={() => navigate('/')}
+                  <button className="w-full py-2 tracking-wide text-blue-400 transition-colors duration-200 transform bg-white-700 border-2 rounded-md" type='button'
+                    // onClick={() => navigate('/')}
                   >
                     Đăng nhập với bằng thiết bị di động
                   </button>
@@ -123,14 +174,14 @@ export default function LoginForm() {
                 <li className='text-center flex-1 font-thin'  onClick={()=>setIsSelectQR(false)}>VỚI SỐ ĐIỆN THOẠI</li>
               </ul>
 
-              <div className='flex flex-col items-center m-6 mx-16 border-2 rounded-lg' >
-                <img src={qrCodeUrl} alt='QR' style={{width:230, height:230, borderRadius: 5, margin:10}} />
+              <div className='flex flex-col items-center m-6 mx-20 border-2 rounded-lg' >
+                <img src={qrCodeUrl} alt='QR' className='my-3' style={{width:200, height:200, borderRadius: 5}} />
 
                 <p className="text-base text-center font-normal text-blue-600 w-60"> 
                   Chỉ dùng để đăng nhập
                 </p>
 
-                <p className="text-base text-center font-normal text-black-600 w-60"> 
+                <p className="text-base text-center font-normal text-black-600 w-60 mb-3"> 
                   Zalo trên máy tính
                 </p>
               </div>
