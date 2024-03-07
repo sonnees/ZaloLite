@@ -65,7 +65,7 @@ public class AuthController {
                 .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));
     }
 
-    @GetMapping("/authenticate")
+    @PostMapping("/authenticate")
     public Mono<ResponseEntity<String>> login(@RequestBody AccountLoginDTO accountLoginDTO) {
         return accountRepository.searchByPhoneNumber(accountLoginDTO.getPhoneNumber())
                 .flatMap(account -> {
