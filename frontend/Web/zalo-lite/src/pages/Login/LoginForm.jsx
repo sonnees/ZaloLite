@@ -13,7 +13,7 @@ export default function LoginForm() {
 
 
   const [formLogin, setFormLogin] = useState({
-    username: '',
+    phoneNumber: '',
     password: '',
   })
 
