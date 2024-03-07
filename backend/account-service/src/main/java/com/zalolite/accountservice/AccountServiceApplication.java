@@ -42,7 +42,7 @@ public class AccountServiceApplication {
                 if(account!=null) return;
 
                 Mono<Account> save = accountRepository.save(new Account(
-                        UUID.randomUUID(),
+                        UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db9"),
                         "0123456789",
                         new BCryptPasswordEncoder().encode("123"),
                         UUID.randomUUID(),
@@ -50,7 +50,7 @@ public class AccountServiceApplication {
                         Type.personal,
                         new Profile(
                                 "Nguyen Van Son",
-                                false,
+                                true,
                                 new Date(),
                                 "https://cdn1.vectorstock.com/i/1000x1000/23/70/man-avatar-icon-flat-vector-19152370.jpg",
                                 "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
@@ -64,7 +64,7 @@ public class AccountServiceApplication {
                 log.info("** create account success: "+save.block().getId());
 
                 Mono<Account> save1 = accountRepository.save(new Account(
-                        UUID.randomUUID(),
+                        UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db8"),
                         "0123456788",
                         new BCryptPasswordEncoder().encode("123"),
                         UUID.randomUUID(),
@@ -84,6 +84,28 @@ public class AccountServiceApplication {
                         )
                 ));
                 log.info("** create account success: "+save1.block().getId());
+
+                Mono<Account> save2 = accountRepository.save(new Account(
+                        UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db6"),
+                        "0123456777",
+                        new BCryptPasswordEncoder().encode("123"),
+                        UUID.randomUUID(),
+                        new Date(),
+                        Type.personal,
+                        new Profile(
+                                "Ha Ma Tau",
+                                false,
+                                new Date(),
+                                "https://cdn4.iconfinder.com/data/icons/circle-avatars-1/128/050_girl_avatar_profile_woman_suit_student_officer-2-1024.png",
+                                "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
+                        ),
+                        UserRole.USER,
+                        new Setting(
+                                AllowMessaging.EVERYONE,
+                                ShowBirthday.SHOW_DM
+                        )
+                ));
+                log.info("** create account success: "+save2.block().getId());
             }
         };
     }
