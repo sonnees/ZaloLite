@@ -9,7 +9,6 @@ import com.zalolite.accountservice.enums.Type;
 import com.zalolite.accountservice.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,22 +37,22 @@ public class AccountServiceApplication {
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
-                Account account = accountRepository.searchByPhoneNumber("0123456789").block();
+                Account account = accountRepository.searchByPhoneNumber("0000000000").block();
                 if(account!=null) return;
 
                 Mono<Account> save = accountRepository.save(new Account(
                         UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db9"),
-                        "0123456789",
+                        "0000000000",
                         new BCryptPasswordEncoder().encode("123"),
-                        UUID.randomUUID(),
                         new Date(),
                         Type.personal,
                         new Profile(
-                                "Nguyen Van Son",
+                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db1"),
+                                "Tú Anh",
                                 true,
                                 new Date(),
-                                "https://cdn1.vectorstock.com/i/1000x1000/23/70/man-avatar-icon-flat-vector-19152370.jpg",
-                                "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
+                                "https://zalolite.s3.amazonaws.com/nam1.jpg",
+                                "https://zalolite.s3.amazonaws.com/background1.jpg"
                         ),
                         UserRole.USER,
                         new Setting(
@@ -65,17 +64,17 @@ public class AccountServiceApplication {
 
                 Mono<Account> save1 = accountRepository.save(new Account(
                         UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db8"),
-                        "0123456788",
+                        "0000000001",
                         new BCryptPasswordEncoder().encode("123"),
-                        UUID.randomUUID(),
                         new Date(),
                         Type.personal,
                         new Profile(
-                                "Nguyen Thi Son",
+                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db2"),
+                                "Bảo Châu",
                                 false,
                                 new Date(),
-                                "https://cdn4.iconfinder.com/data/icons/circle-avatars-1/128/050_girl_avatar_profile_woman_suit_student_officer-2-1024.png",
-                                "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
+                                "https://zalolite.s3.amazonaws.com/nu1.jpg",
+                                "https://zalolite.s3.amazonaws.com/background3.jpg"
                         ),
                         UserRole.USER,
                         new Setting(
@@ -87,17 +86,17 @@ public class AccountServiceApplication {
 
                 Mono<Account> save2 = accountRepository.save(new Account(
                         UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db6"),
-                        "0123456777",
+                        "0000000002",
                         new BCryptPasswordEncoder().encode("123"),
-                        UUID.randomUUID(),
                         new Date(),
                         Type.personal,
                         new Profile(
-                                "Ha Ma Tau",
+                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db3"),
+                                "Thảo Chi",
                                 false,
                                 new Date(),
-                                "https://cdn4.iconfinder.com/data/icons/circle-avatars-1/128/050_girl_avatar_profile_woman_suit_student_officer-2-1024.png",
-                                "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
+                                "https://zalolite.s3.amazonaws.com/nu2.jpg",
+                                "https://zalolite.s3.amazonaws.com/background2.jpg"
                         ),
                         UserRole.USER,
                         new Setting(

@@ -19,7 +19,6 @@ public class AccountCreateDTO {
     private Boolean gender;
     private Date birthday;
     private UserRole role;
-
 }
 
 // map struct mvn

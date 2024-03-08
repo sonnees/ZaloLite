@@ -44,7 +44,6 @@ public class AccountController {
                 }).flatMap(responseEntityMono -> responseEntityMono);
     }
 
-
     @GetMapping("/info")
     public Mono<ResponseEntity<String>> getAccount(){
         return  ReactiveSecurityContextHolder.getContext()
@@ -65,5 +64,6 @@ public class AccountController {
                             });
                 }).flatMap(responseEntityMono -> responseEntityMono);
     }
+
 }
 
