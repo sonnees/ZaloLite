@@ -12,13 +12,6 @@ export default function LoginForm() {
   const [password, setPassword] = useState('')
 
 
-  const [formLogin, setFormLogin] = useState({
-    username: '',
-    password: '',
-  })
-  console.log(formLogin);
-
-
 
 
 
@@ -61,16 +54,18 @@ export default function LoginForm() {
   const handleSubmitLogin = async (e) => {
     
     e.preventDefault();
+    
     try {
       const response = await fetch('http://localhost:8081/api/v1/auth/authenticate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          "phoneNumber": "0123456789",
-          "password": "123"
-        }),
+        body: JSON.stringify({phoneNumber: phoneNumber, password: password}),
+        // body: JSON.stringify({
+        //   "phoneNumber": "0123456789",
+        //   "password": "123"
+        // }),
       });
 
       if (response.ok) {
@@ -88,7 +83,6 @@ export default function LoginForm() {
     }
   };
 //===========================================
-
 
 
   return (
@@ -133,7 +127,7 @@ export default function LoginForm() {
                     <option value="option3">+3</option>
                   </select>
 
-                  <input id="input-phone" placeholder="Số điện thoại" className='px-3 focus:outline-none ' onChange={(event) => {setPhoneNumber(event.target.value); console.log(phoneNumber);}}></input>
+                  <input id="input-phone" placeholder="Số điện thoại" className='px-3 focus:outline-none ' onChange={(event) => {setPhoneNumber(event.target.value)}}></input>
                 </div>
 
                 <div className="mb-2 mx-2 py-4 border-b-2">

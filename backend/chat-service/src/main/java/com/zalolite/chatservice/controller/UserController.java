@@ -1,5 +1,6 @@
 package com.zalolite.chatservice.controller;
 
+<<<<<<< HEAD
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.chatservice.dto.AppendConversationDTO;
@@ -20,12 +21,20 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
+=======
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+>>>>>>> master
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/user")
 @Slf4j
 public class UserController {
+<<<<<<< HEAD
     private UserRepository userRepository;
     private ChatRepository chatRepository;
     private GroupRepository groupRepository;
@@ -155,4 +164,7 @@ public class UserController {
 //                            });
 //                });
 //    }
+=======
+    private ObjectMapper objectMapper;
+>>>>>>> master
 }
