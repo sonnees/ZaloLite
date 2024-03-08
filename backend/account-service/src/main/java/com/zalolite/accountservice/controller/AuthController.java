@@ -48,18 +48,15 @@ public class AuthController {
     public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber) throws RuntimeException {
         return accountRepository.searchByPhoneNumber(phoneNumber)
                 .flatMap(account -> {
-                    if (account == null)
-                        return Mono.just(ResponseEntity.ok(""));
                     Profile profile = new Profile();
                     profile.setUserName(account.getProfile().getUserName());
-                    String json = "";
                     try {
-                        json = objectMapper.writeValueAsString(profile);
+                        return Mono.just(ResponseEntity.status(409).body(objectMapper.writeValueAsString(profile)));
                     } catch (JsonProcessingException e) {
-                        return Mono.error(new RuntimeException(e));
+                        log.error("** "+ e);
+                        return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                     }
-                    return Mono.just(ResponseEntity.status(409).body(json));
-                });
+                }).switchIfEmpty(Mono.just(ResponseEntity.ok("")));
     }
 
     @PostMapping("/register")
@@ -86,17 +83,15 @@ public class AuthController {
     public Mono<ResponseEntity<String>> login(@RequestBody AccountLoginDTO accountLoginDTO) {
         return accountRepository.searchByPhoneNumber(accountLoginDTO.getPhoneNumber())
                 .flatMap(account -> {
-                    if (account == null || !new BCryptPasswordEncoder().matches(accountLoginDTO.getPassword(), account.getPassword())) {
+                    if (!new BCryptPasswordEncoder().matches(accountLoginDTO.getPassword(), account.getPassword()))
                         return Mono.just(ResponseEntity.status(401).body(""));
-                    }
                     String token = jwtService.generateToken(account);
-
                     OneFieldDTO oneFieldDTO = new OneFieldDTO(token);
-
                     try {
                         return Mono.just(ResponseEntity.status(200).body(objectMapper.writeValueAsString(oneFieldDTO)));
                     } catch (JsonProcessingException e) {
-                        return Mono.error(new RuntimeException(e));
+                        log.error("** "+ e);
+                        return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                     }
                 })
                 .switchIfEmpty(Mono.just(ResponseEntity.status(401).body("")));
@@ -120,9 +115,7 @@ public class AuthController {
     @GetMapping("/authenticate/qr-code")
     public ResponseEntity<String> loginQRCode() {
         UUID uuid = UUID.randomUUID();
-
         String endpointWebSocket = "ws://localhost:8081/ws/auth/" + uuid;
-
         try {
             int width = 200;
             int height = 200;
@@ -146,7 +139,7 @@ public class AuthController {
 
         } catch (Exception e) {
             log.error("***" + e);
+            return ResponseEntity.status(500).body("Gen QR code error");
         }
-        return ResponseEntity.status(404).body("");
     }
 }
