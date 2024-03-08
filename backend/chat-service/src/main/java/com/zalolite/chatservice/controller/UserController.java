@@ -1,6 +1,8 @@
 package com.zalolite.chatservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.List;
+import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.chatservice.dto.AppendConversationDTO;
 import com.zalolite.chatservice.dto.FriendRequestDTO;
@@ -18,8 +20,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.UUID;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
