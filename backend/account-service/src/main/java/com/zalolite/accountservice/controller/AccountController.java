@@ -23,7 +23,7 @@ public class AccountController {
     private final AccountRepository accountRepository;
     private final ObjectMapper objectMapper;
 
-    @PostMapping("/profile/{phoneNumber}")
+    @GetMapping("/profile/{phoneNumber}")
     public Mono<ResponseEntity<String>> getProfileByPhoneNumber(@PathVariable String phoneNumber){
         return  ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
@@ -36,6 +36,28 @@ public class AccountController {
                                 String json = "";
                                 try {
                                     json = objectMapper.writeValueAsString(account.getProfile(userDetailsPhoneNumber));
+                                } catch (JsonProcessingException e) {
+                                    return Mono.error(new RuntimeException(e));
+                                }
+                                return Mono.just(ResponseEntity.ok(json));
+                            });
+                }).flatMap(responseEntityMono -> responseEntityMono);
+    }
+
+
+    @GetMapping("/info")
+    public Mono<ResponseEntity<String>> getAccount(){
+        return  ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .map(authentication -> {
+                    String userDetailsPhoneNumber = (String) authentication.getPrincipal();
+                    return accountRepository.searchByPhoneNumber(userDetailsPhoneNumber)
+                            .flatMap(account -> {
+                                if (account == null)
+                                    return Mono.just(ResponseEntity.status(403).body("Not authenticate"));
+                                String json = "";
+                                try {
+                                    json = objectMapper.writeValueAsString(account);
                                 } catch (JsonProcessingException e) {
                                     return Mono.error(new RuntimeException(e));
                                 }

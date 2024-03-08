@@ -91,6 +91,7 @@ const MessageDetail = ({ message }) => {
           <p className={`text-[#081c36] ${sender === "other" ? "" : ""}`}>
             {content}
           </p>
+
           {/* {isHovered && (
             <span className="ml-2 rounded-md bg-blue-500 px-2 py-1 text-white">
               Tùy chọn
@@ -109,26 +110,30 @@ const MessageDetail = ({ message }) => {
           </div>
         )}
       </div>
-      {isHovered && sender === "other" && (
+      {sender === "other" && (
         <div className="flex w-[155px] items-end">
-          <div className="mb-3 ml-3 mr-7 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
-            <a href="">
-              <img
-                src="/src/assets/reply-arrow.png"
-                alt=""
-                className="h-4 w-4"
-              />
-            </a>
-            <a href="">
-              <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
-            </a>
-            <a href="">
-              <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
-            </a>
-            <a href="">
-              <img src="/src/assets/option.png" alt="" className="h-4 w-4" />
-            </a>
-          </div>
+          {isHovered ? (
+            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
+              <a href="">
+                <img
+                  src="/src/assets/reply-arrow.png"
+                  alt=""
+                  className="h-4 w-4"
+                />
+              </a>
+              <a href="">
+                <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
+              </a>
+              <a href="">
+                <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
+              </a>
+              <a href="">
+                <img src="/src/assets/option.png" alt="" className="h-4 w-4" />
+              </a>
+            </div>
+          ) : (
+            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
+          )}
         </div>
       )}
     </div>

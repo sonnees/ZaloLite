@@ -5,20 +5,24 @@
 
 <hr>
 
+# Init
+### Import module
+Cần cấu hình các `*-service` và `*-server` để IDE hiểu folder nào là module của dự án microservice.  <br>
+Đề xuất: `File > Project Structure > Modules > + > Import Module > select folder`
+### Run Application
+Chạy các file sau theo thứ tự: <br>
+- `EurekaServerApplication.java` <br>
+- `AccountServiceApplication.java` <br>
+- `GatewayServiceApplication.java` <br>
+
 ## API & Data Transfer Object
-### 1. Account
-```
-ZaloLite\backend\account-service\src\main\java\com\zalolite\accountservice\AccountServiceApplication.java
-```
-  
+### 1. Account 
 #### 1.1 Kiểm tra số điện thoại đã được đăng ký trong hệ thống chưa
-Link api: http://localhost:8081/api/auth/check-uniqueness-phone-number/{phoneNumber} <br>
-Gửi:
+`Method GET` : http://localhost:8081/api/auth/check-uniqueness-phone-number/{phoneNumber} <br>
 ```
 http://localhost:8081/api/v1/auth/check-uniqueness-phone-number/0123456789
 ```
-  
-Nhận:
+`Received` :
 ```
 # Nếu không tồn tại tài khoản đã đăng ký bằng số điện thoại đó
 HTTP 200 OK
@@ -34,22 +38,22 @@ HTTP 409 Conflict
 }
 ```
 #### 1.2 Gửi yêu cầu tạo tài khoản
-Link api: http://localhost:8081/api/v1/auth/register <br>
-Gửi:
+`Method POST` : http://localhost:8081/api/v1/auth/register <br>
 ```
 http://localhost:8081/api/v1/auth/register
 ```
-Với body:
+`Body` :
 ```
 {
-    "phoneNumber":"0123456789",
+    "phoneNumber":"0123456782",
     "password":"123",
     "userName":"Son nees",
     "gender":"true",
-    "birthday":"2024-01-26"
+    "birthday":"2024-01-26",
+    "role":"USER"
 }
 ```  
-Nhận:
+`Received` :
 ```
 # Thành công
 HTTP 200 OK
@@ -60,19 +64,18 @@ HTTP 409 Conflict
 ```
 
 #### 1.3 Gửi yêu cầu cấp quyền
-Link api: http://localhost:8081/api/v1/auth/authenticate <br>
-Gửi:
+`Method GET` : http://localhost:8081/api/v1/auth/authenticate <br>
 ```
 http://localhost:8081/api/v1/auth/authenticate
 ```
-Với body:
+`Body` :
 ```
 {
     "phoneNumber":"0123456789",
     "password":"123"
 }
 ```  
-Nhận:
+`Received` :
 ```
 # Thành công
 HTTP 200 OK
@@ -83,13 +86,11 @@ HTTP 401 Unauthorized
 ```
 
 #### 1.4 Gửi yêu cầu tạo mã qr (Máy tính, ...)
-Link api: http://localhost:8081/api/v1/auth/authenticate/qr-code <br>
-Gửi:
+`Method GET` : http://localhost:8081/api/v1/auth/authenticate/qr-code <br>
 ```
 http://localhost:8081/api/v1/auth/authenticate/qr-code
 ```
-
-Nhận:
+`Received` :
 ```
 # Thành công
 HTTP 200 OK
@@ -100,13 +101,11 @@ HTTP 404
 ```
 
 #### 1.5 Gửi yêu cầu lấy profile của account nào đó bằng số điện thoại
-Link api: http://localhost:8081/api/v1/account/profile/{phoneNumber} <br>
-Gửi kèm token:
+`Method GET + TOKEN ` : http://localhost:8081/api/v1/account/profile/{phoneNumber} <br>
 ```
 http://localhost:8081/api/v1/account/profile/0123456788
 ```
-
-Nhận:
+`Received` :
 ```
 # Thành công (có account):
 HTTP 200 OK
@@ -124,4 +123,33 @@ HTTP 200 OK
 # Thất bại (Không tìm thấy account):
 HTTP 404 
 ```
+
+#### 1.6 Gửi yêu cầu lấy thông tin của account bằng token
+`Method GET + TOKEN` : http://localhost:8081/api/v1/account/info <br>
+```
+http://localhost:8081/api/v1/account/info
+```
+
+`Received` :
+```
+# Thành công (có account):
+HTTP 200 OK
+{info account}
+
+# Thất bại (Không tìm thấy account từ token hoặc token lỗi):
+HTTP 403
+```
+
+
+# FRONT END
+`WEB INIT`
+```
+npm i
+npm run dev
+```
+`Login` :
+```
+http://localhost:5173/auth/login
+```
+
 
