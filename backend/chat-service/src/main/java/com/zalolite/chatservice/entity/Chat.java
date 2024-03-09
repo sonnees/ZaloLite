@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,4 +23,9 @@ public class Chat {
     @Id
     private UUID id;
     private List<ChatActivity> chatActivity;
+
+    public Chat(String id) {
+        this.id = UUID.fromString(id);
+        this.chatActivity = new ArrayList<>();
+    }
 }

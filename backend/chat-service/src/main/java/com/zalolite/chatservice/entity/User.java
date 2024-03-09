@@ -9,18 +9,26 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "user")
 public class User {
     @Field(targetType = FieldType.STRING)
     @Id
     private UUID id;
-    private List<FriendRequests> friendRequests;
+    private List<FriendRequest> friendRequests;
     private List<Conversation> conversations;
+
+    public User(String id) {
+        this.id = UUID.fromString(id);
+        friendRequests = new ArrayList<>();
+        conversations = new ArrayList<>();
+    }
+
 }

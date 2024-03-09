@@ -6,6 +6,7 @@ import com.zalolite.accountservice.AccountRepository;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.jwt.AuthenticationManager;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/account")
+@Slf4j
 public class AccountController {
     private final AccountRepository accountRepository;
     private final ObjectMapper objectMapper;
@@ -31,19 +33,15 @@ public class AccountController {
                     String userDetailsPhoneNumber = (String) authentication.getPrincipal();
                     return accountRepository.searchByPhoneNumber(phoneNumber)
                             .flatMap(account -> {
-                                if (account == null)
-                                    return Mono.just(ResponseEntity.status(404).body("User not found"));
-                                String json = "";
                                 try {
-                                    json = objectMapper.writeValueAsString(account.getProfile(userDetailsPhoneNumber));
+                                    return Mono.just(ResponseEntity.ok(objectMapper.writeValueAsString(account.getProfile(userDetailsPhoneNumber))));
                                 } catch (JsonProcessingException e) {
-                                    return Mono.error(new RuntimeException(e));
+                                    log.error("** "+ e);
+                                    return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                                 }
-                                return Mono.just(ResponseEntity.ok(json));
-                            });
+                            }).switchIfEmpty(Mono.just(ResponseEntity.status(404).body("User not found")));
                 }).flatMap(responseEntityMono -> responseEntityMono);
     }
-
 
     @GetMapping("/info")
     public Mono<ResponseEntity<String>> getAccount(){
@@ -53,17 +51,15 @@ public class AccountController {
                     String userDetailsPhoneNumber = (String) authentication.getPrincipal();
                     return accountRepository.searchByPhoneNumber(userDetailsPhoneNumber)
                             .flatMap(account -> {
-                                if (account == null)
-                                    return Mono.just(ResponseEntity.status(403).body("Not authenticate"));
-                                String json = "";
                                 try {
-                                    json = objectMapper.writeValueAsString(account);
+                                    return Mono.just(ResponseEntity.ok(objectMapper.writeValueAsString(account)));
                                 } catch (JsonProcessingException e) {
-                                    return Mono.error(new RuntimeException(e));
+                                    log.error("** "+ e);
+                                    return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                                 }
-                                return Mono.just(ResponseEntity.ok(json));
-                            });
+                            }).switchIfEmpty(Mono.just(ResponseEntity.status(403).body("Not authenticate")));
                 }).flatMap(responseEntityMono -> responseEntityMono);
     }
+
 }
 

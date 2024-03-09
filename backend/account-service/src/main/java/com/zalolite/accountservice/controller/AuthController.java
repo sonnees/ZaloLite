@@ -15,9 +15,17 @@ import com.zalolite.accountservice.jwt.JwtService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
@@ -31,7 +39,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/auth")
 @Slf4j
 public class AuthController {
-
+    private WebClient.Builder builder;
     private AccountRepository accountRepository;
     private JwtService jwtService;
     private ObjectMapper objectMapper;
@@ -40,18 +48,15 @@ public class AuthController {
     public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber) throws RuntimeException {
         return accountRepository.searchByPhoneNumber(phoneNumber)
                 .flatMap(account -> {
-                    if (account == null)
-                        return Mono.just(ResponseEntity.ok(""));
                     Profile profile = new Profile();
                     profile.setUserName(account.getProfile().getUserName());
-                    String json = "";
                     try {
-                        json = objectMapper.writeValueAsString(profile);
+                        return Mono.just(ResponseEntity.status(409).body(objectMapper.writeValueAsString(profile)));
                     } catch (JsonProcessingException e) {
-                        return Mono.error(new RuntimeException(e));
+                        log.error("** "+ e);
+                        return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                     }
-                    return Mono.just(ResponseEntity.status(409).body(json));
-                });
+                }).switchIfEmpty(Mono.just(ResponseEntity.ok("")));
     }
 
     @PostMapping("/register")
@@ -59,8 +64,17 @@ public class AuthController {
         return accountRepository.insert(new Account(accountCreateDTO))
                 .flatMap(result -> accountRepository.searchByPhoneNumber(accountCreateDTO.getPhoneNumber())
                         .flatMap(account -> {
-                            String token = jwtService.generateToken(account);
-                            return Mono.just(ResponseEntity.status(200).body(token));
+                            WebClient webClient = builder.build();
+                            return  webClient
+                                    .post()
+                                    .uri("http://CHAT-SERVICE/api/v1/user/create?id="+account.getProfile().getUserID())
+                                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                                    .retrieve()
+                                    .bodyToMono(Boolean.class)
+                                    .flatMap(aBoolean -> {
+                                        if(aBoolean) return Mono.just(ResponseEntity.status(200).body(""));
+                                        else return Mono.just(ResponseEntity.status(500).body(""));
+                                    });
                         }))
                 .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));
     }
@@ -69,17 +83,15 @@ public class AuthController {
     public Mono<ResponseEntity<String>> login(@RequestBody AccountLoginDTO accountLoginDTO) {
         return accountRepository.searchByPhoneNumber(accountLoginDTO.getPhoneNumber())
                 .flatMap(account -> {
-                    if (account == null || !new BCryptPasswordEncoder().matches(accountLoginDTO.getPassword(), account.getPassword())) {
+                    if (!new BCryptPasswordEncoder().matches(accountLoginDTO.getPassword(), account.getPassword()))
                         return Mono.just(ResponseEntity.status(401).body(""));
-                    }
                     String token = jwtService.generateToken(account);
-
                     OneFieldDTO oneFieldDTO = new OneFieldDTO(token);
-
                     try {
                         return Mono.just(ResponseEntity.status(200).body(objectMapper.writeValueAsString(oneFieldDTO)));
                     } catch (JsonProcessingException e) {
-                        return Mono.error(new RuntimeException(e));
+                        log.error("** "+ e);
+                        return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                     }
                 })
                 .switchIfEmpty(Mono.just(ResponseEntity.status(401).body("")));
@@ -90,12 +102,20 @@ public class AuthController {
         return Mono.just(jwtService.isTokenExpired(token));
     }
 
+    @GetMapping("/get-userid/{token}")
+    public Mono<String> getPhoneNumber(@PathVariable String token) {
+        return accountRepository.searchByPhoneNumber(jwtService.extractUsername(token))
+                .flatMap(account -> {
+                    if(account!=null)
+                        return Mono.just(account.getProfile().getUserID()+"");
+                    else return Mono.just("");
+                });
+    }
+
     @GetMapping("/authenticate/qr-code")
     public ResponseEntity<String> loginQRCode() {
         UUID uuid = UUID.randomUUID();
-
         String endpointWebSocket = "ws://localhost:8081/ws/auth/" + uuid;
-
         try {
             int width = 200;
             int height = 200;
@@ -119,7 +139,7 @@ public class AuthController {
 
         } catch (Exception e) {
             log.error("***" + e);
+            return ResponseEntity.status(500).body("Gen QR code error");
         }
-        return ResponseEntity.status(404).body("");
     }
 }
