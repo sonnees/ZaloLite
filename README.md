@@ -13,6 +13,7 @@ Cần cấu hình các `*-service` và `*-server` để IDE hiểu folder nào l
 Chạy các file sau theo thứ tự: <br>
 - `EurekaServerApplication.java` <br>
 - `AccountServiceApplication.java` <br>
+- `ChatServiceApplication.java` <br>
 - `GatewayServiceApplication.java` <br>
 
 ## API & Data Transfer Object
