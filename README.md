@@ -9,6 +9,10 @@
 ### Import module
 Cần cấu hình các `*-service` và `*-server` để IDE hiểu folder nào là module của dự án microservice.  <br>
 Đề xuất: `File > Project Structure > Modules > + > Import Module > select folder`
+
+### Config Mongodb
+Cần chạy service mongodb tại `port 27017` 
+
 ### Run Application
 Chạy các file sau theo thứ tự: <br>
 - `EurekaServerApplication.java` <br>
