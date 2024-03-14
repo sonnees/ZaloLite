@@ -11,7 +11,7 @@ Cần cấu hình các `*-service` và `*-server` để IDE hiểu folder nào l
 Đề xuất: `File > Project Structure > Modules > + > Import Module > select folder`
 
 ### Config Mongodb
-Cần chạy service mongodb tại `port 27017` 
+Cần chạy service tại `port 27017` 
 
 ### Run Application
 Chạy các file sau theo thứ tự: <br>

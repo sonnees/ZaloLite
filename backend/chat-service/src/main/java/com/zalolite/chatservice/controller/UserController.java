@@ -143,7 +143,7 @@ public class UserController {
                 });
     }
 
-//    @PostMapping("/append-conversation")
+//    @PostMapping("/append-chat-conversation")
 //    public Mono<ResponseEntity<String>> updateConversations(@RequestParam String id, @RequestBody Conversation conversation){
 //        return userRepository.updateConversations(id, conversation)
 //                .flatMap(aLong -> {
