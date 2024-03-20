@@ -18,4 +18,5 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
     Mono<Long> updateChatActivity(String id, ChatActivity chatActivity);
 
 
+
 }

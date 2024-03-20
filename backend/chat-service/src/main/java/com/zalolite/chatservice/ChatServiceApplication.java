@@ -35,6 +35,9 @@ public class ChatServiceApplication {
 			public void run(String... args) throws Exception {
 				User user = userRepository.findById(UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db1")).block();
 				if( user != null ) return;
+				userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db1")).block();
+				userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db2")).block();
+				userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db3")).block();
 
 //				List<ChatActivity> chatActivities = List.of(
 //						new ChatActivity(

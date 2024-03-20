@@ -85,7 +85,7 @@ HTTP 409
   <summary>👇 Gửi yêu cầu cấp quyền </summary> 
   <hr> 
   
-`Method GET` : http://localhost:8081/api/v1/auth/authenticate <br>
+`Method POST` : http://localhost:8081/api/v1/auth/authenticate <br>
 ```
 http://localhost:8081/api/v1/auth/authenticate
 ```

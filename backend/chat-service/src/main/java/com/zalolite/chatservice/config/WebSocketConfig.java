@@ -1,6 +1,6 @@
 package com.zalolite.chatservice.config;
 
-import com.zalolite.chatservice.websocket.CustomWebSocketHandler;
+import com.zalolite.chatservice.websocket.WebSocketHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +23,12 @@ public class WebSocketConfig implements WebFluxConfigurer {
     }
 
     @Bean
-    public SimpleUrlHandlerMapping simpleUrlHandlerMapping(CustomWebSocketHandler customWebSocketHandler) {
+    public SimpleUrlHandlerMapping simpleUrlHandlerMapping(WebSocketHandler webSocketHandler) {
         log.info("** run simpleUrlHandlerMapping");
-        Map<String, CustomWebSocketHandler> urlMap = new HashMap<>();
+        Map<String, WebSocketHandler> urlMap = new HashMap<>();
 
-        urlMap.put("/ws/chat/{chatID}", customWebSocketHandler);
+        urlMap.put("/ws/chat/{chatID}", webSocketHandler);
+        urlMap.put("/ws/user/{userID}", webSocketHandler);
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setUrlMap(urlMap);
