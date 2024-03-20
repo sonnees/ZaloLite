@@ -29,4 +29,5 @@ public class Group {
     private Date createAt;
     private String avatar;
     private GroupSetting setting;
+
 }
