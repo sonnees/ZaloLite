@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .anonymous(Customizer.withDefaults())
                 .cors(customizer -> {
                     CorsConfiguration corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:19006", "http://localhost:5173"));
+                    corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3005", "http://localhost:5173"));
                     corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS"));
                     corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
                     corsConfiguration.setAllowCredentials(true);

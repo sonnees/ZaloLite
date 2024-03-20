@@ -27,7 +27,6 @@ import java.util.UUID;
 public class AccountServiceApplication {
 
     private AccountRepository accountRepository;
-
     public static void main(String[] args) {
         SpringApplication.run(AccountServiceApplication.class, args);
     }
@@ -60,6 +59,7 @@ public class AccountServiceApplication {
                                 ShowBirthday.SHOW_DMY
                         )
                 ));
+
                 log.info("** create account success: "+save.block().getId());
 
                 Mono<Account> save1 = accountRepository.save(new Account(

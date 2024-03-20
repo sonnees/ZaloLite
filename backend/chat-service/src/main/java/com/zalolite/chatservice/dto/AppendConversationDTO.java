@@ -20,4 +20,24 @@ public class AppendConversationDTO {
     private String receiverName;
     private String receiverAvatar;
     private Type type;
+
+    public AppendConversationDTO(FriendRequestAddDTO f) {
+        senderID = f.getSenderID();
+        senderName = f.getSenderName();
+        senderAvatar = f.getSenderAvatar();
+        receiverID = f.getReceiverID();
+        receiverName = f.getReceiverName();
+        receiverAvatar = f.getReceiverAvatar();
+    }
+
+    public AppendConversationDTO(FriendRequestAcceptDTO f) {
+        senderID = f.getSenderID();
+        senderName = f.getSenderName();
+        senderAvatar = f.getSenderAvatar();
+        receiverID = f.getReceiverID();
+        receiverName = f.getReceiverName();
+        receiverAvatar = f.getReceiverAvatar();
+    }
+
+
 }
