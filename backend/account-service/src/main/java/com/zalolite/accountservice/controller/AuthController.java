@@ -14,6 +14,7 @@ import com.zalolite.accountservice.entity.Profile;
 import com.zalolite.accountservice.jwt.JwtService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.imgscalr.Scalr;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +65,7 @@ public class AuthController {
                 .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));
     }
 
-    @GetMapping("/authenticate")
+    @PostMapping("/authenticate")
     public Mono<ResponseEntity<String>> login(@RequestBody AccountLoginDTO accountLoginDTO) {
         return accountRepository.searchByPhoneNumber(accountLoginDTO.getPhoneNumber())
                 .flatMap(account -> {
@@ -102,13 +103,13 @@ public class AuthController {
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
             for (int x = 0; x < width; x++) {
-                for (int y = 0; y < width; y++) {
+                for (int y = 0; y < height; y++) {
                     image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
                 }
             }
-
+            BufferedImage scaledImage = Scalr.crop(image, 30, 30, width-60, height-60);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", outputStream);
+            ImageIO.write(scaledImage, "png", outputStream);
             byte[] imageBytes = outputStream.toByteArray();
             String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
