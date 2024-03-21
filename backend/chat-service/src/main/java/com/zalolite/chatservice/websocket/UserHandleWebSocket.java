@@ -28,16 +28,12 @@ public class UserHandleWebSocket {
     private UserRepository userRepository;
     private ChatRepository chatRepository;
     private GroupRepository groupRepository;
-    private ObjectMapper objectMapper;
-    private WebClient.Builder builder;
 
     @Autowired
-    public UserHandleWebSocket(UserRepository userRepository, ChatRepository chatRepository, GroupRepository groupRepository, ObjectMapper objectMapper, WebClient.Builder builder) {
+    public UserHandleWebSocket(UserRepository userRepository, ChatRepository chatRepository, GroupRepository groupRepository) {
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.groupRepository = groupRepository;
-        this.objectMapper = objectMapper;
-        this.builder = builder;
     }
 
     public Mono<Void> appendFriendRequests(FriendRequestAddDTO info){
@@ -149,6 +145,16 @@ public class UserHandleWebSocket {
                             })
                             .then();
                 }));
+    }
+
+    public Mono<Void>  unfriend(UnfriendDTO info){
+        log.info("** unfriend: {} {} {}",info.getId(), info.getSenderID(), info.getReceiverID());
+        // update type conversation to STRANGER
+        return updateTypeConversation(
+                info.getSenderID()+"",
+                info.getReceiverID()+"",
+                Type.STRANGER+"",
+                Type.STRANGER+"");
     }
 
     public Mono<Void> updateTypeConversation(String senderID, String receiverID, String typeSender, String typeReceiver){

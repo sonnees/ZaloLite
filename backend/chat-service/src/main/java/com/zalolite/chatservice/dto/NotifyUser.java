@@ -11,10 +11,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NotifyMessage extends UserMessageDTO{
+public class NotifyUser extends UserMessageDTO{
     private TypeNotify typeNotify;
 
-    public NotifyMessage(UUID id, TypeUserMessage TUM, TypeNotify typeNotify) {
+    public NotifyUser(UUID id, TypeUserMessage TUM, TypeNotify typeNotify) {
         super(id, TUM);
         this.typeNotify = typeNotify;
     }
