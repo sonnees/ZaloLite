@@ -1,80 +1,207 @@
-import React from 'react';
+import { faLock, faMobileScreen } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import QR_Test from './../../assets/QR_Test.png';
 
-export default function Login() {
+export default function LoginForm() {
+  const [isSelectQR, setIsSelectQR] = useState(true)
   const navigate = useNavigate();
+
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [password, setPassword] = useState('')
+
+
+
+
+
+
+//=========================================================
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+
+  useEffect(() => {
+    // Gọi API ở đây
+    const fetchQrCode = async () => {
+      try {
+        const response = await fetch('http://localhost:8081/api/v1/auth/authenticate/qr-code');
+        // Nếu sử dụng axios:
+        // const response = await axios.post('your_api_url_here', { key: 'value' });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch QR code');
+        }
+
+        const data = await response.json();
+        console.log(data);
+        setQrCodeUrl('data:image/png;base64,'+data.field); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
+        console.log(qrCodeUrl);
+      } catch (error) {
+        console.error('Error fetching QR code:', error.message);
+      }
+    };
+
+    fetchQrCode();
+  }, []); // useEffect sẽ chạy một lần khi component được render
+//=========================================================
+
+  async function fetchData(link) {
+    let response = await fetch(link);
+    let data = await response.json();
+    return data;
+  }
+
+//===========================================
+  const handleSubmitLogin = async (e) => {
+    
+    e.preventDefault();
+    
+    try {
+      const response = await fetch('http://localhost:8081/api/v1/auth/authenticate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({phoneNumber: phoneNumber, password: password}),
+        // body: JSON.stringify({
+        //   "phoneNumber": "0123456789",
+        //   "password": "123"
+        // }),
+      });
+
+      if (response.ok) {
+        // Xử lý khi API trả về thành công
+        navigate('/');
+        console.log('API call successful');
+      } else {
+        // Xử lý khi API trả về lỗi
+        console.error('API call failed');
+      }
+    } catch (error) {
+      // Xử lý lỗi khi gọi API
+      navigate('/');
+      console.error('Error calling API:', error);
+    }
+  };
+//===========================================
+
+
   return (
     <div className='w-full'>
       <div className="absolute inset-0">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 810" preserveAspectRatio="xMinYMin slice">
-          <path fill="#aad6ff" d="M592.66 0c-15 64.092-30.7 125.285-46.598 183.777C634.056 325.56 748.348 550.932 819.642 809.5h419.672C1184.518 593.727 1083.124 290.064 902.637 0H592.66z"></path>
-          <path fill="#e8f3ff" d="M545.962 183.777c-53.796 196.576-111.592 361.156-163.49 490.74 11.7 44.494 22.8 89.49 33.1 134.883h404.07c-71.294-258.468-185.586-483.84-273.68-625.623z"></path>
-          <path fill="#cee7ff" d="M153.89 0c74.094 180.678 161.088 417.448 228.483 674.517C449.67 506.337 527.063 279.465 592.56 0H153.89z"></path>
-          <path fill="#e8f3ff" d="M153.89 0H0v809.5h415.57C345.477 500.938 240.884 211.874 153.89 0z"></path>
-          <path fill="#e8f3ff" d="M1144.22 501.538c52.596-134.583 101.492-290.964 134.09-463.343 1.2-6.1 2.3-12.298 3.4-18.497 0-.2.1-.4.1-.6 1.1-6.3 2.3-12.7 3.4-19.098H902.536c105.293 169.28 183.688 343.158 241.684 501.638v-.1z"></path>
-          <path fill="#eef4f8" d="M1285.31 0c-2.2 12.798-4.5 25.597-6.9 38.195C1321.507 86.39 1379.603 158.98 1440 257.168V0h-154.69z"></path>
-          <path fill="#e8f3ff" d="M1278.31,38.196C1245.81,209.874 1197.22,365.556 1144.82,499.838L1144.82,503.638C1185.82,615.924 1216.41,720.211 1239.11,809.6L1439.7,810L1439.7,256.768C1379.4,158.78 1321.41,86.288 1278.31,38.195L1278.31,38.196z"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 654" preserveAspectRatio="xMinYMin slice">
+
+          <rect x="1" y="1" width="1280" height="654" fill="#e8f3ff"/>
+          <path fill="#e8f3ff" d="M1181.68 655C1163.95 469.296 1031.95 86.8402 963 1H1279V655H1181.68Z"/>
+          <path fill="#e8f3ff" d="M1.5 142.5C52.5 267 131.5 487 172 653H1.5V142.5Z"/>
+          <path fill="#aad6ff" d="M519.5 1.5H685H964.5C1046 135 1167 469 1180 655.5H767.5C704.5 505.5 604.5 304.5 464 148.5L519.5 1.5Z"/>
+          <path fill="#d0e4fc"  d="M1 144V1.5H519.5C456 189 322.5 475.5 220 652.5H171.5C138.5 509 51.5 262.5 1 144Z"/>
+
         </svg>
 
       </div>
-      <div className="relative flex flex-col justify-center min-h-screen overflow-hidden" >
+      <div className="relative flex flex-col overflow-hidden" >
 
-        <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
+        <div className=''>
+          <h1 className='text-center text-6xl text-blue-600 font-semibold p-3 mt-10'>Zalo</h1>
+          <h2 className='text-center font-normal'>Đăng nhập tài khoản Zalo</h2>
+          <h2 className='text-center font-normal'>để kết nối với ứng dụng Zalo Web</h2>
+        </div>
 
-          <h1 className="text-3xl font-semibold text-center text-purple-700 underline">
-            Sign in
-          </h1>
-          <form className="mt-6">
-            <div className="mb-2">
-              <label
-                htmlFor="email"
-                className="block text-sm font-semibold text-gray-800"
-              > 
-                Email
-              </label>
-              <input
-                type="email" 
-                className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-              />
-            </div>
-            <div className="mb-2">
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold text-gray-800"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                className="block w-full px-4 py-2 mt-2 text-purple-700 bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
-              />
-            </div>
-            <a
-              href="#"
-              className="text-xs text-purple-600 hover:underline"
-            >
-              Forget Password?
-            </a>
-            <div className="mt-6">
-              <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
-                onClick={() => navigate('/')}
-              >
-                Login
-              </button>
-            </div>
-          </form>
+        <div className="w-full pb-6 mx-auto my-5 bg-white shadow-md lg:max-w-[388px]">
 
-          <p className="mt-8 text-xs font-light text-center text-gray-700">
-            {" "}
-            Don't have an account?{" "}
-            <a
-              href="#"
-              className="font-medium text-purple-600 hover:underline"
-            >
-              Sign up
-            </a>
+          {!isSelectQR ? (
+            <>
+              <ul className='flex border-b-2 py-3'>
+                <li className='text-center flex-1 font-thin' onClick={()=>setIsSelectQR(true)} >VỚI MÃ QR</li> 
+                <span className='font-thin text-slate-300'>|</span>
+                <li className='text-center flex-1 font-medium'>VỚI SỐ ĐIỆN THOẠI</li>
+              </ul>
+
+              <form onSubmit={handleSubmitLogin} className="mt-2  px-6">
+                <div className="mb-2 mx-2 py-4 border-b-2">
+                  <FontAwesomeIcon icon={faMobileScreen} className='mx-3'/>
+                  <select id="contryOption" className='text-center mx-3 focus:outline-none'>
+                    <option value="">+84</option>
+                    <option value="option1">+1</option>
+                    <option value="option2">+2</option>
+                    <option value="option3">+3</option>
+                  </select>
+
+                  <input id="input-phone" placeholder="Số điện thoại" className='px-3 focus:outline-none ' onChange={(event) => {setPhoneNumber(event.target.value)}}></input>
+                </div>
+
+                <div className="mb-2 mx-2 py-4 border-b-2">
+                  <FontAwesomeIcon icon={faLock}  className='mx-3'/>
+                  <input id="input-password" placeholder="Mật khẩu" className='mx-3 px-3 focus:outline-none' onChange={(event) => {setPassword(event.target.value)}}></input>
+                </div>
+                
+                <div className="mt-6">
+                  <button className="w-full py-2 tracking-wide text-white transition-colors duration-200 transform bg-blue-400 rounded-md" type='submit'
+                    // onClick={() => {}}
+                  >
+                    Đăng nhập với mật khẩu
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <button className="w-full py-2 tracking-wide text-blue-400 transition-colors duration-200 transform bg-white-700 border-2 rounded-md" type='button'
+                    // onClick={() => navigate('/')}
+                  >
+                    Đăng nhập với bằng thiết bị di động
+                  </button>
+                </div>
+              </form>
+
+                
+
+              <p className="mt-8 text-xs font-light text-center text-gray-700">
+                
+                <a
+                  href="#"
+                  className="font-medium text-black-100 hover:underline"
+                >
+                  Quên mật khẩu?
+                </a>
+              </p>
+            </>  
+              ) : (
+            <>
+              <ul className='flex border-b-2 py-3'>
+                <li className='text-center flex-1 font-medium' >VỚI MÃ QR</li> 
+                <span className='font-thin text-slate-300'>|</span>
+                <li className='text-center flex-1 font-thin'  onClick={()=>setIsSelectQR(false)}>VỚI SỐ ĐIỆN THOẠI</li>
+              </ul>
+
+              <div className='flex flex-col items-center m-6 mx-20 border-2 rounded-lg' >
+                <img src={qrCodeUrl} alt='QR' className='my-3' style={{width:200, height:200, borderRadius: 5}} />
+
+                <p className="text-base text-center font-normal text-blue-600 w-60"> 
+                  Chỉ dùng để đăng nhập
+                </p>
+
+                <p className="text-base text-center font-normal text-black-600 w-60 mb-3"> 
+                  Zalo trên máy tính
+                </p>
+              </div>
+
+                
+
+              <p className="mb-6 text-xs text-center font-medium text-gray-600"> 
+                Sử dụng ứng dụng Zalo để quét mã QR
+              </p>
+            </>
+          )}
+  
+        </div>
+
+        <div className='m-3'>
+          <p className='text-center text-blue-600 text-xs m-12'> 
+            <a className='font-semibold' href="#">Tiếng Việt</a> <span> </span>
+            <a className='font-thin' href="#">English </a>
           </p>
         </div>
+
+
       </div>
     </div>
   );

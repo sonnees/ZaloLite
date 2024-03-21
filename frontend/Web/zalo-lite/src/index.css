@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Ẩn border và tùy chỉnh thanh cuộn */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Phần nền của thanh cuộn */
+::-webkit-scrollbar-track {
+  /* background: #FFF; */
+}
+
+/* Thanh cuộn chính */
+::-webkit-scrollbar-thumb {
+  background: #B8C1CD;
+  border-radius: 4px;
+}
+
+/* Tùy chỉnh màu sắc khi hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #B8C1CD;
+}
+
+/* Ẩn border */
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-track {
+  border: none;
+}
