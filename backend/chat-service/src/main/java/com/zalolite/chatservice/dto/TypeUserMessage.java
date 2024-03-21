@@ -5,4 +5,5 @@ public enum TypeUserMessage {
     TUM01, // append friend request
     TUM02, // remove friend request
     TUM03, // accept friend request
+    TUM04, // unfriend
 }

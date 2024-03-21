@@ -25,11 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @AllArgsConstructor
 public class WebSocketHandler implements org.springframework.web.reactive.socket.WebSocketHandler {
     private WebClient.Builder builder;
-    private UserRepository userRepository;
-    private ChatRepository chatRepository;
-    private GroupRepository groupRepository;
     private ObjectMapper objectMapper;
     private UserHandleWebSocket userHandleWebSocket;
+    private ChatHandleWebSocket chatHandleWebSocket;
 
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
@@ -65,16 +63,16 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield userHandleWebSocket
                                                 .appendFriendRequests(objectMapper.readValue(message, FriendRequestAddDTO.class))
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                    NotifyMessage notifyMessage=new NotifyMessage(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
-                                                    sendMessageToClient(sessionId, notifyMessage);
-                                                    sendMessageToAllClients(sessionId,obj);
-                                                }
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
                                                 ))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyMessage notifyMessage=new NotifyMessage(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
-                                                    sendMessageToClient(sessionId, notifyMessage);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
                                                     return Mono.empty();
                                                 });
                                     }
@@ -84,16 +82,16 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield  userHandleWebSocket
                                                 .removeFriendRequests(obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                    NotifyMessage notifyMessage=new NotifyMessage(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
-                                                    sendMessageToClient(sessionId, notifyMessage);
-                                                    sendMessageToAllClients(sessionId,obj);
-                                                }
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
                                                 ))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyMessage notifyMessage=new NotifyMessage(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
-                                                    sendMessageToClient(sessionId, notifyMessage);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
                                                     return Mono.empty();
                                                 });
                                     }
@@ -103,16 +101,81 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield  userHandleWebSocket
                                                 .acceptFriendRequests(obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyMessage notifyMessage=new NotifyMessage(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
-                                                            sendMessageToClient(sessionId, notifyMessage);
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
                                                             sendMessageToAllClients(sessionId,obj);
                                                         }
                                                 ))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyMessage notifyMessage=new NotifyMessage(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
-                                                    sendMessageToClient(sessionId, notifyMessage);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
+                                                    return Mono.empty();
+                                                });
+                                    }
+                                    case TUM04 -> {
+                                        UnfriendDTO obj = objectMapper.readValue(message, UnfriendDTO.class);
+                                        yield  userHandleWebSocket
+                                                .unfriend(obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    default -> Flux.empty();
+                                };
+                            } catch (JsonProcessingException e) {
+                                log.error("** " + e);
+                                return Flux.empty();
+                            }
+                        })
+                        .publishOn(Schedulers.boundedElastic())
+                        .map(session::textMessage)
+                        .doOnTerminate(() -> {
+                            sessions.remove(sessionId);
+                            log.info("** session end: " + sessionId);
+                        }))
+                .then();
+
+    }
+
+    private Mono<Void> handleChat(WebSocketSession session, Flux<WebSocketMessage> sendFlux, String sessionId, String chatID) {
+        return session
+                .send(sendFlux)
+                .thenMany(session.receive()
+                        .map(WebSocketMessage::getPayloadAsText)
+                        .flatMap(message -> {
+                            try {
+                                ChatMessageDTO root = objectMapper.readValue(message, ChatMessageDTO.class);
+                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
+
+                                return switch (root.getTCM()) {
+                                    case TCM01 -> {
+                                        MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
+                                        yield chatHandleWebSocket
+                                                .appendChat(chatID,obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(sessionId, notify);
+                                                    sendMessageToAllClients(sessionId,obj);
+                                                }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
                                                     return Mono.empty();
                                                 });
                                     }
@@ -133,37 +196,9 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                 .then();
     }
 
-
-    private Mono<Void> handleChat(WebSocketSession session, Flux<WebSocketMessage> sendFlux, String sessionId, String chatID) {
-        return Mono.empty();
-//        return session
-//                .send(sendFlux)
-//                .thenMany(session.receive()
-//                        .map(WebSocketMessage::getPayloadAsText)
-//                        .flatMap(message -> {
-//                            ChatActivityDTO chatActivityDTO = null;
-//                            try {
-//                                chatActivityDTO = objectMapper.readValue(message, ChatActivityDTO.class);
-//                                ChatActivity chatActivity = new ChatActivity(chatActivityDTO);
-//                                log.info("Received message from {}: {}", sessionId, objectMapper.writeValueAsString(chatActivity));
-//                                return chatRepository.updateChatActivity(chatID, chatActivity)
-//                                        .thenMany(Flux.just(message));
-//                            } catch (JsonProcessingException e) {
-//                                log.error("** "+e);
-//                                return Flux.empty();
-//                            }
-//                        })
-//                        .map(session::textMessage)
-//                        .doOnTerminate(() -> {
-//                            sessions.remove("sessionId");
-//                            log.info("** session end: " + sessionId);
-//                        }))
-//                .then();
-    }
-
     private void sendMessageToClient(String senderId, UserMessageDTO userMessageDTO) {
         try {
-            log.info("** sendMessageToAllClients {}",senderId );
+            log.info("** sendMessageToAllClients userMessageDTO {}",senderId );
             String message = objectMapper.writeValueAsString(userMessageDTO);
             sessions.forEach((sessionId, session) -> {
                 if (sessionId.equals(senderId))
@@ -176,10 +211,42 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
         }
     }
 
-    private void sendMessageToAllClients(String senderId,UserMessageDTO userMessageDTO) {
+    private void sendMessageToClient(String senderId, ChatMessageDTO chatMessageDTO) {
         try {
-            log.info("** sendMessageToAllClients");
-            String message = objectMapper.writeValueAsString(userMessageDTO);
+            log.info("** sendMessageToAllClients chatMessageDTO {}",senderId );
+            String message = objectMapper.writeValueAsString(chatMessageDTO);
+            sessions.forEach((sessionId, session) -> {
+                if (sessionId.equals(senderId))
+                    session
+                            .send(Flux.just(session.textMessage(message)))
+                            .subscribe();
+            });
+        } catch (Exception e){
+            log.error(e.getMessage());
+        }
+    }
+
+
+
+    private void sendMessageToAllClients(String senderId,UserMessageDTO info) {
+        try {
+            log.info("** sendMessageToAllClients UserMessageDTO");
+            String message = objectMapper.writeValueAsString(info);
+            sessions.forEach((sessionId, session) -> {
+                if (!sessionId.equals(senderId))
+                    session
+                            .send(Flux.just(session.textMessage(message)))
+                            .subscribe();
+            });
+        } catch (Exception e){
+            log.error(e.getMessage());
+        }
+    }
+
+    private void sendMessageToAllClients(String senderId,ChatMessageDTO info) {
+        try {
+            log.info("** sendMessageToAllClients ChatMessageDTO");
+            String message = objectMapper.writeValueAsString(info);
             sessions.forEach((sessionId, session) -> {
                 if (!sessionId.equals(senderId))
                     session

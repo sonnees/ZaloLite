@@ -1,6 +1,7 @@
 package com.zalolite.chatservice.entity;
 
 import com.zalolite.chatservice.dto.ChatActivityDTO;
+import com.zalolite.chatservice.dto.MessageAppendDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,5 +39,15 @@ public class ChatActivity {
         this.timestamp = new Date();
         this.messageID = UUID.randomUUID();
         this.status = new Status(userID,chatActivityDTO.getUserAvatar());
+    }
+
+    public ChatActivity(MessageAppendDTO m) {
+        this.userID = m.getUserID();
+        this.parentID = m.getParentID();
+        this.contents = m.getContents();
+        this.timestamp = m.getTimestamp();
+
+        this.messageID = UUID.randomUUID();
+        this.status = new Status(m.getUserID(), m.getUserAvatar());
     }
 }
