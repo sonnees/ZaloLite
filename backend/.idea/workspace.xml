@@ -5,39 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/gradlew.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/SingleChatManagementMicroserviceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/controller/SingleChatController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/model/SingleChat.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/reporitory/SingleChatRep.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/java/com/zalolite/singlechatmanagementmicroservice/service/SingleChatService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/main/resources/banner.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SingleChatManagementMicroservice/src/test/java/com/zalolite/singlechatmanagementmicroservice/SingleChatManagementMicroserviceApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/build.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/gradlew.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/settings.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/UserManagementMicroserviceApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/controller/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/model/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/repository/UserRep.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/java/com/zalolite/usermanagementmicroservice/service/UserService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/main/resources/banner.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserManagementMicroservice/src/test/java/com/zalolite/usermanagementmicroservice/UserManagementMicroserviceApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/account-service.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/account-service.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/account-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/AccountServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/AccountServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/account-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/account-service/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/qrcode.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +27,9 @@
       <ProjectState />
     </projectState>
     <projectState path="$PROJECT_DIR$/account-service">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/chat-service">
       <ProjectState />
     </projectState>
     <projectState path="$PROJECT_DIR$/eureka-server">
@@ -121,14 +96,18 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "sonnees",
+    "git-widget-placeholder": "ThienDat",
     "ignore.virus.scanning.warn.message": "true",
     "jdk.selected.JAVA_MODULE": "17",
-    "last_opened_file_path": "C:/SON.admin/VIII/NewTech/ZaloLite/backend",
+    "last_opened_file_path": "D:/Word_Space/My_ZaloLite/backend/gateway-service",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.35172415",
+    "spring.configuration.checksum": "81253acc4c546cfa893d451fe5701a85",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -166,6 +145,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ChatServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="chat-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.zalolite.chatservice.ChatServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="EurekaServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="eureka-server.main" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.zalolite.eurekaserver.EurekaServerApplication" />
@@ -181,6 +167,7 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Spring Boot.ChatServiceApplication" />
       <item itemvalue="Spring Boot.GatewayServiceApplication" />
       <item itemvalue="Spring Boot.AccountServiceApplication" />
       <item itemvalue="Spring Boot.EurekaServerApplication" />
@@ -214,6 +201,8 @@
       <workItem from="1708674730729" duration="8984000" />
       <workItem from="1708684527452" duration="644000" />
       <workItem from="1708753309082" duration="15025000" />
+      <workItem from="1710988673040" duration="112000" />
+      <workItem from="1710988841713" duration="1389000" />
     </task>
     <servers />
   </component>
