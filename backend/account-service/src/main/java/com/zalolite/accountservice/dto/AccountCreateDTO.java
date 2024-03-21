@@ -19,5 +19,11 @@ public class AccountCreateDTO {
     private Boolean gender;
     private Date birthday;
     private UserRole role;
+<<<<<<< HEAD
 
 }
+=======
+}
+
+// map struct mvn
+>>>>>>> master

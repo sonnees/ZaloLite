@@ -19,7 +19,10 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
     public String extractUsername(String token){
         return extractClaim(token, Claims::getSubject);
     }
@@ -64,7 +67,11 @@ public class JwtService {
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
+<<<<<<< HEAD
                 .setExpiration(new Date(System.currentTimeMillis()+1000*3600))
+=======
+                .setExpiration(new Date(System.currentTimeMillis()+1000*3600*30))
+>>>>>>> master
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

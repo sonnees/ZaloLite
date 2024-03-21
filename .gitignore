@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### backend ###
 backend/*.iws
 backend/*.iml
@@ -51,6 +52,8 @@ backend/account-service/!**/src/main/**/build/
 backend/account-service/!**/src/test/**/build/
 
 
+=======
+>>>>>>> master
 ### frontend ###
 frontend/App/node_modules/
 frontend/App/.expo/
