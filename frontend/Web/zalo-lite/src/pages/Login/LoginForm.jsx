@@ -86,7 +86,7 @@ export default function LoginForm() {
 
 
   return (
-    <div className='w-full h-screen'>
+    <div className='w-full'>
       <div className="absolute inset-0">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 654" preserveAspectRatio="xMinYMin slice">
 

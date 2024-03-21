@@ -30,28 +30,28 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Override
     public GatewayFilter apply(Config config) {
         WebClient webClient = builder.build();
-        return (exchange, chain) -> {
+        return (exchange, chain)->{
             String openApiEndpointPattern = "/api/v1/auth/**";
             String path = exchange.getRequest().getURI().getPath();
 
             boolean Match = pathMatcher.match(openApiEndpointPattern, path);
-            log.info("** Match: " + Match + " | " + exchange.getRequest().getURI().getPath());
+            log.info("** Match: "+Match +" | "+exchange.getRequest().getURI().getPath());
 
-            if (!Match) {
+            if(!Match){
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION))
                     throw new RuntimeException("missing authorization header");
                 String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
                 if (token != null && token.startsWith("Bearer "))
                     token = token.substring(7);
 
-                log.info("** AuthenticationFilter enter | token: " + token);
+                log.info("** AuthenticationFilter enter | token: "+token);
 
                 return webClient.get()
                         .uri("http://ACCOUNT-SERVICE/api/v1/auth/check-token/" + token)
                         .retrieve()
                         .bodyToMono(Boolean.class)
                         .flatMap(isValidToken -> {
-                            log.info(isValidToken + "");
+                            log.info(isValidToken+"");
                             if (!isValidToken) {
                                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                                 return exchange.getResponse().setComplete();
@@ -72,6 +72,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     public int value() {
         return -1;
     }
+
 
     public static class Config {
 

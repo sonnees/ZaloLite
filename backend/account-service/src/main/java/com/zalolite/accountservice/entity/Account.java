@@ -52,13 +52,14 @@ public class Account implements UserDetails {
                 accountCreateDTO.getUserName(),
                 accountCreateDTO.getGender(),
                 accountCreateDTO.getBirthday(),
-                accountCreateDTO.getGender() ? ("https://zalolite.s3.amazonaws.com/nam" + random.nextInt(1, 3) + ".jpg")
-                        : ("https://zalolite.s3.amazonaws.com/nu" + random.nextInt(1, 2) + ".jpg"),
-                "https://zalolite.s3.amazonaws.com/background" + random.nextInt(1, 5) + ".jpg");
+                accountCreateDTO.getGender() ?("https://zalolite.s3.amazonaws.com/nam"+ random.nextInt(1,3) +".jpg") : ("https://zalolite.s3.amazonaws.com/nu"+ random.nextInt(1,2) +".jpg"),
+                "https://zalolite.s3.amazonaws.com/background"+random.nextInt(1,5)+".jpg"
+        );
         this.role = accountCreateDTO.getRole();
         this.setting = new Setting(
                 AllowMessaging.EVERYONE,
-                ShowBirthday.SHOW_DMY);
+                ShowBirthday.SHOW_DMY
+        );
     }
 
     @Override
@@ -66,14 +67,14 @@ public class Account implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public Profile getProfile(String phoneNumber) {
-        if (this.phoneNumber.equals(phoneNumber))
+    public Profile getProfile(String phoneNumber){
+        if(this.phoneNumber.equals(phoneNumber))
             return this.profile;
 
         Profile temp = this.profile;
-        switch (this.setting.getShowBirthday()) {
+        switch (this.setting.getShowBirthday()){
             case NO -> temp.setBirthday(null);
-            case SHOW_DM -> temp.setBirthday(new Date(0, temp.getBirthday().getMonth(), temp.getBirthday().getDay()));
+            case SHOW_DM -> temp.setBirthday(new Date(0,temp.getBirthday().getMonth(),temp.getBirthday().getDay()));
         }
         return temp;
     }

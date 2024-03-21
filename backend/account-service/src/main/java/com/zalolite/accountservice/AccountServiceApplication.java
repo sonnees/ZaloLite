@@ -26,79 +26,86 @@ import java.util.UUID;
 @EnableDiscoveryClient
 public class AccountServiceApplication {
 
-        private AccountRepository accountRepository;
+    private AccountRepository accountRepository;
+    public static void main(String[] args) {
+        SpringApplication.run(AccountServiceApplication.class, args);
+    }
 
-        public static void main(String[] args) {
-                SpringApplication.run(AccountServiceApplication.class, args);
-        }
+    @Bean
+    CommandLineRunner commandLineRunner(){
+        return new CommandLineRunner() {
+            @Override
+            public void run(String... args) throws Exception {
+                Account account = accountRepository.searchByPhoneNumber("0000000000").block();
+                if(account!=null) return;
 
-        @Bean
-        CommandLineRunner commandLineRunner() {
-                return new CommandLineRunner() {
-                        @Override
-                        public void run(String... args) throws Exception {
-                                Account account = accountRepository.searchByPhoneNumber("0000000000").block();
-                                if (account != null)
-                                        return;
+                Mono<Account> save = accountRepository.save(new Account(
+                        UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db9"),
+                        "0000000000",
+                        new BCryptPasswordEncoder().encode("123"),
+                        new Date(),
+                        Type.personal,
+                        new Profile(
+                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db1"),
+                                "Tú Anh",
+                                true,
+                                new Date(),
+                                "https://zalolite.s3.amazonaws.com/nam1.jpg",
+                                "https://zalolite.s3.amazonaws.com/background1.jpg"
+                        ),
+                        UserRole.USER,
+                        new Setting(
+                                AllowMessaging.EVERYONE,
+                                ShowBirthday.SHOW_DMY
+                        )
+                ));
 
-                                Mono<Account> save = accountRepository.save(new Account(
-                                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db9"),
-                                                "0000000000",
-                                                new BCryptPasswordEncoder().encode("123"),
-                                                new Date(),
-                                                Type.personal,
-                                                new Profile(
-                                                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db1"),
-                                                                "Tú Anh",
-                                                                true,
-                                                                new Date(),
-                                                                "https://zalolite.s3.amazonaws.com/nam1.jpg",
-                                                                "https://zalolite.s3.amazonaws.com/background1.jpg"),
-                                                UserRole.USER,
-                                                new Setting(
-                                                                AllowMessaging.EVERYONE,
-                                                                ShowBirthday.SHOW_DMY)));
+                log.info("** create account success: "+save.block().getId());
 
-                                log.info("** create account success: " + save.block().getId());
+                Mono<Account> save1 = accountRepository.save(new Account(
+                        UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db8"),
+                        "0000000001",
+                        new BCryptPasswordEncoder().encode("123"),
+                        new Date(),
+                        Type.personal,
+                        new Profile(
+                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db2"),
+                                "Bảo Châu",
+                                false,
+                                new Date(),
+                                "https://zalolite.s3.amazonaws.com/nu1.jpg",
+                                "https://zalolite.s3.amazonaws.com/background3.jpg"
+                        ),
+                        UserRole.USER,
+                        new Setting(
+                                AllowMessaging.EVERYONE,
+                                ShowBirthday.NO
+                        )
+                ));
+                log.info("** create account success: "+save1.block().getId());
 
-                                Mono<Account> save1 = accountRepository.save(new Account(
-                                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db8"),
-                                                "0000000001",
-                                                new BCryptPasswordEncoder().encode("123"),
-                                                new Date(),
-                                                Type.personal,
-                                                new Profile(
-                                                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db2"),
-                                                                "Bảo Châu",
-                                                                false,
-                                                                new Date(),
-                                                                "https://zalolite.s3.amazonaws.com/nu1.jpg",
-                                                                "https://zalolite.s3.amazonaws.com/background3.jpg"),
-                                                UserRole.USER,
-                                                new Setting(
-                                                                AllowMessaging.EVERYONE,
-                                                                ShowBirthday.NO)));
-                                log.info("** create account success: " + save1.block().getId());
-
-                                Mono<Account> save2 = accountRepository.save(new Account(
-                                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db6"),
-                                                "0000000002",
-                                                new BCryptPasswordEncoder().encode("123"),
-                                                new Date(),
-                                                Type.personal,
-                                                new Profile(
-                                                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db3"),
-                                                                "Thảo Chi",
-                                                                false,
-                                                                new Date(),
-                                                                "https://zalolite.s3.amazonaws.com/nu2.jpg",
-                                                                "https://zalolite.s3.amazonaws.com/background2.jpg"),
-                                                UserRole.USER,
-                                                new Setting(
-                                                                AllowMessaging.EVERYONE,
-                                                                ShowBirthday.SHOW_DM)));
-                                log.info("** create account success: " + save2.block().getId());
-                        }
-                };
-        }
+                Mono<Account> save2 = accountRepository.save(new Account(
+                        UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db6"),
+                        "0000000002",
+                        new BCryptPasswordEncoder().encode("123"),
+                        new Date(),
+                        Type.personal,
+                        new Profile(
+                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db3"),
+                                "Thảo Chi",
+                                false,
+                                new Date(),
+                                "https://zalolite.s3.amazonaws.com/nu2.jpg",
+                                "https://zalolite.s3.amazonaws.com/background2.jpg"
+                        ),
+                        UserRole.USER,
+                        new Setting(
+                                AllowMessaging.EVERYONE,
+                                ShowBirthday.SHOW_DM
+                        )
+                ));
+                log.info("** create account success: "+save2.block().getId());
+            }
+        };
+    }
 }

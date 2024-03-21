@@ -15,7 +15,7 @@ import reactor.netty.http.client.HttpClient;
 @Configuration
 public class SecurityConfig {
     @Bean
-    public AntPathMatcher pathMatcher() {
+    public AntPathMatcher pathMatcher(){
         return new AntPathMatcher();
     }
 

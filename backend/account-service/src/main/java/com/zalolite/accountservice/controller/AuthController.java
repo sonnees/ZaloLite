@@ -45,8 +45,7 @@ public class AuthController {
     private ObjectMapper objectMapper;
 
     @GetMapping("/check-uniqueness-phone-number/{phoneNumber}")
-    public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber)
-            throws RuntimeException {
+    public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber) throws RuntimeException {
         return accountRepository.searchByPhoneNumber(phoneNumber)
                 .flatMap(account -> {
                     Profile profile = new Profile();
@@ -54,33 +53,30 @@ public class AuthController {
                     try {
                         return Mono.just(ResponseEntity.status(409).body(objectMapper.writeValueAsString(profile)));
                     } catch (JsonProcessingException e) {
-                        log.error("** " + e);
+                        log.error("** "+ e);
                         return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                     }
                 }).switchIfEmpty(Mono.just(ResponseEntity.ok("")));
     }
 
     @PostMapping("/register")
-    public Mono<ResponseEntity<String>> create(@RequestBody AccountCreateDTO accountCreateDTO) {
+    public Mono<ResponseEntity<String>> create(@RequestBody AccountCreateDTO accountCreateDTO){
         return accountRepository.insert(new Account(accountCreateDTO))
                 .flatMap(result -> accountRepository.searchByPhoneNumber(accountCreateDTO.getPhoneNumber())
                         .flatMap(account -> {
                             WebClient webClient = builder.build();
-                            return webClient
+                            return  webClient
                                     .post()
-                                    .uri("http://CHAT-SERVICE/api/v1/user/create?id="
-                                            + account.getProfile().getUserID())
+                                    .uri("http://CHAT-SERVICE/api/v1/user/create?id="+account.getProfile().getUserID())
                                     .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                                     .retrieve()
                                     .bodyToMono(Boolean.class)
                                     .flatMap(aBoolean -> {
-                                        if (aBoolean)
-                                            return Mono.just(ResponseEntity.status(200).body(""));
-                                        else
-                                            return Mono.just(ResponseEntity.status(500).body(""));
+                                        if(aBoolean) return Mono.just(ResponseEntity.status(200).body(""));
+                                        else return Mono.just(ResponseEntity.status(500).body(""));
                                     });
                         }))
-                .onErrorResume(e -> Mono.just(ResponseEntity.status(409).body("")));
+                .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));
     }
 
     @PostMapping("/authenticate")
@@ -94,7 +90,7 @@ public class AuthController {
                     try {
                         return Mono.just(ResponseEntity.status(200).body(objectMapper.writeValueAsString(oneFieldDTO)));
                     } catch (JsonProcessingException e) {
-                        log.error("** " + e);
+                        log.error("** "+ e);
                         return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                     }
                 })
@@ -110,10 +106,9 @@ public class AuthController {
     public Mono<String> getPhoneNumber(@PathVariable String token) {
         return accountRepository.searchByPhoneNumber(jwtService.extractUsername(token))
                 .flatMap(account -> {
-                    if (account != null)
-                        return Mono.just(account.getProfile().getUserID() + "");
-                    else
-                        return Mono.just("");
+                    if(account!=null)
+                        return Mono.just(account.getProfile().getUserID()+"");
+                    else return Mono.just("");
                 });
     }
 
@@ -132,7 +127,7 @@ public class AuthController {
                     image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
                 }
             }
-            BufferedImage scaledImage = Scalr.crop(image, 30, 30, width - 60, height - 60);
+            BufferedImage scaledImage = Scalr.crop(image, 30, 30, width-60, height-60);
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(scaledImage, "png", outputStream);
             byte[] imageBytes = outputStream.toByteArray();
