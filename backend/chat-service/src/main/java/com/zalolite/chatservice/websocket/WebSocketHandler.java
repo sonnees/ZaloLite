@@ -133,32 +133,50 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                 .then();
     }
 
-
     private Mono<Void> handleChat(WebSocketSession session, Flux<WebSocketMessage> sendFlux, String sessionId, String chatID) {
-        return Mono.empty();
-//        return session
-//                .send(sendFlux)
-//                .thenMany(session.receive()
-//                        .map(WebSocketMessage::getPayloadAsText)
-//                        .flatMap(message -> {
-//                            ChatActivityDTO chatActivityDTO = null;
-//                            try {
-//                                chatActivityDTO = objectMapper.readValue(message, ChatActivityDTO.class);
-//                                ChatActivity chatActivity = new ChatActivity(chatActivityDTO);
-//                                log.info("Received message from {}: {}", sessionId, objectMapper.writeValueAsString(chatActivity));
-//                                return chatRepository.updateChatActivity(chatID, chatActivity)
-//                                        .thenMany(Flux.just(message));
-//                            } catch (JsonProcessingException e) {
-//                                log.error("** "+e);
-//                                return Flux.empty();
-//                            }
-//                        })
-//                        .map(session::textMessage)
-//                        .doOnTerminate(() -> {
-//                            sessions.remove("sessionId");
-//                            log.info("** session end: " + sessionId);
-//                        }))
-//                .then();
+        return session
+                .send(sendFlux)
+                .thenMany(session.receive()
+                        .map(WebSocketMessage::getPayloadAsText)
+                        .flatMap(message -> {
+                            try {
+                                UserMessageDTO root = objectMapper.readValue(message, UserMessageDTO.class);
+                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
+
+                                return switch (root.getTUM()) {
+                                    case TUM01 -> {
+                                        FriendRequestAddDTO obj = objectMapper.readValue(message, FriendRequestAddDTO.class);
+                                        yield userHandleWebSocket
+                                                .appendFriendRequests(objectMapper.readValue(message, FriendRequestAddDTO.class))
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyMessage notifyMessage=new NotifyMessage(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notifyMessage);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyMessage notifyMessage=new NotifyMessage(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notifyMessage);
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    default -> Flux.empty();
+                                };
+                            } catch (JsonProcessingException e) {
+                                log.error("** " + e);
+                                return Flux.empty();
+                            }
+                        })
+                        .publishOn(Schedulers.boundedElastic())
+                        .map(session::textMessage)
+                        .doOnTerminate(() -> {
+                            sessions.remove(sessionId);
+                            log.info("** session end: " + sessionId);
+                        }))
+                .then();
     }
 
     private void sendMessageToClient(String senderId, UserMessageDTO userMessageDTO) {
