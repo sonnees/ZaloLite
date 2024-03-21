@@ -17,7 +17,7 @@ export default function Information() {
         <Text style={{fontSize: 14, fontWeight: "bold", fontFamily: "Roboto"}}>Thông tin</Text>
       </View>
       <View style={{flex: 0.05}}></View>
-      <View style={{flex: 1, backgroundColor: "#FFFFFF",justifyContent:"center",  paddingLeft: "5%",}}>
+      <View style={{flex: 1, backgroundColor: "#FFFFFF",justifyContent:"center",  paddingLeft: "5%"}}>
         <Text style={{fontSize: 14, fontWeight: "bold", fontFamily: "Roboto"}}>Đổi ảnh đại diện</Text>
       </View>
       <View style={{flex: 0.05}}></View>

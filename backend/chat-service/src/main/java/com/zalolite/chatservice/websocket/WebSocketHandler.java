@@ -63,10 +63,10 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield userHandleWebSocket
                                                 .appendFriendRequests(objectMapper.readValue(message, FriendRequestAddDTO.class))
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
-                                                    sendMessageToClient(sessionId, notify);
-                                                    sendMessageToAllClients(sessionId,obj);
-                                                }
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
                                                 ))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
@@ -82,10 +82,10 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield  userHandleWebSocket
                                                 .removeFriendRequests(obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
-                                                    sendMessageToClient(sessionId, notify);
-                                                    sendMessageToAllClients(sessionId,obj);
-                                                }
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
                                                 ))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
@@ -101,10 +101,10 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield  userHandleWebSocket
                                                 .acceptFriendRequests(obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
-                                                    sendMessageToClient(sessionId, notify);
-                                                    sendMessageToAllClients(sessionId,obj);
-                                                }
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
                                                 ))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
@@ -114,16 +114,15 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                     return Mono.empty();
                                                 });
                                     }
-
                                     case TUM04 -> {
                                         UnfriendDTO obj = objectMapper.readValue(message, UnfriendDTO.class);
                                         yield  userHandleWebSocket
                                                 .unfriend(obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
-                                                    sendMessageToClient(sessionId, notify);
-                                                    sendMessageToAllClients(sessionId,obj);
-                                                }
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
                                                 ))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
@@ -148,6 +147,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                             log.info("** session end: " + sessionId);
                         }))
                 .then();
+
     }
 
     private Mono<Void> handleChat(WebSocketSession session, Flux<WebSocketMessage> sendFlux, String sessionId, String chatID) {
@@ -225,7 +225,6 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
             log.error(e.getMessage());
         }
     }
-
 
 
 

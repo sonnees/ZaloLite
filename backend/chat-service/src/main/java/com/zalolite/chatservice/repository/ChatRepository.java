@@ -23,4 +23,5 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
     @Update(update = "{$set: {'conversations.$.type': ?2}}")
     Mono<Long> updateDelivery(String chatID, String messageID, String type);
 
+
 }
