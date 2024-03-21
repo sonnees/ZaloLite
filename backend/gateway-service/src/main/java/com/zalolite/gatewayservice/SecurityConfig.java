@@ -1,5 +1,10 @@
 package com.zalolite.gatewayservice;
 
+<<<<<<< HEAD
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
+=======
 import io.netty.resolver.DefaultAddressResolverGroup;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -11,10 +16,15 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
+>>>>>>> master
 
 @Configuration
 public class SecurityConfig {
     @Bean
+<<<<<<< HEAD
+    public RestTemplate template(){
+        return new RestTemplate();
+=======
     public AntPathMatcher pathMatcher(){
         return new AntPathMatcher();
     }
@@ -29,5 +39,6 @@ public class SecurityConfig {
     @LoadBalanced
     public WebClient.Builder loadBalancedWebClientBuilder(HttpClient httpClient) {
         return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
+>>>>>>> master
     }
 }

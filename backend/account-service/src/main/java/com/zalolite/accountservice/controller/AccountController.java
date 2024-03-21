@@ -6,7 +6,10 @@ import com.zalolite.accountservice.AccountRepository;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.jwt.AuthenticationManager;
 import lombok.AllArgsConstructor;
+<<<<<<< HEAD
+=======
 import lombok.extern.slf4j.Slf4j;
+>>>>>>> master
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,12 +23,19 @@ import reactor.core.publisher.Mono;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/account")
+<<<<<<< HEAD
+=======
 @Slf4j
+>>>>>>> master
 public class AccountController {
     private final AccountRepository accountRepository;
     private final ObjectMapper objectMapper;
 
+<<<<<<< HEAD
+    @PostMapping("/profile/{phoneNumber}")
+=======
     @GetMapping("/profile/{phoneNumber}")
+>>>>>>> master
     public Mono<ResponseEntity<String>> getProfileByPhoneNumber(@PathVariable String phoneNumber){
         return  ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
@@ -33,6 +43,20 @@ public class AccountController {
                     String userDetailsPhoneNumber = (String) authentication.getPrincipal();
                     return accountRepository.searchByPhoneNumber(phoneNumber)
                             .flatMap(account -> {
+<<<<<<< HEAD
+                                if (account == null)
+                                    return Mono.just(ResponseEntity.status(404).body("User not found"));
+                                String json = "";
+                                try {
+                                    json = objectMapper.writeValueAsString(account.getProfile(userDetailsPhoneNumber));
+                                } catch (JsonProcessingException e) {
+                                    return Mono.error(new RuntimeException(e));
+                                }
+                                return Mono.just(ResponseEntity.ok(json));
+                            });
+                }).flatMap(responseEntityMono -> responseEntityMono);
+    }
+=======
                                 try {
                                     return Mono.just(ResponseEntity.ok(objectMapper.writeValueAsString(account.getProfile(userDetailsPhoneNumber))));
                                 } catch (JsonProcessingException e) {
@@ -61,5 +85,6 @@ public class AccountController {
                 }).flatMap(responseEntityMono -> responseEntityMono);
     }
 
+>>>>>>> master
 }
 
