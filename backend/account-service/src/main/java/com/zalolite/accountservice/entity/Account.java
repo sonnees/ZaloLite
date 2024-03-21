@@ -19,14 +19,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-<<<<<<< HEAD
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-=======
 import java.util.*;
->>>>>>> master
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,11 +33,6 @@ public class Account implements UserDetails {
     @Indexed(unique = true)
     private String phoneNumber;
     private String pw;
-<<<<<<< HEAD
-    @Field(targetType = FieldType.STRING)
-    private UUID userID;
-=======
->>>>>>> master
     private Date createAt;
     private Type type;
     private Profile profile;
@@ -52,20 +40,6 @@ public class Account implements UserDetails {
     private Setting setting;
 
     public Account(AccountCreateDTO accountCreateDTO) {
-<<<<<<< HEAD
-        this.id = UUID.randomUUID();
-        this.phoneNumber = accountCreateDTO.getPhoneNumber();
-        this.pw = new BCryptPasswordEncoder().encode(accountCreateDTO.getPassword());
-        this.userID = UUID.randomUUID();
-        this.createAt = new Date();
-        this.type = Type.personal;
-        this.profile = new Profile(
-                accountCreateDTO.getUserName(),
-                accountCreateDTO.getGender(),
-                accountCreateDTO.getBirthday(),
-                accountCreateDTO.getGender() ? "https://cdn4.iconfinder.com/data/icons/circle-avatars-1/128/050_girl_avatar_profile_woman_suit_student_officer-2-1024.png" : "https://cdn1.vectorstock.com/i/1000x1000/23/70/man-avatar-icon-flat-vector-19152370.jpg",
-                "https://giaiphapzalo.com/wp-content/uploads/2021/09/pagebg-1-1920x705.jpg"
-=======
         Random random = new Random();
 
         this.id = UUID.randomUUID();
@@ -78,15 +52,13 @@ public class Account implements UserDetails {
                 accountCreateDTO.getUserName(),
                 accountCreateDTO.getGender(),
                 accountCreateDTO.getBirthday(),
-                accountCreateDTO.getGender() ?("https://zalolite.s3.amazonaws.com/nam"+ random.nextInt(1,3) +".jpg") : ("https://zalolite.s3.amazonaws.com/nu"+ random.nextInt(1,2) +".jpg"),
-                "https://zalolite.s3.amazonaws.com/background"+random.nextInt(1,5)+".jpg"
->>>>>>> master
-        );
+                accountCreateDTO.getGender() ? ("https://zalolite.s3.amazonaws.com/nam" + random.nextInt(1, 3) + ".jpg")
+                        : ("https://zalolite.s3.amazonaws.com/nu" + random.nextInt(1, 2) + ".jpg"),
+                "https://zalolite.s3.amazonaws.com/background" + random.nextInt(1, 5) + ".jpg");
         this.role = accountCreateDTO.getRole();
         this.setting = new Setting(
                 AllowMessaging.EVERYONE,
-                ShowBirthday.SHOW_DMY
-        );
+                ShowBirthday.SHOW_DMY);
     }
 
     @Override
@@ -94,14 +66,14 @@ public class Account implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public Profile getProfile(String phoneNumber){
-        if(this.phoneNumber.equals(phoneNumber))
+    public Profile getProfile(String phoneNumber) {
+        if (this.phoneNumber.equals(phoneNumber))
             return this.profile;
 
         Profile temp = this.profile;
-        switch (this.setting.getShowBirthday()){
+        switch (this.setting.getShowBirthday()) {
             case NO -> temp.setBirthday(null);
-            case SHOW_DM -> temp.setBirthday(new Date(0,temp.getBirthday().getMonth(),temp.getBirthday().getDay()));
+            case SHOW_DM -> temp.setBirthday(new Date(0, temp.getBirthday().getMonth(), temp.getBirthday().getDay()));
         }
         return temp;
     }
