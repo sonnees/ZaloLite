@@ -2,27 +2,23 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'reac
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 
-export default function MeScreen() {
+export default function Person() {
   let navigation = useNavigation();
   return (
     <View style={styles.container}>
       
       <View style={{flex: 1.2, backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignContent: "space-between"}}>
-        <View style={{flex: 0.2}}></View>
       <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
           <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/search.png")}></Image>
       </TouchableOpacity>
-      <TextInput style={{flex: 7, borderRadius: 5, backgroundColor: "#1E90FF", height: "70%", paddingLeft: "5%", paddingRight: "5%", marginTop: 7, color: "white"}} placeholder="Tìm kiếm"></TextInput>
+      <TextInput style={{flex: 7, borderRadius: 5, backgroundColor: "#1E90FF", height: "70%", paddingLeft: "7%", paddingRight: "7%", marginTop: 7, color: "white"}} placeholder="Tìm kiếm"></TextInput>
       <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
-          <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/settings.png")}
-             onStartShouldSetResponder={() => navigation.navigate('MeNavigator', { screen: 'SettingScreen' })}
-          ></Image>
+          <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/settings.png")}></Image>
         </TouchableOpacity>
-        <View style={{flex: 0.5}}></View>
       </View>
       <View style={{flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", alignItems: "center"}}>
         <View style={{flex: 0.75, flexDirection: "row"}} 
-          onStartShouldSetResponder={() => navigation.navigate('MeNavigator', { screen: 'ProfileScreen' })}
+          onStartShouldSetResponder={() => navigation.navigate("Profile")}
         > 
           <View style={{flex: 0.1}}></View>
           <Image style={{width: 50, height: 50,borderRadius: 50, resizeMode: "contain"}} source={require("../assets/avata.jpg")}></Image>
@@ -32,8 +28,8 @@ export default function MeScreen() {
             <Text style={{fontFamily: "Roboto", fontSize: 15, color: "#808080"}}>Xem trang cá nhân</Text>
           </View>
         </View>
-        <Image style={{width: "10%", height: 28, resizeMode: "contain", marginRight: -100}} source={require("../assets/transfer.png")}
-           onStartShouldSetResponder={() => navigation.navigate('MeNavigator', { screen: 'SwitchAccountScreen' })}
+        <Image style={{width: "10%", height: 28, resizeMode: "contain", marginRight: -85}} source={require("../assets/transfer.png")}
+          onStartShouldSetResponder={() => navigation.navigate("TranferAccount")}
         ></Image>
       </View>
       <View style={{flex: 0.2}}></View>

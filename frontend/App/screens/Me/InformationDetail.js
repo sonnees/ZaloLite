@@ -20,7 +20,7 @@ export default function InformationDetail() {
         <Image style={{width: 60, height: 60,borderRadius: 50, resizeMode: "contain"}} source={require("../assets/avata.jpg")}></Image>
         </View>
         <Image style={{position:"absolute",width: "15%", height: "10%", resizeMode: "contain",top: "10%"}} source={require("../assets/back1.png")}
-            onStartShouldSetResponder={() => navigation.navigate("InformationScreen")}
+            onStartShouldSetResponder={() => navigation.navigate("Information")}
         ></Image>
         <Text style={{position: "absolute",top: "70%",fontFamily: "Roboto", fontSize: 20, fontWeight: "bold", color: "white", paddingLeft: "25%" }}>Lê Hữu Bằng</Text>
         </View>
