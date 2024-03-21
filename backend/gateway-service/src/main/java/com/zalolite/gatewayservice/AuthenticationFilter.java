@@ -1,27 +1,5 @@
 package com.zalolite.gatewayservice;
 
-<<<<<<< HEAD
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-
-@Service
-@AllArgsConstructor
-@Slf4j
-public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
-
-    private JwtService jwtService;
-    private RestTemplate restTemplate;
-    AntPathMatcher pathMatcher = new AntPathMatcher();
-=======
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -44,7 +22,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
     @Autowired
     AntPathMatcher pathMatcher;
->>>>>>> master
 
     public AuthenticationFilter() {
         super(Config.class);
@@ -52,53 +29,29 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
     @Override
     public GatewayFilter apply(Config config) {
-<<<<<<< HEAD
-=======
         WebClient webClient = builder.build();
->>>>>>> master
-        return (exchange, chain)->{
+        return (exchange, chain) -> {
             String openApiEndpointPattern = "/api/v1/auth/**";
             String path = exchange.getRequest().getURI().getPath();
 
             boolean Match = pathMatcher.match(openApiEndpointPattern, path);
-            log.info("** Match: "+Match +" | "+exchange.getRequest().getURI().getPath());
+            log.info("** Match: " + Match + " | " + exchange.getRequest().getURI().getPath());
 
-            if(!Match){
+            if (!Match) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION))
                     throw new RuntimeException("missing authorization header");
-<<<<<<< HEAD
-                log.info("** AuthenticationFilter pass");
-                String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-                if (authHeader != null && authHeader.startsWith("Bearer "))
-                    authHeader = authHeader.substring(7);
-                try {
-                    jwtService.validateToken(authHeader);
-                } catch (Exception e) {
-                    System.out.println("invalid access...!");
-                    throw new RuntimeException("un authorized access to application");
-                }
-            }
-
-            return chain.filter(exchange);
-        };
-    }
-    public static class Config {
-
-    }
-
-=======
                 String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
                 if (token != null && token.startsWith("Bearer "))
                     token = token.substring(7);
 
-                log.info("** AuthenticationFilter enter | token: "+token);
+                log.info("** AuthenticationFilter enter | token: " + token);
 
                 return webClient.get()
                         .uri("http://ACCOUNT-SERVICE/api/v1/auth/check-token/" + token)
                         .retrieve()
                         .bodyToMono(Boolean.class)
                         .flatMap(isValidToken -> {
-                            log.info(isValidToken+"");
+                            log.info(isValidToken + "");
                             if (!isValidToken) {
                                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                                 return exchange.getResponse().setComplete();
@@ -120,9 +73,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         return -1;
     }
 
-
     public static class Config {
 
     }
->>>>>>> master
 }

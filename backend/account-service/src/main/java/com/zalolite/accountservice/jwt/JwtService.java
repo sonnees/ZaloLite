@@ -19,15 +19,11 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-<<<<<<< HEAD
-
-=======
->>>>>>> master
-    public String extractUsername(String token){
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T > claimsTFunction){
+    public <T> T extractClaim(String token, Function<Claims, T> claimsTFunction) {
         final Claims claims;
         try {
             claims = extractAllClaims(token);
@@ -37,7 +33,7 @@ public class JwtService {
         return claimsTFunction.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails){
+    public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         AtomicReference<String> a = new AtomicReference<>("");
@@ -48,30 +44,25 @@ public class JwtService {
         return generateToken(claims, userDetails);
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails){
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     public boolean isTokenExpired(String token) {
         Date expiration = extractClaim(token, Claims::getExpiration);
-        return expiration!= null && expiration.after(new Date(System.currentTimeMillis()));
+        return expiration != null && expiration.after(new Date(System.currentTimeMillis()));
     }
 
     public String generateToken(
-            Map<String, Object>  extractClaims,
-            UserDetails userDetails
-    ){
+            Map<String, Object> extractClaims,
+            UserDetails userDetails) {
         return Jwts
                 .builder()
                 .setClaims(extractClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-<<<<<<< HEAD
-                .setExpiration(new Date(System.currentTimeMillis()+1000*3600))
-=======
-                .setExpiration(new Date(System.currentTimeMillis()+1000*3600*30))
->>>>>>> master
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 3600 * 30))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
