@@ -2,57 +2,23 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvo
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
-import axios from 'axios';
-import { useRoute } from '@react-navigation/native';
 
-export default function RegisterACcountScreen() {
+export default function RegisterScreenDT() {
   let navigation = useNavigation();
   const [isChecked, setIsChecked] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('123');
-  
-  const route = useRoute();
-  const userName = route.params.userName;
-
-  const [gender, setGender] = useState(true);
-  const [birthday, setBirthday] = useState('2024-01-26');
-  const [role, setRole] = useState('USER');
-    const handleRegister = () => {
-    // Kiểm tra thông tin nhập vào
-    if (!phoneNumber.trim() || !password.trim() || !userName.trim()) {
-      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin');
-      return;
-    }
-
-    // Gửi yêu cầu đăng ký
-    axios.post('http://localhost:8081/api/v1/auth/register', {
-      phoneNumber,
-      password,
-      userName,
-      gender,
-      birthday,
-      role
-    })
-      .then(response => {
-        navigation.navigate('TabNavigator', { screen: 'Messages' });
-      })
-      .catch(error => {
-        Alert.alert('Lỗi', 'Đăng ký không thành công. Vui lòng thử lại sau.');
-        console.error('Đăng ký không thành công:', error);
-      });
-  };
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"} 
+      behavior={Platform.OS === "ios" ? "padding" : "height"} // Use "padding" for iOS and "height" for Android
     >
       <View style={styles.container}>
+      <View style={{ flex: 0.5, backgroundColor: "#0000FF" }}></View>
         <View style={{ flex: 0.6, backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center" }}>
           <Image
             style={{ width: "15%", height: "40%", resizeMode: "contain" }}
             source={require("../assets/back1.png")}
-            onStartShouldSetResponder={() => navigation.navigate("RegisterScreen")}
+            onStartShouldSetResponder={() => navigation.navigate("RegisterTVScreen")}
           ></Image>
           <Text style={{ fontSize: 16, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>Tạo tài khoản</Text>
         </View>
@@ -72,8 +38,6 @@ export default function RegisterACcountScreen() {
               marginRight: "3%"
             }}
             placeholder='Nhập số điện thoại'
-            value={phoneNumber}
-            onChangeText={text => setPhoneNumber(text)}
           />
 
           <CheckBox
@@ -94,10 +58,11 @@ export default function RegisterACcountScreen() {
         </View>
 
          <View style={{ flex: 5 }}></View>
-         <View style={{flex: 2, justifyContent: "center", paddingLeft: "70%" }}>
-          <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}} onPress={handleRegister}>
-            <Image style={{width: "70%", height: "40%", resizeMode: "contain"}} source={require("../assets/right-arrow.png")}></Image>
-          </TouchableOpacity>
+        <View style={{ flex: 2, justifyContent: "center", alignItems: "flex-end", marginRight: "-80%" }}>
+          <Image
+            style={{ width: "100%", height: "30%", resizeMode: "contain" }}
+            source={require("../assets/right-arrow.png")}
+          ></Image>
         </View>
       </View>
     </KeyboardAvoidingView>

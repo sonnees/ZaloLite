@@ -2,24 +2,22 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'reac
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 
-export default function InformationScreen() {
+export default function Information() {
   let navigation = useNavigation();
   return (
     <View style={styles.container}>
       
       <View style={{flex: 1.2, backgroundColor: "#1E90FF", flexDirection: "row",  alignItems:"center"}}>
         <Image style={{width: "15%", height: "40%", resizeMode: "contain"}} source={require("../assets/back1.png")}
-            onStartShouldSetResponder={() => navigation.navigate("ProfileScreen")}
+            onStartShouldSetResponder={() => navigation.navigate("Profile")}
         ></Image>
         <Text style={{fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color:"white"}}>Lê Hữu Bằng</Text>
       </View>
       <View style={{flex: 1, backgroundColor: "#FFFFFF",justifyContent:"center",  paddingLeft: "5%",}}>
-        <Text style={{fontSize: 14, fontWeight: "bold", fontFamily: "Roboto"}}
-          onStartShouldSetResponder={() => navigation.navigate("InformationDetailScreen")}
-        >Thông tin</Text>
+        <Text style={{fontSize: 14, fontWeight: "bold", fontFamily: "Roboto"}}>Thông tin</Text>
       </View>
       <View style={{flex: 0.05}}></View>
-      <View style={{flex: 1, backgroundColor: "#FFFFFF",justifyContent:"center",  paddingLeft: "5%",}}>
+      <View style={{flex: 1, backgroundColor: "#FFFFFF",justifyContent:"center",  paddingLeft: "5%"}}>
         <Text style={{fontSize: 14, fontWeight: "bold", fontFamily: "Roboto"}}>Đổi ảnh đại diện</Text>
       </View>
       <View style={{flex: 0.05}}></View>
