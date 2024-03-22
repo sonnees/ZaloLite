@@ -25,20 +25,20 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
 
     @Query(value = "{'_id': ?0}")
     @Update("{$push:{'friendRequests': ?1}}")
-    Mono<Long> updateFriendRequests(String id, FriendRequest friendRequest);
+    Mono<Long> appendFriendRequest(String id, FriendRequest friendRequest);
 
     @Query(value = "{'_id': ?0}")
-    @Update("{$pull:{'friendRequests':{userID: ?1}}}")
-    Mono<Long> updateFriendRequestsRemove(String sender, String receiver);
+    @Update("{$pull: {friendRequests: {userID: ?1}}}")
+    Mono<Long> removeFriendRequest(String sender, String receiver);
 
-    @Query(value = "{'_id': ?0,'conversations.chatID': {$in: [?0, ?1]}}")
-    @Update("[{$set: {'conversations.$.type': ?2}}]")
+    @Query(value = "{'_id': ?0, 'conversations.chatID': { $in: [?0, ?1] }}")
+    @Update(update = "{$set: {'conversations.$.type': ?2}}")
     Mono<Long> updateTypeConversation(String senderID, String receiverID, String type);
 
     @Query(value = "{'_id': ?0}")
     @Update("{$push:{'conversations': ?1}}")
-    Mono<Long> updateConversations(String id, Conversation conversation);
+    Mono<Long> appendConversation(String id, Conversation conversation);
 
-    @Query(value = "{_id:?0,'conversations.chatID': {$in: [?0,?1]}}")
-    Mono<User> searchConversation(String senderID, String receiverID);
+    @Query(value = "{_id:?0,'conversations.chatID': {$in: [?1,?2]}}")
+    Mono<User> searchConversation(String senderID, String chatId1, String chatId2);
 }
