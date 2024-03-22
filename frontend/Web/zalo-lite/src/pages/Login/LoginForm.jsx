@@ -74,6 +74,7 @@ export default function LoginForm() {
         console.log('API call successful');
       } else {
         // Xử lý khi API trả về lỗi
+        navigate('/auth/login');
         console.error('API call failed');
       }
     } catch (error) {
@@ -194,8 +195,8 @@ export default function LoginForm() {
   
         </div>
 
-        <div className='m-3'>
-          <p className='text-center text-blue-600 text-xs m-12'> 
+        <div className='m-3 mt-10'>
+          <p className=' text-blue-600 text-xs text-center'> 
             <a className='font-semibold' href="#">Tiếng Việt</a> <span> </span>
             <a className='font-thin' href="#">English </a>
           </p>
