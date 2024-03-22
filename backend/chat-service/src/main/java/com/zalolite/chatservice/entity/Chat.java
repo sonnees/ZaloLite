@@ -22,6 +22,8 @@ public class Chat {
     @Field(targetType = FieldType.STRING)
     @Id
     private UUID id;
+    private List<Delivery> deliveries;
+    private List<Delivery> reads;
     private List<ChatActivity> chatActivity;
 
     public Chat(String id) {

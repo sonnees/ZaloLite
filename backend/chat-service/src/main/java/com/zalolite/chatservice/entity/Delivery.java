@@ -16,5 +16,7 @@ import java.util.UUID;
 public class Delivery {
     @Field(targetType = FieldType.STRING)
     private UUID userID;
+    @Field(targetType = FieldType.STRING)
+    private UUID messageID;
     private String userAvatar;
 }

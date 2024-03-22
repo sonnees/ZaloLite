@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -161,7 +162,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                 log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
 
                                 return switch (root.getTCM()) {
-                                    case TCM01 -> {
+                                    case TCM01 -> { // message
                                         MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
                                         yield chatHandleWebSocket
                                                 .appendChat(chatID,obj)
@@ -170,6 +171,44 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                     sendMessageToClient(sessionId, notify);
                                                     sendMessageToAllClients(sessionId,obj);
                                                 }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TCM02 -> { // message delivery
+                                        MessageDeliveryDTO obj = objectMapper.readValue(message, MessageDeliveryDTO.class);
+                                        yield chatHandleWebSocket
+                                                .changeDeliveryChat(chatID, obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TCM03 -> { // message read
+                                        MessageDeliveryDTO obj = objectMapper.readValue(message, MessageDeliveryDTO.class);
+                                        yield chatHandleWebSocket
+                                                .changeReadChat(UUID.fromString(chatID), obj.getUserID(), obj.getMessageID(), obj.getUserAvatar())
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
                                                 ))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
