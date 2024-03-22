@@ -11,11 +11,11 @@ export default function ProfileScreen() {
       source={require("../assets/cover_Image.jpg")}
     >
       <View style={{ flex: 1,flexDirection: "row",}}>
-        <Image style={{width: "20%", height: "100%", resizeMode: "center", marginLeft: "5%", marginTop: "-21%", marginLeft: "-3%"}} source={require("../assets/back.png")}
+        <Image style={{width: "7%", height: "30%", resizeMode: "contain", marginLeft:"5%", marginTop: "5%" }} source={require("../assets/back1.png")}
           onStartShouldSetResponder={() => navigation.navigate('TabNavigator',{ screen: 'Me' })}
         ></Image>
         <View style={{flex: 1.5}}></View>
-        <Image style={{width: "20%", height: "100%", resizeMode: "center", marginLeft: "5%", marginTop: "-21%"}} source={require("../assets/more.png")}
+        <Image style={{width: "7%", height: "30%", resizeMode: "contain", marginTop: "5%", marginRight: "5%"}} source={require("../assets/more.png")}
           onStartShouldSetResponder={() => navigation.navigate("InformationScreen")}
         ></Image>
       </View>
@@ -25,7 +25,7 @@ export default function ProfileScreen() {
         <View style={{flex: 0.05}}></View>
         <View style={{ flexDirection: "row" }}>
           <Image
-            style={{ width: "17%", height: "80%", resizeMode: "center", marginLeft: "15%", marginRight: "-4%"}}
+            style={{ width: "17%", height: "80%", resizeMode: "contain", marginLeft: "15%", marginRight: "-4%"}}
             source={require("../assets/pencil.png")}
           ></Image>
           <Text style={{fontSize: 15, fontFamily: "Roboto", color: "blue", }}>Cập nhật giới thiệu bản thân</Text>
@@ -49,7 +49,7 @@ export default function ProfileScreen() {
       <View
         style={{
           position: "absolute",
-          top: "25%",
+          top: "27%",
           justifyContent: "center",
           alignItems: "center",
           width: "100%",
