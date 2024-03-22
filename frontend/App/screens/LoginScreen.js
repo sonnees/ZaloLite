@@ -20,7 +20,7 @@ export default function LoginScreen() {
       navigation.navigate('TabNavigator'); 
     } catch (error) {
       console.error('Đăng nhập thất bại:', error);
-      Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại số điện thoại và mật khẩu');
+      // Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại số điện thoại và mật khẩu');
     }
   };
   

@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, TextInput, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, ScrollView,Text } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native'
 
 const MessagesScreen = () => {
+  let navigation = useNavigation();
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -16,7 +18,9 @@ const MessagesScreen = () => {
               <Icon name='search1' size={30} color={'white'} />
             </TouchableOpacity>
             <TextInput style={{ flex: 7, borderRadius: 5, backgroundColor: "#1E90FF", height: 40, paddingHorizontal: 10 }} placeholder="Tìm kiếm" />
-            <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'5%'}}>
+            <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'5%'}}
+                onPress={() => navigation.navigate('MeNavigator', { screen: 'QRScreen' })}
+            >
               <Image style={{ width: 30, height: 30, resizeMode: "contain" }} source={require("../assets/qr-code.png")} />
             </TouchableOpacity>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'2%'  }}>

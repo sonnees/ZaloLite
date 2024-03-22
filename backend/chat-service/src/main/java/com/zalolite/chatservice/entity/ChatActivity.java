@@ -50,4 +50,14 @@ public class ChatActivity {
 
         this.status = new Status();
     }
+
+    public ChatActivity(MessageAppendDTO m) {
+        this.userID = m.getUserID();
+        this.parentID = m.getParentID();
+        this.contents = m.getContents();
+        this.timestamp = m.getTimestamp();
+
+        this.messageID = UUID.randomUUID();
+        this.status = new Status(m.getUserID(), m.getUserAvatar());
+    }
 }

@@ -6,8 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+<<<<<<< HEAD
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
+=======
+>>>>>>> master
 
 import java.util.Date;
 import java.util.List;
@@ -18,11 +21,17 @@ import java.util.UUID;
 @Setter
 @ToString
 public class MessageAppendDTO extends ChatMessageDTO{
+<<<<<<< HEAD
     @Field(targetType = FieldType.STRING)
     private UUID userID;
     private String userAvatar;
     private Date timestamp;
     @Field(targetType = FieldType.STRING)
+=======
+    private UUID userID;
+    private String userAvatar;
+    private Date timestamp;
+>>>>>>> master
     private UUID parentID;
     private List<Content> contents;
     private Status status;
