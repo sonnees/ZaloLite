@@ -7,6 +7,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class OneFieldDTO {
+public class FieldDTO {
     private String field;
 }
