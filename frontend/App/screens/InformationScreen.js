@@ -14,9 +14,11 @@ export default function InformationScreen() {
         <Text style={{fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color:"white"}}>Lê Hữu Bằng</Text>
       </View>
       <View style={{flex: 1, backgroundColor: "#FFFFFF",justifyContent:"center",  paddingLeft: "5%",}}>
-        <Text style={{fontSize: 14, fontWeight: "bold", fontFamily: "Roboto"}}
-          onStartShouldSetResponder={() => navigation.navigate("InformationDetailScreen")}
-        >Thông tin</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("InformationDetailScreen")}>
+          <Text style={{fontSize: 14, fontWeight: "bold", fontFamily: "Roboto"}}
+          >Thông tin</Text>
+        </TouchableOpacity>
+        
       </View>
       <View style={{flex: 0.05}}></View>
       <View style={{flex: 1, backgroundColor: "#FFFFFF",justifyContent:"center",  paddingLeft: "5%",}}>
