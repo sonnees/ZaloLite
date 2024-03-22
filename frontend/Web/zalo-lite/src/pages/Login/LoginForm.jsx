@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QR_Test from './../../assets/QR_Test.png';
+// import { WebSocket } from 'vite';
 
 export default function LoginForm() {
   const [isSelectQR, setIsSelectQR] = useState(true)
@@ -10,6 +11,7 @@ export default function LoginForm() {
 
   const [phoneNumber, setPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
+  const [socket, setSocket] = useState(null);
 
 
 
@@ -32,9 +34,23 @@ export default function LoginForm() {
         }
 
         const data = await response.json();
-        console.log(data);
-        setQrCodeUrl('data:image/png;base64,'+data.field); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
-        console.log(qrCodeUrl);
+        // console.log(data);
+        setQrCodeUrl('data:image/png;base64,'+data.field2); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
+        // console.log(qrCodeUrl);
+        //=========SOCKET=========
+        const socketLink = data.field1;
+        const newSocket = new WebSocket(data.field1);
+        console.log(data.field1);
+        newSocket.onopen = () => {
+          console.log('WebSocket connected');
+        };
+        
+        setSocket(newSocket);
+        return () => {
+          newSocket.close();
+        };
+        //========================
+
       } catch (error) {
         console.error('Error fetching QR code:', error.message);
       }
@@ -70,7 +86,7 @@ export default function LoginForm() {
 
       if (response.ok) {
         // Xử lý khi API trả về thành công
-        navigate('/');
+        navigate('/app');
         console.log('API call successful');
       } else {
         // Xử lý khi API trả về lỗi
@@ -84,7 +100,45 @@ export default function LoginForm() {
     }
   };
 //===========================================
+  const handleReceiveToken = () => {
+    socket.onmessage = async (event) => {
+      const data = JSON.parse(event.data);
+      if (data) {
+        console.log('Received token:', data);
+        // Xử lý token nhận được từ React Native
+        try {
+          const response = await fetch('http://localhost:8081/api/v1/auth/authenticate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({phoneNumber: data.phoneNumber, password: data.password}),
+            // body: JSON.stringify({
+            //   "phoneNumber": "0123456789",
+            //   "password": "123"
+            // }),
+          });
+    
+          if (response.ok) {
+            // Xử lý khi API trả về thành công
+            navigate('/app');
+            console.log('API call successful');
+          } else {
+            // Xử lý khi API trả về lỗi
+            navigate('/auth/login');
+            console.error('API call failed');
+          }
+        } catch (error) {
+          // Xử lý lỗi khi gọi API
+          navigate('/');
+          console.error('Error calling API:', error);
+        }
+        //======================================
 
+        
+      }
+    };
+  }
 
   return (
     <div className='w-full'>
@@ -174,7 +228,7 @@ export default function LoginForm() {
               </ul>
 
               <div className='flex flex-col items-center m-6 mx-20 border-2 rounded-lg' >
-                <img src={qrCodeUrl} alt='QR' className='my-3' style={{width:200, height:200, borderRadius: 5}} />
+                <img src={qrCodeUrl} onLoad={handleReceiveToken} alt='QR' className='my-3' style={{width:200, height:200, borderRadius: 5}} />
 
                 <p className="text-base text-center font-normal text-blue-600 w-60"> 
                   Chỉ dùng để đăng nhập
