@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +30,9 @@ public class ChatActivity {
     @Field(targetType = FieldType.STRING)
     private UUID parentID;
     private List<Content> contents;
-    private Status status;
+    @Field(targetType = FieldType.STRING)
+    private List<UUID> hidden;
+    private Boolean recall;
 
     public ChatActivity(ChatActivityDTO chatActivityDTO) {
         this.userID = chatActivityDTO.getUserID();
@@ -38,7 +41,8 @@ public class ChatActivity {
 
         this.timestamp = new Date();
         this.messageID = UUID.randomUUID();
-        this.status = new Status();
+        this.hidden = new ArrayList<>();
+        this.recall = false;
     }
 
     public ChatActivity(MessageAppendDTO m, UUID messageID) {
@@ -47,8 +51,8 @@ public class ChatActivity {
         this.contents = m.getContents();
         this.timestamp = m.getTimestamp();
         this.messageID = messageID;
-
-        this.status = new Status();
+        this.hidden = new ArrayList<>();
+        this.recall = false;
     }
 
     public ChatActivity(MessageAppendDTO m) {
@@ -58,6 +62,7 @@ public class ChatActivity {
         this.timestamp = m.getTimestamp();
 
         this.messageID = UUID.randomUUID();
-        this.status = new Status(m.getUserID(), m.getUserAvatar());
+        this.hidden = new ArrayList<>();
+        this.recall = false;
     }
 }
