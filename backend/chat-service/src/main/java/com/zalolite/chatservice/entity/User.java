@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,5 +31,6 @@ public class User {
         friendRequests = new ArrayList<>();
         conversations = new ArrayList<>();
     }
+
 
 }
