@@ -17,23 +17,23 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class MessageAppendDTO extends ChatMessageDTO{
+public class MessageDeliveryDTO extends ChatMessageDTO{
     @Field(targetType = FieldType.STRING)
     private UUID userID;
-    private String userAvatar;
-    private Date timestamp;
     @Field(targetType = FieldType.STRING)
-    private UUID parentID;
-    private List<Content> contents;
-    private Status status;
+    private UUID messageID;
+    private String userAvatar;
 
-    public MessageAppendDTO(UUID id, TypeChatMessage TCM, UUID userID, String userAvatar, Date timestamp, UUID parentID, List<Content> contents, Status status) {
+    public MessageDeliveryDTO(UUID id, TypeChatMessage TCM, UUID userID, UUID messageID, String userAvatar) {
         super(id, TCM);
         this.userID = userID;
+        this.messageID = messageID;
         this.userAvatar = userAvatar;
-        this.timestamp = timestamp;
-        this.parentID = parentID;
-        this.contents = contents;
-        this.status = status;
+    }
+
+    public MessageDeliveryDTO(UUID userID,UUID messageID, String userAvatar) {
+        this.messageID = messageID;
+        this.userAvatar = userAvatar;
+        this.userID = userID;
     }
 }

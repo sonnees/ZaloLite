@@ -11,20 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Status {
-    private List<Delivery> delivery;
-    private List<Delivery> read;
     @Field(targetType = FieldType.STRING)
     private List<UUID> hidden;
     private Boolean recall;
 
-    public Status(UUID id, String avt) {
-        this.delivery = List.of(new Delivery(id,avt));
-        this.read = List.of(new Delivery(id,avt));
+    public Status() {
         this.hidden = new ArrayList<>();
         this.recall = false;
     }

@@ -24,6 +24,8 @@ public class Conversation {
     private Type type;
     private Date connectAt;
     private Date lastUpdateAt;
+    private List<Delivery> deliveries;
+    private List<Delivery> reads;
     private List<ChatActivity> topChatActivity;
 
     public Conversation(UUID chatID, String chatName, String chatAvatar, Type type) {
@@ -33,6 +35,8 @@ public class Conversation {
         this.type = type;
         this.connectAt = new Date();
         this.lastUpdateAt = new Date();
+        this.deliveries = new ArrayList<>();
+        this.reads = new ArrayList<>();
         this.topChatActivity = new ArrayList<>();
     }
 }

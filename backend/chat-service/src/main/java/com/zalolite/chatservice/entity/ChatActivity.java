@@ -24,7 +24,7 @@ public class ChatActivity {
     private UUID messageID;
     @Field(targetType = FieldType.STRING)
     private UUID userID;
-//    @Indexed(unique = true)
+    @Indexed(unique = true, sparse = true)
     private Date timestamp;
     @Field(targetType = FieldType.STRING)
     private UUID parentID;
@@ -38,16 +38,16 @@ public class ChatActivity {
 
         this.timestamp = new Date();
         this.messageID = UUID.randomUUID();
-        this.status = new Status(userID,chatActivityDTO.getUserAvatar());
+        this.status = new Status();
     }
 
-    public ChatActivity(MessageAppendDTO m) {
+    public ChatActivity(MessageAppendDTO m, UUID messageID) {
         this.userID = m.getUserID();
         this.parentID = m.getParentID();
         this.contents = m.getContents();
         this.timestamp = m.getTimestamp();
+        this.messageID = messageID;
 
-        this.messageID = UUID.randomUUID();
-        this.status = new Status(m.getUserID(), m.getUserAvatar());
+        this.status = new Status();
     }
 }

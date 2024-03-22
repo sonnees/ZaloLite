@@ -8,7 +8,8 @@ import com.google.zxing.common.BitMatrix;
 import com.zalolite.accountservice.AccountRepository;
 import com.zalolite.accountservice.dto.AccountCreateDTO;
 import com.zalolite.accountservice.dto.AccountLoginDTO;
-import com.zalolite.accountservice.dto.OneFieldDTO;
+import com.zalolite.accountservice.dto.Field2DTO;
+import com.zalolite.accountservice.dto.FieldDTO;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.entity.Profile;
 import com.zalolite.accountservice.jwt.JwtService;
@@ -18,14 +19,9 @@ import org.imgscalr.Scalr;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
@@ -86,7 +82,7 @@ public class AuthController {
                     if (!new BCryptPasswordEncoder().matches(accountLoginDTO.getPassword(), account.getPassword()))
                         return Mono.just(ResponseEntity.status(401).body(""));
                     String token = jwtService.generateToken(account);
-                    OneFieldDTO oneFieldDTO = new OneFieldDTO(token);
+                    FieldDTO oneFieldDTO = new FieldDTO(token);
                     try {
                         return Mono.just(ResponseEntity.status(200).body(objectMapper.writeValueAsString(oneFieldDTO)));
                     } catch (JsonProcessingException e) {
@@ -133,9 +129,9 @@ public class AuthController {
             byte[] imageBytes = outputStream.toByteArray();
             String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
-            OneFieldDTO oneFieldDTO = new OneFieldDTO(base64Image);
+            Field2DTO dto = new Field2DTO(endpointWebSocket, base64Image);
 
-            return ResponseEntity.ok().body(objectMapper.writeValueAsString(oneFieldDTO));
+            return ResponseEntity.ok().body(objectMapper.writeValueAsString(dto));
 
         } catch (Exception e) {
             log.error("***" + e);

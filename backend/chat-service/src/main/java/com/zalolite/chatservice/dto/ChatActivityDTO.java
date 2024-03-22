@@ -19,8 +19,10 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ChatActivityDTO {
+    @Field(targetType = FieldType.STRING)
     private UUID userID;
     private String userAvatar;
+    @Field(targetType = FieldType.STRING)
     private UUID parentID;
     private List<Content> contents;
 }
