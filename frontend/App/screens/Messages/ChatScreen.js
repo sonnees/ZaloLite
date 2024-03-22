@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 import { View, Text, SafeAreaView, StyleSheet, Image, ScrollView,TouchableOpacity  } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
@@ -79,19 +78,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
-=======
-import React, { useState } from 'react';
-import { Modal, View, Text, Button, SafeAreaView } from 'react-native';
-
-const MyModal = () => {
-  const [modalVisible, setModalVisible] = useState(false);
-
-  return (
-    <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        
-    </SafeAreaView>
-  );
-};
-
-export default MyModal;
->>>>>>> 77b5ea3ec481465807cfadbd123fec06e229858c

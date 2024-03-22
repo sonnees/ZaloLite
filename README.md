@@ -5,14 +5,20 @@
 
 <hr>
 
+
 # Init
 ### Import module
 Cần cấu hình các `*-service` và `*-server` để IDE hiểu folder nào là module của dự án microservice.  <br>
 Đề xuất: `File > Project Structure > Modules > + > Import Module > select folder`
+
+### Config Mongodb
+Cần chạy service tại `port 27017` 
+
 ### Run Application
 Chạy các file sau theo thứ tự: <br>
 - `EurekaServerApplication.java` <br>
 - `AccountServiceApplication.java` <br>
+- `ChatServiceApplication.java` <br>
 - `GatewayServiceApplication.java` <br>
 
 ## API & Data Transfer Object
@@ -79,7 +85,7 @@ HTTP 409
   <summary>👇 Gửi yêu cầu cấp quyền </summary> 
   <hr> 
   
-`Method GET` : http://localhost:8081/api/v1/auth/authenticate <br>
+`Method POST` : http://localhost:8081/api/v1/auth/authenticate <br>
 ```
 http://localhost:8081/api/v1/auth/authenticate
 ```
