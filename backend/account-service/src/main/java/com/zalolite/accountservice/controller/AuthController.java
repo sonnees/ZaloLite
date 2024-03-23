@@ -110,14 +110,12 @@ public class AuthController {
 
     @GetMapping("/authenticate/qr-code")
     public ResponseEntity<String> loginQRCode() {
-        UUID uuid = UUID.randomUUID();
-        String endpointWebSocket = "ws://localhost:8081/ws/auth/" + uuid;
+        String endpointWebSocket = UUID.randomUUID().toString();
         try {
             int width = 200;
             int height = 200;
             BitMatrix matrix = new MultiFormatWriter().encode(endpointWebSocket, BarcodeFormat.QR_CODE, width, height);
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
@@ -128,11 +126,8 @@ public class AuthController {
             ImageIO.write(scaledImage, "png", outputStream);
             byte[] imageBytes = outputStream.toByteArray();
             String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-
             Field2DTO dto = new Field2DTO(endpointWebSocket, base64Image);
-
             return ResponseEntity.ok().body(objectMapper.writeValueAsString(dto));
-
         } catch (Exception e) {
             log.error("***" + e);
             return ResponseEntity.status(500).body("Gen QR code error");
