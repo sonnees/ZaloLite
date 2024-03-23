@@ -19,4 +19,5 @@ public class Delivery {
     @Field(targetType = FieldType.STRING)
     private UUID messageID;
     private String userAvatar;
+    private String userName;
 }

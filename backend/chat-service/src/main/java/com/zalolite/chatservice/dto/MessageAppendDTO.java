@@ -20,15 +20,17 @@ public class MessageAppendDTO extends ChatMessageDTO{
     @Field(targetType = FieldType.STRING)
     private UUID userID;
     private String userAvatar;
+    private String userName;
     private Date timestamp;
     @Field(targetType = FieldType.STRING)
     private UUID parentID;
     private List<Content> contents;
 
-    public MessageAppendDTO(UUID id, TypeChatMessage TCM, UUID userID, String userAvatar, Date timestamp, UUID parentID, List<Content> contents) {
+    public MessageAppendDTO(UUID id, TypeChatMessage TCM, UUID userID, String userAvatar, String userName, Date timestamp, UUID parentID, List<Content> contents) {
         super(id, TCM);
         this.userID = userID;
         this.userAvatar = userAvatar;
+        this.userName = userName;
         this.timestamp = timestamp;
         this.parentID = parentID;
         this.contents = contents;
