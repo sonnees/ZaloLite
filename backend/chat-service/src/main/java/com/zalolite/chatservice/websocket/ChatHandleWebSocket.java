@@ -43,7 +43,7 @@ public class ChatHandleWebSocket {
 
     public Mono<Void> appendChat(String chatID, MessageAppendDTO info){
         log.info("** appendChat: {} {} {} {}",info.getId(), chatID, info.getUserID(), info.getContents().get(0).getValue());
-        UUID messageID = UUID.randomUUID();
+        UUID messageID = info.getId();
         return chatRepository.appendChatActivityByIDChat(chatID, new ChatActivity(info,messageID))
                 .flatMap(aLong -> {
                     if(aLong<=0) return Mono.error(() -> new Throwable("appendChatActivityByIDChat failed"));
