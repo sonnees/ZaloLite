@@ -25,16 +25,43 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
     Mono<Long> appendDelivery(String chatID, Delivery delivery);
 
     @Query(value = "{'_id': ?0}")
-    @Update("{$pull:{deliveries: {userID: ?1}}}")
-    Mono<Long> removeDelivery(String chatID, String userID);
-
-    @Query(value = "{'_id': ?0}")
     @Update("{$push:{'reads': ?1}}")
     Mono<Long> appendRead(String chatID, Delivery delivery);
 
+    @Query(value = "{'_id': ?0, 'deliveries.userID': ?1}")
+    Mono<Chat> searchDeliveryByUserID(String chatID, String userID);
+
+    @Query(value = "{'_id': ?0, 'reads.userID': ?1}")
+    Mono<Chat> searchReadByUserID(String chatID, String userID);
+
+    @Query(value = "{'_id': ?0, 'deliveries.userID': ?1}")
+    @Update(update = "{$set: {'deliveries.$.messageID': ?2}}")
+    Mono<Long> changeDelivery(String chatID, String userID, String messageID);
+
+    @Query(value = "{'_id': ?0, 'reads.userID': ?1}")
+    @Update(update = "{$set: {'reads.$.messageID': ?2}}")
+    Mono<Long> changeRead(String chatID, String userID, String messageID);
+
+    @Query(value = "{'_id': ?0}")
+    @Update("{$pull:{deliveries: {messageID: ?1}}}")
+    Mono<Long> removeDelivery(String chatID, String messageID);
+
+    @Query(value = "{'_id': ?0, 'reads.userID': ?1}")
+    @Update(update = "[{$setOnInsert: {'reads.$': ?2}} ,{$upsert:true}]")
+    Mono<Long> appendRead(String chatID, String userID, Delivery delivery);
+
+    @Query(value = "{'_id': ?0}")
+    @Update("{$pull:{reads: {messageID: ?1}}}")
+    Mono<Long> removeRead(String chatID, String messageID);
+
+    @Query(value = "{_id: ?0, 'chatActivity.messageID': ?2}")
+    @Update("{$push:{'chatActivity.$.hidden': ?1}}")
+    Mono<Long> appendHiddenMessage(String chatID, String userID, String messageID);
+
     @Query(value = "{'_id': ?0, 'chatActivity.messageID': ?1}")
-    @Update(update = "{$set: {'conversations.$.type': ?2}}")
-    Mono<Long> updateDelivery(String chatID, String messageID, String type);
+    @Update(update = "{$set: {'chatActivity.$.recall': true}}")
+    Mono<Long> recallMessage(String chatID, String messageID);
 
-
+    @Query(value = "{_id:?0}", fields = "{chatActivity: {$slice: -10}}")
+    Mono<Chat> getChatTop10(String chatID);
 }

@@ -1,4 +1,5 @@
 package com.zalolite.chatservice.dto;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,32 +13,20 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class MessageDeliveryDTO extends ChatMessageDTO{
+public class MessageHiddenDTO extends ChatMessageDTO{
     @Field(targetType = FieldType.STRING)
     private UUID userID;
     @Field(targetType = FieldType.STRING)
     private UUID messageID;
-    private String userAvatar;
 
-    public MessageDeliveryDTO(UUID id, TypeChatMessage TCM, UUID userID, UUID messageID, String userAvatar) {
+    public MessageHiddenDTO(UUID id, TypeChatMessage TCM, UUID userID, UUID messageID) {
         super(id, TCM);
         this.userID = userID;
         this.messageID = messageID;
-        this.userAvatar = userAvatar;
     }
 
-    public MessageDeliveryDTO(UUID userID,UUID messageID, String userAvatar) {
+    public MessageHiddenDTO(UUID userID, UUID messageID) {
         this.messageID = messageID;
-        this.userAvatar = userAvatar;
         this.userID = userID;
     }
-
-    public MessageDeliveryDTO(MessageAppendDTO m, UUID messageID) {
-        super(m.getId(), m.getTCM());
-        this.userID = m.getUserID();
-        this.messageID = messageID;
-        this.userAvatar = m.getUserAvatar();
-    }
-
-
 }

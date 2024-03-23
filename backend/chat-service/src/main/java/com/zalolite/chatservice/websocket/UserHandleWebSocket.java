@@ -44,17 +44,11 @@ public class UserHandleWebSocket {
         // add friend request for sender
         return userRepository.appendFriendRequest(receiver.getUserID()+"",sender)
                 .flatMap(aLong -> {
-                    if(aLong<=0){
-                        log.error("** sender updateFriendRequests failed");
-                        return Mono.error(() -> new Throwable("failed"));
-                    }
+                    if(aLong<=0) return Mono.error(() -> new Throwable("appendFriendRequest sender failed"));
                     // add friend request for receiver
                     return userRepository.appendFriendRequest(sender.getUserID() + "", receiver)
                             .flatMap(aLong1 -> {
-                                if(aLong1<=0){
-                                    log.error("** receiver updateFriendRequests failed");
-                                    return Mono.error(() -> new Throwable("failed"));
-                                }
+                                if(aLong1<=0) return Mono.error(() -> new Throwable("appendFriendRequest receiver failed"));
                                 // check exist conversation
                                 String chatID1 = info.getSenderID().toString().substring(0,18)+info.getReceiverID().toString().substring(18,36);
                                 String chatID2 = info.getReceiverID().toString().substring(0,18)+info.getSenderID().toString().substring(18,36);
@@ -66,24 +60,9 @@ public class UserHandleWebSocket {
                                         .flatMap(user ->{
                                             log.info("** conversation exist");
                                             return updateTypeConversation(info.getSenderID() + "", info.getReceiverID() + "", Type.REQUESTS+"",Type.REQUESTED+"");
-                                        })
-                                        .onErrorResume(e -> {
-                                            log.error("** ",e);
-                                            return Mono.empty();
-                                        })
-                                        .then();
-                            })
-                            .onErrorResume(e -> {
-                                log.error("** ",e);
-                                return Mono.empty();
-                            })
-                            .then();
-                })
-                .onErrorResume(e -> {
-                    log.error("** ",e);
-                    return Mono.empty();
-                })
-                .then();
+                                        });
+                            });
+                });
     }
 
     public Mono<Void> removeFriendRequests(FriendRequestRemoveDTO info){
@@ -91,35 +70,19 @@ public class UserHandleWebSocket {
         // remove friend request for sender
         return userRepository.removeFriendRequest(info.getSenderID()+"",info.getReceiverID()+"")
                 .flatMap(aLong -> {
-                    if(aLong<=0) {
-                        log.error("** sender updateFriendRequestsRemove failed");
-                        return Mono.error(() -> new Throwable("failed"));
-                    }
+                    if(aLong<=0) return Mono.error(() -> new Throwable("removeFriendRequest sender failed"));
                     // remove friend request for receiver
                     return userRepository.removeFriendRequest(info.getReceiverID()+"", info.getSenderID()+"")
                             .flatMap(aLong1 -> {
-                                if(aLong1<=0){
-                                    log.error("** receiver updateFriendRequestsRemove failed");
-                                    return Mono.error(() -> new Throwable("failed"));
-                                }
+                                if(aLong1<=0) return Mono.error(() -> new Throwable("removeFriendRequest receiver failed"));
                                 // check exist conversation
                                 String chatID1 = info.getSenderID().toString().substring(0,18)+info.getReceiverID().toString().substring(18,36);
                                 String chatID2 = info.getReceiverID().toString().substring(0,18)+info.getSenderID().toString().substring(18,36);
                                 return userRepository.searchConversation(info.getSenderID()+"",chatID1,chatID2)
                                         .flatMap(user -> updateTypeConversation(info.getSenderID() + "", info.getReceiverID() + "", Type.STRANGER+"",Type.STRANGER+""))
                                         .switchIfEmpty(Mono.empty());
-                            })
-                            .onErrorResume(throwable -> {
-                                log.error(Arrays.toString(throwable.getStackTrace()));
-                                return Mono.error(() -> new Throwable("failed sql receiver"));
-                            })
-                            .then();
-                })
-                .onErrorResume(throwable -> {
-                    log.error(Arrays.toString(throwable.getStackTrace()));
-                    return Mono.error(() -> new Throwable("failed sql sender"));
-                })
-                .then();
+                            });
+                });
     }
 
     public Mono<Void>  acceptFriendRequests(FriendRequestAcceptDTO info){
@@ -138,12 +101,7 @@ public class UserHandleWebSocket {
                             .flatMap(user ->{ // exist conversation
                                 log.info("** acceptFriendRequests exist");
                                 return updateTypeConversation(info.getSenderID() + "", info.getReceiverID() + "", Type.FRIEND+"",Type.FRIEND+"");
-                            })
-                            .onErrorResume(e -> {
-                                log.error("** ",e);
-                                return Mono.empty();
-                            })
-                            .then();
+                            });
                 }));
     }
 
@@ -161,25 +119,14 @@ public class UserHandleWebSocket {
         log.info("** updateTypeConversation: {} {} {}",senderID, receiverID, typeSender);
         return userRepository.updateTypeConversation(senderID,receiverID,typeSender)
                 .flatMap(aLong -> {
-                    if(aLong<=0){
-                        log.error("** update conversation in sender failed");
-                        return Mono.error(() -> new Throwable("failed"));
-                    }
+                    if(aLong<=0) return Mono.error(() -> new Throwable("updateTypeConversation receiver failed"));
                     // update conversation in receiver
                     return userRepository.updateTypeConversation(receiverID,senderID,typeReceiver)
                             .flatMap(aLong1 -> {
-                                if(aLong1<=0){
-                                    log.error("** update conversation in receiver failed");
-                                    return Mono.error(() -> new Throwable("failed"));
-                                }
+                                if(aLong1<=0) return Mono.error(() -> new Throwable("updateTypeConversation receiver failed"));
                                 return Mono.empty();
                             });
-                })
-                .onErrorResume(e -> {
-                    log.error("** ",e);
-                    return Mono.empty();
-                })
-                .then();
+                });
     }
 
     // check duplicate
@@ -194,10 +141,7 @@ public class UserHandleWebSocket {
                     // new chat
                     return chatRepository.save(new Chat(idChat+""))
                             .flatMap(chat -> {
-                                if(chat==null){
-                                    log.error("** new chat updateConversations failed");
-                                    return Mono.error(() -> new Throwable("failed"));
-                                }
+                                if(chat == null) return Mono.error(() -> new Throwable("new chat failed"));
                                 Conversation conversationOurSender = null;
                                 switch (type){
                                     case FRIEND -> conversationOurSender = new Conversation(idChat,info.getReceiverName(),info.getReceiverAvatar(), Type.FRIEND);
@@ -207,10 +151,7 @@ public class UserHandleWebSocket {
                                 // append conversation for sender
                                 return userRepository.appendConversation(info.getSenderID()+"",conversationOurSender)
                                         .flatMap(aLongS -> {
-                                            if(aLongS<=0) {
-                                                log.error("** sender updateConversations failed");
-                                                return Mono.error(() -> new Throwable("failed"));
-                                            }
+                                            if(aLongS<=0) return Mono.error(() -> new Throwable("appendConversation sender failed"));
                                             Conversation conversationOurReceiver = null;
                                             switch (type){
                                                 case FRIEND -> conversationOurReceiver = new Conversation(idChat,info.getSenderName(),info.getSenderAvatar(),Type.FRIEND);
@@ -220,31 +161,12 @@ public class UserHandleWebSocket {
                                             // append conversation for receiver
                                             return userRepository.appendConversation(info.getReceiverID()+"",conversationOurReceiver)
                                                     .flatMap(aLongR -> {
-                                                        if(aLongR<=0){
-                                                            log.error("** sender updateConversations failed");
-                                                            return Mono.error(() -> new Throwable("failed"));
-                                                        }
+                                                        if(aLongR<=0) return Mono.error(() -> new Throwable("appendConversation receiver failed"));
                                                         return Mono.empty();
-                                                    })
-                                                    .onErrorResume(e -> {
-                                                        log.error("** ",e);
-                                                        return Mono.empty();
-                                                    })
-                                                    .then();
-                                        })
-                                        .onErrorResume(e -> {
-                                            log.error("** ",e);
-                                            return Mono.empty();
-                                        })
-                                        .then();
-                            })
-                            .onErrorResume(e -> {
-                                log.error("** ",e);
-                                return Mono.empty();
-                            })
-                            .then();
+                                                    });
+                                        });
+                            });
                 })).then();
     }
-
 
 }

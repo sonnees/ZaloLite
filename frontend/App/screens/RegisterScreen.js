@@ -25,7 +25,7 @@ export default function RegisterScreen() {
     }
 
     // Gửi yêu cầu đăng ký
-    axios.post('http://localhost:8081/api/v1/auth/register', {
+    axios.post('http://192.168.1.6:8081/api/v1/auth/register', {
       phoneNumber,
       password,
       userName,

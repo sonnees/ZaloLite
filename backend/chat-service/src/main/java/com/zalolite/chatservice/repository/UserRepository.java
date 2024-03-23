@@ -19,9 +19,6 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Query(value = "{'_id': ?0}",sort = "{'conversations.lastUpdateAt': -1}")
     Mono<User> findUserById(String id);
 
-    @Query(value = "{'conversations.chatID': ?0}")
-    @Update("{$set:{'conversations.$.topChatActivity': ?1}}")
-    Mono<Long> updateTopChatActivity(String chatID, List<ChatActivity> newTopChatActivity);
 
     @Query(value = "{'_id': ?0}")
     @Update("{$push:{'friendRequests': ?1}}")
@@ -41,4 +38,9 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
 
     @Query(value = "{_id:?0,'conversations.chatID': {$in: [?1,?2]}}")
     Mono<User> searchConversation(String senderID, String chatId1, String chatId2);
+
+    @Query(value = "{'conversations.chatID': ?0}")
+    @Update("{$set:{'conversations.$.topChatActivity': ?1}}")
+    Mono<Long> updateTopChatActivity(String chatID, List<ChatActivity> newTopChatActivity);
+
 }

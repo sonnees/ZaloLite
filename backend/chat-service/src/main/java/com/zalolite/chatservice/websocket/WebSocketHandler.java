@@ -3,6 +3,7 @@ package com.zalolite.chatservice.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.chatservice.dto.*;
+import com.zalolite.chatservice.entity.Type;
 import com.zalolite.chatservice.repository.ChatRepository;
 import com.zalolite.chatservice.repository.GroupRepository;
 import com.zalolite.chatservice.repository.UserRepository;
@@ -134,6 +135,25 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 });
                                     }
 
+                                    case TUM05 -> { // create conversation
+                                        FriendRequestAcceptDTO obj = objectMapper.readValue(message, FriendRequestAcceptDTO.class);
+                                        yield  userHandleWebSocket
+                                                .appendConversations(new AppendConversationDTO(obj), Type.STRANGER)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
+                                                    return Mono.empty();
+                                                });
+                                    }
+
                                     default -> Flux.empty();
                                 };
                             } catch (JsonProcessingException e) {
@@ -203,7 +223,45 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                     case TCM03 -> { // message read
                                         MessageDeliveryDTO obj = objectMapper.readValue(message, MessageDeliveryDTO.class);
                                         yield chatHandleWebSocket
-                                                .changeReadChat(UUID.fromString(chatID), obj.getUserID(), obj.getMessageID(), obj.getUserAvatar())
+                                                .changeReadChat(chatID, new MessageDeliveryDTO(obj.getUserID(), obj.getMessageID(), obj.getUserAvatar()))
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TCM04 -> { // message hidden
+                                        MessageHiddenDTO obj = objectMapper.readValue(message, MessageHiddenDTO.class);
+                                        yield chatHandleWebSocket
+                                                .appendHiddenMessage(UUID.fromString(chatID), obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+                                                            sendMessageToAllClients(sessionId,obj);
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TCM05 -> { // message recall
+                                        MessageHiddenDTO obj = objectMapper.readValue(message, MessageHiddenDTO.class);
+                                        yield chatHandleWebSocket
+                                                .recallMessage(UUID.fromString(chatID), obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
                                                             NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(sessionId, notify);
@@ -230,6 +288,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .map(session::textMessage)
                         .doOnTerminate(() -> {
                             sessions.remove(sessionId);
+
                             log.info("** session end: " + sessionId);
                         }))
                 .then();

@@ -21,6 +21,7 @@ import org.springframework.web.reactive.socket.WebSocketSession;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -42,82 +43,88 @@ public class ChatHandleWebSocket {
 
     public Mono<Void> appendChat(String chatID, MessageAppendDTO info){
         log.info("** appendChat: {} {} {} {}",info.getId(), chatID, info.getUserID(), info.getContents().get(0).getValue());
-        UUID messageID = UUID.randomUUID();
+        UUID messageID = info.getId();
         return chatRepository.appendChatActivityByIDChat(chatID, new ChatActivity(info,messageID))
                 .flatMap(aLong -> {
-                    if(aLong<=0){
-                        log.error("** appendChat failed");
-                        return Mono.error(() -> new Throwable("failed"));
-                    }
-                    return changeReadChat(UUID.fromString(chatID), info.getUserID(), messageID, info.getUserAvatar());
-                })
-                .onErrorResume(e -> {
-                    log.error("** ",e);
-                    return Mono.empty();
-                })
-                .then();
+                    if(aLong<=0) return Mono.error(() -> new Throwable("appendChatActivityByIDChat failed"));
+                    return changeReadChat(chatID, new MessageDeliveryDTO(info, messageID));
+                });
     }
 
     public Mono<Void> changeDeliveryChat(String chatID,MessageDeliveryDTO info){
         log.info("** changeDeliveryChat: {} {} {}",chatID, info.getMessageID(), info.getUserAvatar());
-        return chatRepository.appendDelivery(chatID, new Delivery(info.getUserID() ,info.getMessageID(),info.getUserAvatar()))
+        return chatRepository.searchDeliveryByUserID(chatID,info.getUserID().toString())
+                .switchIfEmpty(Mono.defer(() -> {
+                    return chatRepository.appendDelivery(chatID, new Delivery(info.getUserID(), info.getMessageID(), info.getUserAvatar()))
+                            .flatMap(aLong -> {
+                                if (aLong <= 0) return Mono.error(() -> new Throwable("changeDelivery failed"));
+                                return Mono.empty();
+                            });
+                }))
+                .flatMap(user ->{
+                    return chatRepository.changeDelivery(chatID,info.getUserID().toString(),info.getMessageID().toString())
+                            .flatMap(aLong -> {
+                                if(aLong<=0) return Mono.error(() -> new Throwable("changeDelivery failed"));
+                                return Mono.empty();
+                            });
+                });
+    }
+
+    public Mono<Void> changeReadChat(String chatID,MessageDeliveryDTO info){
+        log.info("** changeReadChat: {} {} {}",chatID, info.getMessageID(), info.getUserAvatar());
+        return chatRepository.searchReadByUserID(chatID,info.getUserID().toString())
+                .switchIfEmpty(Mono.defer(() -> {
+                    return chatRepository.appendRead(chatID, new Delivery(info.getUserID(), info.getMessageID(), info.getUserAvatar()))
+                            .flatMap(aLong -> {
+                                if (aLong <= 0) return Mono.error(() -> new Throwable("appendRead failed"));
+                                return chatRepository.searchDeliveryByUserID(chatID,info.getUserID().toString())
+                                        .switchIfEmpty(Mono.defer(()->{ // not exit Delivery
+                                                    return chatRepository.appendDelivery(chatID, new Delivery(info.getUserID(), info.getMessageID(), info.getUserAvatar()))
+                                                            .flatMap(aLong1 -> {
+                                                                if (aLong1 <= 0) return Mono.error(() -> new Throwable("appendDelivery failed"));
+                                                                return Mono.empty();
+                                                            });
+                                                }))
+                                        .flatMap(chat -> { // exit Delivery
+                                            return chatRepository.changeDelivery(chatID,info.getUserID().toString(),info.getMessageID().toString())
+                                                    .flatMap(aLong1 -> {
+                                                        if(aLong1<=0) return Mono.error(() -> new Throwable("changeRead failed"));
+                                                        return Mono.empty();
+                                                    });
+                                        });
+                            });
+                }))
+                .flatMap(user ->{
+                    // change Read
+                    return chatRepository.changeRead(chatID,info.getUserID().toString(),info.getMessageID().toString())
+                            .flatMap(aLong -> {
+                                if(aLong<=0) return Mono.error(() -> new Throwable("changeRead failed"));
+                                // change Delivery
+                                return chatRepository.changeDelivery(chatID,info.getUserID().toString(),info.getMessageID().toString())
+                                        .flatMap(aLong1 -> {
+                                            if(aLong1<=0) return Mono.error(() -> new Throwable("changeRead failed"));
+                                            return Mono.empty();
+                                        });
+                            });
+                });
+    }
+
+    public Mono<Void> appendHiddenMessage(UUID chatID, MessageHiddenDTO info){
+        log.info("** appendHiddenMessage: {} {} {}", chatID.toString(), info.getUserID(), info.getMessageID());
+        return chatRepository.appendHiddenMessage(chatID.toString(), info.getUserID().toString(), info.getMessageID().toString())
                 .flatMap(aLong -> {
-                    if(aLong<=0){
-                        log.error("** appendChat failed");
-                        return Mono.error(() -> new Throwable("failed"));
-                    }
+                    if (aLong <= 0) return Mono.error(() -> new Throwable("appendHiddenMessage failed"));
                     return Mono.empty();
-                })
-                .onErrorResume(e -> {
-                    log.error("** ",e);
-                    return Mono.empty();
-                })
-                .then();
+                });
     }
 
-    public Mono<Void> changeReadChat(UUID chatID, UUID userID, UUID messageID, String userAvatar){
-        log.info("** changeReadChat: {} {} {}",chatID.toString(), messageID.toString(), userAvatar);
-        return chatRepository.appendRead(chatID.toString(), new Delivery(userID,messageID, userAvatar))
-                .flatMap(aLong1 -> {
-                    if (aLong1 <= 0) {
-                        log.error("** changeReadChat failed");
-                        return Mono.error(() -> new Throwable("failed"));
-                    }
+    public Mono<Void> recallMessage(UUID chatID, MessageHiddenDTO info){
+        log.info("** recallMessage: {} {} {}", chatID.toString(), info.getUserID(), info.getMessageID());
+        return chatRepository.recallMessage(chatID.toString(), info.getMessageID().toString())
+                .flatMap(aLong -> {
+                    if (aLong <= 0) return Mono.error(() -> new Throwable("recallMessage failed"));
                     return Mono.empty();
-                })
-                .onErrorResume(e -> {
-                    log.error("** ",e);
-                    return Mono.empty();
-                })
-                .then();
+                });
     }
-
-//    public Mono<Void> changeReadChatNotExitDelivery(UUID chatID, UUID messageID, String userAvatar){
-//        log.info("** changeReadChatNotExitDelivery: {} {} {}",chatID.toString(), messageID.toString(), userAvatar);
-//        // remove delivery
-//        return chatRepository.removeDelivery(chatID.toString(), messageID.toString())
-//                .flatMap(aLong -> {
-//                    if (aLong <= 0) {
-//                        log.error("** changeReadChatNotExitDelivery removeDelivery failed");
-//                        return Mono.error(() -> new Throwable("failed"));
-//                    }
-//                    // append read
-//                    return chatRepository.appendRead(chatID.toString(), new Delivery(messageID, userAvatar))
-//                            .flatMap(aLong1 -> {
-//                                if (aLong1 <= 0) {
-//                                    log.error("** changeReadChatNotExitDelivery changeReadChat failed");
-//                                    return Mono.error(() -> new Throwable("failed"));
-//                                }
-//                                return Mono.empty();
-//                            })
-//                            .onErrorResume(e -> {
-//                                log.error("** ",e);
-//                                return Mono.empty();
-//                            })
-//                            .then();
-//                });
-//    }
-
-
 
 }
