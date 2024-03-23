@@ -1,10 +1,4 @@
 package com.zalolite.chatservice.dto;
-
-<<<<<<< HEAD
-=======
-import com.zalolite.chatservice.entity.Content;
-import com.zalolite.chatservice.entity.Status;
->>>>>>> master
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,11 +6,6 @@ import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
-<<<<<<< HEAD
-=======
-import java.util.Date;
-import java.util.List;
->>>>>>> master
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -42,7 +31,6 @@ public class MessageDeliveryDTO extends ChatMessageDTO{
         this.userAvatar = userAvatar;
         this.userID = userID;
     }
-<<<<<<< HEAD
 
     public MessageDeliveryDTO(MessageAppendDTO m, UUID messageID) {
         super(m.getId(), m.getTCM());
@@ -52,6 +40,4 @@ public class MessageDeliveryDTO extends ChatMessageDTO{
     }
 
 
-=======
->>>>>>> master
 }
