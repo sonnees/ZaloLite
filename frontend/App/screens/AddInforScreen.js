@@ -10,7 +10,8 @@ export default function AddInforScreen() {
   return (
     <KeyboardAvoidingView style={{ flex: 2 }} behavior="padding">
       <View style={styles.container}>
-        <View style={{ flex: 0.9, backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flex: 0.2, backgroundColor: "#0000FF", paddingVertical: 10 }}></View>
+        <View style={{ flex: 0.9, backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center" , paddingVertical: 5}}>
           <Image
             style={{ width: "15%", height: "40%", resizeMode: "contain" }}
             source={require("../assets/back1.png")}

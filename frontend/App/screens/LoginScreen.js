@@ -10,7 +10,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.1.6:8081/api/v1/auth/authenticate', {
+      const response = await axios.post('http://172.20.53.85:8081/api/v1/auth/authenticate', {
         phoneNumber: phoneNumber,
         password: password
       });
