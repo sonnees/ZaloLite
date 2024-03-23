@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
@@ -25,7 +25,7 @@ export default function RegisterScreen() {
     }
 
     // Gửi yêu cầu đăng ký
-    axios.post('http://192.168.1.6:8081/api/v1/auth/register', {
+    axios.post('http://172.20.53.85:8081/api/v1/auth/register', {
       phoneNumber,
       password,
       userName,
@@ -48,7 +48,8 @@ export default function RegisterScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "height"} 
     >
       <View style={styles.container}>
-        <View style={{ flex: 0.6, backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center" }}>
+        <View style={{ flex: 0.2, backgroundColor: "#0000FF", paddingVertical: 10 }}></View>
+        <View style={{ flex: 0.6, backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center", paddingVertical: 5 }}>
           <Image
             style={{ width: "15%", height: "40%", resizeMode: "contain" }}
             source={require("../assets/back1.png")}
