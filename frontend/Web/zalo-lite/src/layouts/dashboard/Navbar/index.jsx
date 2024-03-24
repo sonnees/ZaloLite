@@ -35,10 +35,10 @@ function Navbar() {
   };
 
   return (
-    <div className="fixed h-full w-16 bg-[#0091ff]  pt-8">
+    <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
       <nav className="w-full">
         <ul className="grid w-full items-center justify-center">
-          <li className="pb-5">
+          <li className="pb-[14px]">
             <div className="">
               <Button
                 id="fade-button"

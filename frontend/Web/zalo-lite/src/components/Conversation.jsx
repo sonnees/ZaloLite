@@ -118,6 +118,7 @@ const Conversation = () => {
       timestamp: "15:50",
       avatar: "avatar_url",
     },
+    
     {
       sender: "me",
       content: "Thanks for the invitation! I'll let you know if I can make it.",

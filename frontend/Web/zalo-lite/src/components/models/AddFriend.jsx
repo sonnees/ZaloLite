@@ -19,12 +19,31 @@ import AvatarNameItem from "../AvatarNameItem";
 import countries from "../../data/countries";
 
 const recentSearchesData = [
-  { id: 1, name: "John Doe", avatar: "/avatars/john.jpg" },
-  { id: 2, name: "Jane Smith", avatar: "/avatars/jane.jpg" },
-  { id: 3, name: "Bob Johnson", avatar: "/avatars/bob.jpg" },
+  {
+    id: 1,
+    name: "John Doe",
+    avatar:
+      "https://eliteprschool.edu.vn/wp-content/uploads/2017/08/xay-dung-hinh-anh-doanh-nha-1.jpg",
+    phoneNumber: "(+84) 0123456789", // Số điện thoại bắt đầu bằng (+84)
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    avatar:
+      "https://cdn-i.vtcnews.vn/resize/th/upload/2023/10/13/anh-bao-chi--2-11095058.jpg",
+    phoneNumber: "(+84) 0987654321", // Số điện thoại bắt đầu bằng (+84)
+  },
+  {
+    id: 3,
+    name: "Bob Johnson",
+    avatar: "https://i-ngoisao.vnecdn.net/2019/02/03/2-8472-1549155527.jpg",
+    phoneNumber: "(+84) 0876543210", // Số điện thoại bắt đầu bằng (+84)
+  },
 ];
+
+
 const suggestedFriendsData = [
-  { id: 4, name: "Alice Brown", avatar: "/avatars/alice.jpg" },
+  { id: 4, name: "Alice Brown", avatar: "/avatars/alice.jpg"},
   { id: 5, name: "Charlie Green", avatar: "/avatars/charlie.jpg" },
   { id: 6, name: "David White", avatar: "/avatars/david.jpg" },
   { id: 7, name: "Eva Black", avatar: "/avatars/eva.jpg" },
@@ -94,7 +113,7 @@ export default function AddFriendDialog() {
       <Dialog open={open} onClose={handleClose}>
         <div className="flex items-center justify-between border p-2">
           <DialogTitle sx={{ padding: 0 }}>
-            <span className="pl-2 text-base font-bold text-tblack">
+            <span className="pl-2 text-base font-medium text-tblack">
               Thêm bạn
             </span>
           </DialogTitle>
@@ -154,14 +173,15 @@ export default function AddFriendDialog() {
             </div>
           </div>
           <div className="mt-3">
-            <DialogContentText>Recent Searches:</DialogContentText>
-            <AvatarNameItem />
+            <span className="text-[13px] text-[#7589A3]">Kết quả gần nhất</span>
+            {/* <AvatarNameItem /> */}
             <ul>
-              {recentSearches.map((search, index) => (
-                <li key={index} className="flex items-center space-x-2">
-                  <Avatar src={search.avatar} alt={search.name} />
-                  <span>{search.name}</span>
-                </li>
+              {recentSearches.map((data, index) => (
+                // <li key={index} className="flex items-center space-x-2">
+                //   <Avatar src={search.avatar} alt={search.name} />
+                //   <span>{search.name}</span>
+                // </li>
+                <AvatarNameItem data={data} type={"AF"}/>
               ))}
             </ul>
           </div>

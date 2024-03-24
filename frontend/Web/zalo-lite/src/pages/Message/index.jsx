@@ -1,20 +1,13 @@
 import React from "react";
 import conversations from "../../data/conversations";
 import ChatElement from "../../components/ChatElement";
-// import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars-2";
-// import { Box } from "@mui/material";
 
 function Message() {
-  // const [searchParams, setSearchParams] = useSearchParams();
-  // const selectedChatId = searchParams.get("id");
-  // const theme = useTheme();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedChatId = searchParams.get("id");
 
-  // const StyledChatBox = styled(Box)(({ theme }) => ({
-  //   "&:hover": {
-  //     cursor: "pointer",
-  //   },
-  // }));
   return (
     <div className="h-[calc(100vh-95px)] w-full overflow-auto">
       {/* <div className="flex h-[74px] w-full items-center border border-black ">
@@ -46,34 +39,23 @@ function Message() {
         </div>
       </div> */}
       {conversations.map((conversation) => (
-        // <StyledChatBox
-        //   onClick={() => {
-        //     searchParams.set("id", id);
-        //     searchParams.set("type", "individual-chat");
-        //     setSearchParams(searchParams);
-        //   }}
-        //   sx={{
-        //     width: "100%",
-
-        //     borderRadius: 1,
-
-        //     backgroundColor: isSelected
-        //       ? theme.palette.mode === "light"
-        //         ? alpha(theme.palette.primary.main, 0.5)
-        //         : theme.palette.primary.main
-        //       : theme.palette.mode === "light"
-        //         ? "#fff"
-        //         : theme.palette.background.paper,
-        //   }}
-        //   p={2}
-        // >
-        <ChatElement
+        <div
           key={conversation.userID}
-          id={conversation.userID}
-          name={conversation.userName}
-          {...conversation}
-        />
-        // </StyledChatBox>
+          className="cursor-pointer hover:bg-slate-50"
+          onClick={() => {
+            searchParams.set("id", conversation.userID);
+            searchParams.set("type", "individual-chat");
+            setSearchParams(searchParams);
+            console.log(searchParams);
+          }}
+        >
+          <ChatElement
+            id={conversation.userID}
+            key={conversation.userID}
+            name={conversation.userName}
+            {...conversation}
+          />
+        </div>
       ))}
       <div className="h-[60px]">
         <p className="mt-5 text-center text-sm">
