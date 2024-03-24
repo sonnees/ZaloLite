@@ -9,27 +9,29 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~3.1.3",
     "@react-navigation/bottom-tabs": "^6.5.14",
     "@react-navigation/drawer": "^6.6.9",
     "@react-navigation/stack": "^6.3.23",
-    "deprecated-react-native-prop-types": "^5.0.0",
-    "expo": "~50.0.14",
+    "axios": "^1.6.8",
+    "expo": "~50.0.8",
+    "expo-barcode-scanner": "~12.9.3",
+    "expo-camera": "~14.1.1",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
-    "react-native": "^0.73.6",
-    "react-native-camera": "^4.2.1",
+    "react-native": "0.73.4",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.14.0",
+    "react-native-gifted-chat": "^2.4.0",
     "react-native-popup-menu": "^0.16.1",
     "react-native-qrcode-scanner": "^1.5.5",
     "react-native-vector-icons": "^10.0.3",
+    "react-native-web": "~0.19.6",
+    "react-native-websocket": "^1.0.2",
     "react-router-dom": "^6.22.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
-    "@types/react": "^18.2.69",
-    "@types/react-native": "^0.73.0",
-    "typescript": "^5.4.3"
+    "@babel/core": "^7.20.0"
   },
   "private": true
 }
