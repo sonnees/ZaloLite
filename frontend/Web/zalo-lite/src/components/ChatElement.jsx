@@ -157,8 +157,8 @@ function ChatElement({
 
 export default ChatElement;
 
-
-{/* <div className="grid gap-y-1">
+{
+  /* <div className="grid gap-y-1">
   <div>
     <span className="text-base text-[#081C36]">{userName}</span>
   </div>
@@ -168,4 +168,5 @@ export default ChatElement;
       {messageContent}
     </span>
   </div>
-</div>; */}
+</div>; */
+}
