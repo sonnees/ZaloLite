@@ -34,7 +34,10 @@ export default function ChatScreen({ navigation }) {
           onStartShouldSetResponder={() => navigation.navigate( "OpionNavigator", { screen:"OptionScreen"})}
             />     
         </View>
-        <View style={{flex: 9}}></View>
+      <View style={{ flex: 9 }}>
+        
+        
+        </View>
         <View style={styles.foter}>
           <Image
               style={{ width: "15%", height: "45%", resizeMode: "contain"}}

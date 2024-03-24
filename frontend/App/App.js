@@ -7,16 +7,19 @@ import MeNavigator from './navigations/MeNavigator'
 import ChatScreen from './screens/ChatScreen';
 import OpionNavigator from './navigations/OptionNavigator';
 import LoginNavigator from './navigations/LoginNavigator'
+import SearchScreen from './screens/SearchScreen';
 // import MainNavigator from './navigations/MainNavigator'
 const Stack = createStackNavigator();
 function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name='LoginNavigator' component={LoginNavigator} options={{headerShown:false}}></Stack.Screen>
+        {/* <Stack.Screen name='LoginNavigator' component={LoginNavigator} options={{headerShown:false}}></Stack.Screen> */}
       
-        <Stack.Screen name='ChatScreen' component={ChatScreen} options={{ headerShown: false }}></Stack.Screen>
+        {/* <Stack.Screen name='ChatScreen' component={ChatScreen} options={{ headerShown: false }}></Stack.Screen> */}
         <Stack.Screen name='TabNavigator' component={TabNavigator} options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name='SearchScreen' component={SearchScreen} options={{ headerShown: false }}></Stack.Screen>
+        
         <Stack.Screen name='OpionNavigator' component={OpionNavigator} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='MeNavigator' component={MeNavigator} options={{headerShown:false}}></Stack.Screen>
         
