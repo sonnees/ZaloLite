@@ -13,6 +13,7 @@
     "@react-navigation/bottom-tabs": "^6.5.14",
     "@react-navigation/drawer": "^6.6.9",
     "@react-navigation/stack": "^6.3.23",
+    "axios": "^1.6.8",
     "expo": "~50.0.8",
     "expo-barcode-scanner": "~12.9.3",
     "expo-camera": "~14.1.1",
