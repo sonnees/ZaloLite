@@ -1,27 +1,19 @@
 package com.zalolite.chatservice.websocket;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.chatservice.dto.*;
 import com.zalolite.chatservice.entity.ChatActivity;
 import com.zalolite.chatservice.entity.Delivery;
-import com.zalolite.chatservice.entity.Type;
 import com.zalolite.chatservice.repository.ChatRepository;
 import com.zalolite.chatservice.repository.GroupRepository;
 import com.zalolite.chatservice.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.socket.WebSocketMessage;
-import org.springframework.web.reactive.socket.WebSocketSession;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -55,7 +47,7 @@ public class ChatHandleWebSocket {
         log.info("** changeDeliveryChat: {} {} {}",chatID, info.getMessageID(), info.getUserAvatar());
         return chatRepository.searchDeliveryByUserID(chatID,info.getUserID().toString())
                 .switchIfEmpty(Mono.defer(() -> {
-                    return chatRepository.appendDelivery(chatID, new Delivery(info.getUserID(), info.getMessageID(), info.getUserAvatar()))
+                    return chatRepository.appendDelivery(chatID, new Delivery(info.getUserID(), info.getMessageID(), info.getUserAvatar(), info.getUserName()))
                             .flatMap(aLong -> {
                                 if (aLong <= 0) return Mono.error(() -> new Throwable("changeDelivery failed"));
                                 return Mono.empty();
@@ -74,12 +66,12 @@ public class ChatHandleWebSocket {
         log.info("** changeReadChat: {} {} {}",chatID, info.getMessageID(), info.getUserAvatar());
         return chatRepository.searchReadByUserID(chatID,info.getUserID().toString())
                 .switchIfEmpty(Mono.defer(() -> {
-                    return chatRepository.appendRead(chatID, new Delivery(info.getUserID(), info.getMessageID(), info.getUserAvatar()))
+                    return chatRepository.appendRead(chatID, new Delivery(info.getUserID(), info.getMessageID(), info.getUserAvatar(),info.getUserName()))
                             .flatMap(aLong -> {
                                 if (aLong <= 0) return Mono.error(() -> new Throwable("appendRead failed"));
                                 return chatRepository.searchDeliveryByUserID(chatID,info.getUserID().toString())
                                         .switchIfEmpty(Mono.defer(()->{ // not exit Delivery
-                                                    return chatRepository.appendDelivery(chatID, new Delivery(info.getUserID(), info.getMessageID(), info.getUserAvatar()))
+                                                    return chatRepository.appendDelivery(chatID, new Delivery(info.getUserID(), info.getMessageID(), info.getUserAvatar(),info.getUserName()))
                                                             .flatMap(aLong1 -> {
                                                                 if (aLong1 <= 0) return Mono.error(() -> new Throwable("appendDelivery failed"));
                                                                 return Mono.empty();

@@ -6,7 +6,7 @@ export default function Diary() {
   let navigation = useNavigation();
   return (
     <View style={styles.container}>
-      
+      <View style={{flex: 0.5, backgroundColor: "#0000FF", paddingVertical: 10}}></View>
       <View style={{flex: 1.2, backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignContent: "space-between"}}>
       <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
           {/* <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/search.png")}></Image> */}

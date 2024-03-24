@@ -10,6 +10,7 @@ const YourComponent = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} // Điều chỉnh offset nếu cần thiết
     >
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={{flex: 0.05, backgroundColor: "#0000FF", paddingVertical: 5}}></View>
         <View style={{ flex: 1 }}>
           <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 10 }}>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingLeft:'2%' }}>
@@ -17,7 +18,7 @@ const YourComponent = () => {
             </TouchableOpacity>
             <TextInput style={{ flex: 7, borderRadius: 5, backgroundColor: "#1E90FF", height: 40, paddingHorizontal: 10 }} placeholder="Tìm kiếm" />
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'5%'}}>
-              <Image style={{ width: 30, height: 30, resizeMode: "contain" }} source={require("../assets/QR.png")} />
+              <Image style={{ width: 30, height: 30, resizeMode: "contain" }} source={require("../assets/qr-code.png")} />
             </TouchableOpacity>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'2%'  }}>
               <Icon name='plus' size={30} color={'white'} />
@@ -35,7 +36,7 @@ const YourComponent = () => {
                 <Text> OA</Text>
               </TouchableOpacity>
           </View>
-            <View style={{borderBottomColor: 'gray',borderBottomWidth: 1,width: '100%',          }} />
+            <View style={{borderBottomColor: 'gray',borderBottomWidth: 1,width: '100%',}} />
           <View style={{ flex: 1, backgroundColor: "#fff" }}>
             {/* Your remaining content */}
           </View>

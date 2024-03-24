@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Alert } from 'react-native';
 import axios from 'axios'; // Import thư viện axios
 import { useNavigation } from '@react-navigation/native';
+import { API_URL } from '../api/Api';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -10,7 +11,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://192.168.1.6:8081/api/v1/auth/authenticate', {
+      const response = await axios.post(API_URL, {
         phoneNumber: phoneNumber,
         password: password
       });

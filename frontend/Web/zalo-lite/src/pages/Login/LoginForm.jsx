@@ -14,7 +14,15 @@ export default function LoginForm() {
   const [socket, setSocket] = useState(null);
 
 
-
+//=========================================================
+  function isJSON(str) {
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
 
 
@@ -58,6 +66,12 @@ export default function LoginForm() {
 
     fetchQrCode();
   }, []); // useEffect sẽ chạy một lần khi component được render
+
+  useEffect(() => {
+    if (socket) {
+      handleReceiveToken();
+    }
+  });
 //=========================================================
 
   async function fetchData(link) {
@@ -86,7 +100,9 @@ export default function LoginForm() {
 
       if (response.ok) {
         // Xử lý khi API trả về thành công
-        navigate('/app');
+        const token = await response.json();
+        
+        navigate('/app', {token: token.field});
         console.log('API call successful');
       } else {
         // Xử lý khi API trả về lỗi
@@ -102,42 +118,25 @@ export default function LoginForm() {
 //===========================================
   const handleReceiveToken = () => {
     socket.onmessage = async (event) => {
-      const data = JSON.parse(event.data);
-      if (data) {
-        console.log('Received token:', data);
-        // Xử lý token nhận được từ React Native
-        try {
-          const response = await fetch('http://localhost:8081/api/v1/auth/authenticate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({phoneNumber: data.phoneNumber, password: data.password}),
-            // body: JSON.stringify({
-            //   "phoneNumber": "0123456789",
-            //   "password": "123"
-            // }),
-          });
-    
-          if (response.ok) {
-            // Xử lý khi API trả về thành công
-            navigate('/app');
-            console.log('API call successful');
-          } else {
-            // Xử lý khi API trả về lỗi
-            navigate('/auth/login');
-            console.error('API call failed');
-          }
-        } catch (error) {
-          // Xử lý lỗi khi gọi API
-          navigate('/');
-          console.error('Error calling API:', error);
+      if (isJSON(event.data)) {
+        let data = JSON.parse(event.data);
+        console.log(data);
+        if (data.token != null ) {
+          // console.log(data.token);
+          navigate('/app', {token: token.field});
+        } else if (data.connect=="ACCEPT") {
+          let device = navigator.userAgent.match('Windows')? 'Windows' : 'MAC';
+          let day = new Date();
+          let time =day.getHours() + ":" + day.getMinutes() + ":" +day.getSeconds();
+          let location = "navigator.userAgent";
+          socket.send(JSON.stringify({device:device, time:time, location:location}));
+          // console.log(socket);
         }
-        //======================================
 
-        
       }
-    };
+      
+
+    }
   }
 
   return (
@@ -228,7 +227,7 @@ export default function LoginForm() {
               </ul>
 
               <div className='flex flex-col items-center m-6 mx-20 border-2 rounded-lg' >
-                <img src={qrCodeUrl} onLoad={handleReceiveToken} alt='QR' className='my-3' style={{width:200, height:200, borderRadius: 5}} />
+                <img src={qrCodeUrl}  alt='QR' className='my-3' style={{width:200, height:200, borderRadius: 5}} />
 
                 <p className="text-base text-center font-normal text-blue-600 w-60"> 
                   Chỉ dùng để đăng nhập
