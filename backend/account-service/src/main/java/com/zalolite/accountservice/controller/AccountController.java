@@ -26,18 +26,17 @@ public class AccountController {
     private final ObjectMapper objectMapper;
 
     @GetMapping("/profile/{phoneNumber}")
-    public Mono<ResponseEntity<String>> getProfileByPhoneNumber(@PathVariable String phoneNumber) {
-        return ReactiveSecurityContextHolder.getContext()
+    public Mono<ResponseEntity<String>> getProfileByPhoneNumber(@PathVariable String phoneNumber){
+        return  ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(authentication -> {
                     String userDetailsPhoneNumber = (String) authentication.getPrincipal();
                     return accountRepository.searchByPhoneNumber(phoneNumber)
                             .flatMap(account -> {
                                 try {
-                                    return Mono.just(ResponseEntity.ok(objectMapper
-                                            .writeValueAsString(account.getProfile(userDetailsPhoneNumber))));
+                                    return Mono.just(ResponseEntity.ok(objectMapper.writeValueAsString(account.getProfile(userDetailsPhoneNumber))));
                                 } catch (JsonProcessingException e) {
-                                    log.error("** " + e);
+                                    log.error("** "+ e);
                                     return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                                 }
                             }).switchIfEmpty(Mono.just(ResponseEntity.status(404).body("User not found")));
@@ -45,8 +44,8 @@ public class AccountController {
     }
 
     @GetMapping("/info")
-    public Mono<ResponseEntity<String>> getAccount() {
-        return ReactiveSecurityContextHolder.getContext()
+    public Mono<ResponseEntity<String>> getAccount(){
+        return  ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(authentication -> {
                     String userDetailsPhoneNumber = (String) authentication.getPrincipal();
@@ -55,7 +54,7 @@ public class AccountController {
                                 try {
                                     return Mono.just(ResponseEntity.ok(objectMapper.writeValueAsString(account)));
                                 } catch (JsonProcessingException e) {
-                                    log.error("** " + e);
+                                    log.error("** "+ e);
                                     return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                                 }
                             }).switchIfEmpty(Mono.just(ResponseEntity.status(403).body("Not authenticate")));
@@ -63,3 +62,4 @@ public class AccountController {
     }
 
 }
+

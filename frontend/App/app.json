@@ -24,8 +24,7 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png",
-      "port": 3005
+      "favicon": "./assets/favicon.png"
     }
   }
 }

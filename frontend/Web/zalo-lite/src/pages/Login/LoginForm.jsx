@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import QR_Test from './../../assets/QR_Test.png';
+// import { WebSocket } from 'vite';
 
 export default function LoginForm() {
   const [isSelectQR, setIsSelectQR] = useState(true)
@@ -10,9 +11,18 @@ export default function LoginForm() {
 
   const [phoneNumber, setPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
+  const [socket, setSocket] = useState(null);
 
 
-
+//=========================================================
+  function isJSON(str) {
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 
 
 
@@ -32,9 +42,23 @@ export default function LoginForm() {
         }
 
         const data = await response.json();
-        console.log(data);
-        setQrCodeUrl('data:image/png;base64,'+data.field); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
-        console.log(qrCodeUrl);
+        // console.log(data);
+        setQrCodeUrl('data:image/png;base64,'+data.field2); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
+        // console.log(qrCodeUrl);
+        //=========SOCKET=========
+        const socketLink = data.field1;
+        const newSocket = new WebSocket('ws://localhost:8081/ws/auth/' + data.field1);
+        console.log(data.field1);
+        newSocket.onopen = () => {
+          console.log('WebSocket connected');
+        };
+        
+        setSocket(newSocket);
+        return () => {
+          newSocket.close();
+        };
+        //========================
+
       } catch (error) {
         console.error('Error fetching QR code:', error.message);
       }
@@ -42,6 +66,12 @@ export default function LoginForm() {
 
     fetchQrCode();
   }, []); // useEffect sẽ chạy một lần khi component được render
+
+  useEffect(() => {
+    if (socket) {
+      handleReceiveToken();
+    }
+  });
 //=========================================================
 
   async function fetchData(link) {
@@ -70,10 +100,13 @@ export default function LoginForm() {
 
       if (response.ok) {
         // Xử lý khi API trả về thành công
-        navigate('/');
+        const token = await response.json();
+        
+        navigate('/app', {token: token.field});
         console.log('API call successful');
       } else {
         // Xử lý khi API trả về lỗi
+        navigate('/auth/login');
         console.error('API call failed');
       }
     } catch (error) {
@@ -83,10 +116,31 @@ export default function LoginForm() {
     }
   };
 //===========================================
+  const handleReceiveToken = () => {
+    socket.onmessage = async (event) => {
+      if (isJSON(event.data)) {
+        let data = JSON.parse(event.data);
+        console.log(data);
+        if (data.token != null ) {
+          // console.log(data.token);
+          navigate('/app', {token: token.field});
+        } else if (data.connect=="ACCEPT") {
+          let device = navigator.userAgent.match('Windows')? 'Windows' : 'MAC';
+          let day = new Date();
+          let time =day.getHours() + ":" + day.getMinutes() + ":" +day.getSeconds();
+          let location = "navigator.userAgent";
+          socket.send(JSON.stringify({device:device, time:time, location:location}));
+          // console.log(socket);
+        }
 
+      }
+      
+
+    }
+  }
 
   return (
-    <div className='w-full h-screen'>
+    <div className='w-full'>
       <div className="absolute inset-0">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 654" preserveAspectRatio="xMinYMin slice">
 
@@ -173,7 +227,7 @@ export default function LoginForm() {
               </ul>
 
               <div className='flex flex-col items-center m-6 mx-20 border-2 rounded-lg' >
-                <img src={qrCodeUrl} alt='QR' className='my-3' style={{width:200, height:200, borderRadius: 5}} />
+                <img src={qrCodeUrl}  alt='QR' className='my-3' style={{width:200, height:200, borderRadius: 5}} />
 
                 <p className="text-base text-center font-normal text-blue-600 w-60"> 
                   Chỉ dùng để đăng nhập
@@ -194,8 +248,8 @@ export default function LoginForm() {
   
         </div>
 
-        <div className='m-3'>
-          <p className='text-center text-blue-600 text-xs m-12'> 
+        <div className='m-3 mt-10'>
+          <p className=' text-blue-600 text-xs text-center'> 
             <a className='font-semibold' href="#">Tiếng Việt</a> <span> </span>
             <a className='font-thin' href="#">English </a>
           </p>

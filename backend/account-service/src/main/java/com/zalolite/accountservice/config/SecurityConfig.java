@@ -20,19 +20,21 @@ import reactor.netty.http.client.HttpClient;
 
 import java.util.Arrays;
 
+
 @Configuration
 @EnableWebFluxSecurity
 @AllArgsConstructor
 public class SecurityConfig {
     private AuthenticationManager authenticationManager;
     private SecurityContextRepository securityContextRepository;
-
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
 
         return http.authorizeExchange(
-                auth -> auth.pathMatchers("/api/v1/auth/**", "/ws/auth/**").permitAll()
-                        .anyExchange().authenticated())
+                        auth ->
+                                auth.pathMatchers("/api/v1/auth/**", "/ws/auth/**").permitAll()
+                                        .anyExchange().authenticated()
+                )
                 .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepository)
                 .formLogin(Customizer.withDefaults())
@@ -40,8 +42,7 @@ public class SecurityConfig {
                 .anonymous(Customizer.withDefaults())
                 .cors(customizer -> {
                     CorsConfiguration corsConfiguration = new CorsConfiguration();
-                    corsConfiguration
-                            .setAllowedOrigins(Arrays.asList("http://localhost:3005", "http://localhost:5173"));
+                    corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3005", "http://localhost:5173"));
                     corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS"));
                     corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
                     corsConfiguration.setAllowCredentials(true);

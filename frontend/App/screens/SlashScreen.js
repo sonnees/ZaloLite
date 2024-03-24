@@ -32,7 +32,7 @@ export default function SlashScreen() {
            <View style={{flex: 0.1}}></View>
 
            <TouchableOpacity style={{backgroundColor: "#C0C0C0", height: "18%", justifyContent: "center",  marginLeft: "21%", marginRight: "21%", alignItems: 'center',borderRadius: 50}}
-                onPress={() => navigation.navigate("RegisterScreen")}
+                onPress={() => navigation.navigate("AddInforScreen")}
            >
                 <Text style={{fontSize: 20,fontFamily: "Roboto", fontWeight: "bold"}}>Đăng ký</Text>
            </TouchableOpacity>

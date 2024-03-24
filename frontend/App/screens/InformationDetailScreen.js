@@ -2,7 +2,7 @@ import { StyleSheet, Text, View,Image } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 
-export default function InformationDetailScreen() {
+export default function InformationDetail() {
     let navigation = useNavigation();
   return (
     <View style={styles.container}>

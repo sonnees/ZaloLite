@@ -70,11 +70,11 @@ public class UserController {
                 .doOnError(throwable -> log.error(throwable.getMessage()));
     }
 
-    @PostMapping("/update")
-    public Mono<Boolean> updateTopChatActivity(@RequestParam String id, @RequestBody List<ChatActivity> chatActivities){
-        return userRepository.updateTopChatActivity(id,chatActivities)
-                .flatMap(aLong -> Mono.just(aLong>0));
-    }
+//    @PostMapping("/update")
+//    public Mono<Boolean> updateTopChatActivity(@RequestParam String id, @RequestBody List<ChatActivity> chatActivities){
+//        return userRepository.updateTopChatActivity(id,chatActivities)
+//                .flatMap(aLong -> Mono.just(aLong>0));
+//    }
 
 //    @PostMapping("/friend-request")
 //    public Mono<ResponseEntity<String>> updateFriendRequests(@RequestBody FriendRequestDTO f_dto){
