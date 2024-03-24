@@ -1,5 +1,3 @@
-/* This file has been downloaded from rnexamples.com */
-/* If You want to help us please go here https://www.rnexamples.com/help-us */
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, FlatList } from 'react-native';
 
@@ -26,7 +24,7 @@ const ProductCard = ({ item, onIncrement, onDecrement }) => {
   );
 };
 
-const Mainex = () => {
+export default function Mainex() {
   const [products, setProducts] = useState([
     { id: 1, name: 'Hamburger', description: 'Juicy beef patty on a fresh bun with all the fixings', price: 5.99, image: 'https://source.unsplash.com/900x900/?burger', amount: 0 },
     { id: 2, name: 'Pizza', description: 'Freshly made pizza with your choice of toppings', price: 9.99, image: 'https://source.unsplash.com/900x900/?pizza', amount: 0 },
@@ -168,4 +166,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Mainex;

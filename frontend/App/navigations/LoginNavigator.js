@@ -14,6 +14,7 @@ import ConfirmAccountScreen from '../screens/ConfirmAccountScreen'
 import UpdatePhotoScreen from '../screens/UpdatePhotoScreen'
 import ZaloNameScreen from '../screens/ZaloNameScreen'
 
+import Chatex from "../screens/Chatex";
 
 
 
@@ -23,18 +24,18 @@ export default function LoginNavigator() {
   
   return (
       <Stack.Navigator>
-          {/* Screen Của Login */}
-        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="ConfirmForgotPasswordScreen" component={ConfirmForgotPasswordScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="CreatePasswordScreen" component={CreatePasswordScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="CreatePasswordWhenForgotScreen" component={CreatePasswordWhenForgotScreen} options={{ headerShown: false }} />
+      {/* Screen Của Login */}
+        {/* <Stack.Screen name="LoginScreen" component={LoginScreen} options={{headerShown: false}}/> */}
+        {/* <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} options={{headerShown: false}}/> */}
+        {/* <Stack.Screen name="ConfirmForgotPasswordScreen" component={ConfirmForgotPasswordScreen} options={{ headerShown: false }} /> */}
+        {/* <Stack.Screen name="CreatePasswordScreen" component={CreatePasswordScreen} options={{headerShown: false}}/> */}
+        {/* <Stack.Screen name="CreatePasswordWhenForgotScreen" component={CreatePasswordWhenForgotScreen} options={{ headerShown: false }} /> */}
           {/* Screen của Register */}
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="AddInforScreen" component={AddInforScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="ConfirmAccountScreen" component={ConfirmAccountScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="UpdatePhotoScreen" component={UpdatePhotoScreen} options={{headerShown: false}}/>
-        <Stack.Screen name="ZaloNameScreen" component={ZaloNameScreen} options={{ headerShown: false }} />
+        {/* <Stack.Screen name="AddInforScreen" component={AddInforScreen} options={{headerShown: false}}/> */}
+        {/* <Stack.Screen name="ConfirmAccountScreen" component={ConfirmAccountScreen} options={{ headerShown: false }} /> */}
+        {/* <Stack.Screen name="UpdatePhotoScreen" component={UpdatePhotoScreen} options={{headerShown: false}}/> */}
+        {/* <Stack.Screen name="ZaloNameScreen" component={ZaloNameScreen} options={{ headerShown: false }} /> */}
       </Stack.Navigator>
   );
 }
