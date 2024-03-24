@@ -101,12 +101,14 @@ export default function AddFriendDialog() {
     <Fragment>
       <div
         onClick={handleClickOpen}
-        className="ml-3 mr-1 w-10 hover:bg-gray-200"
+        className="w-10 ml-3 mr-1 hover:bg-gray-200"
       >
         <img
           src="/src/assets/user-plus.png"
           alt=""
-          className="w-[22px] cursor-pointer items-center justify-center"
+          // className="w-[22px] cursor-pointer items-center justify-center"
+          className="cursor-pointer items-center justify-center"
+          style={{ width: "100%", height: "100%"}}
         />
       </div>
 

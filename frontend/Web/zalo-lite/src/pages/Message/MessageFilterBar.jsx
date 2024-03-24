@@ -39,7 +39,7 @@ function MessageFilterBar() {
           <img
             src="/src/assets/group-user-plus.png"
             alt=""
-            className="w-[22px] cursor-pointer items-center justify-center"
+            className="cursor-pointer items-center justify-center w-14"
           />
         </div>
         <div className="mt-[-10px] flex flex-row gap-x-2 pb-2">

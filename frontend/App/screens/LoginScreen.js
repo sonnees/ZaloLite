@@ -1,48 +1,84 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, TextInput, FlatList } from 'react-native';
-import React from 'react'
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, Alert } from 'react-native';
+import axios from 'axios'; // Import thư viện axios
+import { useNavigation } from '@react-navigation/native';
+import { API_URL } from '../api/Api';
 
 export default function LoginScreen() {
+  const navigation = useNavigation();
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
 
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(API_URL, {
+        phoneNumber: phoneNumber,
+        password: password
+      });
+      
+     
+      console.log(response.data); 
+      navigation.navigate('TabNavigator'); 
+    } catch (error) {
+      console.error('Đăng nhập thất bại:', error);
+      // Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại số điện thoại và mật khẩu');
+    }
+  };
+  
   return (
-    <View style={styles.container}>
-        <View style={{flex: 0.5}}></View>
-        <View style={{flex: 0.5, justifyContent: "center", alignItems: "center"}}>
-            <Text style={{fontSize: 40, fontWeight: "bold", color: "#0000FF",fontFamily: "Roboto"}}>ZaloLite</Text>
+    <KeyboardAvoidingView style={{ flex: 2 }} behavior="padding">
+      <View style={styles.container}>
+        <View style={{ flex: 0.6, backgroundColor: "#0000FF" }}></View>
+        <View style={{ flex: 0.9, backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center" }}>
+          <Image
+            style={{ width: "15%", height: "40%", resizeMode: "contain" }}
+            source={require("../assets/back1.png")}
+            onStartShouldSetResponder={() => navigation.navigate("SlashScreen")}
+          ></Image>
+          <Text style={{ fontSize: 16, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>Đăng nhập</Text>
         </View>
-        <Text style={{fontSize: 28, fontWeight: "bold", textAlign: "center",fontFamily: "Roboto"}}>Đăng nhập tài khoản</Text>
-        <View style={{flex: 1, flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-            <TouchableOpacity>
-                <Text style={{fontSize: 20, fontWeight: "bold",fontFamily: "Roboto"}}>QUÉT MÃ QR</Text>
-            </TouchableOpacity>
-            <View style={{flex: 0.5}}></View>
-            <TouchableOpacity>
-                <Text style={{fontSize: 20, fontWeight: "bold",fontFamily: "Roboto"}}>SỐ ĐIỆN THOẠI</Text>
-            </TouchableOpacity>  
+        <View style={{ flex: 6}}>
+          <View style={{flex: 0.2, backgroundColor: "#CFCFCF", justifyContent: "center"}}>
+            <Text style={{ fontFamily: "Roboto", fontSize: 13 , fontWeight: "700", marginLeft: "3%" }}>Vui lòng nhập số điện thoại và mật khẩu để đăng nhập</Text>
+          </View>
+
+          <TextInput
+            style={{ borderBottomWidth: 1, borderBottomColor: "#1E90FF", fontSize: 16, fontFamily: "Roboto", top: "4%", padding: 10,marginLeft: "3%", marginRight: "3%" }}
+            placeholder='Số điện thoại'
+            value={phoneNumber}
+            onChangeText={text => setPhoneNumber(text)}
+          />
+
+          <TextInput
+            style={{ borderBottomWidth: 1, borderBottomColor: "#1E90FF", fontSize: 16, fontFamily: "Roboto", top: "4%", padding: 10,marginLeft: "3%", marginRight: "3%" }}
+            placeholder='Mật khẩu'
+            secureTextEntry={true}
+            value={password}
+            onChangeText={text => setPassword(text)}
+          />
+          <View style={{flex: 0.1}}></View>
+          <TouchableOpacity>
+            <Text style={{ fontFamily: "Roboto", fontSize: 16, top: "10%", fontWeight: '700' , color: "#1E90FF", marginLeft: "3%"}}>Lấy lại mật khẩu</Text>
+          </TouchableOpacity>
         </View>
-        <View style={{flex: 1,}}>
-            <TextInput style={{flex: 0.5,  borderBottomColor: "grey", borderBottomWidth: 1, borderColor: "red"}} placeholder="Số điện thoại"></TextInput>
-        </View>
-        <View style={{flex: 1,}}>
-            <TextInput style={{flex: 0.5,  borderBottomColor: "grey", borderBottomWidth: 1, borderColor: "red"}} placeholder="Mật khẩu"></TextInput>
-        </View>
-        <View style={{flex: 1}}>
-            <TouchableOpacity style={{flex: 0.5, backgroundColor: "#0000FF", justifyContent: "center", alignItems: "center", borderRadius: 8}}>
-                <Text style={{fontSize: 20, fontWeight: "bold", color: "white"}}>Đăng nhập</Text>
-            </TouchableOpacity>
-            <View style={{flex: 0.3}}></View>
-            <Text style={{fontSize: 15, fontFamily: "Roboto"}}>Quên mật khẩu?</Text>
-        </View>
+        <View style={{ flex: 5 }}></View>
+        <View style={{flex: 2, justifyContent: "center", paddingLeft: "70%" }}>
+        <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}
+          onPress={handleLogin}
+        >
+          <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/right-arrow.png")}></Image>
+        </TouchableOpacity>
+          
         
-        <View style={{flex: 1}}></View>
-        <View style={{flex: 1}}></View>
-    </View>
-  )
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
 }
+
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      paddingLeft: "5%",
-      paddingRight: "5%"
-    },
-  });
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+});

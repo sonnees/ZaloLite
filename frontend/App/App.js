@@ -1,37 +1,27 @@
+import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-
-import Profile from './screens/Profile';
-import Person from './screens/Person';
-import TranferAccount from './screens/TranferAccount';
-import Diary from './screens/Diary';
-import Information from "./screens/Information";
-import InformationDetail from "./screens/InformationDetail";
-import Install from "./screens/Install";
-
-
-export default function App() {
-  let Stack = createStackNavigator();
-  
+import TabNavigator from './navigations/TabNavigator';
+import MeNavigator from './navigations/MeNavigator'
+import ChatScreen from './screens/ChatScreen';
+import OpionNavigator from './navigations/OptionNavigator';
+import LoginNavigator from './navigations/LoginNavigator'
+// import MainNavigator from './navigations/MainNavigator'
+const Stack = createStackNavigator();
+function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        
-        <Stack.Screen name="Person" component={Person} options={{headerShown: false}}/>
-        <Stack.Screen name="Install" component={Install} options={{headerShown: false}}/>
-        <Stack.Screen name="InformationDetail" component={InformationDetail} options={{headerShown: false}}/>
-
-        <Stack.Screen name="Information" component={Information} options={{headerShown: false}}/>
-        <Stack.Screen name="Diary" component={Diary} options={{headerShown: false}}/>
-        
-        <Stack.Screen name="Profile" component={Profile} options={{headerShown: false}}/>
-        <Stack.Screen name="TranferAccount" component={TranferAccount} options={{headerShown: false}}/>
+        <Stack.Screen name='LoginNavigator' component={LoginNavigator} options={{headerShown:false}}></Stack.Screen>
+      
+        <Stack.Screen name='ChatScreen' component={ChatScreen} options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name='TabNavigator' component={TabNavigator} options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name='OpionNavigator' component={OpionNavigator} options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name='MeNavigator' component={MeNavigator} options={{headerShown:false}}></Stack.Screen>
         
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-
+export default App;
