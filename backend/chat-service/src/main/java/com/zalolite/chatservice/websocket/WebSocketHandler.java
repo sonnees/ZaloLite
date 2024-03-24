@@ -4,9 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.chatservice.dto.*;
 import com.zalolite.chatservice.entity.Type;
-import com.zalolite.chatservice.repository.ChatRepository;
-import com.zalolite.chatservice.repository.GroupRepository;
-import com.zalolite.chatservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @AllArgsConstructor
 public class WebSocketHandler implements org.springframework.web.reactive.socket.WebSocketHandler {
-    private WebClient.Builder builder;
     private ObjectMapper objectMapper;
     private UserHandleWebSocket userHandleWebSocket;
     private ChatHandleWebSocket chatHandleWebSocket;
@@ -223,7 +219,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                     case TCM03 -> { // message read
                                         MessageDeliveryDTO obj = objectMapper.readValue(message, MessageDeliveryDTO.class);
                                         yield chatHandleWebSocket
-                                                .changeReadChat(chatID, new MessageDeliveryDTO(obj.getUserID(), obj.getMessageID(), obj.getUserAvatar()))
+                                                .changeReadChat(chatID, new MessageDeliveryDTO(obj.getUserID(), obj.getMessageID(), obj.getUserAvatar(), obj.getUserName()))
                                                 .thenMany(Mono.fromRunnable(() -> {
                                                             NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(sessionId, notify);
