@@ -62,9 +62,7 @@ export default function Carousel({ slides }) {
             key={index}
             style={{ scrollSnapAlign: "start", minWidth: "100%" }}
           >
-            <div
-              className={`duration-40 flex items-center`}
-            >
+            <div className={`duration-40 flex items-center`}>
               <div className="flex w-full flex-col items-center justify-center">
                 <img src={s.img} alt="" className="w-[380px]" />
                 <div className="mb-[10px] mt-5">
@@ -72,7 +70,7 @@ export default function Carousel({ slides }) {
                     {s.caption}
                   </span>
                 </div>
-                <div>
+                <div className="w-[85%] items-center text-center">
                   <span
                     className="text-sm"
                     dangerouslySetInnerHTML={{ __html: s.detail }}

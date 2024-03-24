@@ -1,12 +1,20 @@
 import { Routes, Route, Link, useLocation } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
+// import fetch from "node-fetch";
 
 function Navbar() {
+  const [profileData, setProfileData] = useState(null);
   const location = useLocation();
+  const token = location.state?.token;
+  const phoneNumber = location.state?.phoneNumber;
+  console.log("Token: ", token);
+  console.log("Phone Number: ", phoneNumber);
 
   let messageImage = "/message-outline.png";
   let contactImage = "/contact-book-outline.png";
@@ -33,6 +41,39 @@ function Navbar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
+  useEffect(() => {
+    if (token && phoneNumber) {
+      const fetchProfile = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8081/api/v1/account/profile/${phoneNumber}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`
+              },
+            },
+          );
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          setProfileData(data);
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+          setProfileData(null);
+        }
+      };
+
+      fetchProfile();
+    }
+  }, [token, phoneNumber]);
+
+  console.log(profileData);
 
   return (
     <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
@@ -98,18 +139,20 @@ function Navbar() {
                       Cài đặt
                     </MenuItem>
                   </div>
-                  <MenuItem
-                    sx={{
-                      fontSize: 14,
-                      paddingLeft: 0,
-                      paddingTop: 1,
-                      height: 36,
-                      color: "#081c36",
-                    }}
-                    onClick={handleClose}
-                  >
-                    Đăng xuất
-                  </MenuItem>
+                  <Link to="/auth/login">
+                    <MenuItem
+                      sx={{
+                        fontSize: 14,
+                        paddingLeft: 0,
+                        paddingTop: 1,
+                        height: 36,
+                        color: "#081c36",
+                      }}
+                      onClick={handleClose}
+                    >
+                      Đăng xuất
+                    </MenuItem>
+                  </Link>
                 </div>
               </Menu>
             </div>

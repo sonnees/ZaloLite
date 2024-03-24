@@ -85,7 +85,8 @@ const Welcome = () => {
     //     </Link>
     //   </Typography>
     // </Stack>
-    <div className="flex h-screen flex-col items-center justify-center border border-red-500">
+    <div className="flex h-screen flex-col items-center justify-center "> 
+    {/* border border-red-500 */}
       <div id="header" className="mb-4 text-2xl font-light text-tblack">
         <span className="">Chào mừng đến với </span>
         <span className="font-medium">Zalo Lite!</span>
