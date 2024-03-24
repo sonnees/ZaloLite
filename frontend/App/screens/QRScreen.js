@@ -52,7 +52,7 @@ const QRScannerScreen = () => {
       socket.close();
     }
 
-    const newSocket = new WebSocket('ws://192.168.1.19:8081/ws/auth/0d7d5940-ee27-4c4b-be45-b603723f1d2f');
+    const newSocket = new WebSocket('ws://192.168.1.19:8081/ws/auth/' + data);
     
     try {
       // Đợi cho kết nối mở
