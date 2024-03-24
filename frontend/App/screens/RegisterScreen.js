@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
+import { API_RGT } from '../api/Api';
 
 export default function RegisterScreen() {
   let navigation = useNavigation();
@@ -25,7 +26,7 @@ export default function RegisterScreen() {
     }
 
     // Gửi yêu cầu đăng ký
-    axios.post('http://172.20.53.85:8081/api/v1/auth/register', {
+    axios.post(API_RGT, {
       phoneNumber,
       password,
       userName,
