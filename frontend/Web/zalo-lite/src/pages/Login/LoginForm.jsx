@@ -101,8 +101,9 @@ export default function LoginForm() {
       if (response.ok) {
         // Xử lý khi API trả về thành công
         const token = await response.json();
+        console.log(token.field);
         
-        navigate('/app', {token: token.field});
+        // navigate('/app', {token: token.field});
         console.log('API call successful');
       } else {
         // Xử lý khi API trả về lỗi
