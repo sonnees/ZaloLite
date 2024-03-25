@@ -12,16 +12,15 @@ const MessagesScreen = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} // Điều chỉnh offset nếu cần thiết
     >
       <StatusBar />
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ flex: 1 }}>
-          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 6 }}>
+          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 6,height:50 }}>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingLeft:'2%' }}>
               <Icon name='search1' size={22} color={'white'} />
             </TouchableOpacity>
             <TouchableOpacity style={{ flex: 7, borderRadius: 5, backgroundColor: "#1E90FF", height: 40, paddingHorizontal: 10,justifyContent: "center", alignItems: "flex-start" }}
               onPress={() => navigation.navigate("SearchScreen")}
             >
-                <Text style={{paddingLeft:10,fontSize:16,color:"#454545"}}>Search</Text>
+                <Text style={{paddingLeft:10,fontSize:16,color:"#CCCCCC"}}>Search</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'5%'}}
                 onPress={() => navigation.navigate('MeNavigator', { screen: 'QRScreen' })}
@@ -35,7 +34,7 @@ const MessagesScreen = () => {
             </TouchableOpacity>
           </View>
           
-          <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between",paddingVertical: 12,backgroundColor: "#fff"}}>
+          <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between",paddingVertical: 12,backgroundColor: "#fff",height:45}}>
               <View style={{flex:1, flexDirection: "row", justifyContent: "center", alignContent: "space-between"}}>
                 <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
                   <Text style={{fontSize:16}}>Focused</Text>
@@ -45,8 +44,8 @@ const MessagesScreen = () => {
                 </TouchableOpacity>
               </View>
             
-              <TouchableOpacity style={{flex: 1, justifyContent: "center", alignItems: "flex-end", paddingRight:'2%'}}>
-                <Icon name='filter' size={22} color={'gray'}></Icon>
+              <TouchableOpacity style={{flex: 1, justifyContent: "center", alignItems: "flex-end", paddingRight:'3%'}}>
+                <Icon name='filter' size={25} color={'gray'}></Icon>
               </TouchableOpacity>
           </View>
             <View style={{borderBottomColor: 'gray',borderBottomWidth: 1,width: '100%'}} />
@@ -54,7 +53,6 @@ const MessagesScreen = () => {
             {/* Your remaining content */}
           </View>
         </View>
-      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

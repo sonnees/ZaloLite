@@ -690,13 +690,13 @@ const countries = [
         "dial_code": "+686"
     },
     {
-        "name": "Korea, Democratic People's Republic of Korea",
+        "name": "North Korean",
         "flag": "🇰🇵",
         "code": "KP",
         "dial_code": "+850"
     },
     {
-        "name": "Korea, Republic of South Korea",
+        "name": "South Korean",
         "flag": "🇰🇷",
         "code": "KR",
         "dial_code": "+82"

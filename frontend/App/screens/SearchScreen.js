@@ -11,9 +11,8 @@ const SearchScreen = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} // Điều chỉnh offset nếu cần thiết
     >
       <StatusBar  />
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ flex: 1 }}>
-          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 8 }}>
+          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 8,height:50}}>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingLeft: '2%',paddingRight:'4%' }}
               onPress={() => navigation.navigate("TabNavigator")}
             >
@@ -35,7 +34,6 @@ const SearchScreen = () => {
             {/* Your remaining content */}
           </View>
         </View>
-      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

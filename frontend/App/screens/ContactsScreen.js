@@ -11,16 +11,15 @@ const YourComponent = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} // Điều chỉnh offset nếu cần thiết
     >
       <StatusBar  />
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1 }}>
         <View style={{ flex: 1 }}>
-          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 6 }}>
+          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 6,height:50}}>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingLeft:'2%' }}>
               <Icon name='search1' size={22} color={'white'} />
             </TouchableOpacity>
               <TouchableOpacity style={{ flex: 7, borderRadius: 5, backgroundColor: "#1E90FF", height: 40, paddingHorizontal: 10,justifyContent: "center", alignItems: "flex-start" }}
               onPress={() => navigation.navigate("SearchScreen")}
             >
-                <Text style={{paddingLeft:10,fontSize:16,color:"#454545"}}>Search</Text>
+                <Text style={{paddingLeft:10,fontSize:16,color:"#CCCCCC"}}>Search</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'5%'}}>
               <Image style={{ width: 22, height: 22, resizeMode: "contain" }} source={require("../assets/qr-code.png")} />
@@ -30,7 +29,7 @@ const YourComponent = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between",paddingVertical: 12,backgroundColor: "#fff"}}>
+          <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between",paddingVertical: 12,backgroundColor: "#fff",height:45}}>
               <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
                 <Text style={{fontSize:16}}> Friends</Text>
               </TouchableOpacity>
@@ -46,7 +45,6 @@ const YourComponent = () => {
             {/* Your remaining content */}
           </View>
         </View>
-      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
