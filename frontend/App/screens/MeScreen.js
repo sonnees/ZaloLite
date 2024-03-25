@@ -2,6 +2,7 @@ import { Platform, StyleSheet, Text, View, Image, TextInput, TouchableOpacity, K
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { StatusBar } from 'react-native';
 
 export default function MeScreen() {
   let navigation = useNavigation();
@@ -12,9 +13,9 @@ export default function MeScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : null}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} 
     >
-      <View style={{flex: 0.5, backgroundColor: "#0000FF", paddingVertical: 10}}></View>
+      <StatusBar></StatusBar>
       <View style={{ flex: 1 }}> 
-          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 10 }}>
+          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 10,height:50 }}>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingLeft:'2%' }}>
               <Icon name='search1' size={30} color={'white'} />
             </TouchableOpacity>

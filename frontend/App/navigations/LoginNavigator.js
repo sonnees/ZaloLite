@@ -32,5 +32,3 @@ export default function LoginNavigator() {
       </Stack.Navigator>
   );
 }
-
-

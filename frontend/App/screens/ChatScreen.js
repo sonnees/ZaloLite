@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, StyleSheet, Image, ScrollView,TouchableOpacity  } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, ScrollView,TouchableOpacity,StatusBar  } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import React from 'react'
 // import { useNavigation } from '@react-navigation/native'
@@ -7,6 +7,7 @@ export default function ChatScreen({ navigation }) {
   // let navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar></StatusBar>
       <View style={styles.header}>
           <Image
             style={{ width: "15%", height: "40%", resizeMode: "contain" }}
@@ -34,7 +35,10 @@ export default function ChatScreen({ navigation }) {
           onStartShouldSetResponder={() => navigation.navigate( "OpionNavigator", { screen:"OptionScreen"})}
             />     
         </View>
-        <View style={{flex: 9}}></View>
+      <View style={{ flex: 9 }}>
+        
+        
+        </View>
         <View style={styles.foter}>
           <Image
               style={{ width: "15%", height: "45%", resizeMode: "contain"}}
@@ -63,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#abcdff',
   },
   header: {
-    height: 60,
+    height: 50,
     backgroundColor: "#1E90FF",
     flexDirection: "row",
     alignItems: "center",

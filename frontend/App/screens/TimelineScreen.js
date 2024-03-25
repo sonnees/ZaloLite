@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity,StatusBar } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 
@@ -6,20 +6,20 @@ export default function Diary() {
   let navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <View style={{flex: 0.5, backgroundColor: "#0000FF", paddingVertical: 10}}></View>
-      <View style={{flex: 1.2, backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignContent: "space-between"}}>
-      <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
-          {/* <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/search.png")}></Image> */}
-      </TouchableOpacity>
-      <TextInput style={{flex: 6, borderRadius: 5, backgroundColor: "#1E90FF", height: "70%", paddingLeft: "7%", paddingRight: "7%", marginTop: 7, color: "white"}} placeholder="Tìm kiếm"></TextInput>
+      <StatusBar></StatusBar>
+      <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignContent: "space-between",height:50}}>
         <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
-          {/* <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/image.png")}></Image> */}
+            {/* <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/search.png")}></Image> */}
         </TouchableOpacity>
-        <View style={{flex: 0.3}}></View>
-        <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
-          {/* <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/bell.png")}></Image> */}
-        </TouchableOpacity>
-        <View style={{flex: 0.1}}></View>
+        <TextInput style={{flex: 6, borderRadius: 5, backgroundColor: "#1E90FF", height: "70%", paddingLeft: "7%", paddingRight: "7%", marginTop: 7, color: "white"}} placeholder="Tìm kiếm"></TextInput>
+          <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
+            {/* <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/image.png")}></Image> */}
+          </TouchableOpacity>
+          <View style={{flex: 0.3}}></View>
+          <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>
+            {/* <Image style={{width: "100%", height: "50%", resizeMode: "contain"}} source={require("../assets/bell.png")}></Image> */}
+          </TouchableOpacity>
+          <View style={{flex: 0.1}}></View>
       </View>
       <View style={{flex: 2, backgroundColor: "#FFFFFF", justifyContent: "center"}}>
         <View style={{flex: 0.75, flexDirection: "row", alignItems: "center"}} > 
