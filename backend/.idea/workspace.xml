@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider3.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider6.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider7.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/arrow-left.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/arrow-right.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-attach.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-photo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-reminder.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-screenshotz.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-sticker.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-todo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider1.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider2.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider3.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider4.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider5.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider6.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider7.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/Carousel.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/chat.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Home/Welcome.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/checksums/checksums.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/dependencies-accessors/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/executionHistory/executionHistory.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/fileChanges/last-build.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/fileHashes/fileHashes.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/vcs-1/gc.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chat-service/src/main/java/com/zalolite/chatservice/dto/MessageDeliveryDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/java/com/zalolite/chatservice/dto/MessageDeliveryDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/api/Api.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/api/Api.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/ConfrimQRScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/ConfrimQRScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/LoginScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/LoginScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/QRScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/QRScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/RegisterScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/RegisterScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/assets/group-user-plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/assets/group-user-plus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/assets/user-plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/assets/user-plus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/AvatarNameItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/AvatarNameItem.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/ChatElement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/ChatElement.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/Conversation.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/Conversation.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/DetailContact.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/DetailContact.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/LoadingScreen.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/LoadingScreen.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/MessageDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/MessageDetail.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/models/AddFriend.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/models/AddFriend.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/conversations.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/conversations.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/countries.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/countries.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/layouts/dashboard/Navbar/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/layouts/dashboard/Navbar/index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Login/LoginForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Login/LoginForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Message/MessageFilterBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Message/MessageFilterBar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Message/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Message/index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/routes/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/routes/index.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/tailwind.config.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/SingleChatManagementMicroservice">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/UserManagementMicroservice">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/account-service">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/eureka-server">
+      <ProjectState />
+    </projectState>
+    <projectState path="$PROJECT_DIR$/gateway-service">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/account-service">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="HTML File" />
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2acb80sc0vlxsnAj9uRfwmbHOXy" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "android.gradle.sync.needed": "true",
+    "deletionFromPopupRequiresConfirmation": "false",
+    "git-widget-placeholder": "Merging HuuBang",
+    "ignore.virus.scanning.warn.message": "true",
+    "jdk.selected.JAVA_MODULE": "17",
+    "last_opened_file_path": "/Volumes/SSD_1TB/Hoc_Ki2_Nam4/3_NewTechnology/ZaloLite/backend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "spring.configuration.checksum": "1bc373138585468a2642852349b823e3",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.zalolite.accountservice.enums" />
+      <recent name="com.zalolite.accountservice" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\SingleChatManagementMicroservice\src\main\java\com\zalolite\singlechatmanagementmicroservice" />
+      <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\SingleChatManagementMicroservice\src\main\resources" />
+      <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\UserManagementMicroservice\src\main\java\com\zalolite\usermanagementmicroservice" />
+      <recent name="C:\SON.admin\VIII\NewTech\ZaloLite\backend\UserManagementMicroservice\src\main\resources" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.zalolite.gatewayservice" />
+      <recent name="com.zalolite.accountservice.entity" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.GatewayServiceApplication">
+    <configuration name="AccountServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="account-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.zalolite.accountservice.AccountServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ChatServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="chat-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.zalolite.chatservice.ChatServiceApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.zalolite.chatservice.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="EurekaServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="eureka-server.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.zalolite.eurekaserver.EurekaServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GatewayServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="gateway-service.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.zalolite.gatewayservice.GatewayServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Spring Boot.GatewayServiceApplication" />
+      <item itemvalue="Spring Boot.AccountServiceApplication" />
+      <item itemvalue="Spring Boot.EurekaServerApplication" />
+      <item itemvalue="Spring Boot.ChatServiceApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.ChatServiceApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="" />
+      <created>1704620653841</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1704620653841</updated>
+      <workItem from="1704620654643" duration="1630000" />
+      <workItem from="1704805040266" duration="500000" />
+      <workItem from="1704807942916" duration="4000" />
+      <workItem from="1704892142912" duration="166000" />
+      <workItem from="1704896415211" duration="18000" />
+      <workItem from="1704896445249" duration="602000" />
+      <workItem from="1705393632875" duration="27000" />
+      <workItem from="1705393671325" duration="874000" />
+      <workItem from="1705819468466" duration="48000" />
+      <workItem from="1706183521297" duration="8529000" />
+      <workItem from="1706193850296" duration="261000" />
+      <workItem from="1706269492810" duration="9461000" />
+      <workItem from="1706280718216" duration="1950000" />
+      <workItem from="1708335027250" duration="17178000" />
+      <workItem from="1708411844537" duration="18542000" />
+      <workItem from="1708499479666" duration="29324000" />
+      <workItem from="1708567131981" duration="26906000" />
+      <workItem from="1708674730729" duration="8984000" />
+      <workItem from="1708684527452" duration="644000" />
+      <workItem from="1708753309082" duration="15025000" />
+      <workItem from="1711258659091" duration="294000" />
+      <workItem from="1711332099586" duration="1085000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/account-service/src/main/java/com/zalolite/accountservice/config/WebSocketConfig.java</url>
+          <line>25</line>
+          <properties class="com.zalolite.accountservice.config.WebSocketConfig" method="simpleUrlHandlerMapping">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="SpringBootApplicationConfigurationType">
+        <watch expression="target" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

@@ -46,7 +46,9 @@ export default function MeScreen() {
       </View>
       <View style={{flex: 0.2}}></View>
 
-      <View style={{flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+      <View style={{flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", justifyContent: "center", alignItems: "center"}}
+         onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'RegisterDEScreen' })}
+      >
           <View style={{flex: 0.01}}></View>
           <Image style={{width: "15%", height: "40%", resizeMode: "contain"}} source={require("../assets/musical.png")}></Image>
           <View style={{flex: 0.05}}></View>

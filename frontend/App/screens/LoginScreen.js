@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvo
 import axios from 'axios'; // Import thư viện axios
 import { useNavigation } from '@react-navigation/native';
 import { API_URL } from '../api/Api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
@@ -11,21 +12,22 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-<<<<<<< HEAD
       const response = await axios.post(API_URL, {
-=======
-      const response = await axios.post('http://172.20.53.85:8081/api/v1/auth/authenticate', {
->>>>>>> 99bcf1df1857a65e6541d2d2fbc30aecf048e5a8
         phoneNumber: phoneNumber,
         password: password
       });
-      
-     
-      console.log(response.data); 
-      navigation.navigate('TabNavigator'); 
+  
+      // Lấy token từ response
+      const token = response.data.token;
+  
+      // Lưu token vào local storage
+      await AsyncStorage.setItem('token', token);
+  
+      console.log(response.data);
+      navigation.navigate('TabNavigator');
     } catch (error) {
       console.error('Đăng nhập thất bại:', error);
-      // Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại số điện thoại và mật khẩu');
+      Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại số điện thoại và mật khẩu');
     }
   };
   

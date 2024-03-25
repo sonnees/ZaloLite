@@ -26,11 +26,7 @@ export default function RegisterScreen() {
     }
 
     // Gửi yêu cầu đăng ký
-<<<<<<< HEAD
     axios.post(API_RGT, {
-=======
-    axios.post('http://172.20.53.85:8081/api/v1/auth/register', {
->>>>>>> 99bcf1df1857a65e6541d2d2fbc30aecf048e5a8
       phoneNumber,
       password,
       userName,

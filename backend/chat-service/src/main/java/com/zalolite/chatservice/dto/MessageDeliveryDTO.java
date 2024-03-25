@@ -1,8 +1,5 @@
 package com.zalolite.chatservice.dto;
-<<<<<<< HEAD
 
-=======
->>>>>>> 99bcf1df1857a65e6541d2d2fbc30aecf048e5a8
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
