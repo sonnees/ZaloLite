@@ -138,12 +138,12 @@ export default function LoginForm() {
         console.log(data);
         if (data.token != null) {
           // console.log(data.token);
-          navigate("/app", { token: token.field });
+          navigate("/app", { token: data.token });
         } else if (data.connect == "ACCEPT") {
           let device = navigator.userAgent.match("Windows") ? "Windows" : "MAC";
           let day = new Date();
           let time = day.getHours() + ":" + day.getMinutes() + ":" + day.getSeconds();
-          let location = "navigator.userAgent";
+          let location = "TP.HCM";
           socket.send(
             JSON.stringify({ device: device, time: time, location: location }),
           );

@@ -1,5 +1,4 @@
 import { Routes, Route, Link, useLocation } from "react-router-dom";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import * as React from "react";
 import Button from "@mui/material/Button";
@@ -62,6 +61,7 @@ function Navbar() {
           }
 
           const data = await response.json();
+          console.log(data);
           setProfileData(data);
         } catch (error) {
           console.error("Error fetching profile:", error);
