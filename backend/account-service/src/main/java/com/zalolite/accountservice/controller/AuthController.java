@@ -108,6 +108,8 @@ public class AuthController {
                 });
     }
 
+    //true: pixel đen
+    //cot x, hang y
     @GetMapping("/authenticate/qr-code")
     public ResponseEntity<String> loginQRCode() {
         String endpointWebSocket = UUID.randomUUID().toString();
