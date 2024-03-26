@@ -12,7 +12,7 @@ const AddFriendScreen = () => {
     >
       <StatusBar  />
         <View style={{ flex: 1, height:60}}>
-          <View style={{ flexDirection: "row", paddingVertical: 8,height:50}}>
+          <View style={{ flexDirection: "row", paddingVertical: 8,height:50, alignItems:'center'}}>
             <TouchableOpacity style={{paddingLeft: '2%',paddingRight:'4%' }}
               onPress={() => navigation.navigate("TabNavigator")}
             >
