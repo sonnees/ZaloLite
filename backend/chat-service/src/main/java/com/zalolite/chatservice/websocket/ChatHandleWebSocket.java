@@ -1,6 +1,7 @@
 package com.zalolite.chatservice.websocket;
 
 import com.zalolite.chatservice.dto.*;
+import com.zalolite.chatservice.entity.Chat;
 import com.zalolite.chatservice.entity.ChatActivity;
 import com.zalolite.chatservice.entity.Delivery;
 import com.zalolite.chatservice.repository.ChatRepository;
@@ -12,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -117,6 +119,15 @@ public class ChatHandleWebSocket {
                     if (aLong <= 0) return Mono.error(() -> new Throwable("recallMessage failed"));
                     return Mono.empty();
                 });
+    }
+
+    public Mono<Chat> getChatTop10(String chatID){
+        log.info("** getChatTop10: {}", chatID);
+        return chatRepository.getChatTop10(chatID)
+                .switchIfEmpty(Mono.defer(()->{
+                    return Mono.error(() -> new Throwable("getChatTop10 failed"));
+                }))
+                .flatMap(Mono::just);
     }
 
 }

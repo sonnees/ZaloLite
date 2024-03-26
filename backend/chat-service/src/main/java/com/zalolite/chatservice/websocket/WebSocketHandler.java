@@ -3,6 +3,7 @@ package com.zalolite.chatservice.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.chatservice.dto.*;
+import com.zalolite.chatservice.entity.Chat;
 import com.zalolite.chatservice.entity.Type;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -11,11 +12,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -284,6 +287,11 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .map(session::textMessage)
                         .doOnTerminate(() -> {
                             sessions.remove(sessionId);
+                            userHandleWebSocket.updateConversations(Objects.requireNonNull(chatHandleWebSocket.getChatTop10(chatID).block()))
+                                    .onErrorResume(e -> {
+                                        log.error("** " + e);
+                                        return Mono.empty();
+                                    }).block();
 
                             log.info("** session end: " + sessionId);
                         }))
@@ -351,4 +359,5 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
             log.error(e.getMessage());
         }
     }
+
 }
