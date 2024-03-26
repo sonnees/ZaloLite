@@ -35,12 +35,17 @@ function MessageFilterBar() {
             onChange={handleSearchChange}
             className="h-8 w-full rounded-md border bg-[#EAEDF0] p-2 pl-[30px] text-sm focus:outline-none"
           />
-          <AddFriendDialog />
-          <img
-            src="/src/assets/group-user-plus.png"
-            alt=""
-            className="cursor-pointer items-center justify-center w-14"
-          />
+          
+            <AddFriendDialog />
+            
+          <div className="relative inline-block p-1">
+            <img
+              src="/src/assets/group-user-plus.png"
+              alt=""
+              className="w-8 cursor-pointer items-center justify-center"
+            />
+            <div className="absolute inset-0 rounded-md bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10"></div>
+          </div>
         </div>
         <div className="mt-[-10px] flex flex-row gap-x-2 pb-2">
           <NavLink

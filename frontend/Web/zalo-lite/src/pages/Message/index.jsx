@@ -1,11 +1,16 @@
+import React from "react";
 import conversations from "../../data/conversations";
 import ChatElement from "../../components/ChatElement";
+import { useSearchParams } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
 function Message() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedChatId = searchParams.get("id");
+
   return (
-      <div className="h-[calc(100vh-95px)] w-full overflow-auto">
-        {/* <div className="flex h-[74px] w-full items-center border border-black ">
+    <div className="h-[calc(100vh-95px)] w-full overflow-auto">
+      {/* <div className="flex h-[74px] w-full items-center border border-black ">
         <img
           src="https://zpsocial-f51-org.zadn.vn/c20081221b9ef5c0ac8f.jpg"
           alt=""
@@ -33,21 +38,32 @@ function Message() {
           </div>
         </div>
       </div> */}
-        {conversations.map((conversation) => (
+      {conversations.map((conversation) => (
+        <div
+          key={conversation.userID}
+          className="cursor-pointer hover:bg-slate-50"
+          onClick={() => {
+            searchParams.set("id", conversation.userID);
+            searchParams.set("type", "individual-chat");
+            setSearchParams(searchParams);
+            console.log(searchParams);
+          }}
+        >
           <ChatElement
-            key={conversation.userID}
             id={conversation.userID}
+            key={conversation.userID}
             name={conversation.userName}
             {...conversation}
           />
-        ))}
-        <div className="h-[60px]">
-          <p className="mt-5 text-center text-sm">
-            Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên trình
-            duyệt này.
-          </p>
         </div>
+      ))}
+      <div className="h-[60px]">
+        <p className="mt-5 text-center text-sm">
+          Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên trình
+          duyệt này.
+        </p>
       </div>
+    </div>
   );
 }
 

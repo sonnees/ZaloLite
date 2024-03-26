@@ -17,7 +17,7 @@ export default function ConfirmQRScreen({route}) {
       socket.close();
     }
   
-    const newSocket = new WebSocket('ws://172.20.51.21:8081/ws/auth/' + data);
+    const newSocket = new WebSocket('ws://192.168.137.180:8081/ws/auth/' + data);
     setSocket(newSocket);
   
     newSocket.onmessage = async (event) => {
