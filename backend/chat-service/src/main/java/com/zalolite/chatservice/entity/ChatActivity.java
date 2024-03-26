@@ -25,7 +25,7 @@ public class ChatActivity {
     private UUID messageID;
     @Field(targetType = FieldType.STRING)
     private UUID userID;
-    @Indexed(unique = true, sparse = true)
+    @Indexed()
     private Date timestamp;
     @Field(targetType = FieldType.STRING)
     private UUID parentID;

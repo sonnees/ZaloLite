@@ -28,9 +28,4 @@ public class ChatController {
                 .flatMap(chat -> Mono.just((chat!=null)));
     }
 
-//    @PostMapping("/append-chat")
-//    public Mono<Boolean> appendChatByChatID(@RequestParam String id, @RequestBody List<Content> contents){
-//        return chatRepository.
-//                .flatMap(chat -> Mono.just((chat!=null)));
-//    }
 }
