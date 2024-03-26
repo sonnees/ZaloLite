@@ -6,7 +6,8 @@ export default function TransferAccountScreen() {
   let navigation = useNavigation();
   return (
     <View style={styles.container}>
-      
+      <View style={{flex: 0.5, backgroundColor: "#0000FF", paddingVertical: 10}}></View>
+     <View style={{flex: 0.5, backgroundColor: "#0000FF", paddingVertical: 10}}></View>
       <View style={{flex: 1.2, backgroundColor: "#1E90FF", flexDirection: "row",  alignItems:"center"}}>
         <Image style={{width: "15%", height: "40%", resizeMode: "contain"}} source={require("../assets/back1.png")}
             onStartShouldSetResponder={() => navigation.navigate("MeScreen")}
@@ -44,7 +45,7 @@ export default function TransferAccountScreen() {
 
     </View>
       
-      <View style={{flex: 11.25, backgroundColor: "#D7D7D7"}}></View>
+      <View style={{flex: 10.25, backgroundColor: "#D7D7D7"}}></View>
     </View>
   )
 }

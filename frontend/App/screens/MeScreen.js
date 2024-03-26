@@ -12,7 +12,8 @@ export default function MeScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : null}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} 
     >
-      <View style={{ flex: 1 }}>
+      <View style={{flex: 0.5, backgroundColor: "#0000FF", paddingVertical: 10}}></View>
+      <View style={{ flex: 1 }}> 
           <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 10 }}>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingLeft:'2%' }}>
               <Icon name='search1' size={30} color={'white'} />
@@ -49,7 +50,9 @@ export default function MeScreen() {
           <View style={{flex: 0.01}}></View>
           <Image style={{width: "15%", height: "40%", resizeMode: "contain"}} source={require("../assets/musical.png")}></Image>
           <View style={{flex: 0.05}}></View>
-          <View style={{justifyContent: "center"}}>
+          <View style={{justifyContent: "center"}}
+            
+          >
             <Text style={{fontFamily: "Roboto", fontSize: 15 }}>Nhạc chờ Zalo</Text>
             <Text style={{fontFamily: "Roboto", fontSize: 13, color: "#808080"}}>Đăng ký nhạc chờ, thể hiện cá tính</Text>
           </View>
