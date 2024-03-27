@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import React from 'react';
+import { View, TouchableOpacity, Text, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native';
 
 const ModalPlus = () => {
     let navigation = useNavigation();
     const dataIcon = [
-        { name: 'adduser', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
-        { name: 'addusergroup', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
-        { name: 'cloudo', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
-        { name: 'calendar', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
-        { name: 'videocamera', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
-        { name: 'iconfontdesktop', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
-    ]
-    const setIcon = ({ data }) => {
+        { title: 'Add friend', name: 'adduser', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
+        { title: 'Create group', name: 'addusergroup', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
+        { title: 'My Cloud', name: 'cloudo', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
+        { title: 'Zalo Calendar', name: 'calendar', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
+        { title: 'Create group call', name: 'videocamera', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
+        { title: 'Logged-in devices', name: 'iconfontdesktop', navigate: 'AddFriendScreen', typeScreen: "MessagesScreen" },
+    ];
+
+    const SetIcon = ({ item }) => {
         return (
             <TouchableOpacity
                 style={{
@@ -23,23 +24,27 @@ const ModalPlus = () => {
                     marginTop: 13,
                     marginLeft: 20
                 }}
-                onPress={() => navigation.navigate(data.navigate, { typeScreen: data.typeScreen })}>
-                <Icon name={data.name} size={22} color={"gray"} style={{ marginRight: 5 }}></Icon>
-                <Text style={styles.textInModal}>Add friend</Text>
+                onPress={() => navigation.navigate(item.navigate, { typeScreen: item.typeScreen })}>
+                <Icon name={item.name} size={22} color={"gray"} style={{ marginRight: 5 }}></Icon>
+                <Text style={{
+                    marginLeft: 10,
+                    fontSize: 16
+                }}>{item.title}</Text>
             </TouchableOpacity>
-        )
-    }
+        );
+    };
+
     return (
         <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end', backgroundColor: 'transparent', margin: 6 }}>
             <View style={{ backgroundColor: 'white', height: 285, width: 200, borderRadius: 2, elevation: 5 }}>
-
                 <FlatList
                     data={dataIcon}
-                    renderItem={({ item }) => <setIcon item={item} />}
-                    keyExtractor={(item) => item.name} // Sử dụng trường code làm key
+                    renderItem={({ item }) => <SetIcon item={item} />}
+                    keyExtractor={(item) => item.name} // Use the 'name' field as the key
                 />
             </View>
         </View>
     );
 };
+
 export default ModalPlus;

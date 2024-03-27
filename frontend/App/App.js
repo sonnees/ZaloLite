@@ -11,23 +11,22 @@ import SearchScreen from './screens/SearchScreen';
 // import MainNavigator from './navigations/MainNavigator'
 import ListCountryScreen from './screens/ListCountryScreen';
 import AddFriendScreen from './screens/AddFriendScreen';
-import HoldButtonExample from './screens/HoldButtonExample';
 const Stack = createStackNavigator();
 function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
         {/* <Stack.Screen name='LoginNavigator' component={LoginNavigator} options={{headerShown:false}}></Stack.Screen> */}
-        {/* <Stack.Screen name='ChatScreen' component={ChatScreen} options={{ headerShown: false }}></Stack.Screen> */}
-        
+
         {/* <Stack.Screen name='HoldButtonExample' component={HoldButtonExample} options={{ headerShown: false }}></Stack.Screen> */}
         <Stack.Screen name='TabNavigator' component={TabNavigator} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='AddFriendScreen' component={AddFriendScreen} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='ListCountryScreen' component={ListCountryScreen} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='SearchScreen' component={SearchScreen} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='OpionNavigator' component={OpionNavigator} options={{ headerShown: false }}></Stack.Screen>
-        <Stack.Screen name='MeNavigator' component={MeNavigator} options={{headerShown:false}}></Stack.Screen>
-        
+        <Stack.Screen name='MeNavigator' component={MeNavigator} options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name='ChatScreen' component={ChatScreen} options={{ headerShown: false }}></Stack.Screen>
+
       </Stack.Navigator>
     </NavigationContainer>
   );

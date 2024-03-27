@@ -378,44 +378,7 @@ const conversations = [{
         }]
     }]
 },
-    // {
-    //     userID: 11,
-    //     userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmSlqvXJn5BzWQlTak89FL-NbRIpndsNxFWg&usqp=CAU",
-    //     userName: "Phương Nam",
-    //     msg: "À, mình rất vui!",
-    //     time: "1 giờ",
-    //     unread: 0,
-    // },
-    // {
-    //     userID: 12,
-    //     userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlb38HezTM0NVDza71H9dzD1Pjpc0POT1ktg&usqp=CAU",
-    //     userName: "Minh Nam",
-    //     msg: "À, mình rất vui!",
-    //     time: "1 giờ",
-    //     unread: 0,
-    // },
-    // , {
-    //     userID: 13,
-    //     userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVl_S9KDd8spljejf8DtrGNlgEbMKB24OPUDKlQUZWd89USkHBYRHWrhHKw0oc3ZecR9U&usqp=CAU",
-    //     userName: "Phương Anh",
-    //     msg: "Bình thường thôi.",
-    //     time: "4 giờ",
-    //     unread: 1,
-    // }, {
-    //     userID: 14,
-    //     userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxfNQZ4dI6KAKWVVy9eHMPY3C4PF1w1r9fgQ&usqp=CAU",
-    //     userName: "Phương Nam",
-    //     msg: "À, mình rất vui!",
-    //     time: "1 giờ",
-    //     unread: 0,
-    // }, {
-    //     userID: 15,
-    //     userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlb38HezTM0NVDza71H9dzD1Pjpc0POT1ktg&usqp=CAU",
-    //     userName: "Minh Nam",
-    //     msg: "À, mình rất vui!",
-    //     time: "1 giờ",
-    //     unread: 0,
-    // }
+
 ];
 
 export default conversations;

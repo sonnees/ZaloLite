@@ -1,4 +1,4 @@
-[{
+const chat = [{
     _id: "uuid1",
     chatActivity: [
         // Thêm các tin nhắn cũ hơn ở đây
@@ -107,3 +107,4 @@
 
     ]
 }]
+export default chat;
