@@ -44,8 +44,8 @@ export default function Router() {
 
   useEffect(() => {
     if (location.pathname === "/app") {
-      // setComp(<Conversation />);
-      setComp(<Welcome />);
+      setComp(<Conversation />);
+      // setComp(<Welcome />);
     } else if (location.pathname === "/contact") {
       setComp(<DetailContact />);
     }

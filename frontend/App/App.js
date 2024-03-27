@@ -17,7 +17,7 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* <Stack.Screen name='LoginNavigator' component={LoginNavigator} options={{headerShown:false}}></Stack.Screen> */}
+        <Stack.Screen name='LoginNavigator' component={LoginNavigator} options={{headerShown:false}}></Stack.Screen>
         {/* <Stack.Screen name='ChatScreen' component={ChatScreen} options={{ headerShown: false }}></Stack.Screen> */}
         
         {/* <Stack.Screen name='HoldButtonExample' component={HoldButtonExample} options={{ headerShown: false }}></Stack.Screen> */}

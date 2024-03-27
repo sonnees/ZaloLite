@@ -100,11 +100,7 @@ const conversations = [{
                 {
                     messageID: "mmid3",
                     userID: "2",
-<<<<<<< HEAD
-                    timetamp: "2024-03-25T15:38:00Z",
-=======
                     timetamp: "2024-03-24T14:47:00Z",
->>>>>>> master
                     parentID: "",
                     content: [{
                         key: "text",

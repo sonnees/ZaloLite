@@ -29,6 +29,39 @@ const RegisterProfileScreen = () => {
   };
 
   const handleRegister = async () => {
+<<<<<<< HEAD
+  // Tạo dữ liệu để gửi đi
+  const formData = new FormData();
+  formData.append('phoneNumber', phoneNumber);
+  formData.append('password', '123'); // Thay 'your_password' bằng mật khẩu thực tế
+  formData.append('userName', userName);
+  formData.append('gender', gender);
+  formData.append('birthday', birthDate);
+  formData.append('role', {
+    uri: selectedImage,
+    name: 'image.jpg',
+    type: 'image/jpeg',
+  });
+
+  try {
+    // Gọi API với Axios
+    const response = await axios.post('http://192.168.1.6:8081/api/v1/auth/register', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Sửa lại header Content-Type
+      },
+    });
+
+    // Xử lý kết quả từ API (response.data)
+    console.log(response.data);
+
+    // Nếu đăng ký thành công, chuyển sang màn hình TabNavigator
+    navigation.navigate('TabNavigator');
+  } catch (error) {
+    // Xử lý lỗi nếu có
+    console.error(error);
+  }
+};
+=======
     // Tạo dữ liệu để gửi đi
     const formData = new FormData();
     formData.append('phoneNumber', phoneNumber);
@@ -60,6 +93,7 @@ const RegisterProfileScreen = () => {
       console.error(error);
     }
   };
+>>>>>>> be3a7430297aab3326ffbde729b82e80272e3b02
 
   return (
     <KeyboardAvoidingView
