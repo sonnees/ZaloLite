@@ -25,6 +25,7 @@ public class Conversation {
     private String chatAvatar;
     private Type type;
     private Date connectAt;
+    @Indexed()
     private Date lastUpdateAt;
     private List<Delivery> deliveries;
     private List<Delivery> reads;

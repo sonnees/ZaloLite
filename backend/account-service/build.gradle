@@ -34,7 +34,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-
     implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
     implementation 'com.google.zxing:core:3.5.0'
 
@@ -59,3 +58,6 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+
+

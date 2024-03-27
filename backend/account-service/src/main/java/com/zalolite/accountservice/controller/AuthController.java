@@ -135,4 +135,10 @@ public class AuthController {
             return ResponseEntity.status(500).body("Gen QR code error");
         }
     }
+
+    @PostMapping("/send-otp/{phoneNumber}")
+    public Mono<String> sendOTP(@PathVariable String phoneNumber) {
+
+        return Mono.empty();
+    }
 }

@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
+<<<<<<< HEAD
 import AsyncStorage from '@react-native-async-storage/async-storage';
+=======
+import PhoneNumberInput from './PhoneNumberInput'; // Import component PhoneNumberInput
+>>>>>>> be3a7430297aab3326ffbde729b82e80272e3b02
 import { useNavigation } from '@react-navigation/native';
-import { API_URL } from '../api/Api';
+import { CheckBox } from 'react-native-elements';
 
+<<<<<<< HEAD
 const RegisterScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
@@ -41,6 +46,11 @@ const RegisterScreen = () => {
   };
  
   
+=======
+
+const RegisterScreen = () => {
+  let navigation = useNavigation();
+>>>>>>> be3a7430297aab3326ffbde729b82e80272e3b02
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -72,8 +82,11 @@ const RegisterScreen = () => {
               flex: 1 // Đảm bảo TextInput chiếm hết không gian còn lại của row
             }}
             placeholder='Nhập số điện thoại'
+<<<<<<< HEAD
             value={phoneNumber}
             onChangeText={setPhoneNumber}
+=======
+>>>>>>> be3a7430297aab3326ffbde729b82e80272e3b02
           />       
         </View>
         <View style={{ flexDirection: "row", paddingHorizontal: 10 }}> 
@@ -90,8 +103,11 @@ const RegisterScreen = () => {
             }}
             placeholder='Mật khẩu'
             secureTextEntry={true}
+<<<<<<< HEAD
             value={password}
             onChangeText={setPassword}
+=======
+>>>>>>> be3a7430297aab3326ffbde729b82e80272e3b02
           />       
         </View>
         <Text style={{ fontSize: 15, marginLeft: "5%", marginTop: "15%", fontFamily: "Roboto", color: "#1E90FF", fontWeight: "bold" }}>
@@ -102,7 +118,10 @@ const RegisterScreen = () => {
         <View style={{ flex: 2, justifyContent: "center", alignItems: "flex-end" }}>
           <TouchableOpacity 
             style={{ borderRadius: 20, justifyContent: "center", alignItems: "center", paddingVertical: 5 }}
+<<<<<<< HEAD
             onPress={handleLogin}
+=======
+>>>>>>> be3a7430297aab3326ffbde729b82e80272e3b02
           >
             <Image 
               style={{ width: 80, height: 50, resizeMode: "contain" }}
