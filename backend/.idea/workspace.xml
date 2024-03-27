@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/assets/Chương 2.pptx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/navigations/LoginNavigator.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/navigations/LoginNavigator.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/AddInforScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/AddInforScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/LoginScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/LoginScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/RegisterDEScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/RegisterDEScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/RegisterScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/RegisterScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/SlashScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/SlashScreen.js" afterDir="false" />
-    </list>
+    <list default="true" id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -88,30 +76,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
-    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;HuuBang&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;17&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Volumes/SSD_1TB/Hoc_Ki2_Nam4/3_NewTechnology/ZaloLite/backend&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;spring.configuration.checksum&quot;: &quot;1bc373138585468a2642852349b823e3&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "android.gradle.sync.needed": "true",
+    "deletionFromPopupRequiresConfirmation": "false",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "jdk.selected.JAVA_MODULE": "17",
+    "last_opened_file_path": "/Volumes/SSD_1TB/Hoc_Ki2_Nam4/3_NewTechnology/ZaloLite/backend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "spring.configuration.checksum": "1bc373138585468a2642852349b823e3",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>

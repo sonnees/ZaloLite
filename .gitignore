@@ -18,3 +18,5 @@ frontend/App/*.pem
 frontend/App/.env*.local
 frontend/App/*.tsbuildinfo
 
+backend/.idea
+
