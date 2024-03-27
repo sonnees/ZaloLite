@@ -169,4 +169,17 @@ public class UserHandleWebSocket {
                 })).then();
     }
 
+    public Mono<Void> updateConversations(Chat chat){
+        log.info("** updateConversations: {}",chat.getId());
+
+        return userRepository.updateChatActivity(
+                        chat.getId().toString(),
+                        chat.getChatActivity().get(chat.getChatActivity().size()-1).getTimestamp(),
+                        chat.getDeliveries(),
+                        chat.getReads(),
+                        chat.getChatActivity())
+                .then();
+    }
+
+
 }

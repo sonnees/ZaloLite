@@ -6,6 +6,7 @@ import com.zalolite.chatservice.entity.Delivery;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.mongodb.repository.Update;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -64,4 +65,6 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
 
     @Query(value = "{_id:?0}", fields = "{chatActivity: {$slice: -10}}")
     Mono<Chat> getChatTop10(String chatID);
+
+
 }

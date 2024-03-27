@@ -1,4 +1,5 @@
 import { Routes, Route, Link, useLocation } from "react-router-dom";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import * as React from "react";
 import Button from "@mui/material/Button";
@@ -8,13 +9,12 @@ import Fade from "@mui/material/Fade";
 // import fetch from "node-fetch";
 
 function Navbar() {
-  // const [userAvatar, setUserAvatar] = useState("")
   const [profileData, setProfileData] = useState(null);
   const location = useLocation();
   const token = location.state?.token;
   const phoneNumber = location.state?.phoneNumber;
-  // console.log("Token: ", token);
-  // console.log("Phone Number: ", phoneNumber);
+  console.log("Token: ", token);
+  console.log("Phone Number: ", phoneNumber);
 
   let messageImage = "/message-outline.png";
   let contactImage = "/contact-book-outline.png";
