@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Setter
 public class Conversation {
     @Field(targetType = FieldType.STRING)
+    @Indexed()
     private UUID chatID;
     private String chatName;
     private String chatAvatar;

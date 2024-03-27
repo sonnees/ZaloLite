@@ -46,13 +46,9 @@ export default function LoginForm() {
         // console.log(qrCodeUrl);
         //=========SOCKET=========
         const socketLink = data.field1;
-<<<<<<< HEAD
-        const newSocket = new WebSocket('ws://localhost:8081/ws/auth/'+data.field1);
-=======
         const newSocket = new WebSocket(
           "ws://localhost:8081/ws/auth/" + data.field1,
         );
->>>>>>> 4194d570ae5a729ef772c9e7b8616201d7e57793
         console.log(data.field1);
         newSocket.onopen = () => {
           console.log("WebSocket connected");

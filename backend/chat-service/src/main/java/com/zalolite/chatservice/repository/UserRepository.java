@@ -1,15 +1,14 @@
 package com.zalolite.chatservice.repository;
 
-import com.zalolite.chatservice.entity.ChatActivity;
-import com.zalolite.chatservice.entity.Conversation;
-import com.zalolite.chatservice.entity.FriendRequest;
-import com.zalolite.chatservice.entity.User;
+import com.zalolite.chatservice.entity.*;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +39,7 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     Mono<User> searchConversation(String senderID, String chatId1, String chatId2);
 
     @Query(value = "{'conversations.chatID': ?0}")
-    @Update("{$set:{'conversations.$.topChatActivity': ?1}}")
-    Mono<Long> updateTopChatActivity(String chatID, List<ChatActivity> newTopChatActivity);
+    @Update(update = "{$set:{'conversations.$.lastUpdateAt': ?1, 'conversations.$.deliveries': ?2, 'conversations.$.reads': ?3, 'conversations.$.topChatActivity': ?4}}")
+    Mono<Long> updateChatActivity(String chatID, Date lastUpdateAt, List<Delivery> deliveries, List<Delivery> reads, List<ChatActivity> newTopChatActivity);
 
 }
