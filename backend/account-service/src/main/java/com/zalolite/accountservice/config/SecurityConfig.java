@@ -68,4 +68,5 @@ public class SecurityConfig {
     public WebClient.Builder loadBalancedWebClientBuilder(HttpClient httpClient) {
         return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
     }
+
 }

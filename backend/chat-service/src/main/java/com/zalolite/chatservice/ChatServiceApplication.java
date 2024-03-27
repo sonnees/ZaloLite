@@ -17,6 +17,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -43,37 +44,18 @@ public class ChatServiceApplication {
 			public void run(String... args) throws Exception {
 
 				User user = userRepository.findById(UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db1")).block();
+
 				if( user != null ) return;
-
-				userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db1")).block();
-				userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db2")).block();
-				userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db3")).block();
-
-
-				//				MongoConfig mongoConfig = new MongoConfig();
-//				mongoConfig.reactiveMongoClient().getDatabase("Zalolite").getCollection("user")
-//						.dropIndexes()
-//						.subscribe(new Subscriber<Void>() {
-//							@Override
-//							public void onSubscribe(Subscription s) {
-//
-//							}
-//
-//							@Override
-//							public void onNext(Void unused) {
-//
-//							}
-//
-//							@Override
-//							public void onError(Throwable t) {
-//
-//							}
-//
-//							@Override
-//							public void onComplete() {
-//
-//							}
-//						});
+				userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db1"))
+								.then(Mono.defer(()->{
+									return userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db2"))
+											.then(Mono.defer(()->{
+												return userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db2"))
+														.then(Mono.defer(()->{
+															return userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db3"));
+														}));
+											}));
+								})).block();
 			}
 		};
 	}

@@ -50,8 +50,8 @@ public class AccountServiceApplication {
                                 "Tú Anh",
                                 true,
                                 new Date(),
-                                "https://zalolite.s3.amazonaws.com/nam1.jpg",
-                                "https://zalolite.s3.amazonaws.com/background1.jpg"
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532178/nam1_hyq0hl.jpg",
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532181/background2_kyjzut.jpg"
                         ),
                         UserRole.USER,
                         new Setting(
@@ -73,8 +73,8 @@ public class AccountServiceApplication {
                                 "Bảo Châu",
                                 false,
                                 new Date(),
-                                "https://zalolite.s3.amazonaws.com/nu1.jpg",
-                                "https://zalolite.s3.amazonaws.com/background3.jpg"
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532179/nu1_uq2zmu.png",
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532181/background2_kyjzut.jpg"
                         ),
                         UserRole.USER,
                         new Setting(
@@ -95,8 +95,8 @@ public class AccountServiceApplication {
                                 "Thảo Chi",
                                 false,
                                 new Date(),
-                                "https://zalolite.s3.amazonaws.com/nu2.jpg",
-                                "https://zalolite.s3.amazonaws.com/background2.jpg"
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532179/nu1_uq2zmu.png",
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532181/background2_kyjzut.jpg"
                         ),
                         UserRole.USER,
                         new Setting(
