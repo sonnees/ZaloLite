@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TextInput, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, ScrollView,Text,StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native'
+import Navbar from '../layout/Navbar';
 const YourComponent = () => {
   let navigation = useNavigation();
   return (
@@ -12,22 +13,7 @@ const YourComponent = () => {
     >
       <StatusBar  />
         <View style={{ flex: 1 }}>
-          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 6,height:50}}>
-            <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingLeft:'2%' }}>
-              <Icon name='search1' size={22} color={'white'} />
-            </TouchableOpacity>
-              <TouchableOpacity style={{ flex: 7, borderRadius: 5, backgroundColor: "#1E90FF", height: 40, paddingHorizontal: 10,justifyContent: "center", alignItems: "flex-start" }}
-              onPress={() => navigation.navigate("SearchScreen")}
-            >
-                <Text style={{paddingLeft:10,fontSize:16,color:"#CCCCCC"}}>Search</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'5%'}}>
-              <Image style={{ width: 22, height: 22, resizeMode: "contain" }} source={require("../assets/qr-code.png")} />
-            </TouchableOpacity>
-            <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'2%'  }}>
-              <Icon name='plus' size={22} color={'white'} />
-            </TouchableOpacity>
-          </View>
+          <Navbar type={"ContactsScreen"}></Navbar>
 
           <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between",paddingVertical: 12,backgroundColor: "#fff",height:45}}>
               <TouchableOpacity style={{flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center"}}>

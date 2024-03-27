@@ -3,32 +3,15 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { StatusBar } from 'react-native';
+import Navbar from '../layout/Navbar';
 
 export default function MeScreen() {
   let navigation = useNavigation();
   
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : null}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} 
-    >
+    <View style={styles.container}>
       <StatusBar></StatusBar>
-      <View style={{ flex: 1 }}> 
-          <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 10,height:50 }}>
-            <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingLeft:'2%' }}>
-              <Icon name='search1' size={30} color={'white'} />
-            </TouchableOpacity>
-            <TextInput style={{ flex: 7, borderRadius: 5, backgroundColor: "#1E90FF", height: 40, paddingHorizontal: 10 }} placeholder="Tìm kiếm" />
-          
-            <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'2%'  }}
-               onPress={() => navigation.navigate('MeNavigator', { screen: 'SettingScreen' })}
-
-            >
-              <Icon name='setting' size={30} color={'white'} />
-            </TouchableOpacity>
-          </View>
-      </View>
+      <Navbar type={'MeScreen'}></Navbar>
       <View style={{flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", alignItems: "center",}}>
         <View style={{flex: 0.75, flexDirection: "row"}} 
           onStartShouldSetResponder={() => navigation.navigate('MeNavigator', { screen: 'ProfileScreen' })}
@@ -121,7 +104,7 @@ export default function MeScreen() {
 
       <View style={{flex: 3}}></View>
 
-    </KeyboardAvoidingView>
+    </View>
   )
 }
 

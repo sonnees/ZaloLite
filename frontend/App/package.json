@@ -28,6 +28,7 @@
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.14.0",
     "react-native-gifted-chat": "^2.4.0",
+    "react-native-keyboard-aware-scrollview": "^2.1.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-popup-menu": "^0.16.1",
     "react-native-qrcode-scanner": "^1.5.5",
