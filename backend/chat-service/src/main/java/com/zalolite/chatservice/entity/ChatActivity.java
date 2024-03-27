@@ -22,6 +22,7 @@ import java.util.UUID;
 @Setter
 public class ChatActivity {
     @Field(targetType = FieldType.STRING)
+    @Indexed()
     private UUID messageID;
     @Field(targetType = FieldType.STRING)
     private UUID userID;
