@@ -1,7 +1,8 @@
-import React, { memo } from 'react';
+import React, { memo,useState } from 'react';
 import { View, TextInput, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Text, ScrollView, StatusBar, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native'
+import { useRoute } from '@react-navigation/native';
 import countries from '../data/countries';
 
 const sortedCountries = [
@@ -12,10 +13,23 @@ const sortedCountries = [
   ...countries.filter(country => !["Vietnam", "China", "South Korean", "Myanmar"].includes(country.name))
 ];
 
-const CountryItem = memo(({ item }) => {
+
+
+const ListCountryScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const [phoneCountry, setPhoneCountry] = useState(route.params?.phoneCountry || "");
+  const CountryItem = memo(({ item }) => {
   return (
      <View>
-      <TouchableOpacity style={{ flex: 1, height: 60, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <TouchableOpacity style={{ flex: 1, height: 60, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+        onPress={ ()=>{
+            setPhoneCountry(item.dial_code);
+            console.log(phoneCountry);
+            navigation.navigate("AddFriendScreen", { phoneCountry: item.dial_code });
+        }}
+          
+      >
         <Text style={{ marginLeft: 40, fontSize: 15 }}>
           {item.name}
         </Text>
@@ -30,10 +44,6 @@ const CountryItem = memo(({ item }) => {
   // Kiểm tra xem các props có thay đổi không
   return prevProps.item.name === nextProps.item.name && prevProps.item.dial_code === nextProps.item.dial_code;
 });
-
-const ListCountryScreen = () => {
-  const navigation = useNavigation();
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -44,7 +54,7 @@ const ListCountryScreen = () => {
         <View style={{ flex: 1 }}>
           <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 8,height:50}}>
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingLeft: '2%', paddingRight: '4%' }}
-              onPress={() => navigation.navigate("TabNavigator")}
+              onPress={() => navigation.navigate("AddFriendScreen",{ phoneCountry: item.dial_code })}
             >
               <Icon name='arrowleft' size={22} color={'white'} />
             </TouchableOpacity>
