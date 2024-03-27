@@ -19,4 +19,5 @@ frontend/App/.env*.local
 frontend/App/*.tsbuildinfo
 
 backend/.idea
+shared
 
