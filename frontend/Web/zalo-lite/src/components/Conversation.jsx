@@ -221,7 +221,7 @@ const Conversation = () => {
                 }}
               >
                 <img
-                  src="chatbar-sticker.png"
+                  src="/chatbar-sticker.png"
                   alt=""
                   className="h-[24px] w-[24px] opacity-65"
                 />
@@ -247,7 +247,7 @@ const Conversation = () => {
             <div className="mr-2 flex w-10 items-center justify-center">
               <a href="#">
                 <img
-                  src="chatbar-photo.png"
+                  src="/chatbar-photo.png"
                   alt=""
                   className="h-[24px] w-[24px] opacity-65"
                 />
@@ -256,7 +256,7 @@ const Conversation = () => {
             <div className="mr-2 flex w-10 items-center justify-center">
               <a href="#">
                 <img
-                  src="chatbar-attach.png"
+                  src="/chatbar-attach.png"
                   alt=""
                   className="h-[24px] w-[24px] opacity-65"
                 />
@@ -265,7 +265,7 @@ const Conversation = () => {
             <div className="mr-2 flex w-10 items-center justify-center">
               <a href="#">
                 {/* prettier-ignore */}
-                <img src="chatbar-screenshotz.png"
+                <img src="/chatbar-screenshotz.png"
                   alt=""
                   className="h-[24px] w-[24px] opacity-65"
                 />
@@ -274,7 +274,7 @@ const Conversation = () => {
             <div className="mr-2 flex w-10 items-center justify-center">
               <a href="#">
                 <img
-                  src="chatbar-reminder.png"
+                  src="/chatbar-reminder.png"
                   alt=""
                   className="h-[24px] w-[24px] opacity-65"
                 />
@@ -283,7 +283,7 @@ const Conversation = () => {
             <div className="mr-2 flex w-10 items-center justify-center">
               <a href="#">
                 <img
-                  src="chatbar-todo.png"
+                  src="/chatbar-todo.png"
                   alt=""
                   className="h-[24px] w-[24px] opacity-65"
                 />

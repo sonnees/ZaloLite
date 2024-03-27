@@ -20,10 +20,7 @@ function Navbar() {
   let contactImage = "/contact-book-outline.png";
   let todoImage = "/todo-outline.png";
 
-  if (
-    location.pathname === "/app" ||
-    location.pathname === "/app/other-message"
-  ) {
+  if (location.pathname.startsWith("/app")) {
     messageImage = "/message.png";
   }
   if (location.pathname === "/contact") {
@@ -52,7 +49,7 @@ function Navbar() {
             {
               method: "GET",
               headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`,
               },
             },
           );
@@ -179,12 +176,9 @@ function Navbar() {
           </li>
           <li>
             <Link
-              to="/"
+              to="/app"
               className={`flex justify-center p-4 py-5 ${
-                location.pathname === "/app" ||
-                location.pathname === "/app/other-message"
-                  ? "bg-[#006edc]"
-                  : ""
+                location.pathname.startsWith("/app") ? "bg-[#006edc]" : ""
               }`}
             >
               <img

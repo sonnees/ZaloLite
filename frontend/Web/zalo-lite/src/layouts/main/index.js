@@ -1,21 +1,12 @@
-// import React from "react";
-// import { useSelector } from "react-redux";
-// import { Navigate, Outlet } from "react-router-dom";
+import React from "react";
+import { useSelector } from "react-redux";
+import { Navigate, Outlet } from "react-router-dom";
+import MessageFilterBar from "../../pages/Message/MessageFilterBar";
 
-// const MainLayout = () => {
+const MainLayout = () => {
+    <>
 
-//   const {isLoggedIn} = useSelector((state) => state.auth);
+    </>
+};
 
-//   if (!isLoggedIn) {
-//     return <Navigate to={"/auth/login"} />;
-//   }
-//   return (
-//     <>
-//       <div>Main Layout</div>
-
-//       <Outlet />
-//     </>
-//   );
-// };
-
-// export default MainLayout;
+export default MainLayout;
