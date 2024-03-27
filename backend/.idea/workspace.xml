@@ -5,71 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="699a2e6b-23bc-4a79-9b2c-e611dda77a8a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider3.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider4.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider5.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider6.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/._slider7.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/arrow-left.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/arrow-right.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-attach.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-photo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-reminder.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-screenshotz.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-sticker.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/chatbar-todo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider3.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider4.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider5.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider6.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/public/slider7.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/Carousel.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/chat.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Home/Welcome.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/checksums/checksums.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/dependencies-accessors/gc.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/executionHistory/executionHistory.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/fileChanges/last-build.bin" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/fileHashes/fileHashes.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/8.5/gc.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../shared/api/.gradle/vcs-1/gc.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chat-service/src/main/java/com/zalolite/chatservice/dto/MessageDeliveryDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/chat-service/src/main/java/com/zalolite/chatservice/dto/MessageDeliveryDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/api/Api.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/api/Api.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/assets/Chương 2.pptx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/navigations/LoginNavigator.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/navigations/LoginNavigator.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/App/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/App/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/ConfrimQRScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/ConfrimQRScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/AddInforScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/AddInforScreen.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/App/screens/LoginScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/LoginScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/QRScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/QRScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/RegisterDEScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/RegisterDEScreen.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/App/screens/RegisterScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/RegisterScreen.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/assets/group-user-plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/assets/group-user-plus.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/assets/user-plus.png" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/assets/user-plus.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/AvatarNameItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/AvatarNameItem.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/ChatElement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/ChatElement.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/Conversation.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/Conversation.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/DetailContact.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/DetailContact.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/LoadingScreen.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/LoadingScreen.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/MessageDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/MessageDetail.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/models/AddFriend.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/components/models/AddFriend.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/conversations.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/conversations.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/countries.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/data/countries.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/layouts/dashboard/Navbar/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/layouts/dashboard/Navbar/index.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Login/LoginForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Login/LoginForm.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Message/MessageFilterBar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Message/MessageFilterBar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Message/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/pages/Message/index.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/routes/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/src/routes/index.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/Web/zalo-lite/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/Web/zalo-lite/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/App/screens/SlashScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/App/screens/SlashScreen.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,30 +88,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "android.gradle.sync.needed": "true",
-    "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "Merging HuuBang",
-    "ignore.virus.scanning.warn.message": "true",
-    "jdk.selected.JAVA_MODULE": "17",
-    "last_opened_file_path": "/Volumes/SSD_1TB/Hoc_Ki2_Nam4/3_NewTechnology/ZaloLite/backend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "spring.configuration.checksum": "1bc373138585468a2642852349b823e3",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;HuuBang&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;17&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Volumes/SSD_1TB/Hoc_Ki2_Nam4/3_NewTechnology/ZaloLite/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;1bc373138585468a2642852349b823e3&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -269,6 +215,8 @@
       <workItem from="1708753309082" duration="15025000" />
       <workItem from="1711258659091" duration="294000" />
       <workItem from="1711332099586" duration="1085000" />
+      <workItem from="1711352721250" duration="2113000" />
+      <workItem from="1711526804085" duration="2096000" />
     </task>
     <servers />
   </component>
