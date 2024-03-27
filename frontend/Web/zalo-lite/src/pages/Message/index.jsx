@@ -3,6 +3,7 @@ import conversations from "../../data/conversations";
 import ChatElement from "../../components/ChatElement";
 import { useSearchParams } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import { Link } from "react-router-dom";
 
 function Message() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,12 +50,14 @@ function Message() {
             console.log(searchParams);
           }}
         >
-          <ChatElement
-            id={conversation.userID}
-            key={conversation.userID}
-            name={conversation.userName}
-            {...conversation}
-          />
+          {/* <Link to="/auth/login"> */}
+            <ChatElement
+              id={conversation.userID}
+              key={conversation.userID}
+              name={conversation.userName}
+              {...conversation}
+            />
+          {/* </Link> */}
         </div>
       ))}
       <div className="h-[60px]">

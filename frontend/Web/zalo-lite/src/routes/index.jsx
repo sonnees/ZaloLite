@@ -49,6 +49,9 @@ export default function Router() {
     } else if (location.pathname === "/contact") {
       setComp(<DetailContact />);
     }
+    else if (location.pathname === "/app?id=2&type=individual-chat") {
+      setComp(<Conversation />);
+    }
   }, [location.pathname]);
 
   return useRoutes([

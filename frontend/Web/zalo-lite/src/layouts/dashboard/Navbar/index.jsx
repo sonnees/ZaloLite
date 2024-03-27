@@ -1,5 +1,4 @@
 import { Routes, Route, Link, useLocation } from "react-router-dom";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import * as React from "react";
 import Button from "@mui/material/Button";
@@ -9,12 +8,13 @@ import Fade from "@mui/material/Fade";
 // import fetch from "node-fetch";
 
 function Navbar() {
+  // const [userAvatar, setUserAvatar] = useState("")
   const [profileData, setProfileData] = useState(null);
   const location = useLocation();
   const token = location.state?.token;
   const phoneNumber = location.state?.phoneNumber;
-  console.log("Token: ", token);
-  console.log("Phone Number: ", phoneNumber);
+  // console.log("Token: ", token);
+  // console.log("Phone Number: ", phoneNumber);
 
   let messageImage = "/message-outline.png";
   let contactImage = "/contact-book-outline.png";
@@ -81,22 +81,42 @@ function Navbar() {
         <ul className="grid w-full items-center justify-center">
           <li className="pb-[14px]">
             <div className="">
-              <Button
-                id="fade-button"
-                aria-controls={open ? "fade-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                onClick={handleClick}
-                disableTouchRipple
-              >
-                <div>
-                  <img
-                    src="https://s120-ava-talk.zadn.vn/2/5/a/5/6/120/5ded83a5856f6d2af9fce6eac4b8d6d2.jpg"
-                    className="w-14 rounded-full border "
-                    alt="avatar"
-                  />
-                </div>
-              </Button>
+              {profileData ? (
+                <Button
+                  id="fade-button"
+                  aria-controls={open ? "fade-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                  disableTouchRipple
+                >
+                  <div>
+                    <img
+                      src={profileData.avatar}
+                      className="w-14 rounded-full border "
+                      alt="avatar"
+                    />
+                  </div>
+                </Button>
+              ) : (
+                // Hiển thị một phần tử loading hoặc hình ảnh mặc định
+                <Button
+                  id="fade-button"
+                  aria-controls={open ? "fade-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                  disableTouchRipple
+                >
+                  <div>
+                    <img
+                      src="user-loading.jpg"
+                      className="w-14 rounded-full border "
+                      alt="avatar"
+                    />
+                  </div>
+                </Button>
+              )}
               <Menu
                 id="fade-menu"
                 MenuListProps={{
