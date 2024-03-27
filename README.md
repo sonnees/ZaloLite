@@ -197,7 +197,7 @@ HTTP 200
 </details>
 
 <details>
-  <summary>👇 Lấy list các tin nhắn củ hơn theo id chat [X đến Y, sếp theo thời gian tăng dần] </summary> <br>
+  <summary>👇 Lấy list các tin nhắn củ hơn theo id chat [X đến Y, xếp theo thời gian tăng dần] </summary> <br>
 
 `Method GET + TOKEN` : http://localhost:8082/api/v1/chat/x-to-y <br>
 ```
