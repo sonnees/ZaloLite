@@ -156,7 +156,7 @@ const countries = [
         "dial_code": "+975"
     },
     {
-        "name": "Bolivia",
+        "name": "Bolivia, Plurinational State of bolivia",
         "flag": "🇧🇴",
         "code": "BO",
         "dial_code": "+591"
@@ -300,7 +300,7 @@ const countries = [
         "dial_code": "+242"
     },
     {
-        "name": "Congo",
+        "name": "Congo, The Democratic Republic of the Congo",
         "flag": "🇨🇩",
         "code": "CD",
         "dial_code": "+243"
@@ -564,6 +564,18 @@ const countries = [
         "dial_code": "+509"
     },
     {
+        "name": "Heard Island and Mcdonald Islands",
+        "flag": "🇭🇲",
+        "code": "HM",
+        "dial_code": "+672"
+    },
+    {
+        "name": "Holy See (Vatican City State)",
+        "flag": "🇻🇦",
+        "code": "VA",
+        "dial_code": "+379"
+    },
+    {
         "name": "Honduras",
         "flag": "🇭🇳",
         "code": "HN",
@@ -598,6 +610,12 @@ const countries = [
         "flag": "🇮🇩",
         "code": "ID",
         "dial_code": "+62"
+    },
+    {
+        "name": "Iran, Islamic Republic of Persian Gulf",
+        "flag": "🇮🇷",
+        "code": "IR",
+        "dial_code": "+98"
     },
     {
         "name": "Iraq",
@@ -670,6 +688,18 @@ const countries = [
         "flag": "🇰🇮",
         "code": "KI",
         "dial_code": "+686"
+    },
+    {
+        "name": "North Korean",
+        "flag": "🇰🇵",
+        "code": "KP",
+        "dial_code": "+850"
+    },
+    {
+        "name": "South Korean",
+        "flag": "🇰🇷",
+        "code": "KR",
+        "dial_code": "+82"
     },
     {
         "name": "Kosovo",
@@ -828,6 +858,12 @@ const countries = [
         "dial_code": "+52"
     },
     {
+        "name": "Micronesia, Federated States of Micronesia",
+        "flag": "🇫🇲",
+        "code": "FM",
+        "dial_code": "+691"
+    },
+    {
         "name": "Moldova",
         "flag": "🇲🇩",
         "code": "MD",
@@ -978,6 +1014,12 @@ const countries = [
         "dial_code": "+680"
     },
     {
+        "name": "Palestinian Territory, Occupied",
+        "flag": "🇵🇸",
+        "code": "PS",
+        "dial_code": "+970"
+    },
+    {
         "name": "Panama",
         "flag": "🇵🇦",
         "code": "PA",
@@ -1068,6 +1110,12 @@ const countries = [
         "dial_code": "+590"
     },
     {
+        "name": "Saint Helena, Ascension and Tristan Da Cunha",
+        "flag": "🇸🇭",
+        "code": "SH",
+        "dial_code": "+290"
+    },
+    {
         "name": "Saint Kitts and Nevis",
         "flag": "🇰🇳",
         "code": "KN",
@@ -1090,6 +1138,12 @@ const countries = [
         "flag": "🇵🇲",
         "code": "PM",
         "dial_code": "+508"
+    },
+    {
+        "name": "Saint Vincent and the Grenadines",
+        "flag": "🇻🇨",
+        "code": "VC",
+        "dial_code": "+1784"
     },
     {
         "name": "Samoa",
@@ -1182,6 +1236,12 @@ const countries = [
         "dial_code": "+211"
     },
     {
+        "name": "South Georgia and the South Sandwich Islands",
+        "flag": "🇬🇸",
+        "code": "GS",
+        "dial_code": "+500"
+    },
+    {
         "name": "Spain",
         "flag": "🇪🇸",
         "code": "ES",
@@ -1246,6 +1306,12 @@ const countries = [
         "flag": "🇹🇯",
         "code": "TJ",
         "dial_code": "+992"
+    },
+    {
+        "name": "Tanzania, United Republic of Tanzania",
+        "flag": "🇹🇿",
+        "code": "TZ",
+        "dial_code": "+255"
     },
     {
         "name": "Thailand",
@@ -1362,7 +1428,7 @@ const countries = [
         "dial_code": "+678"
     },
     {
-        "name": "Venezuela",
+        "name": "Venezuela, Bolivarian Republic of Venezuela",
         "flag": "🇻🇪",
         "code": "VE",
         "dial_code": "+58"
