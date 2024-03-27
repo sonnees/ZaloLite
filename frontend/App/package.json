@@ -22,19 +22,29 @@
     "expo": "~50.0.8",
     "expo-barcode-scanner": "~12.9.3",
     "expo-camera": "~14.1.1",
+    "expo-image-picker": "~14.7.1",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
     "react-native": "^0.73.6",
+    "react-native-country-picker-modal": "^2.0.0",
+    "react-native-datepicker": "^1.7.2",
+    "react-native-document-picker": "^9.1.1",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.14.0",
     "react-native-gifted-chat": "^2.4.0",
+<<<<<<< HEAD
+    "react-native-image-picker": "^7.1.2",
+=======
     "react-native-keyboard-aware-scrollview": "^2.1.0",
+>>>>>>> b444d3e05881ce45690176dfee7f4684fbad9f3d
     "react-native-linear-gradient": "^2.8.3",
+    "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-popup-menu": "^0.16.1",
     "react-native-qrcode-scanner": "^1.5.5",
     "react-native-vector-icons": "^10.0.3",
     "react-native-web": "~0.19.6",
     "react-native-websocket": "^1.0.2",
+    "react-native-webview": "^13.8.2",
     "react-router-dom": "^6.22.1"
   },
   "devDependencies": {

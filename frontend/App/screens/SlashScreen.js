@@ -19,7 +19,7 @@ export default function SlashScreen() {
                 alignItems: "center",
             }}
             >
-                <Text style={{fontFamily: "Roboto", fontSize: 70, fontWeight: "bold", color: "#1E90FF" }}>Zalo</Text>
+                <Text style={{fontFamily: "Roboto", fontSize: 50, fontWeight: "bold", color: "#1E90FF" }}>ZaloLife</Text>
             </View>
         </View>
         <View style={{flex:3, backgroundColor: "#fff", justifyContent: "center", }}>
