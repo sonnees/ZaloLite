@@ -5,6 +5,7 @@ import Todo from "../pages/Todo";
 import Message from "../pages/Message";
 import OtherMessage from "../pages/Message/OtherMessage";
 import Sidebar from "../layouts/dashboard/Sidebar";
+import Welcome from "../pages/Home/Welcome";
 
 import { Suspense, lazy, useEffect, useState } from "react";
 import { Navigate, useLocation, useRoutes } from "react-router-dom";
@@ -18,6 +19,11 @@ import MessageFilterBar from "../pages/Message/MessageFilterBar";
 import SearchBox from "../components/SearchBox";
 import Conversation from "../components/Conversation";
 import DetailContact from "../components/DetailContact";
+import { set } from "date-fns";
+
+import { Stack } from "@mui/material";
+import { Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const Loadable = (Component) => (props) => {
   return (
@@ -27,23 +33,21 @@ const Loadable = (Component) => (props) => {
   );
 };
 
-
-
 export default function Router() {
-  const [comp, setComp] = useState(<Conversation/>)
+  const [comp, setComp] = useState(<Conversation />);
 
   function handleComp() {
-    setComp(<DetailContact/>)
+    setComp(<DetailContact />);
   }
 
   const location = useLocation();
 
   useEffect(() => {
     if (location.pathname === "/app") {
-      setComp(<Conversation/>);
-    } 
-    else if (location.pathname === "/contact") {
-      setComp(<DetailContact/>);
+      // setComp(<Conversation />);
+      setComp(<Welcome />);
+    } else if (location.pathname === "/contact") {
+      setComp(<DetailContact />);
     }
   }, [location.pathname]);
 
@@ -66,9 +70,8 @@ export default function Router() {
             { path: "other-message", element: <OtherMessage /> },
           ],
         },
-        { path: "/contact", element: [<SearchBox/>,  <Contact/>], },
+        { path: "/contact", element: [<SearchBox />, <Contact />] },
         { path: "todo", element: <Todo /> },
-        
       ],
     },
 
