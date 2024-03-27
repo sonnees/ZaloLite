@@ -196,6 +196,22 @@ HTTP 200
 ```
 </details>
 
+<details>
+  <summary>👇 Lấy list các tin nhắn củ hơn theo id chat [X đến Y, sếp theo thời gian tăng dần] </summary> <br>
+
+`Method GET + TOKEN` : http://localhost:8082/api/v1/chat/x-to-y <br>
+```
+http://localhost:8082/api/v1/chat/x-to-y?id=49a9768c-a2a8-4290-9653-5291b9718db1&x=10&y=20
+```
+`Received` :
+```
+# Failed
+# Success
+HTTP 200
+{danh sách chatActivity}
+```
+</details>
+
 
 # FRONT END
 `WEB INIT`
