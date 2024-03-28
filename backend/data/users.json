@@ -1,0 +1,236 @@
+[{
+    "_id": "26ce60d1-64b9-45d2-8053-7746760a8354",
+    "friendRequests": [
+        {
+            "userID": "5b685d06-8fbe-4ab7-a18b-b713b2ba4daa",
+            "userName": "Ánh Tina",
+            "userAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
+            "description": "Tôi muốn được kết bạn với pro!",
+            "sendAt": {
+                "$date": "2024-03-28T15:34:44.138Z"
+            },
+            "isSender": false
+        },
+        {
+            "userID": "f1cee7b8-7712-4042-9e94-17bd21209a62",
+            "userName": "Lê Hữu Bằng",
+            "userAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
+            "description": "Tôi muốn được kết bạn với pro!",
+            "sendAt": {
+                "$date": "2024-03-28T15:34:51.64Z"
+            },
+            "isSender": false
+        },
+        {
+            "userID": "b95ad4f4-68b0-4dd8-a4db-59b5874c4bdf",
+            "userName": "Nguyễn Thị Việt Chi",
+            "userAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
+            "description": "Tôi muốn được kết bạn với pro!",
+            "sendAt": {
+                "$date": "2024-03-28T15:36:25.955Z"
+            },
+            "isSender": false
+        }
+    ],
+    "conversations": [
+        {
+            "chatID": "5b685d06-8fbe-4ab7-8053-7746760a8000",
+            "chatName": "Ánh Tina",
+            "chatAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
+            "type": "REQUESTED",
+            "connectAt": {
+                "$date": "2024-03-28T15:34:44.288Z"
+            },
+            "lastUpdateAt": {
+                "$date": "2024-03-28T15:34:44.288Z"
+            },
+            "deliveries": [],
+            "reads": [],
+            "topChatActivity": []
+        },
+        {
+            "chatID": "5b685d06-8fbe-4ab7-8053-7746760a8001",
+            "chatName": "Lê Hữu Bằng",
+            "chatAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
+            "type": "REQUESTED",
+            "connectAt": {
+                "$date": "2024-03-28T15:34:51.667Z"
+            },
+            "lastUpdateAt": {
+                "$date": "2024-03-28T15:34:51.667Z"
+            },
+            "deliveries": [],
+            "reads": [],
+            "topChatActivity": []
+        },
+        {
+            "chatID": "5b685d06-8fbe-4ab7-8053-7746760a8002",
+            "chatName": "Nguyễn Thị Việt Chi",
+            "chatAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
+            "type": "REQUESTED",
+            "connectAt": {
+                "$date": "2024-03-28T15:36:25.978Z"
+            },
+            "lastUpdateAt": {
+                "$date": "2024-03-28T15:36:25.978Z"
+            },
+            "deliveries": [],
+            "reads": [],
+            "topChatActivity": []
+        }
+    ],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "f1cee7b8-7712-4042-9e94-17bd21209a62",
+    "friendRequests": [
+        {
+            "userID": "26ce60d1-64b9-45d2-8053-7746760a8354",
+            "userName": "Tran Huy",
+            "description": "Tôi muốn được kết bạn với pro!",
+            "sendAt": {
+                "$date": "2024-03-28T15:34:51.64Z"
+            },
+            "isSender": true
+        }
+    ],
+    "conversations": [
+        {
+            "chatID": "f1cee7b8-7712-4042-8053-7746760a8354",
+            "chatName": "Tran Huy",
+            "type": "REQUESTS",
+            "connectAt": {
+                "$date": "2024-03-28T15:34:51.66Z"
+            },
+            "lastUpdateAt": {
+                "$date": "2024-03-28T15:34:51.66Z"
+            },
+            "deliveries": [],
+            "reads": [],
+            "topChatActivity": []
+        }
+    ],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "5b685d06-8fbe-4ab7-a18b-b713b2ba4daa",
+    "friendRequests": [
+        {
+            "userID": "26ce60d1-64b9-45d2-8053-7746760a8354",
+            "userName": "Tran Huy",
+            "description": "Bạn đẹp trai quá!",
+            "sendAt": {
+                "$date": "2024-03-28T15:34:44.138Z"
+            },
+            "isSender": true
+        }
+    ],
+    "conversations": [
+        {
+            "chatID": "5b685d06-8fbe-4ab7-8053-7746760a8001",
+            "chatName": "Tran Huy",
+            "type": "REQUESTS",
+            "connectAt": {
+                "$date": "2024-03-28T15:34:44.281Z"
+            },
+            "lastUpdateAt": {
+                "$date": "2024-03-28T15:34:44.281Z"
+            },
+            "deliveries": [],
+            "reads": [],
+            "topChatActivity": []
+        }
+    ],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "b95ad4f4-68b0-4dd8-a4db-59b5874c4bdf",
+    "friendRequests": [
+        {
+            "userID": "26ce60d1-64b9-45d2-8053-7746760a8354",
+            "userName": "Tran Huy",
+            "description": "Hi!",
+            "sendAt": {
+                "$date": "2024-03-28T15:36:25.955Z"
+            },
+            "isSender": true
+        }
+    ],
+    "conversations": [
+        {
+            "chatID": "5b685d06-8fbe-4ab7-8053-7746760a8002",
+            "chatName": "Tran Huy",
+            "type": "REQUESTS",
+            "connectAt": {
+                "$date": "2024-03-28T15:36:25.973Z"
+            },
+            "lastUpdateAt": {
+                "$date": "2024-03-28T15:36:25.973Z"
+            },
+            "deliveries": [],
+            "reads": [],
+            "topChatActivity": []
+        }
+    ],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "51600131-f45b-4101-b669-7c95eef1632d",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "0a2f80df-655f-47f7-9202-7a01b0f9ba74",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "daa67a2a-44c2-4d41-95f1-f6d674501a71",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "f31a6af5-e633-44f0-895d-26f0eafd6262",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "0a67357b-9a70-431f-be90-39fa9fc7e3e2",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "cb9878ba-4e5e-4217-9131-9b2527f92fa6",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "b9a12d48-9698-4716-b990-a70a2a977a48",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "6a1c22fa-73d8-4332-a801-4445f06a642d",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "79feacfd-507b-4721-b7b0-92869f06cf20",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+},
+{
+    "_id": "9ad80136-2f08-4316-a8a0-be1e3f1ea44d",
+    "friendRequests": [],
+    "conversations": [],
+    "_class": "com.zalolite.chatservice.entity.User"
+}]

@@ -58,20 +58,21 @@ public class AuthController {
     @PostMapping("/register")
     public Mono<ResponseEntity<String>> create(@RequestBody AccountCreateDTO accountCreateDTO){
         return accountRepository.insert(new Account(accountCreateDTO))
-                .flatMap(result -> accountRepository.searchByPhoneNumber(accountCreateDTO.getPhoneNumber())
-                        .flatMap(account -> {
-                            WebClient webClient = builder.build();
-                            return  webClient
-                                    .post()
-                                    .uri("http://CHAT-SERVICE/api/v1/user/create?id="+account.getProfile().getUserID())
-                                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                                    .retrieve()
-                                    .bodyToMono(Boolean.class)
-                                    .flatMap(aBoolean -> {
-                                        if(aBoolean) return Mono.just(ResponseEntity.status(200).body(""));
-                                        else return Mono.just(ResponseEntity.status(500).body(""));
-                                    });
-                        }))
+                .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("new account failed"))))
+                .flatMap(result -> {
+                    WebClient webClient = builder.build();
+                    return  webClient
+                            .post()
+                            .uri("http://CHAT-SERVICE/api/v1/user/create?id="+result.getProfile().getUserID())
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                            .retrieve()
+                            .bodyToMono(Boolean.class)
+                            .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("new user failed"))))
+                            .flatMap(aBoolean -> {
+                                if(aBoolean) return Mono.just(ResponseEntity.status(200).body(""));
+                                else return Mono.just(ResponseEntity.status(500).body(""));
+                            });
+                })
                 .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));
     }
 

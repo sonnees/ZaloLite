@@ -37,7 +37,7 @@ public class ChatServiceApplication {
 		SpringApplication.run(ChatServiceApplication.class, args);
 	}
 
-	@Bean
+//	@Bean
 	CommandLineRunner commandLineRunner(){
 		return new CommandLineRunner() {
 			@Override

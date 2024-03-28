@@ -32,7 +32,7 @@ public class SecurityConfig {
 
         return http.authorizeExchange(
                         auth ->
-                                auth.pathMatchers("/ws/**").permitAll()
+                                auth.pathMatchers("/ws/**", "/api/v1/user/create/**").permitAll()
                                         .anyExchange().authenticated()
                 )
                 .authenticationManager(authenticationManager)
