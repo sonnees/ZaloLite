@@ -24,6 +24,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class ChatHandleWebSocket {
+
     private UserRepository userRepository;
     private ChatRepository chatRepository;
     private GroupRepository groupRepository;
@@ -33,6 +34,13 @@ public class ChatHandleWebSocket {
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.groupRepository = groupRepository;
+    }
+
+    public Mono<Void> create(String chatID){
+        log.info("** create: {}", chatID);
+        return chatRepository.save(new Chat(chatID))
+                .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("new chat failed"))))
+                .flatMap(chat -> Mono.empty());
     }
 
     public Mono<Void> appendChat(String chatID, MessageAppendDTO info){

@@ -39,5 +39,4 @@ public class AppendConversationDTO {
         receiverAvatar = f.getReceiverAvatar();
     }
 
-
 }
