@@ -32,7 +32,8 @@ public class SecurityConfig {
 
         return http.authorizeExchange(
                         auth ->
-                                auth.anyExchange().authenticated()
+                                auth.pathMatchers("/ws/**").permitAll()
+                                        .anyExchange().authenticated()
                 )
                 .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepository)
