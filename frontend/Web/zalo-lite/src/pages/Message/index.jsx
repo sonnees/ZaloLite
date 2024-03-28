@@ -74,14 +74,42 @@
 
 // export default Message;
 
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import conversations from "../../data/conversations";
 import ChatElement from "../../components/ChatElement";
 import { Link, useNavigate } from "react-router-dom";
 
 function Message() {
   const navigate = useNavigate();
+  const [conversations, setConversations] = useState([]);
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8082/api/v1/user/info/49a9768c-a2a8-4290-9653-5291b9718db1",
+          {
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjAwMDAwMDAwMDAiLCJpYXQiOjE3MTE2MTIyOTQsImV4cCI6MTcxMTcyMDI5NH0.b9dSf3nH1wAXYWCty0dIKyAeVp-hrF4yOiAkih7vi_8",
+            },
+            method: "GET",
+          },
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch conversations");
+        }
+        const data = await response.json();
+        setConversations(data); // Cập nhật state với dữ liệu từ API
+      } catch (error) {
+        console.error("Error fetching conversations:", error);
+      }
+    };
+
+    fetchConversations();
+  }, []); // Sử dụng dependency array rỗng để fetch dữ liệu chỉ một lần khi component được render
 
   const handleConversationClick = (conversation) => {
     // Di chuyển đến route Conversation với các query parameters tương ứng
