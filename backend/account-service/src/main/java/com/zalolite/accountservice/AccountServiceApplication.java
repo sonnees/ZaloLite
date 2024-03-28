@@ -31,7 +31,7 @@ public class AccountServiceApplication {
         SpringApplication.run(AccountServiceApplication.class, args);
     }
 
-    @Bean
+//    @Bean
     CommandLineRunner commandLineRunner(){
         return new CommandLineRunner() {
             @Override
