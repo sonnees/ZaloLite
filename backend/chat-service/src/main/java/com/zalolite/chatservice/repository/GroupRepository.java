@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface GroupRepository extends ReactiveMongoRepository<Group, UUID> {
+
 }

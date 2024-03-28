@@ -34,6 +34,9 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Query(value = "{'_id': ?0}")
     @Update("{$push:{'conversations': ?1}}")
     Mono<Long> appendConversation(String id, Conversation conversation);
+    @Query(value = "{'_id': {$in: ?0}}")
+    @Update("{$push:{'conversations': ?1}}")
+    Mono<Long> appendConversation(String[] id, Conversation conversation);
 
     @Query(value = "{_id:?0,'conversations.chatID': {$in: [?1,?2]}}")
     Mono<User> searchConversation(String senderID, String chatId1, String chatId2);

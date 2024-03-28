@@ -29,6 +29,7 @@ public class WebSocketConfig implements WebFluxConfigurer {
 
         urlMap.put("/ws/chat/{chatID}", webSocketHandler);
         urlMap.put("/ws/user/{userID}", webSocketHandler);
+        urlMap.put("/ws/group", webSocketHandler);
 
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setUrlMap(urlMap);

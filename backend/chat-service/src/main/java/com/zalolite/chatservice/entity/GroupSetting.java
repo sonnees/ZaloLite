@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
@@ -16,4 +15,11 @@ public class GroupSetting {
     private Boolean membershipApproval;
     private Boolean createNewPolls;
 
+    public GroupSetting() {
+        this.changeChatNameAndAvatar = true;
+        this.pinMessages = true;
+        this.sendMessages = true;
+        this.membershipApproval = true;
+        this.createNewPolls = true;
+    }
 }
