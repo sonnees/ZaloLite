@@ -22,8 +22,6 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
     @Update("{$push:{'chatActivity': ?1}}")
     Mono<Long> appendChatActivityByIDChat(String chatID, ChatActivity chatActivity);
 
-//    @Update(update = "{$set: {'conversations.$.type': ?2}}")
-
     @Query(value = "{'_id': ?0}")
     @Update("{$push:{'deliveries': ?1}}")
     Mono<Long> appendDelivery(String chatID, Delivery delivery);

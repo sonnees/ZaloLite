@@ -169,6 +169,15 @@ public class UserHandleWebSocket {
                 })).then();
     }
 
+    public Mono<Void> appendConversation(String[] userID,Conversation conversation){
+        log.info("** appendConversation: {}",conversation.getChatID());
+        return userRepository.appendConversation(userID,conversation)
+                .flatMap(aLongR -> {
+                    if(aLongR<=0) return Mono.error(() -> new Throwable("appendConversation failed"));
+                    return Mono.empty();
+                });
+    }
+
     public Mono<Void> updateConversations(Chat chat){
         log.info("** updateConversations: {}",chat.getId());
 

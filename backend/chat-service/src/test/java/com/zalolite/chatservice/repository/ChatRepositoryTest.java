@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.TestComponent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -36,5 +39,12 @@ class ChatRepositoryTest {
                     return Flux.empty();
                 })
                 .blockFirst();
+    }
+
+    @Test
+    void test(){
+        UUID u = UUID.randomUUID();
+        System.out.println(u);
+
     }
 }

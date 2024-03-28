@@ -3,23 +3,18 @@ package com.zalolite.chatservice.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.chatservice.dto.*;
-import com.zalolite.chatservice.entity.Chat;
 import com.zalolite.chatservice.entity.Type;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
-import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -29,6 +24,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
     private ObjectMapper objectMapper;
     private UserHandleWebSocket userHandleWebSocket;
     private ChatHandleWebSocket chatHandleWebSocket;
+    private GroupHandleWebSocket groupHandleWebSocket;
 
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
@@ -41,11 +37,64 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
         sessions.put(sessionId, session);
         Flux<WebSocketMessage> sendFlux = Flux.just(session.textMessage("Connect success"));
 
-        return switch (split[split.length - 2]) {
+        return switch (split[2]) {
             case "chat" -> handleChat(session, sendFlux, sessionId, split[split.length - 1]);
             case "user" -> handleUser(session, sendFlux, sessionId, split[split.length - 1]);
+            case "group" -> handleGroup(session, sendFlux, sessionId);
             default -> Mono.empty();
         };
+    }
+
+    private Mono<Void> handleGroup(WebSocketSession session, Flux<WebSocketMessage> sendFlux, String sessionId) {
+        return session
+                .send(sendFlux)
+                .thenMany(session.receive()
+                        .map(WebSocketMessage::getPayloadAsText)
+                        .flatMap(message -> {
+                            try {
+                                GroupDTO root = objectMapper.readValue(message, GroupDTO.class);
+                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
+
+                                return switch (root.getTGM()) {
+                                    case TGM01 -> {
+                                        CreateGroupDTO obj = objectMapper.readValue(message, CreateGroupDTO.class);
+
+                                        List<String> listID = new ArrayList<>();
+                                        listID.add(obj.getOwner().getUserID().toString());
+                                        obj.getMembers().forEach(personInfo -> listID.add(personInfo.getUserID().toString()));
+                                        String[] arrayID = listID.toArray(new String[0]);
+//                                        sendMessageToAllClients(session,arrayID, obj);
+                                        yield groupHandleWebSocket
+                                                .create(arrayID, objectMapper.readValue(message, CreateGroupDTO.class))
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(sessionId, notify);
+//                                                            sendMessageToAllClients(sessionId,arrayID, obj);
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(sessionId, notify);
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    default -> Flux.empty();
+                                };
+                            } catch (JsonProcessingException e) {
+                                log.error("** " + e);
+                                return Flux.empty();
+                            }
+                        })
+                        .publishOn(Schedulers.boundedElastic())
+                        .map(session::textMessage)
+                        .doOnTerminate(() -> {
+                            sessions.remove(sessionId);
+                            log.info("** session end: " + sessionId);
+                        }))
+                .then();
     }
 
     private Mono<Void> handleUser(WebSocketSession session, Flux<WebSocketMessage> sendFlux, String sessionId, String userID) {
@@ -359,5 +408,24 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
             log.error(e.getMessage());
         }
     }
+
+    private void sendMessageToAllClient(WebSocketSession session, String[] arrID, CreateGroupDTO info ) {
+        try {
+            log.info("** sendMessageToAllClients CreateGroupDTO");
+            String message = objectMapper.writeValueAsString(info);
+            sessions.put(arrID[0], session);
+            session.send(Flux.just(session.textMessage(message)))
+                    .subscribe();
+//            sessions.forEach((sessionId, session) -> {
+//                if (!sessionId.equals(senderId))
+//                    session
+//                            .send(Flux.just(session.textMessage(message)))
+//                            .subscribe();
+//            });
+        } catch (Exception e){
+            log.error(e.getMessage());
+        }
+    }
+
 
 }
