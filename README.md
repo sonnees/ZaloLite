@@ -63,6 +63,7 @@ http://localhost:8081/api/v1/auth/register
     "phoneNumber":"0123456789",
     "password":"123",
     "userName":"Son nees",
+    "avatar":"https://s.net.vn/pPN0",
     "gender":"true",
     "birthday":"2024-01-26",
     "role":"USER"
