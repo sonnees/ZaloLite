@@ -44,7 +44,7 @@ public class GroupHandleWebSocket {
         log.info("** create group: {}",info.getId());
         Group group = new Group(info);
         return groupRepository.save(group)
-                .switchIfEmpty(Mono.error(() -> new Throwable("appendChatActivityByIDChat failed")))
+                .switchIfEmpty(Mono.error(() -> new Throwable("create group failed")))
                 .flatMap(group1 -> {
                     Conversation conversation = new Conversation(
                             info.getId(),
