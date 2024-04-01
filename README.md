@@ -198,6 +198,10 @@ HTTP 200
 
 
 # FRONT END
+`APP RUN`
+```
+npx expo start --port 3005
+```
 `WEB INIT`
 ```
 npm i
