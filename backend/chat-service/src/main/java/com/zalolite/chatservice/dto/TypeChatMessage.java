@@ -7,4 +7,5 @@ public enum TypeChatMessage {
     TCM03, // message read
     TCM04, // message hidden
     TCM05, // message recall
+    TCM06, // user typing a text message
 }

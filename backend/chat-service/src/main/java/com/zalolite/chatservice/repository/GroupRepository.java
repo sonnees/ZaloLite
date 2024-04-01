@@ -60,4 +60,16 @@ public interface GroupRepository extends ReactiveMongoRepository<Group, UUID> {
     @Query(value = "{'_id': ?0}")
     @Update(update = "{$set: {'setting': {'createNewPolls': ?1}}}")
     Mono<Long> updateSetting_createNewPolls(String senderID, boolean createNewPolls);
+
+    @Query(value = "{'owner.userAvatar': ?0}")
+    @Update(update = "{$set:{'owner.userAvatar': ?1}}")
+    Mono<Long> updateAvatarInOwner(String oldAvatar, String newAvatar);
+
+    @Query(value = "{'admin.userAvatar': ?0}")
+    @Update(update = "{$set:{'admin.$.userAvatar': ?1}}")
+    Mono<Long> updateAvatarInAdmin(String oldAvatar, String newAvatar);
+
+    @Query(value = "{'members.userAvatar': ?0}")
+    @Update(update = "{$set:{'members.$.userAvatar': ?1}}")
+    Mono<Long> updateAvatarInMembers(String oldAvatar, String newAvatar);
 }

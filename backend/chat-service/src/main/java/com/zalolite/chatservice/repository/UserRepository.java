@@ -45,4 +45,13 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Query(value = "{'conversations.chatID': ?0}")
     @Update(update = "{$set:{'conversations.$.lastUpdateAt': ?1, 'conversations.$.deliveries': ?2, 'conversations.$.reads': ?3, 'conversations.$.topChatActivity': ?4}}")
     Mono<Long> updateChatActivity(String chatID, Date lastUpdateAt, List<Delivery> deliveries, List<Delivery> reads, List<ChatActivity> newTopChatActivity);
+
+    @Query(value = "{'conversations.chatAvatar': ?0}")
+    @Update(update = "{$set:{'conversations.$.chatAvatar': ?1}}")
+    Mono<Long> updateAvatarInConversation(String oldAvatar, String newAvatar);
+
+    @Query(value = "{'friendRequests.userAvatar': ?0}")
+    @Update(update = "{$set:{'conversations.$.chatAvatar': ?1}}")
+    Mono<Long> updateAvatarInFriendRequest(String oldAvatar, String newAvatar);
+
 }

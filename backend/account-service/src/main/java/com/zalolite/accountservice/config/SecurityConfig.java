@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -69,4 +71,8 @@ public class SecurityConfig {
         return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
     }
 
+    @Bean
+    public TaskExecutor taskExecutor() {
+        return new SimpleAsyncTaskExecutor();
+    }
 }

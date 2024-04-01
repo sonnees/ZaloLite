@@ -43,7 +43,6 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
         else sessions.get(path).add(session);
 
         Flux<WebSocketMessage> sendFlux = Flux.just(session.textMessage("Connect success"));
-
         return switch (split[2]) {
             case "chat" -> handleChat(session, sendFlux, sessionId, split[split.length - 1], path);
             case "user" -> handleUser(session, sendFlux, sessionId, split[split.length - 1], path);
@@ -227,7 +226,8 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 });
                                     }
 
-                                    default -> Flux.empty();
+                                    default -> Mono.empty();
+
                                 };
                             } catch (JsonProcessingException e) {
                                 log.error("** " + e);
@@ -385,6 +385,12 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                     sendMessageToClient(path,sessionId,notify, "Failed | recall message");
                                                     return Mono.empty();
                                                 });
+                                    }
+
+                                    case TCM06 -> { // user typing a text message
+                                        TypingTextMessageDTO obj = objectMapper.readValue(message, TypingTextMessageDTO.class);
+                                        sendMessageToAllClients(path,sessionId,obj,"user typing a text message");
+                                        yield Mono.empty();
                                     }
 
                                     default -> Flux.empty();

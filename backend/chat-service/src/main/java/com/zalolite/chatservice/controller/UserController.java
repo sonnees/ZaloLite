@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zalolite.chatservice.async.UpdateAsync;
 import com.zalolite.chatservice.dto.AppendConversationDTO;
 import com.zalolite.chatservice.entity.*;
 import com.zalolite.chatservice.repository.ChatRepository;
@@ -29,6 +30,7 @@ public class UserController {
     private UserRepository userRepository;
     private ChatRepository chatRepository;
     private GroupRepository groupRepository;
+    private UpdateAsync updateAsync;
     private ObjectMapper objectMapper;
     private WebClient.Builder builder;
 
@@ -68,6 +70,13 @@ public class UserController {
                            .switchIfEmpty(Mono.just(ResponseEntity.status(401).body("Error token")));
                })
                 .doOnError(throwable -> log.error(throwable.getMessage()));
+    }
+
+    @GetMapping("/update-avatar-account")
+    public Mono<Void> updateAvatarAsync(@RequestParam String oldAvatar,@RequestParam String newAvatar){
+        log.info("** updateAvatarAsync {}", newAvatar);
+        updateAsync.updateAvatarAsync(oldAvatar,newAvatar);
+        return Mono.empty();
     }
 
 }
