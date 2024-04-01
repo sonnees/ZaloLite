@@ -3,10 +3,15 @@ package com.zalolite.accountservice.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.accountservice.AccountRepository;
+import com.zalolite.accountservice.dto.AccountChangePassword;
+import com.zalolite.accountservice.dto.AccountCreateDTO;
+import com.zalolite.accountservice.dto.FieldDTO;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.jwt.AuthenticationManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,7 +19,9 @@ import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -24,6 +31,7 @@ import reactor.core.publisher.Mono;
 public class AccountController {
     private final AccountRepository accountRepository;
     private final ObjectMapper objectMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/profile/{phoneNumber}")
     public Mono<ResponseEntity<String>> getProfileByPhoneNumber(@PathVariable String phoneNumber){
@@ -58,6 +66,44 @@ public class AccountController {
                                     return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                                 }
                             }).switchIfEmpty(Mono.just(ResponseEntity.status(403).body("Not authenticate")));
+                }).flatMap(responseEntityMono -> responseEntityMono);
+    }
+
+    @PostMapping("/change-password")
+    public Mono<ResponseEntity<String>> changePassword(@RequestBody AccountChangePassword info){
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .map(authentication -> {
+                    String userDetailsPhoneNumber = (String) authentication.getPrincipal();
+                    return accountRepository.searchByPhoneNumber(userDetailsPhoneNumber)
+                            .switchIfEmpty(Mono.empty())
+                            .flatMap(account -> {
+                                if(!passwordEncoder.matches(info.getCurPass(),account.getPassword())){
+                                    log.error("** {} ",info.getCurPass());
+                                    return Mono.just(ResponseEntity.status(403).body("Not authenticate"));
+                                }
+                                return accountRepository.changePassword(account.getPhoneNumber(), passwordEncoder.encode(info.getNewPass()))
+                                        .flatMap(aLong ->Mono.just(ResponseEntity.ok("Success")))
+                                        .switchIfEmpty(Mono.just(ResponseEntity.status(403).body("Not authenticate")));
+                            });
+                }).flatMap(responseEntityMono -> responseEntityMono);
+    }
+
+    @PostMapping("/change-avatar")
+    public Mono<ResponseEntity<String>> changeAvatar(@RequestBody FieldDTO dto){
+        log.info("** changeAvatar {}", dto.getField());
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .map(authentication -> {
+                     String userDetailsPhoneNumber = (String) authentication.getPrincipal();
+                    return accountRepository.changeAvatar(userDetailsPhoneNumber, dto.getField())
+                            .flatMap(aLong -> {
+                                if(aLong<=0) {
+                                    log.error("**  changeAvatar");
+                                    return Mono.just(ResponseEntity.status(403).body("Error"));
+                                }
+                                return Mono.just(ResponseEntity.ok("Success"));
+                            });
                 }).flatMap(responseEntityMono -> responseEntityMono);
     }
 

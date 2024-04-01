@@ -7,4 +7,7 @@ public enum TypeUserMessage {
     TUM03, // accept friend request
     TUM04, // unfriend
     TUM05, // create conversation type STRANGER
+    TUM06, // change avatar
+
+
 }

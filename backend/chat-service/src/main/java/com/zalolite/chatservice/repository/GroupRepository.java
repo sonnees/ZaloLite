@@ -29,6 +29,35 @@ public interface GroupRepository extends ReactiveMongoRepository<Group, UUID> {
     Mono<Long> removeAdmin(String id, String userID);
 
     @Query(value = "{'_id': ?0}")
-    @Update(update = "{$set: {'conversations.$.type': ?2}}")
-    Mono<Long> updateNameChat(String senderID, String receiverID, String type);
+    @Update(update = "{$set: {'chatName': ?1}}")
+    Mono<Long> updateNameChat(String senderID, String chatName);
+
+    @Query(value = "{'_id': ?0}")
+    @Update(update = "{$set: {'avatar': ?1}}")
+    Mono<Long> updateAvatar(String senderID, String avatar);
+
+    @Query(value = "{'_id': ?0}")
+    @Update(update = "{$set: {'owner': ?1}}")
+    Mono<Long> changeOwner(String senderID, PersonInfo owner);
+
+    // ===== setting =====
+    @Query(value = "{'_id': ?0}")
+    @Update(update = "{$set: {'setting': {'changeChatNameAndAvatar': ?1}}}")
+    Mono<Long> updateSetting_changeChatNameAndAvatar(String senderID, boolean changeChatNameAndAvatar);
+
+    @Query(value = "{'_id': ?0}")
+    @Update(update = "{$set: {'setting': {'pinMessages': ?1}}}")
+    Mono<Long> updateSetting_pinMessages(String senderID, boolean pinMessages);
+
+    @Query(value = "{'_id': ?0}")
+    @Update(update = "{$set: {'setting': {'sendMessages': ?1}}}")
+    Mono<Long> updateSetting_sendMessages(String senderID, boolean sendMessages);
+
+    @Query(value = "{'_id': ?0}")
+    @Update(update = "{$set: {'setting': {'membershipApproval': ?1}}}")
+    Mono<Long> updateSetting_membershipApproval(String senderID, boolean membershipApproval);
+
+    @Query(value = "{'_id': ?0}")
+    @Update(update = "{$set: {'setting': {'createNewPolls': ?1}}}")
+    Mono<Long> updateSetting_createNewPolls(String senderID, boolean createNewPolls);
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class FieldDTO {
-    private String field;
+public class AccountChangePassword {
+    private String curPass;
+    private String newPass;
 }
