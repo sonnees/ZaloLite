@@ -32,7 +32,7 @@ public class AccountController {
     private final AccountRepository accountRepository;
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
-
+    private final WebClient.Builder builder;
     @GetMapping("/profile/{phoneNumber}")
     public Mono<ResponseEntity<String>> getProfileByPhoneNumber(@PathVariable String phoneNumber){
         return  ReactiveSecurityContextHolder.getContext()
@@ -95,14 +95,28 @@ public class AccountController {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .map(authentication -> {
-                     String userDetailsPhoneNumber = (String) authentication.getPrincipal();
-                    return accountRepository.changeAvatar(userDetailsPhoneNumber, dto.getField())
-                            .flatMap(aLong -> {
-                                if(aLong<=0) {
-                                    log.error("**  changeAvatar");
-                                    return Mono.just(ResponseEntity.status(403).body("Error"));
-                                }
-                                return Mono.just(ResponseEntity.ok("Success"));
+                    String userDetailsPhoneNumber = (String) authentication.getPrincipal();
+                    return accountRepository.searchByPhoneNumber(userDetailsPhoneNumber)
+                            .switchIfEmpty(Mono.defer(()->{
+                                log.error("**  searchByPhoneNumber");
+                                return Mono.just(ResponseEntity.status(403).body("Error Token"));
+                            }).then(Mono.empty()))
+                            .flatMap(account -> {
+                                return accountRepository.changeAvatar(userDetailsPhoneNumber, dto.getField())
+                                        .flatMap(aLong -> {
+                                            if(aLong<=0) {
+                                                log.error("**  changeAvatar");
+                                                return Mono.just(ResponseEntity.status(403).body("Error"));
+                                            }
+                                            WebClient webClient = builder.build();
+                                            String oldAvatar = account.getProfile().getAvatar();
+                                            String newAvatar = dto.getField();
+                                            return webClient.get()
+                                                    .uri("http://CHAT-SERVICE/api/v1/user/update-avatar-account?oldAvatar="+ oldAvatar+"&newAvatar="+newAvatar)
+                                                    .retrieve()
+                                                    .bodyToMono(Void.class)
+                                                    .then(Mono.just(ResponseEntity.ok("Success")));
+                                        });
                             });
                 }).flatMap(responseEntityMono -> responseEntityMono);
     }

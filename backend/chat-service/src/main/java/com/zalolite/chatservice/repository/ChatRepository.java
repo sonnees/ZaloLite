@@ -70,4 +70,11 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
     @Aggregation({"{$match: {_id: ?0}}","{ $project: { _id: 0, chatActivity: 1 } }", "{ $unwind: '$chatActivity' }","{ $replaceRoot: { newRoot: '$chatActivity' } }","{$sort:{timestamp:-1}}","{$skip:?1}","{$limit:?2}", "{$sort:{timestamp:1}}"})
     Flux<ChatActivity> getChatActivityFromNToM(String chatID, int x, int y);
 
+    @Query(value = "{'reads.userAvatar': ?0}")
+    @Update(update = "{$set:{'reads.$.userAvatar': ?1}}")
+    Mono<Long> updateAvatarInRead(String oldAvatar, String newAvatar);
+
+    @Query(value = "{'deliveries.userAvatar': ?0}")
+    @Update(update = "{$set:{'deliveries.$.userAvatar': ?1}}")
+    Mono<Long> updateAvatarInDelivery(String oldAvatar, String newAvatar);
 }

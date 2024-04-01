@@ -18,4 +18,5 @@ public class NotifyUser extends UserMessageDTO{
         super(id, TUM);
         this.typeNotify = typeNotify;
     }
+
 }

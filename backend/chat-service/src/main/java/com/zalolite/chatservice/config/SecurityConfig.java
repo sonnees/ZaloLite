@@ -31,8 +31,8 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
 
         return http.authorizeExchange(
-                        auth ->
-                                auth.anyExchange().authenticated()
+                        auth -> auth.pathMatchers("/api/v1/user/update-avatar-account/**", "/ws/**").permitAll()
+                                .anyExchange().authenticated()
                 )
                 .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepository)
