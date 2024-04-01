@@ -6,10 +6,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.zalolite.accountservice.AccountRepository;
-import com.zalolite.accountservice.dto.AccountCreateDTO;
-import com.zalolite.accountservice.dto.AccountLoginDTO;
-import com.zalolite.accountservice.dto.Field2DTO;
-import com.zalolite.accountservice.dto.FieldDTO;
+import com.zalolite.accountservice.dto.*;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.entity.Profile;
 import com.zalolite.accountservice.jwt.JwtService;
@@ -19,7 +16,10 @@ import org.imgscalr.Scalr;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -39,6 +39,7 @@ public class AuthController {
     private AccountRepository accountRepository;
     private JwtService jwtService;
     private ObjectMapper objectMapper;
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/check-uniqueness-phone-number/{phoneNumber}")
     public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber) throws RuntimeException {
@@ -137,9 +138,16 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/send-otp/{phoneNumber}")
-    public Mono<String> sendOTP(@PathVariable String phoneNumber) {
-
-        return Mono.empty();
+    @PostMapping("/reset-password")
+    public Mono<ResponseEntity<String>> resetPassword(@RequestBody Field2DTO dto){
+        return accountRepository.changePassword(dto.getField1(), passwordEncoder.encode(dto.getField2()))
+                .switchIfEmpty(Mono.empty())
+                .flatMap(aLong -> {
+                     if(aLong<=0) {
+                         log.error("** change password");
+                         return Mono.just(ResponseEntity.status(403).body("Error"));
+                     }
+                        return Mono.just(ResponseEntity.ok("Success"));
+                });
     }
 }
