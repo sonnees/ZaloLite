@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, Button } from 'react-native';
+import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, Button, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios'; // Import thư viện Axios
+import cloudinaryConfig from '../config/cloudinaryConfig';
+import { API_RGT } from '../api/Api';
 
 const RegisterProfileScreen = () => {
   let navigation = useNavigation();
@@ -28,72 +30,56 @@ const RegisterProfileScreen = () => {
     }
   };
 
-  const handleRegister = async () => {
-<<<<<<< HEAD
-  // Tạo dữ liệu để gửi đi
-  const formData = new FormData();
-  formData.append('phoneNumber', phoneNumber);
-  formData.append('password', '123'); // Thay 'your_password' bằng mật khẩu thực tế
-  formData.append('userName', userName);
-  formData.append('gender', gender);
-  formData.append('birthday', birthDate);
-  formData.append('role', {
-    uri: selectedImage,
-    name: 'image.jpg',
-    type: 'image/jpeg',
-  });
+  //Upload ảnh lên Cloudinary
+  const handleUpload = (image) =>{
+    const data = new FormData();
+    data.append('file', image);
+    data.append('upload_preset', 'ZaloLife');
+    data.append('cloud_name', 'dbmkvqy3b');
 
-  try {
-    // Gọi API với Axios
-    const response = await axios.post('http://192.168.1.6:8081/api/v1/auth/register', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data', // Sửa lại header Content-Type
-      },
-    });
-
-    // Xử lý kết quả từ API (response.data)
-    console.log(response.data);
-
-    // Nếu đăng ký thành công, chuyển sang màn hình TabNavigator
-    navigation.navigate('TabNavigator');
-  } catch (error) {
-    // Xử lý lỗi nếu có
-    console.error(error);
+    fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
+      method: 'post',
+      body: data
+    }).then(res => res.json())
+    .then(data => {
+      console.log(data);
+    })
   }
-};
-=======
-    // Tạo dữ liệu để gửi đi
-    const formData = new FormData();
-    formData.append('phoneNumber', phoneNumber);
-    formData.append('password', '123'); // Thay 'your_password' bằng mật khẩu thực tế
-    formData.append('userName', userName);
-    formData.append('gender', gender);
-    formData.append('birthday', birthDate);
-    formData.append('role', {
-      uri: selectedImage,
-      name: 'image.jpg',
-      type: 'image/jpeg',
-    });
+
+  const handleRegister = async () => {
+    // Nếu người dùng đã chọn ảnh mới, thực hiện upload ảnh lên Cloudinary trước khi đăng ký
+    if (selectedImage) {
+      try {
+        await handleUpload(selectedImage); // Gọi hàm handleUpload với ảnh đã chọn
+      } catch (error) {
+        console.error("Upload image failed:", error);
+        Alert.alert("Upload ảnh thất bại", "Vui lòng thử lại sau.");
+        return; // Nếu upload ảnh thất bại, dừng hàm handleRegister
+      }
+    }
+
+    // Tạo object body cho request API
+    const body = {
+      phoneNumber: phoneNumber,
+      password: "123", // Giá trị mặc định cho password
+      userName: userName ,
+      avatar: selectedImage ? "" : "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532179/nu1_uq2zmu.png", // Sử dụng ảnh đã chọn hoặc ảnh mặc định nếu không có ảnh đã chọn
+      gender: gender === "male" ? "true" : "false", // Chuyển đổi giá trị gender thành true hoặc false
+      birthday: birthDate, 
+      role: "USER" 
+    };
 
     try {
-      // Gọi API với Axios
-      const response = await axios.post('http://192.168.1.6:8081/api/v1/auth/register', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      // Xử lý kết quả từ API (response.data)
-      console.log(response.data);
-
-      // Nếu đăng ký thành công, chuyển sang màn hình TabNavigator
-      navigation.navigate('TabNavigator');
+      const response = await axios.post(API_RGT, body);
+      console.log("Registration successful:", response.data);
+      // Chuyển hướng sang màn hình TabNavigator sau khi đăng ký thành công
+      navigation.navigate('OtpScreen');
     } catch (error) {
-      // Xử lý lỗi nếu có
-      console.error(error);
+      console.error("Registration failed:", error);
+      Alert.alert("Đăng ký thất bại", "Vui lòng kiểm tra lại thông tin đăng ký và thử lại sau.");
     }
-  };
->>>>>>> be3a7430297aab3326ffbde729b82e80272e3b02
+};
+
 
   return (
     <KeyboardAvoidingView
@@ -131,7 +117,8 @@ const RegisterProfileScreen = () => {
         <View style={{flex: 3,backgroundColor: "#fff"}}></View>
         <View style={{flex: 2, justifyContent: "center", paddingLeft: "70%",backgroundColor: "#fff"}}>
         <TouchableOpacity style={{flex: 0.7, borderRadius: 20, justifyContent: "center", alignItems: "center"}} 
-        onPress={handleRegister}>
+        onPress={handleRegister} // Gọi hàm xử lý đăng ký khi người dùng nhấn nút
+        >
           <Image style={{width: "70%", height: "50%", resizeMode: "contain"}} source={require("../assets/right-arrow.png")}></Image>
         </TouchableOpacity>
           
@@ -142,11 +129,10 @@ const RegisterProfileScreen = () => {
     </KeyboardAvoidingView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
-
-
 export default RegisterProfileScreen;

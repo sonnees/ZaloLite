@@ -59,7 +59,7 @@ const RegisterDEScreen = () => {
       alert("Vui lòng chọn giới tính và ngày sinh trước khi tiếp tục.");
       return;
     }
-
+    
     // Chuyển qua màn hình tiếp theo
     navigation.navigate("RegisterProfileScreen",{
       userName: userName,
