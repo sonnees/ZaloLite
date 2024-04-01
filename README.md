@@ -176,6 +176,83 @@ HTTP 403
 ```
 </details>
 
+<details>
+  <summary>👇 Gửi yêu cầu đổi mật khẩu tài khoản </summary> 
+  <hr>
+
+`Method POST + TOKEN` : http://localhost:8081/api/v1/account/change-password <br>
+```
+http://localhost:8081/api/v1/account/change-password
+```
+`Body` :
+```
+{
+    "curPass":"123", // mật khẩu hiên tại
+    "newPass":"321" // mật khẩu mới
+}
+```  
+`Received` :
+```
+# Thành công:
+HTTP 200 OK
+
+# Thất bại (Token sai, mật khẩu hiện tại sai):
+HTTP 403, 401
+Not authenticate
+```
+</details>
+
+<details>
+  <summary>👇 Gửi yêu cầu đổi ảnh đại diện tài khoản </summary> 
+  <hr>
+
+`Method POST + TOKEN` : http://localhost:8081/api/v1/account/change-avatar <br>
+```
+http://localhost:8081/api/v1/account/change-avatar
+```
+`Body`:
+```
+{
+    "field":"? img ?"
+}
+```  
+`Received` :
+```
+# Thành công:
+HTTP 200 OK
+
+# Thất bại (Token sai):
+HTTP 403, 401
+Not authenticate
+```
+</details>
+
+<details>
+  <summary>👇 Gửi yêu cầu đổi mật khẩu trong trường hợp reset tài khoản </summary> 
+  <hr>
+
+`Method POST` : http://localhost:8081/api/v1/auth/reset-password <br>
+```
+http://localhost:8081/api/v1/auth/reset-password
+```
+`Body`:
+```
+{
+    "field1":"0000000000",
+    "field2":"123"
+}
+```  
+`Received` :
+```
+# Thành công:
+HTTP 200 OK
+
+# Thất bại (không tìm thấy tài khoản dựa trên số điện thoại):
+HTTP 403, 401
+Not authenticate
+```
+</details>
+
 ### Liên quan đến chat
 
 <details>
