@@ -1,11 +1,16 @@
-import { Platform, StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, ScrollView } from 'react-native';
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native'; // Thêm useRoute vào đây
 import Icon from 'react-native-vector-icons/AntDesign';
 import { StatusBar } from 'react-native';
 
 export default function MeScreen() {
   let navigation = useNavigation();
+  const route = useRoute();
+
+  const { userName, avatar } = route.params;
+
+
 
   return (
     <View style={styles.container}>
@@ -23,7 +28,7 @@ export default function MeScreen() {
 
         <View style={{ flexDirection: 'row', width: 80 }}>
           <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "flex-end", marginRight: 12 }}
-            onPress={() => { setModalVisible(true) }}
+            onPress={() => navigation.navigate('MeNavigator', { screen: 'SettingScreen' })}
           >
             <Icon name='setting' size={23} color={'white'} />
           </TouchableOpacity>
@@ -35,10 +40,10 @@ export default function MeScreen() {
           onStartShouldSetResponder={() => navigation.navigate('MeNavigator', { screen: 'ProfileScreen' })}
         >
           <View style={{ flex: 0.1 }}></View>
-          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain" }} source={require("../assets/avata.jpg")}></Image>
+          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain" }} source={{uri : avatar}}></Image>
           <View style={{ flex: 0.2 }}></View>
           <View style={{ justifyContent: "center" }}>
-            <Text style={{ fontFamily: "Roboto", fontSize: 18, fontWeight: "bold" }}>Lê Hữu Bằng</Text>
+            <Text style={{ fontFamily: "Roboto", fontSize: 18, fontWeight: "bold" }}>{userName}</Text>
             <Text style={{ fontFamily: "Roboto", fontSize: 15, color: "#808080" }}>Xem trang cá nhân</Text>
           </View>
         </View>
@@ -53,7 +58,7 @@ export default function MeScreen() {
         <Image style={{ width: "15%", height: "40%", resizeMode: "contain" }} source={require("../assets/musical.png")}></Image>
         <View style={{ flex: 0.05 }}></View>
         <View style={{ justifyContent: "center" }}
-
+           onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'OtpScreen' })}
         >
           <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Nhạc chờ Zalo</Text>
           <Text style={{ fontFamily: "Roboto", fontSize: 13, color: "#808080" }}>Đăng ký nhạc chờ, thể hiện cá tính</Text>
@@ -91,7 +96,6 @@ export default function MeScreen() {
         <View style={{ justifyContent: "center" }}>
           <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Dung lượng và dữ liệu</Text>
           <Text style={{ fontFamily: "Roboto", fontSize: 13, color: "#808080" }}>Quản lý dung lượng và dữ liệu</Text>
-
         </View>
         <View style={{ flex: 1 }}></View>
         <Image style={{ width: "15%", height: "20%", resizeMode: "contain" }} source={require("../assets/next.png")}></Image>
