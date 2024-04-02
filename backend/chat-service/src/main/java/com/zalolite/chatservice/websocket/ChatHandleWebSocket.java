@@ -43,6 +43,12 @@ public class ChatHandleWebSocket {
                 .flatMap(chat -> Mono.empty());
     }
 
+    public Mono<Void> delete(String chatID){
+        log.info("** delete: {}", chatID);
+        return chatRepository.deleteById(UUID.fromString(chatID))
+                .then(Mono.empty());
+    }
+
     public Mono<Void> appendChat(String chatID, MessageAppendDTO info){
         log.info("** appendChat: {} {} {} {}",info.getId(), chatID, info.getUserID(), info.getContents().get(0).getValue());
         UUID messageID = info.getId();
