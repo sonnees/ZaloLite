@@ -1,7 +1,8 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.notify;
 
-import com.zalolite.chatservice.entity.Type;
-import lombok.AllArgsConstructor;
+import com.zalolite.chatservice.dto.handleUser.UserMessageDTO;
+import com.zalolite.chatservice.dto.enums.TypeNotify;
+import com.zalolite.chatservice.dto.enums.TypeUserMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class NotifyUser extends UserMessageDTO{
+public class NotifyUser extends UserMessageDTO {
     private TypeNotify typeNotify;
 
     public NotifyUser(UUID id, TypeUserMessage TUM, TypeNotify typeNotify) {

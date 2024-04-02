@@ -1,4 +1,4 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.enums;
 
 public enum TypeGroupMessage {
     TGM00, // notify from root user

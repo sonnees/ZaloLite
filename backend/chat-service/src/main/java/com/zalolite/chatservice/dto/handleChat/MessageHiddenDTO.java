@@ -1,5 +1,6 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleChat;
 
+import com.zalolite.chatservice.dto.enums.TypeChatMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class MessageHiddenDTO extends ChatMessageDTO{
+public class MessageHiddenDTO extends ChatMessageDTO {
     @Field(targetType = FieldType.STRING)
     private UUID userID;
     @Field(targetType = FieldType.STRING)

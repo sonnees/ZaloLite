@@ -1,4 +1,4 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.enums;
 
 public enum TypeUserMessage {
     TUM00, // notify from root user

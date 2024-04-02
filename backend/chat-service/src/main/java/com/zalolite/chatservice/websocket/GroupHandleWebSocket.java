@@ -1,19 +1,15 @@
 package com.zalolite.chatservice.websocket;
 
-import com.zalolite.chatservice.dto.*;
+import com.zalolite.chatservice.dto.handleGroup.CreateGroupDTO;
 import com.zalolite.chatservice.entity.*;
 import com.zalolite.chatservice.repository.ChatRepository;
 import com.zalolite.chatservice.repository.GroupRepository;
 import com.zalolite.chatservice.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.util.StringList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -41,7 +37,7 @@ public class GroupHandleWebSocket {
         this.chatHandleWebSocket = chatHandleWebSocket;
     }
 
-    public Mono<Void> create(String[] arrayID,CreateGroupDTO info){
+    public Mono<Void> create(String[] arrayID, CreateGroupDTO info){
         log.info("** create group: {}",info.getId());
         Group group = new Group(info);
         return groupRepository.save(group)

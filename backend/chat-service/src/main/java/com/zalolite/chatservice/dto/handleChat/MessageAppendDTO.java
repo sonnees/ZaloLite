@@ -1,5 +1,6 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleChat;
 
+import com.zalolite.chatservice.dto.enums.TypeChatMessage;
 import com.zalolite.chatservice.entity.Content;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class MessageAppendDTO extends ChatMessageDTO{
+public class MessageAppendDTO extends ChatMessageDTO {
     @Field(targetType = FieldType.STRING)
     private UUID userID;
     private String userAvatar;

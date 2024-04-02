@@ -1,12 +1,11 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleUser;
 
-import com.zalolite.chatservice.entity.Content;
+import com.zalolite.chatservice.dto.enums.TypeUserMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor

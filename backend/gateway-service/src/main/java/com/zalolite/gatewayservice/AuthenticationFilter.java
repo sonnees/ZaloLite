@@ -1,5 +1,6 @@
 package com.zalolite.gatewayservice;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -32,7 +33,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         WebClient webClient = builder.build();
         return (exchange, chain)->{
             String openApiEndpointPattern1 = "/api/v1/auth/**";
-            String openApiEndpointPattern2 = "/ws/auth/**";
+            String openApiEndpointPattern2 = "/ws/**";
             String path = exchange.getRequest().getURI().getPath();
 
             boolean match1 = pathMatcher.match(openApiEndpointPattern1, path);
