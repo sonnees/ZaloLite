@@ -10,6 +10,7 @@ import AddInforScreen from '../screens/AddInforScreen'
 import SlashScreen from "../screens/SlashScreen";
 import RegisterDEScreen from "../screens/RegisterDEScreen";
 import RegisterProfileScreen from "../screens/RegisterProfileScreen";
+import OtpScreen from "../screens/OtpScreen";
 
 
 
@@ -27,6 +28,7 @@ export default function LoginNavigator() {
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{headerShown: false}}/>
         <Stack.Screen name="RegisterDEScreen" component={RegisterDEScreen} options={{headerShown: false}}/>
         <Stack.Screen name="RegisterProfileScreen" component={RegisterProfileScreen} options={{headerShown: false}}/>
+        <Stack.Screen name="OtpScreen" component={OtpScreen} options={{headerShown: false}}/>
         
      
 
