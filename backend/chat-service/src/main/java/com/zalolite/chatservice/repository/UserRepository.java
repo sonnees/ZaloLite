@@ -18,7 +18,6 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Query(value = "{'_id': ?0}",sort = "{'conversations.lastUpdateAt': -1}")
     Mono<User> findUserById(String id);
 
-
     @Query(value = "{'_id': ?0}")
     @Update("{$push:{'friendRequests': ?1}}")
     Mono<Long> appendFriendRequest(String id, FriendRequest friendRequest);
@@ -38,6 +37,10 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Query(value = "{'_id': {$in: ?0}}")
     @Update("{$push:{'conversations': ?1}}")
     Mono<Long> appendConversation(String[] id, Conversation conversation);
+
+    @Query(value = "{}")
+    @Update("{$pull:{'conversations.chatID': {$in: ?0}}}")
+    Mono<Long> removeConversation(String[] id);
 
     @Query(value = "{_id:?0,'conversations.chatID': {$in: [?1,?2]}}")
     Mono<User> searchConversation(String senderID, String chatId1, String chatId2);

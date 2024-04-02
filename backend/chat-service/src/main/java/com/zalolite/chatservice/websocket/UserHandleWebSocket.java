@@ -178,6 +178,15 @@ public class UserHandleWebSocket {
                 });
     }
 
+    public Mono<Void> removeConversation(String[] userID){
+        log.info("** removeConversation:");
+        return userRepository.removeConversation(userID)
+                .flatMap(aLongR -> {
+                    if(aLongR<=0) return Mono.error(() -> new Throwable("removeConversation failed"));
+                    return Mono.empty();
+                });
+    }
+
     public Mono<Void> updateConversations(Chat chat){
         log.info("** updateConversations: {}",chat.getId());
 
