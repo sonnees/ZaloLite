@@ -2,7 +2,18 @@ package com.zalolite.chatservice.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zalolite.chatservice.dto.*;
+import com.zalolite.chatservice.dto.enums.TypeChatMessage;
+import com.zalolite.chatservice.dto.enums.TypeGroupMessage;
+import com.zalolite.chatservice.dto.enums.TypeNotify;
+import com.zalolite.chatservice.dto.enums.TypeUserMessage;
+import com.zalolite.chatservice.dto.handleChat.*;
+import com.zalolite.chatservice.dto.handleGroup.CreateGroupDTO;
+import com.zalolite.chatservice.dto.handleGroup.DeleteGroupDTO;
+import com.zalolite.chatservice.dto.handleGroup.GroupDTO;
+import com.zalolite.chatservice.dto.handleUser.*;
+import com.zalolite.chatservice.dto.notify.NotifyChat;
+import com.zalolite.chatservice.dto.notify.NotifyGroup;
+import com.zalolite.chatservice.dto.notify.NotifyUser;
 import com.zalolite.chatservice.entity.Type;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -107,7 +118,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                     default -> Flux.empty();
                                 };
                             } catch (JsonProcessingException e) {
-                                log.error("** " + e);
+                                    log.error("** " + e);
                                 return Flux.empty();
                             }
                         })
@@ -137,7 +148,6 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
             log.error(e.getMessage());
         }
     }
-
 
     private void sendMessageToAllClients(String[] arrayID, String ignore, GroupDTO obj) {
         log.info("** sendMessageToAllClients create group");
@@ -489,6 +499,5 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
             log.error(e.getMessage());
         }
     }
-
 
 }

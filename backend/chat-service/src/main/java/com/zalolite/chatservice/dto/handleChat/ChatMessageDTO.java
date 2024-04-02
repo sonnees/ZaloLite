@@ -1,5 +1,6 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleChat;
 
+import com.zalolite.chatservice.dto.enums.TypeChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

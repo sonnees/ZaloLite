@@ -1,4 +1,4 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.other;
 
 import com.zalolite.chatservice.entity.Content;
 import lombok.AllArgsConstructor;

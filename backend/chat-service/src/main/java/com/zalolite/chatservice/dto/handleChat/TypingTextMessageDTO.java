@@ -1,5 +1,6 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleChat;
 
+import com.zalolite.chatservice.dto.enums.TypeChatMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class TypingTextMessageDTO extends ChatMessageDTO{
+public class TypingTextMessageDTO extends ChatMessageDTO {
     private String chatID;
     private String senderName;
 

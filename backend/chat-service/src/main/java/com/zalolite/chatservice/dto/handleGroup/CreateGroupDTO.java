@@ -1,16 +1,17 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleGroup;
 
+import com.zalolite.chatservice.dto.enums.TypeGroupMessage;
+import com.zalolite.chatservice.dto.handleGroup.GroupDTO;
 import com.zalolite.chatservice.entity.PersonInfo;
 import lombok.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
 @Getter
 @Setter
-public class CreateGroupDTO extends GroupDTO{
+public class CreateGroupDTO extends GroupDTO {
     private String chatName;
     private PersonInfo owner;
     private List<PersonInfo> members;

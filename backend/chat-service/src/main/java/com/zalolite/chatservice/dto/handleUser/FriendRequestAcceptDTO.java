@@ -1,6 +1,10 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleUser;
 
-import lombok.*;
+import com.zalolite.chatservice.dto.enums.TypeUserMessage;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.UUID;
 
@@ -8,16 +12,16 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class FriendRequestAddDTO extends UserMessageDTO{
+public class FriendRequestAcceptDTO extends UserMessageDTO {
     private UUID senderID;
     private String senderName;
     private String senderAvatar;
+
     private UUID receiverID;
     private String receiverName;
     private String receiverAvatar;
-    private String description;
 
-    public FriendRequestAddDTO(UUID id, TypeUserMessage TUM, UUID senderID, String senderName, String senderAvatar, UUID receiverID, String receiverName, String receiverAvatar, String description) {
+    public FriendRequestAcceptDTO(UUID id, TypeUserMessage TUM, UUID senderID, String senderName, String senderAvatar, UUID receiverID, String receiverName, String receiverAvatar) {
         super(id, TUM);
         this.senderID = senderID;
         this.senderName = senderName;
@@ -25,6 +29,5 @@ public class FriendRequestAddDTO extends UserMessageDTO{
         this.receiverID = receiverID;
         this.receiverName = receiverName;
         this.receiverAvatar = receiverAvatar;
-        this.description = description;
     }
 }

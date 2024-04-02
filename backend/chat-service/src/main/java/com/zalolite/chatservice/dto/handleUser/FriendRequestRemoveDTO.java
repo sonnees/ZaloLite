@@ -1,5 +1,6 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleUser;
 
+import com.zalolite.chatservice.dto.enums.TypeUserMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class FriendRequestRemoveDTO extends UserMessageDTO{
+public class FriendRequestRemoveDTO extends UserMessageDTO {
     private UUID senderID;
     private UUID receiverID;
 
