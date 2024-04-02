@@ -81,19 +81,19 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Message() {
   const navigate = useNavigate();
-  const [conversations, setConversations] = useState([]);
-
+  // const [conversations, setConversations] = useState([]);
+  
   useEffect(() => {
     const fetchConversations = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8082/api/v1/user/info/49a9768c-a2a8-4290-9653-5291b9718db1",
+          "http://localhost:8082/api/v1/user/info/3000f6da-e5c7-43eb-9733-f772672779e1",
           {
             credentials: "include",
             headers: {
               "Content-Type": "application/json",
               Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjAwMDAwMDAwMDAiLCJpYXQiOjE3MTE2MTIyOTQsImV4cCI6MTcxMTcyMDI5NH0.b9dSf3nH1wAXYWCty0dIKyAeVp-hrF4yOiAkih7vi_8",
+                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjAwMDAwMDAwMDAiLCJpYXQiOjE3MTE2MTg0NjcsImV4cCI6MTcxMTcyNjQ2N30.kZkUgVoIYj_97LgkWHMPhmVHmalSR1IH88oBr0DCvD8",
             },
             method: "GET",
           },
@@ -102,7 +102,10 @@ function Message() {
           throw new Error("Failed to fetch conversations");
         }
         const data = await response.json();
-        setConversations(data); // Cập nhật state với dữ liệu từ API
+        // setConversations(data); // Cập nhật state với dữ liệu từ API
+        console.log('====================================');
+        console.log(data);
+        console.log('====================================');
       } catch (error) {
         console.error("Error fetching conversations:", error);
       }
