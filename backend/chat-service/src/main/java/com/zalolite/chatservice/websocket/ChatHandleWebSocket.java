@@ -1,6 +1,9 @@
 package com.zalolite.chatservice.websocket;
 
-import com.zalolite.chatservice.dto.*;
+import com.zalolite.chatservice.dto.handleChat.MessageAppendDTO;
+import com.zalolite.chatservice.dto.handleChat.MessageDeliveryDTO;
+import com.zalolite.chatservice.dto.handleChat.MessageHiddenDTO;
+import com.zalolite.chatservice.entity.Chat;
 import com.zalolite.chatservice.entity.ChatActivity;
 import com.zalolite.chatservice.entity.Delivery;
 import com.zalolite.chatservice.repository.ChatRepository;
@@ -22,6 +25,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class ChatHandleWebSocket {
+
     private UserRepository userRepository;
     private ChatRepository chatRepository;
     private GroupRepository groupRepository;
@@ -31,6 +35,19 @@ public class ChatHandleWebSocket {
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.groupRepository = groupRepository;
+    }
+
+    public Mono<Void> create(String chatID){
+        log.info("** create: {}", chatID);
+        return chatRepository.save(new Chat(chatID))
+                .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("new chat failed"))))
+                .flatMap(chat -> Mono.empty());
+    }
+
+    public Mono<Void> delete(String chatID){
+        log.info("** delete: {}", chatID);
+        return chatRepository.deleteById(UUID.fromString(chatID))
+                .then(Mono.empty());
     }
 
     public Mono<Void> appendChat(String chatID, MessageAppendDTO info){
@@ -117,6 +134,15 @@ public class ChatHandleWebSocket {
                     if (aLong <= 0) return Mono.error(() -> new Throwable("recallMessage failed"));
                     return Mono.empty();
                 });
+    }
+
+    public Mono<Chat> getChatTop10(String chatID){
+        log.info("** getChatTop10: {}", chatID);
+        return chatRepository.getChatTop10(chatID)
+                .switchIfEmpty(Mono.defer(()->{
+                    return Mono.error(() -> new Throwable("getChatTop10 failed"));
+                }))
+                .flatMap(Mono::just);
     }
 
 }

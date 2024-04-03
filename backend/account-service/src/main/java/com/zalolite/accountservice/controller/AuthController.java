@@ -6,10 +6,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import com.zalolite.accountservice.AccountRepository;
-import com.zalolite.accountservice.dto.AccountCreateDTO;
-import com.zalolite.accountservice.dto.AccountLoginDTO;
-import com.zalolite.accountservice.dto.Field2DTO;
-import com.zalolite.accountservice.dto.FieldDTO;
+import com.zalolite.accountservice.dto.*;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.entity.Profile;
 import com.zalolite.accountservice.jwt.JwtService;
@@ -19,7 +16,10 @@ import org.imgscalr.Scalr;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -39,6 +39,7 @@ public class AuthController {
     private AccountRepository accountRepository;
     private JwtService jwtService;
     private ObjectMapper objectMapper;
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/check-uniqueness-phone-number/{phoneNumber}")
     public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber) throws RuntimeException {
@@ -58,20 +59,21 @@ public class AuthController {
     @PostMapping("/register")
     public Mono<ResponseEntity<String>> create(@RequestBody AccountCreateDTO accountCreateDTO){
         return accountRepository.insert(new Account(accountCreateDTO))
-                .flatMap(result -> accountRepository.searchByPhoneNumber(accountCreateDTO.getPhoneNumber())
-                        .flatMap(account -> {
-                            WebClient webClient = builder.build();
-                            return  webClient
-                                    .post()
-                                    .uri("http://CHAT-SERVICE/api/v1/user/create?id="+account.getProfile().getUserID())
-                                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                                    .retrieve()
-                                    .bodyToMono(Boolean.class)
-                                    .flatMap(aBoolean -> {
-                                        if(aBoolean) return Mono.just(ResponseEntity.status(200).body(""));
-                                        else return Mono.just(ResponseEntity.status(500).body(""));
-                                    });
-                        }))
+                .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("new account failed"))))
+                .flatMap(result -> {
+                    WebClient webClient = builder.build();
+                    return  webClient
+                            .post()
+                            .uri("http://CHAT-SERVICE/api/v1/user/create?id="+result.getProfile().getUserID())
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                            .retrieve()
+                            .bodyToMono(Boolean.class)
+                            .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("new user failed"))))
+                            .flatMap(aBoolean -> {
+                                if(aBoolean) return Mono.just(ResponseEntity.status(200).body(""));
+                                else return Mono.just(ResponseEntity.status(500).body(""));
+                            });
+                })
                 .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));
     }
 
@@ -108,6 +110,8 @@ public class AuthController {
                 });
     }
 
+    //true: pixel đen
+    //cot x, hang y
     @GetMapping("/authenticate/qr-code")
     public ResponseEntity<String> loginQRCode() {
         String endpointWebSocket = UUID.randomUUID().toString();
@@ -132,5 +136,18 @@ public class AuthController {
             log.error("***" + e);
             return ResponseEntity.status(500).body("Gen QR code error");
         }
+    }
+
+    @PostMapping("/reset-password")
+    public Mono<ResponseEntity<String>> resetPassword(@RequestBody Field2DTO dto){
+        return accountRepository.changePassword(dto.getField1(), passwordEncoder.encode(dto.getField2()))
+                .switchIfEmpty(Mono.empty())
+                .flatMap(aLong -> {
+                     if(aLong<=0) {
+                         log.error("** change password");
+                         return Mono.just(ResponseEntity.status(403).body("Error"));
+                     }
+                        return Mono.just(ResponseEntity.ok("Success"));
+                });
     }
 }

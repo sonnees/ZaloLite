@@ -52,8 +52,8 @@ public class Account implements UserDetails {
                 accountCreateDTO.getUserName(),
                 accountCreateDTO.getGender(),
                 accountCreateDTO.getBirthday(),
-                accountCreateDTO.getGender() ?("https://zalolite.s3.amazonaws.com/nam"+ random.nextInt(1,3) +".jpg") : ("https://zalolite.s3.amazonaws.com/nu"+ random.nextInt(1,2) +".jpg"),
-                "https://zalolite.s3.amazonaws.com/background"+random.nextInt(1,5)+".jpg"
+                accountCreateDTO.getAvatar(),
+                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532181/background2_kyjzut.jpg"
         );
         this.role = accountCreateDTO.getRole();
         this.setting = new Setting(

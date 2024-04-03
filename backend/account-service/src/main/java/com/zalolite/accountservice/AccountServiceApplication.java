@@ -31,7 +31,7 @@ public class AccountServiceApplication {
         SpringApplication.run(AccountServiceApplication.class, args);
     }
 
-    @Bean
+//    @Bean
     CommandLineRunner commandLineRunner(){
         return new CommandLineRunner() {
             @Override
@@ -40,18 +40,18 @@ public class AccountServiceApplication {
                 if(account!=null) return;
 
                 Mono<Account> save = accountRepository.save(new Account(
-                        UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db9"),
+                        UUID.fromString("3000f6da-e5c7-43eb-9733-f772672779e2"),
                         "0000000000",
                         new BCryptPasswordEncoder().encode("123"),
                         new Date(),
                         Type.personal,
                         new Profile(
-                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db1"),
+                                UUID.fromString("3000f6da-e5c7-43eb-9733-f772672779e1"),
                                 "Tú Anh",
                                 true,
                                 new Date(),
-                                "https://zalolite.s3.amazonaws.com/nam1.jpg",
-                                "https://zalolite.s3.amazonaws.com/background1.jpg"
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532178/nam1_hyq0hl.jpg",
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532181/background2_kyjzut.jpg"
                         ),
                         UserRole.USER,
                         new Setting(
@@ -63,18 +63,18 @@ public class AccountServiceApplication {
                 log.info("** create account success: "+save.block().getId());
 
                 Mono<Account> save1 = accountRepository.save(new Account(
-                        UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db8"),
+                        UUID.fromString("0f1c6cdd-5d81-460b-8a39-02f19349e19f"),
                         "0000000001",
                         new BCryptPasswordEncoder().encode("123"),
                         new Date(),
                         Type.personal,
                         new Profile(
-                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db2"),
+                                UUID.fromString("0f1c6cdd-5d81-460b-8a39-02f19349e18f"),
                                 "Bảo Châu",
                                 false,
                                 new Date(),
-                                "https://zalolite.s3.amazonaws.com/nu1.jpg",
-                                "https://zalolite.s3.amazonaws.com/background3.jpg"
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532179/nu1_uq2zmu.png",
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532181/background2_kyjzut.jpg"
                         ),
                         UserRole.USER,
                         new Setting(
@@ -85,18 +85,18 @@ public class AccountServiceApplication {
                 log.info("** create account success: "+save1.block().getId());
 
                 Mono<Account> save2 = accountRepository.save(new Account(
-                        UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db6"),
+                        UUID.fromString("689d39dd-fbed-409f-9f53-626f250712f2"),
                         "0000000002",
                         new BCryptPasswordEncoder().encode("123"),
                         new Date(),
                         Type.personal,
                         new Profile(
-                                UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db3"),
+                                UUID.fromString("689d39dd-fbed-409f-9f53-626f250712f1"),
                                 "Thảo Chi",
                                 false,
                                 new Date(),
-                                "https://zalolite.s3.amazonaws.com/nu2.jpg",
-                                "https://zalolite.s3.amazonaws.com/background2.jpg"
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532179/nu1_uq2zmu.png",
+                                "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532181/background2_kyjzut.jpg"
                         ),
                         UserRole.USER,
                         new Setting(
