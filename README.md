@@ -3,15 +3,15 @@
 ```
 ipconfig
 ```
-Sau đó vào App/api/Api.js, đổi lại mạng cho giống với IPv4 Address
+Sau đó vào App/api/Api.js => đổi lại mạng cho giống với IPv4 Address
 
 Ví dụ: 
 
-export const API_URL ='http://192.168.1.3:8081/api/v1/auth/authenticate'
-
-IPv4 Address. . . . . . . . . . . : 192.168.1.186
-
-=> export const API_URL ='http://192.168.1.186:8081/api/v1/auth/authenticate';
+        export const API_URL ='http://192.168.1.3:8081/api/v1/auth/authenticate'
+        
+        IPv4 Address. . . . . . . . . . . : 192.168.1.186
+        
+        => export const API_URL ='http://192.168.1.186:8081/api/v1/auth/authenticate';
 
 <details>
   <summary>👇 Cài đặt các thư viện </summary> <br>
