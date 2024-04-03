@@ -13,7 +13,6 @@
 
         console.log(phone);
         console.log(newPassword);
-        console.log(password);
 
         const handleResetPassword = async (e) => {
             e.preventDefault();
