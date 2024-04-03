@@ -2,6 +2,7 @@
 <details>
   <summary>👇 Cài đặt các thư viện </summary> <br>
 `THƯ VIỆN LIÊN QUAN ĐẾN NAVIGATION`
+  
 ```
 npm install @react-navigation/bottom-tabs @react-navigation/stack
 ```
