@@ -144,7 +144,7 @@ function Navbar() {
                       onClick={handleOpenPopup}
                     >
                       Hồ sơ của bạn
-                      <PopupWindow isOpen={isPopupOpen} onClose={handleClosePopup} data={profileData} />
+                      <PopupWindow isOpen={isPopupOpen} onClose={handleClosePopup} data={profileData} phoneNumber={phoneNumber} />
                     </MenuItem>
                     
                     <MenuItem

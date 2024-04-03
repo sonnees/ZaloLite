@@ -1,7 +1,11 @@
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 
 export default function PopupWindow ({ isOpen, onClose, data, phoneNumber }) {
     console.log(data);
+    console.log(phoneNumber);
+    const dateTime = new Date(data.birthday);
   return (
     <>
       {isOpen && (
@@ -12,23 +16,64 @@ export default function PopupWindow ({ isOpen, onClose, data, phoneNumber }) {
             </div>
             <div className="relative bg-white rounded-lg overflow-hidden shadow-xl max-w-md w-full">
               {/* Content of the popup */}
+
               <div className='flex items-center p-4'>
                 <p className='flex-grow'>Thông tin tài khoản</p>
 
                 <p className="bg-gray-50 w-10 text-center cursor-pointer" onClick={onClose}>X</p>
 
               </div>
-              
-              <div className="p-6 m-3">
-                {/* Your content here */}
-                <p>Thông tin cá nhân:</p>
-                <p>Bio: {data.userName}</p>
-                <p>Giới tính: {data.gender?'Nam':'Nữ'}</p>
-                <p>Ngày sinh: {}</p>
-                <p>Điện thoại: {phoneNumber}</p>
-                <p>Chỉ bạn bè có lưu số của bạn trong danh bạ máy xem được số này</p>
+
+
+              <div className="relative bg-cover bg-center bg-no-repeat p-4 h-44 mb-20" style={{backgroundImage: `url(${data.background})`}}>
+                <div className="absolute top-48 left-4 transform -translate-y-1/2">
+                  <img className="w-20 h-20 rounded-full border-4 border-white" src={data.avatar} alt="Avatar" />
+                </div>
+                <div className="absolute top-52 left-4 transform -translate-y-1/2  pl-28">
+                  <h2 className=" text-lg font-semibold">{data.userName}</h2>
+                  {/* <p className=" text-sm">Lorem ipsum dolor sit amet</p> */}
+                </div>
               </div>
-              {/* Close button */}
+
+
+              <hr className='bg-slate-200 h-1.5'/>
+              
+              <div className='m-3'>
+                <p className='font-semibold'>Thông tin cá nhân</p>
+
+                <div className='border-b border-gray-200'>
+                  <div className='flex p-3'>
+                    <p className='text-gray-700 flex-grow'>Bio</p>
+                    <p className='w-72 text-left text-gray-700'>{data.userName}</p>
+                  </div>
+                  <div className='flex p-3'>
+                    <p className='text-gray-700 flex-grow'>Giới tính</p>
+                    <p className='w-72 text-left text-gray-700'>{data.gender ? 'Nam' : 'Nữ'}</p>
+                  </div>
+                  <div className='flex p-3'>
+                    <p className='text-gray-700 flex-grow'>Ngày sinh</p>
+                    <p className='w-72 text-left text-gray-700'> {dateTime.getDate()} tháng {dateTime.getMonth()+1}, {dateTime.getFullYear()}</p>
+                  </div>
+                  <div className='flex p-3'>
+                    <p className='text-gray-700 flex-grow'>Điện thoại</p>
+                    <p className='w-72 text-left text-gray-700'>{phoneNumber}</p>
+                  </div>
+                  <div className='flex p-3'>
+                    <p className='text-gray-700 flex-grow'>Chỉ bạn bè có lưu số của bạn trong danh bạ máy xem được số<br/> này</p>
+                  </div>
+                </div>
+
+                <div className="mt-6 px-2">
+                    <button
+                        className="w-full transform rounded-md bg-white py-2 font-semibold tracking-wide text-black transition-colors duration-200"
+                        type="submit"
+                        // onClick={() => navigate('/auth/reset-password')}
+                    >
+                      <FontAwesomeIcon className='mx-1' icon={faPenToSquare} />
+                      Cập nhật
+                    </button>
+                </div>
+              </div>
               
             </div>
           </div>
