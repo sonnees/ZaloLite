@@ -1,0 +1,15 @@
+[{
+    "_id": "5b685d06-8fbe-4ab7-8053-7746760a8000",
+    "chatActivity": [],
+    "_class": "com.zalolite.chatservice.entity.Chat"
+},
+{
+    "_id": "5b685d06-8fbe-4ab7-8053-7746760a8001",
+    "chatActivity": [],
+    "_class": "com.zalolite.chatservice.entity.Chat"
+},
+{
+    "_id": "5b685d06-8fbe-4ab7-8053-7746760a8002",
+    "chatActivity": [],
+    "_class": "com.zalolite.chatservice.entity.Chat"
+}]

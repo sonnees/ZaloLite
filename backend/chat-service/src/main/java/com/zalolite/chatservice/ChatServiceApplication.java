@@ -37,23 +37,20 @@ public class ChatServiceApplication {
 		SpringApplication.run(ChatServiceApplication.class, args);
 	}
 
-	@Bean
+//	@Bean
 	CommandLineRunner commandLineRunner(){
 		return new CommandLineRunner() {
 			@Override
 			public void run(String... args) throws Exception {
 
-				User user = userRepository.findById(UUID.fromString("49a9768c-a2a8-4290-9653-5291b9718db1")).block();
+				User user = userRepository.findById(UUID.fromString("3000f6da-e5c7-43eb-9733-f772672779e1")).block();
 
 				if( user != null ) return;
-				userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db1"))
+				userRepository.save(new User("3000f6da-e5c7-43eb-9733-f772672779e1"))
 								.then(Mono.defer(()->{
-									return userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db2"))
+									return userRepository.save(new User("0f1c6cdd-5d81-460b-8a39-02f19349e18f"))
 											.then(Mono.defer(()->{
-												return userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db2"))
-														.then(Mono.defer(()->{
-															return userRepository.save(new User("49a9768c-a2a8-4290-9653-5291b9718db3"));
-														}));
+												return userRepository.save(new User("689d39dd-fbed-409f-9f53-626f250712f1"));
 											}));
 								})).block();
 			}

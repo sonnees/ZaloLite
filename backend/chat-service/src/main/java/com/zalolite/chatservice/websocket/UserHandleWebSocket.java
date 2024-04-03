@@ -1,7 +1,6 @@
 package com.zalolite.chatservice.websocket;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zalolite.chatservice.dto.*;
+import com.zalolite.chatservice.dto.handleUser.*;
 import com.zalolite.chatservice.entity.*;
 import com.zalolite.chatservice.repository.ChatRepository;
 import com.zalolite.chatservice.repository.GroupRepository;
@@ -12,10 +11,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -167,6 +164,24 @@ public class UserHandleWebSocket {
                                         });
                             });
                 })).then();
+    }
+
+    public Mono<Void> appendConversation(String[] userID,Conversation conversation){
+        log.info("** appendConversation: {}",conversation.getChatID());
+        return userRepository.appendConversation(userID,conversation)
+                .flatMap(aLongR -> {
+                    if(aLongR<=0) return Mono.error(() -> new Throwable("appendConversation failed"));
+                    return Mono.empty();
+                });
+    }
+
+    public Mono<Void> removeConversation(String[] userID){
+        log.info("** removeConversation:");
+        return userRepository.removeConversation(userID)
+                .flatMap(aLongR -> {
+                    if(aLongR<=0) return Mono.error(() -> new Throwable("removeConversation failed"));
+                    return Mono.empty();
+                });
     }
 
     public Mono<Void> updateConversations(Chat chat){

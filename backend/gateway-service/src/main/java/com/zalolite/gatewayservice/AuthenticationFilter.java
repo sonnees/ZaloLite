@@ -1,5 +1,6 @@
 package com.zalolite.gatewayservice;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -31,13 +32,15 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     public GatewayFilter apply(Config config) {
         WebClient webClient = builder.build();
         return (exchange, chain)->{
-            String openApiEndpointPattern = "/api/v1/auth/**";
+            String openApiEndpointPattern1 = "/api/v1/auth/**";
+            String openApiEndpointPattern2 = "/ws/**";
             String path = exchange.getRequest().getURI().getPath();
 
-            boolean Match = pathMatcher.match(openApiEndpointPattern, path);
-            log.info("** Match: "+Match +" | "+exchange.getRequest().getURI().getPath());
+            boolean match1 = pathMatcher.match(openApiEndpointPattern1, path);
+            boolean match2 = pathMatcher.match(openApiEndpointPattern2, path);
+            log.info("** Match: "+match1 +" | "+exchange.getRequest().getURI().getPath());
 
-            if(!Match){
+            if(!match1 && !match2){
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION))
                     throw new RuntimeException("missing authorization header");
                 String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);

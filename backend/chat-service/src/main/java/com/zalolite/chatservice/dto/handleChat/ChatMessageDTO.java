@@ -1,19 +1,18 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleChat;
 
-import com.zalolite.chatservice.entity.Content;
+import com.zalolite.chatservice.dto.enums.TypeChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserMessageDTO {
+public class ChatMessageDTO {
     private UUID id;
-    private TypeUserMessage TUM;
+    private TypeChatMessage TCM;
 }

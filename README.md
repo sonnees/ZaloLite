@@ -63,6 +63,7 @@ http://localhost:8081/api/v1/auth/register
     "phoneNumber":"0123456789",
     "password":"123",
     "userName":"Son nees",
+    "avatar":"https://s.net.vn/pPN0",
     "gender":"true",
     "birthday":"2024-01-26",
     "role":"USER"
@@ -175,6 +176,83 @@ HTTP 403
 ```
 </details>
 
+<details>
+  <summary>👇 Gửi yêu cầu đổi mật khẩu tài khoản </summary> 
+  <hr>
+
+`Method POST + TOKEN` : http://localhost:8081/api/v1/account/change-password <br>
+```
+http://localhost:8081/api/v1/account/change-password
+```
+`Body` :
+```
+{
+    "curPass":"123", // mật khẩu hiên tại
+    "newPass":"321" // mật khẩu mới
+}
+```  
+`Received` :
+```
+# Thành công:
+HTTP 200 OK
+
+# Thất bại (Token sai, mật khẩu hiện tại sai):
+HTTP 403, 401
+Not authenticate
+```
+</details>
+
+<details>
+  <summary>👇 Gửi yêu cầu đổi ảnh đại diện tài khoản </summary> 
+  <hr>
+
+`Method POST + TOKEN` : http://localhost:8081/api/v1/account/change-avatar <br>
+```
+http://localhost:8081/api/v1/account/change-avatar
+```
+`Body`:
+```
+{
+    "field":"? img ?"
+}
+```  
+`Received` :
+```
+# Thành công:
+HTTP 200 OK
+
+# Thất bại (Token sai):
+HTTP 403, 401
+Not authenticate
+```
+</details>
+
+<details>
+  <summary>👇 Gửi yêu cầu đổi mật khẩu trong trường hợp reset tài khoản </summary> 
+  <hr>
+
+`Method POST` : http://localhost:8081/api/v1/auth/reset-password <br>
+```
+http://localhost:8081/api/v1/auth/reset-password
+```
+`Body`:
+```
+{
+    "field1":"0000000000",
+    "field2":"123"
+}
+```  
+`Received` :
+```
+# Thành công:
+HTTP 200 OK
+
+# Thất bại (không tìm thấy tài khoản dựa trên số điện thoại):
+HTTP 403, 401
+Not authenticate
+```
+</details>
+
 ### Liên quan đến chat
 
 <details>
@@ -193,6 +271,22 @@ HTTP 500 Error processing JSON
 # Success
 HTTP 200
 {user-info}
+```
+</details>
+
+<details>
+  <summary>👇 Lấy list các tin nhắn củ hơn theo id chat [X đến Y, xếp theo thời gian tăng dần] </summary> <br>
+
+`Method GET + TOKEN` : http://localhost:8082/api/v1/chat/x-to-y <br>
+```
+http://localhost:8082/api/v1/chat/x-to-y?id=49a9768c-a2a8-4290-9653-5291b9718db1&x=10&y=20
+```
+`Received` :
+```
+# Failed
+# Success
+HTTP 200
+{danh sách chatActivity}
 ```
 </details>
 

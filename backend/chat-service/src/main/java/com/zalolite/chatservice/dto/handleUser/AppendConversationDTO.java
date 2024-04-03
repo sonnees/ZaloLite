@@ -1,5 +1,7 @@
-package com.zalolite.chatservice.dto;
+package com.zalolite.chatservice.dto.handleUser;
 
+import com.zalolite.chatservice.dto.handleUser.FriendRequestAcceptDTO;
+import com.zalolite.chatservice.dto.handleUser.FriendRequestAddDTO;
 import com.zalolite.chatservice.entity.Type;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,6 +40,5 @@ public class AppendConversationDTO {
         receiverName = f.getReceiverName();
         receiverAvatar = f.getReceiverAvatar();
     }
-
 
 }
