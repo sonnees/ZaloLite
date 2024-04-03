@@ -15,8 +15,7 @@ Ví dụ:
 
 <details>
   <summary>👇 Cài đặt các thư viện </summary> <br>
-`THƯ VIỆN LIÊN QUAN ĐẾN NAVIGATION`
-  
+`THƯ VIỆN LIÊN QUAN ĐẾN NAVIGATION`  
         
         npm install @react-navigation/bottom-tabs @react-navigation/stack
         
@@ -33,28 +32,14 @@ Ví dụ:
         
 
 `THƯ VIỆN LIÊN QUAN ĐẾN CAMERA VÀ QR`
-
-        
         npm install react-native-camera react-native-qrcode-scanner react-native-camera expo-barcode-scanner expo-camera
-        
-        
-        
         npm install @react-native-camera/core @react-native-camera/react-native-camera
-        
-        
-        
         npm install react-native-keyboard-aware-scrollview --save
-        
 
 `THƯ VIỆN LIÊN QUAN ĐẾN XÁC THỰC`
-
-        
         npm install expo-firebase-core
         
-
 </details>
 `APP RUN`
-
-        
         npx expo start --port 3005
         
