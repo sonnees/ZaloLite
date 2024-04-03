@@ -66,9 +66,9 @@ public class GroupHandleWebSocket {
                             listID.add(group.getOwner().getUserID().toString());
                             group.getMembers().forEach(personInfo -> listID.add(personInfo.getUserID().toString()));
                             String[] arrayID = listID.toArray(new String[0]);
-                            return chatHandleWebSocket.delete(idChat)
+                            return userHandleWebSocket.removeConversation(arrayID, idChat)
                                     .then(Mono.defer(() -> {
-                                        return userHandleWebSocket.removeConversation(arrayID)
+                                        return chatHandleWebSocket.delete(idChat)
                                                 .then(Mono.defer(() -> {
                                                     return groupRepository.deleteById(UUID.fromString(idChat))
                                                             .then(Mono.just(arrayID));

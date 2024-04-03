@@ -45,6 +45,5 @@ class ChatRepositoryTest {
     void test(){
         UUID u = UUID.randomUUID();
         System.out.println(u);
-
     }
 }

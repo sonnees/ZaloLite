@@ -97,7 +97,6 @@ public class ChatHandleWebSocket {
                                         .flatMap(chat -> { // exit Delivery
                                             return chatRepository.changeDelivery(chatID,info.getUserID().toString(),info.getMessageID().toString())
                                                     .flatMap(aLong1 -> {
-                                                        if(aLong1<=0) return Mono.error(() -> new Throwable("changeRead failed"));
                                                         return Mono.empty();
                                                     });
                                         });
@@ -111,7 +110,6 @@ public class ChatHandleWebSocket {
                                 // change Delivery
                                 return chatRepository.changeDelivery(chatID,info.getUserID().toString(),info.getMessageID().toString())
                                         .flatMap(aLong1 -> {
-                                            if(aLong1<=0) return Mono.error(() -> new Throwable("changeRead failed"));
                                             return Mono.empty();
                                         });
                             });

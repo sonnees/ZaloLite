@@ -62,6 +62,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
         };
     }
 
+    // ===== handleGroup =====
     private Mono<Void> handleGroup(WebSocketSession session, Flux<WebSocketMessage> sendFlux, String sessionId, String path) {
         return session
                 .send(sendFlux)
