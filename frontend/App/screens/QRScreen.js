@@ -42,11 +42,11 @@ const QRScannerScreen = () => {
     
     try {
       // Mở WebSocket và gửi dữ liệu
-      const newSocket = new WebSocket('ws://172.20.51.21:8081/ws/auth/' + data);
+      const newSocket = new WebSocket('ws://192.168.137.180:8081/ws/auth/' + data);
       setScanned(true);
       navigation.navigate('ConfirmQRScreen', {data: data});
       await waitForWebSocketOpen(newSocket);
-      // console.log('WebSocket connection is now open.');
+      console.log('WebSocket connection is now open.');
       newSocket.send(JSON.stringify({connect:"ACCEPT"}));
       
 
@@ -59,7 +59,7 @@ const QRScannerScreen = () => {
 
     } catch (error) {
       console.error('Failed to establish WebSocket connection:', error);
-      Alert.alert('Error', 'Failed to establish WebSocket connection');
+      // Alert.alert('Error', 'Failed to establish WebSocket connection');
     }
     
     // Alert.alert(
