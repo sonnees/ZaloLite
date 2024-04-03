@@ -1,62 +1,112 @@
-import { StyleSheet, Text, View,Image } from 'react-native'
-import React from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { StyleSheet, Text, View, Image, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 export default function InformationDetail() {
-    let navigation = useNavigation();
+  const [userInfo, setUserInfo] = useState(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    // Function to get token and phoneNumber from AsyncStorage
+    const getData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const phoneNumber = await AsyncStorage.getItem('phoneNumber');
+        return { token, phoneNumber };
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+        return null;
+      }
+    };
+  
+    // Call getData function to get token and phoneNumber
+    getData().then(data => {
+      // If token and phoneNumber exist, make request to get user info
+      if (data && data.token && data.phoneNumber) {
+        // Send GET request to API to get user info with token in header
+        axios.get(`http://192.168.1.3:8081/api/v1/account/profile/${data.phoneNumber}`, {
+          headers: {
+            Authorization: `Bearer ${data.token}`, // Add token to Authorization header
+          },
+        })
+        .then(response => {
+          // Handle response from API
+          setUserInfo(response.data);
+        })
+        .catch(error => {
+          console.error('Lỗi khi lấy thông tin cá nhân:', error);
+          // Handle error, for example: show an alert
+          Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi lấy thông tin cá nhân.');
+        });
+      } else {
+        console.log('Không tìm thấy token hoặc số điện thoại trong AsyncStorage');
+        // Handle case when token or phoneNumber is not found in AsyncStorage
+      }
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
-        <View style={{flex:3}}>
+      {/* Check if userInfo is received from API */}
+      {userInfo && (
+        // Render user information
+        <>
+          {/* Render cover image */}
+          <View style={{ flex: 2 }}>
             <Image source={require('../assets/cover_Image.jpg')} style={{width: '100%', height: '100%'}}/>
-            <View
-            style={{
-                flex: 3,
-                position: "absolute",
-                top: "61%",
-                width: "50%",
-                paddingLeft: "5%",
-            }}
-        >
-        <Image style={{width: 60, height: 60,borderRadius: 50, resizeMode: "contain"}} source={require("../assets/avata.jpg")}></Image>
-        </View>
-        <Image style={{position:"absolute",width: "15%", height: "10%", resizeMode: "contain",top: "10%"}} source={require("../assets/back1.png")}
-            onStartShouldSetResponder={() => navigation.navigate("InformationScreen")}
-        ></Image>
-        <Text style={{position: "absolute",top: "70%",fontFamily: "Roboto", fontSize: 20, fontWeight: "bold", color: "white", paddingLeft: "25%" }}>Lê Hữu Bằng</Text>
-        </View>
-        <View style={{flex:3, backgroundColor: "#fff"}}>
-            <Text style={{fontFamily: "Roboto", fontSize: 18, fontWeight: "bold", paddingLeft: "5%", paddingTop: "3%"}}>Thông tin cá nhân</Text>
-            <View style={{flex: 1, flexDirection: "row", paddingLeft: "5%", alignItems:"center"}}>
-                <Text style={{fontFamily: "Roboto", fontSize: 15,}}>Giới tính</Text>
-                <View style={{flex: 0.2}}></View>
-                <Text style={{fontFamily: "Roboto", fontSize: 15}}>Nam</Text>
+            {/* Render avatar */}
+            <View style={{ flex: 3, position: "absolute", top: "61%", width: "50%", paddingLeft: "5%" }}>
+              <Image style={{ width: 60, height: 60, borderRadius: 50, resizeMode: "contain" }} source={{ uri: userInfo.avatar }} />
             </View>
-            <View style={{flex: 0.02, backgroundColor: "#CCCCCC", paddingLeft: "5%"}}></View>
-            <View style={{flex: 1, flexDirection: "row", paddingLeft: "5%", alignItems: "center"}}>
-                <Text style={{fontFamily: "Roboto", fontSize: 15,}}>Ngày sinh</Text>
-                <View style={{flex: 0.2}}></View>
-                <Text style={{fontFamily: "Roboto", fontSize: 15}}>30/04/2002</Text>
+            {/* Back button */}
+            <Image style={{ position: "absolute", width: "16%", height: "8%", resizeMode: "contain", top: "10%" }}
+              source={require("../assets/back1.png")}
+              onStartShouldSetResponder={() => navigation.navigate("InformationScreen")}
+            />
+            {/* Render user name */}
+            <Text style={{ position: "absolute", top: "70%", fontFamily: "Roboto", fontSize: 20, fontWeight: "bold", color: "white", paddingLeft: "25%" }}>{userInfo.userName}</Text>
+          </View>
+          {/* Render personal information */}
+          <View style={{ flex: 3, backgroundColor: "#fff" }}>
+            <Text style={{ fontFamily: "Roboto", fontSize: 18, fontWeight: "bold", paddingLeft: "5%", paddingTop: "3%" }}>Thông tin cá nhân</Text>
+            {/* Render gender */}
+            <View style={{ flex: 1, flexDirection: "row", paddingLeft: "5%", alignItems: "center" }}>
+              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Giới tính</Text>
+              <View style={{ flex: 0.2 }}></View>
+              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.gender ? 'Nam' : 'Nữ'}</Text>
             </View>
-            <View style={{flex: 0.02, backgroundColor: "#CCCCCC", paddingLeft: "5%"}}></View>
-            <View style={{flex: 1, flexDirection: "row", paddingLeft: "5%", paddingTop: "3%"}}>
-                <Text style={{fontFamily: "Roboto", fontSize: 15,}}>Điện thoại</Text>
-                <View style={{flex: 0.2}}></View>
-                <View style={{flex: 1, flexDirection: "column"}}>
-                    <Text style={{fontFamily: "Roboto", fontSize: 15}}>+84 837 699 806</Text>
-                    <Text style={{fontFamily: "Roboto", fontSize: 12,}}>Số điện thoại chỉ hiện thị với người có lưu só bạn trong danh bạ máy</Text>
-                </View>
+            <View style={{ flex: 0.02, backgroundColor: "#CCCCCC", paddingLeft: "5%" }}></View>
+            {/* Render birthday */}
+            <View style={{ flex: 1, flexDirection: "row", paddingLeft: "5%", alignItems: "center" }}>
+              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Ngày sinh</Text>
+              <View style={{ flex: 0.2 }}></View>
+              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.birthday ? userInfo.birthday.split('T')[0] : '**/**/****'}</Text>
             </View>
-        </View>
-        <View style={{flex:3}}></View>
+            <View style={{ flex: 0.02, backgroundColor: "#CCCCCC", paddingLeft: "5%" }}></View>
+            {/* Render phone number */}
+            <View style={{ flex: 1, flexDirection: "row", paddingLeft: "5%", paddingTop: "3%" }}>
+              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Điện thoại</Text>
+              <View style={{ flex: 0.2 }}></View>
+              <View style={{ flex: 1, flexDirection: "column" }}>
+                
 
-
+                <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.phoneNumber}</Text>
+                <Text style={{ fontFamily: "Roboto", fontSize: 12 }}>Số điện thoại chỉ hiển thị với người có lưu số bạn trong danh bạ máy</Text>
+              </View>
+            </View>
+            <View style={{ flex: 3, backgroundColor: "#fff", paddingLeft: "5%" }}></View>
+          </View>
+        </>
+      )}
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#CCCCCC',
-    }
-})
+  container: {
+    flex: 1,
+    backgroundColor: '#CCCCCC',
+  }
+});
