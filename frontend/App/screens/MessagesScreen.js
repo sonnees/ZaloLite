@@ -95,6 +95,7 @@ const MessagesScreen = () => {
     }, 500);
   };
 
+
   const ChatElement = memo(({ item }) => {
     return (
       <View style={{ alignItems: 'center' }}>
@@ -127,6 +128,9 @@ const MessagesScreen = () => {
   }, (prevProps, nextProps) => {
     return prevProps.item.id === nextProps.item.id;
   });
+
+
+
 
   return (
     <KeyboardAvoidingView
