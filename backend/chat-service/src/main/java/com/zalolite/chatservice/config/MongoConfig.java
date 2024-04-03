@@ -20,4 +20,5 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
     protected boolean autoIndexCreation() {
         return true;
     }
+
 }

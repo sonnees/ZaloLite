@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -42,10 +44,10 @@ public class SecurityConfig {
                 .anonymous(Customizer.withDefaults())
                 .cors(customizer -> {
                     CorsConfiguration corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3005", "http://localhost:5173"));
-                    corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS"));
-                    corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept","Authorization"));
                     corsConfiguration.setAllowCredentials(true);
+                    corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3005", "http://localhost:5173"));
+                    corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST"));
+                    corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
                     customizer.configurationSource(request -> corsConfiguration);
                 })
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
@@ -67,5 +69,10 @@ public class SecurityConfig {
     @LoadBalanced
     public WebClient.Builder loadBalancedWebClientBuilder(HttpClient httpClient) {
         return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
+    }
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        return new SimpleAsyncTaskExecutor();
     }
 }

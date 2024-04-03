@@ -3,12 +3,16 @@ package com.zalolite.chatservice.repository;
 import com.zalolite.chatservice.entity.Chat;
 import com.zalolite.chatservice.entity.ChatActivity;
 import com.zalolite.chatservice.entity.Delivery;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.mongodb.repository.Update;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -17,8 +21,6 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
     @Query(value = "{'_id': ?0}")
     @Update("{$push:{'chatActivity': ?1}}")
     Mono<Long> appendChatActivityByIDChat(String chatID, ChatActivity chatActivity);
-
-//    @Update(update = "{$set: {'conversations.$.type': ?2}}")
 
     @Query(value = "{'_id': ?0}")
     @Update("{$push:{'deliveries': ?1}}")
@@ -64,4 +66,15 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
 
     @Query(value = "{_id:?0}", fields = "{chatActivity: {$slice: -10}}")
     Mono<Chat> getChatTop10(String chatID);
+
+    @Aggregation({"{$match: {_id: ?0}}","{ $project: { _id: 0, chatActivity: 1 } }", "{ $unwind: '$chatActivity' }","{ $replaceRoot: { newRoot: '$chatActivity' } }","{$sort:{timestamp:-1}}","{$skip:?1}","{$limit:?2}", "{$sort:{timestamp:1}}"})
+    Flux<ChatActivity> getChatActivityFromNToM(String chatID, int x, int y);
+
+    @Query(value = "{'reads.userAvatar': ?0}")
+    @Update(update = "{$set:{'reads.$.userAvatar': ?1}}")
+    Mono<Long> updateAvatarInRead(String oldAvatar, String newAvatar);
+
+    @Query(value = "{'deliveries.userAvatar': ?0}")
+    @Update(update = "{$set:{'deliveries.$.userAvatar': ?1}}")
+    Mono<Long> updateAvatarInDelivery(String oldAvatar, String newAvatar);
 }

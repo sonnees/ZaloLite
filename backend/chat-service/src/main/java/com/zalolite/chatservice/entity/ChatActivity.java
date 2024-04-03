@@ -1,7 +1,7 @@
 package com.zalolite.chatservice.entity;
 
-import com.zalolite.chatservice.dto.ChatActivityDTO;
-import com.zalolite.chatservice.dto.MessageAppendDTO;
+import com.zalolite.chatservice.dto.other.ChatActivityDTO;
+import com.zalolite.chatservice.dto.handleChat.MessageAppendDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,6 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.web.reactive.socket.WebSocketMessage;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,10 +21,11 @@ import java.util.UUID;
 @Setter
 public class ChatActivity {
     @Field(targetType = FieldType.STRING)
+    @Indexed()
     private UUID messageID;
     @Field(targetType = FieldType.STRING)
     private UUID userID;
-    @Indexed(unique = true, sparse = true)
+    @Indexed()
     private Date timestamp;
     @Field(targetType = FieldType.STRING)
     private UUID parentID;

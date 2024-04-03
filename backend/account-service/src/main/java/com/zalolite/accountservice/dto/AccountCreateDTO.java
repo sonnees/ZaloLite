@@ -16,9 +16,8 @@ public class AccountCreateDTO {
     private String phoneNumber;
     private String password;
     private String userName;
+    private String avatar;
     private Boolean gender;
     private Date birthday;
     private UserRole role;
 }
-
-// map struct mvn

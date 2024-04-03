@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity,StatusBar } from 'react-native'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 
@@ -6,8 +6,8 @@ export default function SettingScreen() {
   let navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <View style={{flex: 0.5, backgroundColor: "#0000FF", paddingVertical: 10}}></View>
-      <View style={{flex: 1.2, backgroundColor: "#1E90FF", flexDirection: "row",  alignItems:"center"}}>
+       <StatusBar></StatusBar>
+      <View style={{flex: 1, backgroundColor: "#1E90FF", flexDirection: "row",  alignItems:"center", height: 40}}>
         <Image style={{width: "15%", height: "40%", resizeMode: "contain"}} source={require("../assets/back1.png")}
            onStartShouldSetResponder={() => navigation.navigate('TabNavigator',{ screen: 'Me' })}
         ></Image>
@@ -147,7 +147,7 @@ export default function SettingScreen() {
         <View style={{flex: 1.2, backgroundColor: "#FFFFFF"}}>
           <View style={{flex: 0.2}}></View>
           <TouchableOpacity style={{flex: 0.6, backgroundColor: "#CCCCCC", flexDirection: "row",  alignItems:"center", justifyContent: "center", borderRadius: 20, marginLeft: "5%", marginRight: "5%"}}
-              onPress={() => navigation.navigate('OpionNavigator',{ screen: 'SlashScreen' })}
+              onPress={() => navigation.navigate('LoginNavigator',{ screen: 'SlashScreen' })}
           >
             <Image style={{width: "15%", height: "40%", resizeMode: "contain"}} source={require("../assets/logout.png")}></Image>
             <Text style={{fontSize: 15, fontWeight: "bold", fontFamily: "Roboto"}}>Đăng xuất</Text>
