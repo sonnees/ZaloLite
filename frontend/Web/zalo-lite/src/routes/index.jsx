@@ -24,6 +24,8 @@ import { set } from "date-fns";
 import { Stack } from "@mui/material";
 import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import ForgotPasswordForm from "../pages/Login/ForgotPasswordForm";
+import ResetPasseordForm from "../pages/Login/ResetPasseordForm";
 
 const Loadable = (Component) => (props) => {
   return (
@@ -55,7 +57,11 @@ export default function Router() {
     {
       path: "/auth",
       element: <AuthLayout />,
-      children: [{ path: "login", element: <LoginForm /> }],
+      children: [
+        { path: "login", element: <LoginForm /> },
+        { path: "forgot-password", element: <ForgotPasswordForm /> },
+        { path: "reset-password", element: <ResetPasseordForm /> },
+      ],
     },
     {
       path: "/",
