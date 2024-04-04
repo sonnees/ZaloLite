@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Text, StatusBar, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
-import conversations from '../data/conversations';
+
 const MessagesScreen = () => {
   let navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
