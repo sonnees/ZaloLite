@@ -24,8 +24,8 @@ const RegisterDEScreen = () => {
 
   let navigation = useNavigation();
   let route = useRoute();
-    // Nhận giá trị userName từ tham số được truyền qua
-    const { userName, phoneNumber } = route.params;
+  // Nhận giá trị userName từ tham số được truyền qua
+  const { userName, phoneNumber } = route.params;
 
   const handleMaleCheckbox = () => {
     setIsMaleChecked(true);
@@ -59,9 +59,9 @@ const RegisterDEScreen = () => {
       alert("Vui lòng chọn giới tính và ngày sinh trước khi tiếp tục.");
       return;
     }
-    
+
     // Chuyển qua màn hình tiếp theo
-    navigation.navigate("RegisterProfileScreen",{
+    navigation.navigate("RegisterProfileScreen", {
       userName: userName,
       phoneNumber: phoneNumber,
       gender: gender,
