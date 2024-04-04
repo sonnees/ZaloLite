@@ -31,23 +31,23 @@ export default function InformationDetail() {
         console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
       }
     };
-        // Lưu giá trị userName và avatar vào AsyncStorage
-        const saveUserInfoToStorage = async (userName, avatar) => {
-          try {
-            // Kiểm tra xem userName và avatar có tồn tại hay không
-            if (userName && avatar) {
-              // Nếu cả hai giá trị đều tồn tại, lưu chúng vào AsyncStorage
-              await AsyncStorage.setItem('userName', userName);
-              await AsyncStorage.setItem('avatar', avatar);
-            } else {
-              // Nếu userName hoặc avatar không tồn tại, hiển thị thông báo lỗi
-              console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage: userName hoặc avatar không tồn tại');
-            }
-          } catch (error) {
-            console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage:', error);
-          }
-        };
-        
+    // Lưu giá trị userName và avatar vào AsyncStorage
+    const saveUserInfoToStorage = async (userName, avatar) => {
+      try {
+        // Kiểm tra xem userName và avatar có tồn tại hay không
+        if (userName && avatar) {
+          // Nếu cả hai giá trị đều tồn tại, lưu chúng vào AsyncStorage
+          await AsyncStorage.setItem('userName', userName);
+          await AsyncStorage.setItem('avatar', avatar);
+        } else {
+          // Nếu userName hoặc avatar không tồn tại, hiển thị thông báo lỗi
+          console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage: userName hoặc avatar không tồn tại');
+        }
+      } catch (error) {
+        console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage:', error);
+      }
+    };
+
     // Call getToken function to get token
     getToken().then(token => {
       if (token && phoneNumber) {
@@ -57,15 +57,15 @@ export default function InformationDetail() {
             Authorization: `Bearer ${token}`, // Add token to Authorization header
           },
         })
-        .then(response => {
-          // Handle response from API
-          setUserInfo(response.data);
-        })
-        .catch(error => {
-          console.error('Lỗi khi lấy thông tin cá nhân:', error);
-          // Handle error, for example: show an alert
-          Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi lấy thông tin cá nhân.');
-        });
+          .then(response => {
+            // Handle response from API
+            setUserInfo(response.data);
+          })
+          .catch(error => {
+            console.error('Lỗi khi lấy thông tin cá nhân:', error);
+            // Handle error, for example: show an alert
+            Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi lấy thông tin cá nhân.');
+          });
       } else {
         console.log('Không tìm thấy token hoặc số điện thoại trong AsyncStorage');
         // Handle case when token or phoneNumber is not found in AsyncStorage
@@ -78,13 +78,12 @@ export default function InformationDetail() {
 
   return (
     <View style={styles.container}>
-      {/* Check if userInfo is received from API */}
       {userInfo && (
         // Render user information
         <>
           {/* Render cover image */}
           <View style={{ flex: 2 }}>
-            <Image source={require('../assets/cover_Image.jpg')} style={{width: '100%', height: '100%'}}/>
+            <Image source={require('../assets/cover_Image.jpg')} style={{ width: '100%', height: '100%' }} />
             {/* Render avatar */}
             <View style={{ flex: 3, position: "absolute", top: "65%", width: "50%", paddingLeft: "5%" }}>
               <Image style={{ width: 60, height: 60, borderRadius: 60, resizeMode: "contain" }} source={{ uri: userInfo.avatar }} />
@@ -104,7 +103,7 @@ export default function InformationDetail() {
             <View style={{ flex: 1, flexDirection: "row", paddingLeft: "5%", alignItems: "center" }}>
               <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Giới tính</Text>
               <View style={{ flex: 0.2 }}></View>
-              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.gender ? 'Nữ' : 'Nam'}</Text>
+              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.gender === true ? 'Nam' : 'Nữ'}</Text>
             </View>
             <View style={{ flex: 0.02, backgroundColor: "#CCCCCC", paddingLeft: "5%" }}></View>
             {/* Render birthday */}
