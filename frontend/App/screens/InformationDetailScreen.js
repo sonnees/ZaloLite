@@ -104,7 +104,7 @@ export default function InformationDetail() {
             <View style={{ flex: 1, flexDirection: "row", paddingLeft: "5%", alignItems: "center" }}>
               <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Giới tính</Text>
               <View style={{ flex: 0.2 }}></View>
-              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.gender ? 'Nữ' : 'Nam'}</Text>
+              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.gender === true ? 'Nam' : 'Nữ'}</Text>
             </View>
             <View style={{ flex: 0.02, backgroundColor: "#CCCCCC", paddingLeft: "5%" }}></View>
             {/* Render birthday */}

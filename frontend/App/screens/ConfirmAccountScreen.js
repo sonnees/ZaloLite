@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const CreatePasswordScreen = () => {
   const navigation = useNavigation();
@@ -9,41 +10,58 @@ const CreatePasswordScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleChangePassword = async () => {
+  try {
+    // Lấy token từ AsyncStorage
+    const token = await AsyncStorage.getItem('token');
+    console.log('token:', token);
+    
+    // Kiểm tra xem mật khẩu hiện tại có được nhập vào không
+    if (!currentPassword || !currentPassword.trim()) {
+      Alert.alert('Lỗi', 'Vui lòng nhập mật khẩu hiện tại.');
+      return;
+    }
+
     // Validate passwords
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'Mật khẩu mới và xác nhận mật khẩu không khớp.');
+      Alert.alert('Lỗi', 'Mật khẩu mới và xác nhận mật khẩu không khớp.');
       return;
     }
   
-    // Send request to change password
-    try {
-      const response = await fetch('http://192.168.1.10:8081/api/v1/account/change-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          curPass: currentPassword,
-          newPass: newPassword,
-        }),
-      });
-  
-      // Check if response is successful
-      if (!response.ok) {
-        throw new Error('Đã xảy ra lỗi khi kết nối đến máy chủ.');
-      }
-  
-      // Parse response JSON
-      const data = await response.json();
-  
-      // Handle response
-      Alert.alert('Success', 'Đổi mật khẩu thành công.');
-  
-    } catch (error) {
-      console.error('Error:', error.message);
-      Alert.alert('Error', error.message);
+    const response = await fetch('http://192.168.1.10:8081/api/v1/account/change-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        curPass: currentPassword,
+        newPass: newPassword,
+      }),
+    });
+
+    if (response.status === 200) {
+      // Quá trình đổi mật khẩu thành công
+      // Hiển thị thông báo thành công ở đây
+      Alert.alert('Thành công', 'Đổi mật khẩu thành công.');
+    
+      // Đăng xuất tài khoản khi mật khẩu thay đổi (tùy thuộc vào logic ứng dụng của bạn)
+      // Ví dụ: AsyncStorage.removeItem('token');
+    } else if (response.status === 403 || response.status === 401) {
+      // Trường hợp token sai hoặc mật khẩu hiện tại sai
+      // Hiển thị thông báo lỗi tại đây
+      Alert.alert('Lỗi', 'Mật khẩu hiện tại không đúng.');
+    } else {
+      // Xử lý trường hợp lỗi khác
+      throw new Error('Đã xảy ra lỗi khi kết nối đến máy chủ.');
     }
-  };
+
+  } catch (error) {
+    console.error('Lỗi:', error.message);
+    Alert.alert('Lỗi', 'Đã xảy ra lỗi khi thực hiện đổi mật khẩu.');
+  }
+};
+
+  
   
 
   return (
