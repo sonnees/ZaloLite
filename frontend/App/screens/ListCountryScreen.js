@@ -8,8 +8,9 @@ import countries from '../data/countries';
 const sortedCountries = [
   { name: "Vietnam", flag: "🇻🇳", code: "VN", dial_code: "+84" },
   { name: "China", flag: "🇨🇳", code: "CN", dial_code: "+86" },
+  { name: "South Korean", flag: "🇰🇷", code: "KR", dial_code: "+82" },
   { name: "Myanmar", flag: "🇲🇲", code: "MM", dial_code: "+95" },
-  ...countries.filter(country => !["Vietnam", "China", "Myanmar"].includes(country.name))
+  ...countries.filter(country => !["Vietnam", "China", "Myanmar", "South Korean"].includes(country.name))
 ];
 
 
