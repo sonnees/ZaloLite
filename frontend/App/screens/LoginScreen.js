@@ -39,6 +39,8 @@ const LoginScreen = () => {
         // Đăng nhập thành công, lưu token vào AsyncStorage
         await AsyncStorage.setItem('token', data.field);
 
+        console.log('data:', data.field);
+
         // Lưu phoneNumber vào AsyncStorage
         await AsyncStorage.setItem('phoneNumber', phoneNumber);
         // Chuyển hướng đến màn hình tiếp theo
