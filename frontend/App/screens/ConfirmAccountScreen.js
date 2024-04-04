@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { API_CHANGE_PASS } from '../api/Api';
 
 const CreatePasswordScreen = () => {
   const navigation = useNavigation();
@@ -27,7 +28,7 @@ const CreatePasswordScreen = () => {
         return;
       }
 
-      const response = await fetch('http://192.168.1.10:8081/api/v1/account/change-password', {
+      const response = await fetch(API_CHANGE_PASS, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

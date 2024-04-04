@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native'; // Thêm useRoute vào
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { API_PRF } from '../api/Api';
+import { API_PROFILE } from '../api/Api';
 export default function MeScreen() {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({ userName: '', avatar: '' });
@@ -24,7 +24,7 @@ export default function MeScreen() {
     // Function to fetch user info
     const fetchUserInfo = async (phoneNumber, token) => {
       try {
-        const response = await axios.get(`${API_PRF}${phoneNumber}`, {
+        const response = await axios.get(`${API_PROFILE}${phoneNumber}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

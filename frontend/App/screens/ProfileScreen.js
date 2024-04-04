@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, ImageBackground
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { API_PRF } from '../api/Api';
+import { API_PROFILE } from '../api/Api';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -24,7 +24,7 @@ export default function ProfileScreen() {
     // Function to fetch user info
     const fetchUserInfo = async (phoneNumber, token) => {
       try {
-        const response = await axios.get(`${API_PRF}${phoneNumber}`, {
+        const response = await axios.get(`${API_PROFILE}${phoneNumber}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

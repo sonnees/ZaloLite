@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { API_PROFILE } from '../api/Api';
 
 export default function InformationDetail() {
   const [userInfo, setUserInfo] = useState(null);
@@ -52,7 +53,7 @@ export default function InformationDetail() {
     getToken().then(token => {
       if (token && phoneNumber) {
         // Send GET request to API to get user info with phoneNumber
-        axios.get(`http://192.168.1.10:8081/api/v1/account/profile/${phoneNumber}`, {
+        axios.get(`${API_PROFILE}${phoneNumber}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Add token to Authorization header
           },

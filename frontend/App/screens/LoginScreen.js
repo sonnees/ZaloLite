@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
-import { API_URL } from '../api/Api';
+import { API_AUTHENTICATE } from '../api/Api';
 
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -22,7 +22,7 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     try {
       // Gửi yêu cầu đăng nhập đến API
-      const response = await fetch(API_URL, {
+      const response = await fetch(API_AUTHENTICATE, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
