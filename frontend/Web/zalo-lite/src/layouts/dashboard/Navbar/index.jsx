@@ -11,7 +11,7 @@ import PopupWindow from "../../../components/PopupWindow";
 
 function Navbar() {
   const [profileData, setProfileData] = useState(null);
-  const [avatar, setAvatar] = useState('https://s120-ava-talk.zadn.vn/2/5/a/5/6/120/5ded83a5856f6d2af9fce6eac4b8d6d2.jpg');
+  const [avatar, setAvatar] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const location = useLocation();
   const token = location.state?.token;
@@ -37,12 +37,12 @@ function Navbar() {
   }
 
   const handleOpenPopup = () => {
-    setIsPopupOpen(!isPopupOpen);
+    setIsPopupOpen(true);
     console.log(isPopupOpen);
   };
 
   const handleClosePopup = () => {
-    setIsPopupOpen(true);
+    setIsPopupOpen(false);
     console.log(isPopupOpen);
   };
 
@@ -144,9 +144,8 @@ function Navbar() {
                       onClick={handleOpenPopup}
                     >
                       Hồ sơ của bạn
-                      <PopupWindow isOpen={isPopupOpen} onClose={handleClosePopup} data={profileData} phoneNumber={phoneNumber} />
                     </MenuItem>
-                    
+                      <PopupWindow isOpen={isPopupOpen} onClose={handleClosePopup} data={profileData} phoneNumber={phoneNumber} token={token} />
                     <MenuItem
                       sx={{
                         fontSize: 14,
