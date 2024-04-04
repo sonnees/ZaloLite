@@ -63,12 +63,13 @@ const RegisterProfileScreen = () => {
       phoneNumber: phoneNumber,
       password: "123", // Giá trị mặc định cho password
       userName: userName ,
-      avatar: selectedImage ? "" : "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711532179/nu1_uq2zmu.png", // Sử dụng ảnh đã chọn hoặc ảnh mặc định nếu không có ảnh đã chọn
+      avatar: selectedImage ? selectedImage : "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712158193/bihirvugrglydydg1htz.jpg", // Sử dụng ảnh đã chọn hoặc ảnh mặc định nếu không có ảnh đã chọn
       gender: gender === "male" ? "true" : "false", // Chuyển đổi giá trị gender thành true hoặc false
       birthday: birthDate, 
       role: "USER" 
     };
 
+    console.log("Registration body:", body);
     try {
       const response = await axios.post(API_RGT, body);
       console.log("Registration successful:", response.data);
