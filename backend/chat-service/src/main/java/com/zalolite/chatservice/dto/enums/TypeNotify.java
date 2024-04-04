@@ -2,5 +2,6 @@ package com.zalolite.chatservice.dto.enums;
 
 public enum TypeNotify {
     FAILED,
-    SUCCESS
+    SUCCESS,
+    CONFLICT
 }
