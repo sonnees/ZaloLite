@@ -26,6 +26,7 @@ public class ChatController {
 
     @PostMapping("/create")
     public Mono<Boolean> createChat(@RequestParam String id){
+        log.info("** createChat");
         return chatRepository.save(new Chat(id))
                 .flatMap(chat -> Mono.just((chat!=null)));
     }
