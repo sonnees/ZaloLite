@@ -230,25 +230,28 @@ export default function LoginForm() {
               </button>
             </div>
 
-            <div className="mt-4">
-              <button
-                className="bg-white-700 w-full transform rounded-md border-2 py-2 tracking-wide text-blue-400 transition-colors duration-200"
-                type="button"
-                // onClick={() => navigate('/')}
-              >
-                Đăng nhập với bằng thiết bị di động
-              </button>
-            </div>
           </form>
 
-          <p className="mt-8 text-center text-xs font-light text-gray-700">
-            <a
-              onClick={() => navigate('/auth/forgot-password')}
-              className="text-black-100 font-medium hover:underline"
-            >
-              Quên mật khẩu?
-            </a>
-          </p>
+          <div className="flex">
+            <p className="flex-1 mt-8 text-center text-xs font-light text-gray-700">
+              <a
+                onClick={() => navigate('/auth/forgot-password')}
+                className="text-black-100 font-medium hover:underline"
+              >
+                Đăng ký tài khoản
+              </a>
+            </p>
+
+            <p className="flex-1 mt-8 text-center text-xs font-light text-gray-700">
+              <a
+                onClick={() => navigate('/auth/register-user')}
+                className="text-black-100 font-medium hover:underline"
+              >
+                Quên mật khẩu?
+              </a>
+            </p>
+          </div>
+
         </>
       ) : (
         <>
