@@ -8,7 +8,7 @@ const CreatePasswordWhenForgotScreen = () => {
 
   const checkPhoneNumber = async () => {
     try {
-      const response = await fetch(`http://192.168.1.3:8081/api/v1/auth/check-uniqueness-phone-number/${phoneNumber}`);
+      const response = await fetch(`http://192.168.1.10:8081/api/v1/auth/check-uniqueness-phone-number/${phoneNumber}`);
       const status = response.status; // Lấy mã trạng thái của phản hồi
   
       if (status === 409) {

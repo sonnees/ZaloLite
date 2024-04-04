@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect} from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Thêm useRoute vào đây
 import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function MeScreen() {
   const navigation = useNavigation();
+  
 
   return (
     <View style={styles.container}>
