@@ -28,15 +28,6 @@ const OtpScreen = () => {
             code
         );
         firebase.auth().signInWithCredential(credential)
-<<<<<<< HEAD
-        .then(() => {
-            setCode('')
-            navigation.navigate('LoginNavigator', {screen: 'LoginScreen'});
-        })
-        .catch(error => {
-            alert(error)
-        })
-=======
             .then(() => {
                 setCode('')
                 navigation.navigate('LoginNavigator', { screen: 'LoginScreen' });
@@ -44,7 +35,6 @@ const OtpScreen = () => {
             .catch(error => {
                 alert(error)
             })
->>>>>>> 08daac5c189709ef2fa23784d2c9e4bc70a3286c
         Alert.alert('Phone authentication successful 👍')
     }
 
