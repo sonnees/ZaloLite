@@ -40,7 +40,7 @@ const RegisterScreen = () => {
       Alert.alert('Lỗi', 'Số điện thoại không hợp lệ. Vui lòng kiểm tra lại.');
       return;
     }
-    
+
     if (!isCheckedTerm1 || !isCheckedTerm2) {
       Alert.alert('Lỗi', 'Vui lòng đồng ý với các điều khoản sử dụng.');
       return;
@@ -57,10 +57,10 @@ const RegisterScreen = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
     >
       <StatusBar />
-      <View style={{ flex: 1}}>
+      <View style={{ flex: 1 }}>
         <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center", paddingVertical: 6, height: 50 }}>
           <Image style={{ width: "15%", height: "65%", resizeMode: "contain" }} source={require("../assets/back1.png")}
-             onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'AddInforScreen' })}
+            onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'AddInforScreen' })}
           ></Image>
           <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white", marginLeft: "2%" }}>Tạo tài khoản</Text>
         </View>
@@ -68,7 +68,7 @@ const RegisterScreen = () => {
           <Text style={{ fontSize: 14, marginLeft: "6%" }}>Nhập số điện thoại của bạn để tạo tài khoản mới m</Text>
         </View>
 
-        <View style={{ flexDirection: "row", paddingHorizontal: 10, marginLeft: "-22%" }}> 
+        <View style={{ flexDirection: "row", paddingHorizontal: 10, marginLeft: "-22%" }}>
           {/* Sử dụng component PhoneNumberInput */}
           <PhoneNumberInput />
           <TextInput
@@ -88,28 +88,28 @@ const RegisterScreen = () => {
             onChangeText={text => setPhoneNumber(text)}
           />
         </View>
-      {/* <View style={{flex: 0.5}}></View> */}
-      <CheckBox
-      checked={isCheckedTerm1}
-      onPress={() => setIsCheckedTerm1(!isCheckedTerm1)}
-      title='Tôi đồng ý với điều khoản sử dụng của Zalo'
-      containerStyle={{ marginLeft: "3%", marginTop: "10%", backgroundColor: "transparent", borderWidth: 0 }}
-      textStyle={{ fontFamily: "Roboto", fontSize: 13, fontWeight: '700', color: "#1E90FF" }}
-    />
-    <CheckBox
-      checked={isCheckedTerm2}
-      onPress={() => setIsCheckedTerm2(!isCheckedTerm2)}
-      title='Tôi đồng ý với điều khoản Mạng xã hội của Zalo'
-      containerStyle={{ marginLeft: "3%", marginTop: "0%", backgroundColor: "transparent", borderWidth: 0 }}
-      textStyle={{ fontFamily: "Roboto", fontSize: 13, fontWeight: '700', color: "#1E90FF" }}
-    />             
+        {/* <View style={{flex: 0.5}}></View> */}
+        <CheckBox
+          checked={isCheckedTerm1}
+          onPress={() => setIsCheckedTerm1(!isCheckedTerm1)}
+          title='Tôi đồng ý với điều khoản sử dụng của Zalo'
+          containerStyle={{ marginLeft: "3%", marginTop: "10%", backgroundColor: "transparent", borderWidth: 0 }}
+          textStyle={{ fontFamily: "Roboto", fontSize: 13, fontWeight: '700', color: "#1E90FF" }}
+        />
+        <CheckBox
+          checked={isCheckedTerm2}
+          onPress={() => setIsCheckedTerm2(!isCheckedTerm2)}
+          title='Tôi đồng ý với điều khoản Mạng xã hội của Zalo'
+          containerStyle={{ marginLeft: "3%", marginTop: "0%", backgroundColor: "transparent", borderWidth: 0 }}
+          textStyle={{ fontFamily: "Roboto", fontSize: 13, fontWeight: '700', color: "#1E90FF" }}
+        />
         <View style={{ flex: 5 }}></View>
         <View style={{ flex: 2, justifyContent: "center", alignItems: "flex-end" }}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={{ borderRadius: 20, justifyContent: "center", alignItems: "center", paddingVertical: 5 }}
             onPress={handleNext}
           >
-            <Image 
+            <Image
               style={{ width: 80, height: 50, resizeMode: "contain" }}
               source={require("../assets/right-arrow.png")}
             />

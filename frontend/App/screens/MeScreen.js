@@ -9,7 +9,6 @@ export default function MeScreen() {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({ userName: '', avatar: '' });
 
-  //Lay thong tin
   useEffect(() => {
     // Function to get token from AsyncStorage
     const getToken = async () => {
