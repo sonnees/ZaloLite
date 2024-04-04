@@ -10,7 +10,7 @@ const sortedCountries = [
   { name: "China", flag: "🇨🇳", code: "CN", dial_code: "+86" },
   { name: "South Korean", flag: "🇰🇷", code: "KR", dial_code: "+82" },
   { name: "Myanmar", flag: "🇲🇲", code: "MM", dial_code: "+95" },
-  ...countries.filter(country => !["Vietnam", "China", "South Korean", "Myanmar"].includes(country.name))
+  ...countries.filter(country => !["Vietnam", "China", "Myanmar", "South Korean"].includes(country.name))
 ];
 
 
