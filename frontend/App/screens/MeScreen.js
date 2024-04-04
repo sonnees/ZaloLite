@@ -40,8 +40,8 @@ export default function MeScreen() {
           onStartShouldSetResponder={() => navigation.navigate('MeNavigator', { screen: 'ProfileScreen' })}
         >
           <View style={{ flex: 0.1 }}></View>
-          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain" }} source={{ uri: avatar }}></Image>
-          <View style={{ flex: 0.2 }}></View>
+          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain", marginLeft: "5%" }} source={require("../assets/avata.jpg")}></Image>
+          <View style={{ marginLeft: "7%" }}></View>
           <View style={{ justifyContent: "center" }}>
             <Text style={{ fontFamily: "Roboto", fontSize: 18, fontWeight: "bold" }}>{userName}</Text>
             <Text style={{ fontFamily: "Roboto", fontSize: 15, color: "#808080" }}>Xem trang cá nhân</Text>

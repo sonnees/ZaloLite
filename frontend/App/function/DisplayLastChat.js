@@ -3,7 +3,7 @@ function getLastChatForEachID(chat) {
     chat.forEach(element => {
         if (element.chatActivity.length > 0) {
             id = element._id
-            lastChat[id] = {
+            lastChat = {
                 id: id,
                 chat: element.chatActivity[element.chatActivity.length - 1],
                 reads: element.reads,
@@ -15,8 +15,10 @@ function getLastChatForEachID(chat) {
 };
 function getlastContent(lastChat) {
     const lastContent = {};
-    lastChat.forEach(element => {
-
-    });
+    // lastChat.forEach(element => {
+    //     messageID = element.chat.
+    //         // lastContent[]
+    // });
+    return lastContent
 }
 export { getLastChatForEachID };
