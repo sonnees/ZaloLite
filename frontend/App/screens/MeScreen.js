@@ -9,6 +9,7 @@ export default function MeScreen() {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({ userName: '', avatar: '' });
 
+
   useEffect(() => {
     // Function to get token from AsyncStorage
     const getToken = async () => {
@@ -24,7 +25,7 @@ export default function MeScreen() {
     // Function to fetch user info
     const fetchUserInfo = async (phoneNumber, token) => {
       try {
-        const response = await axios.get(`http://192.168.1.10:8081/api/v1/account/profile/${phoneNumber}`, {
+        const response = await axios.get(`http://192.168.1.8:8081/api/v1/account/profile/${phoneNumber}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -27,7 +27,7 @@ const CreatePasswordScreen = () => {
       return;
     }
   
-    const response = await fetch('http://192.168.1.10:8081/api/v1/account/change-password', {
+    const response = await fetch('http://192.168.1.8:8081/api/v1/account/change-password', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

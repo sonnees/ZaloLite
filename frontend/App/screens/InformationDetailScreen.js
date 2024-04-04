@@ -52,7 +52,7 @@ export default function InformationDetail() {
     getToken().then(token => {
       if (token && phoneNumber) {
         // Send GET request to API to get user info with phoneNumber
-        axios.get(`http://192.168.1.10:8081/api/v1/account/profile/${phoneNumber}`, {
+        axios.get(`http://192.168.1.8:8081/api/v1/account/profile/${phoneNumber}`, {
           headers: {
             Authorization: `Bearer ${token}`, // Add token to Authorization header
           },
