@@ -12,4 +12,8 @@ public enum TypeGroupMessage {
     TGM08, // change name chat
     TGM09, // change avatar
     TGM10, // update setting change chat name and avatar
+    TGM11, // update setting pin messages
+    TGM12, // update setting send messages
+    TGM13, // update setting membership approval
+    TGM14, // update setting create new polls
 }
