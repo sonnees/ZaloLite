@@ -4,10 +4,63 @@ import { useNavigation } from '@react-navigation/native'; // Thêm useRoute vào
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+<<<<<<< HEAD
 
 export default function MeScreen() {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({ userName: '', avatar: '' });
+=======
+import { API_PROFILE } from '../api/Api';
+export default function MeScreen() {
+  const navigation = useNavigation();
+  const [userInfo, setUserInfo] = useState({ userName: '', avatar: '' });
+
+  useEffect(() => {
+    // Function to get token from AsyncStorage
+    const getToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        return token;
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+        return null;
+      }
+    };
+
+    // Function to fetch user info
+    const fetchUserInfo = async (phoneNumber, token) => {
+      try {
+        const response = await axios.get(`${API_PROFILE}${phoneNumber}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserInfo(response.data);
+      } catch (error) {
+        console.error('Lỗi khi lấy thông tin cá nhân:', error);
+        Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi lấy thông tin cá nhân.');
+      }
+    };
+
+    // Fetch user info
+    const getPhoneNumberAndToken = async () => {
+      try {
+        const phoneNumber = await AsyncStorage.getItem('phoneNumber');
+        console.log(phoneNumber);
+        const token = await getToken();
+        if (phoneNumber && token) {
+          fetchUserInfo(phoneNumber, token);
+        } else {
+          console.log('Không tìm thấy số điện thoại hoặc token trong AsyncStorage');
+        }
+      } catch (error) {
+        console.error('Lỗi khi lấy số điện thoại hoặc token từ AsyncStorage:', error);
+      }
+    };
+
+    getPhoneNumberAndToken();
+  }, []);
+>>>>>>> 08daac5c189709ef2fa23784d2c9e4bc70a3286c
 
 
   useEffect(() => {
@@ -84,7 +137,11 @@ export default function MeScreen() {
           onPress={() => navigation.navigate('MeNavigator', { screen: 'ProfileScreen' })}
         >
           <View style={{ flex: 0.1 }}></View>
+<<<<<<< HEAD
           <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain" ,marginLeft: "5%" }} source={{ uri: userInfo.avatar }}></Image>
+=======
+          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain", marginLeft: "5%" }} source={{ uri: userInfo.avatar }}></Image>
+>>>>>>> 08daac5c189709ef2fa23784d2c9e4bc70a3286c
           <View style={{ marginLeft: "7%" }}></View>
           <View style={{ justifyContent: "center" }}>
             <Text style={{ fontFamily: "Roboto", fontSize: 18, fontWeight: "bold" }}>{userInfo.userName}</Text>

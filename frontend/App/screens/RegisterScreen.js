@@ -3,6 +3,7 @@ import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Ima
 import PhoneNumberInput from './PhoneNumberInput'; // Import component PhoneNumberInput
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
+import { API_CHECKPHONE } from '../api/Api';
 
 const RegisterScreen = () => {
   let navigation = useNavigation();
@@ -17,9 +18,15 @@ const RegisterScreen = () => {
 
   const checkPhoneNumber = async () => {
     try {
+<<<<<<< HEAD
       const response = await fetch(`http://192.168.1.10:8081/api/v1/auth/check-uniqueness-phone-number/${phoneNumber}`);
       const status = response.status; // Lấy mã trạng thái của phản hồi
   
+=======
+      const response = await fetch(`${API_CHECKPHONE}${phoneNumber}`);
+      const status = response.status; // Lấy mã trạng thái của phản hồi
+
+>>>>>>> 08daac5c189709ef2fa23784d2c9e4bc70a3286c
       if (status === 409) {
         // Số điện thoại đã được đăng ký
         Alert.alert('Thông báo', 'Số điện thoại đã được đăng ký. Vui lòng sử dụng số điện thoại khác.');
@@ -48,6 +55,11 @@ const RegisterScreen = () => {
 
     // Gọi hàm kiểm tra số điện thoại
     checkPhoneNumber();
+<<<<<<< HEAD
+=======
+    // Gọi hàm kiểm tra số điện thoại
+    checkPhoneNumber();
+>>>>>>> 08daac5c189709ef2fa23784d2c9e4bc70a3286c
   };
 
   return (

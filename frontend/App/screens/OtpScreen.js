@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, Alert } from 'react-native'
-import React, {useRef, useState} from 'react'
+import React, { useRef, useState } from 'react'
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha'
 import { firebaseConfig } from '../config/config'
 import firebase from 'firebase/compat/app'
@@ -18,16 +18,17 @@ const OtpScreen = () => {
     const sendVerification = () => {
         const phoneProvider = new firebase.auth.PhoneAuthProvider()
         phoneProvider.verifyPhoneNumber(phoneNumber, recaptchaVerifier.current)
-        .then(setVerificationId)
-        .catch(console.error)
+            .then(setVerificationId)
+            .catch(console.error)
     }
 
     const confirmCode = () => {
         const credential = firebase.auth.PhoneAuthProvider.credential(
-            verificationId, 
+            verificationId,
             code
         );
         firebase.auth().signInWithCredential(credential)
+<<<<<<< HEAD
         .then(() => {
             setCode('')
             navigation.navigate('LoginNavigator', {screen: 'LoginScreen'});
@@ -35,45 +36,54 @@ const OtpScreen = () => {
         .catch(error => {
             alert(error)
         })
+=======
+            .then(() => {
+                setCode('')
+                navigation.navigate('LoginNavigator', { screen: 'LoginScreen' });
+            })
+            .catch(error => {
+                alert(error)
+            })
+>>>>>>> 08daac5c189709ef2fa23784d2c9e4bc70a3286c
         Alert.alert('Phone authentication successful 👍')
     }
 
-  return (
-    <View style={styles.container}>
-      <FirebaseRecaptchaVerifierModal 
-        ref={recaptchaVerifier}
-        firebaseConfig={firebaseConfig}
-      />
-      <Text style={styles.optText}>
-        Login using OTP
-      </Text>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Phone Number with country code"
-        onChangeText={setPhoneNumber}
-        keyboardType='phone-pad'
-        autoComplete='tel'
-       />
-
-       <TouchableOpacity style={styles.sendVerification} onPress={sendVerification}>
-            <Text style={styles.buttonText}>
-                Send Verification
+    return (
+        <View style={styles.container}>
+            <FirebaseRecaptchaVerifierModal
+                ref={recaptchaVerifier}
+                firebaseConfig={firebaseConfig}
+            />
+            <Text style={styles.optText}>
+                Login using OTP
             </Text>
-       </TouchableOpacity>
-       <TextInput
-        style={styles.textInput}
-        placeholder="Confirmation Code"
-        onChangeText={setCode}
-        keyboardType='phone-pad'
-       />
+            <TextInput
+                style={styles.textInput}
+                placeholder="Phone Number with country code"
+                onChangeText={setPhoneNumber}
+                keyboardType='phone-pad'
+                autoComplete='tel'
+            />
 
-        <TouchableOpacity style={styles.sendCode} onPress={confirmCode}>
-            <Text style={styles.buttonText}>
-                Confirm verification
-            </Text>
-        </TouchableOpacity>
-    </View>
-  )
+            <TouchableOpacity style={styles.sendVerification} onPress={sendVerification}>
+                <Text style={styles.buttonText}>
+                    Send Verification
+                </Text>
+            </TouchableOpacity>
+            <TextInput
+                style={styles.textInput}
+                placeholder="Confirmation Code"
+                onChangeText={setCode}
+                keyboardType='phone-pad'
+            />
+
+            <TouchableOpacity style={styles.sendCode} onPress={confirmCode}>
+                <Text style={styles.buttonText}>
+                    Confirm verification
+                </Text>
+            </TouchableOpacity>
+        </View>
+    )
 }
 
 export default OtpScreen

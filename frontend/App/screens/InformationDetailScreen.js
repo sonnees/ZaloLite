@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { API_PROFILE } from '../api/Api';
 
 export default function InformationDetail() {
   const [userInfo, setUserInfo] = useState(null);
@@ -31,41 +32,45 @@ export default function InformationDetail() {
         console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
       }
     };
-        // Lưu giá trị userName và avatar vào AsyncStorage
-        const saveUserInfoToStorage = async (userName, avatar) => {
-          try {
-            // Kiểm tra xem userName và avatar có tồn tại hay không
-            if (userName && avatar) {
-              // Nếu cả hai giá trị đều tồn tại, lưu chúng vào AsyncStorage
-              await AsyncStorage.setItem('userName', userName);
-              await AsyncStorage.setItem('avatar', avatar);
-            } else {
-              // Nếu userName hoặc avatar không tồn tại, hiển thị thông báo lỗi
-              console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage: userName hoặc avatar không tồn tại');
-            }
-          } catch (error) {
-            console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage:', error);
-          }
-        };
-        
+    // Lưu giá trị userName và avatar vào AsyncStorage
+    const saveUserInfoToStorage = async (userName, avatar) => {
+      try {
+        // Kiểm tra xem userName và avatar có tồn tại hay không
+        if (userName && avatar) {
+          // Nếu cả hai giá trị đều tồn tại, lưu chúng vào AsyncStorage
+          await AsyncStorage.setItem('userName', userName);
+          await AsyncStorage.setItem('avatar', avatar);
+        } else {
+          // Nếu userName hoặc avatar không tồn tại, hiển thị thông báo lỗi
+          console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage: userName hoặc avatar không tồn tại');
+        }
+      } catch (error) {
+        console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage:', error);
+      }
+    };
+
     // Call getToken function to get token
     getToken().then(token => {
       if (token && phoneNumber) {
         // Send GET request to API to get user info with phoneNumber
+<<<<<<< HEAD
         axios.get(`http://192.168.1.8:8081/api/v1/account/profile/${phoneNumber}`, {
+=======
+        axios.get(`${API_PROFILE}${phoneNumber}`, {
+>>>>>>> 08daac5c189709ef2fa23784d2c9e4bc70a3286c
           headers: {
             Authorization: `Bearer ${token}`, // Add token to Authorization header
           },
         })
-        .then(response => {
-          // Handle response from API
-          setUserInfo(response.data);
-        })
-        .catch(error => {
-          console.error('Lỗi khi lấy thông tin cá nhân:', error);
-          // Handle error, for example: show an alert
-          Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi lấy thông tin cá nhân.');
-        });
+          .then(response => {
+            // Handle response from API
+            setUserInfo(response.data);
+          })
+          .catch(error => {
+            console.error('Lỗi khi lấy thông tin cá nhân:', error);
+            // Handle error, for example: show an alert
+            Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi lấy thông tin cá nhân.');
+          });
       } else {
         console.log('Không tìm thấy token hoặc số điện thoại trong AsyncStorage');
         // Handle case when token or phoneNumber is not found in AsyncStorage
@@ -83,7 +88,7 @@ export default function InformationDetail() {
         <>
           {/* Render cover image */}
           <View style={{ flex: 2 }}>
-            <Image source={require('../assets/cover_Image.jpg')} style={{width: '100%', height: '100%'}}/>
+            <Image source={require('../assets/cover_Image.jpg')} style={{ width: '100%', height: '100%' }} />
             {/* Render avatar */}
             <View style={{ flex: 3, position: "absolute", top: "65%", width: "50%", paddingLeft: "5%" }}>
               <Image style={{ width: 60, height: 60, borderRadius: 60, resizeMode: "contain" }} source={{ uri: userInfo.avatar }} />
