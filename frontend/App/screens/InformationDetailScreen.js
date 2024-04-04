@@ -78,7 +78,6 @@ export default function InformationDetail() {
 
   return (
     <View style={styles.container}>
-      {/* Check if userInfo is received from API */}
       {userInfo && (
         // Render user information
         <>
