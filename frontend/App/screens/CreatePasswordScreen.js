@@ -15,7 +15,7 @@ const CreatePasswordScreen = () => {
       return;
     }
   
-    fetch('http://192.168.1.3:8081/api/v1/auth/reset-password', {
+    fetch('http://192.168.1.10:8081/api/v1/auth/reset-password', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -6,29 +6,55 @@ import AsyncStorage from '@react-native-async-storage/async-storage'; // Import 
 
 export default function InformationDetail() {
   const [userInfo, setUserInfo] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState(null); // Thêm state để lưu phoneNumber từ AsyncStorage
   const navigation = useNavigation();
 
   useEffect(() => {
-    // Function to get token and phoneNumber from AsyncStorage
-    const getData = async () => {
+
+    // Function to get token from AsyncStorage
+    const getToken = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
-        const phoneNumber = await AsyncStorage.getItem('phoneNumber');
-        return { token, phoneNumber };
+        return token;
       } catch (error) {
         console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
         return null;
       }
     };
-  
-    // Call getData function to get token and phoneNumber
-    getData().then(data => {
-      // If token and phoneNumber exist, make request to get user info
-      if (data && data.token && data.phoneNumber) {
-        // Send GET request to API to get user info with token in header
-        axios.get(`http://192.168.1.3:8081/api/v1/account/profile/${data.phoneNumber}`, {
+
+    // Function to get phoneNumber from AsyncStorage
+    const getPhoneNumber = async () => {
+      try {
+        const phone = await AsyncStorage.getItem('phoneNumber');
+        setPhoneNumber(phone);
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+      }
+    };
+        // Lưu giá trị userName và avatar vào AsyncStorage
+        const saveUserInfoToStorage = async (userName, avatar) => {
+          try {
+            // Kiểm tra xem userName và avatar có tồn tại hay không
+            if (userName && avatar) {
+              // Nếu cả hai giá trị đều tồn tại, lưu chúng vào AsyncStorage
+              await AsyncStorage.setItem('userName', userName);
+              await AsyncStorage.setItem('avatar', avatar);
+            } else {
+              // Nếu userName hoặc avatar không tồn tại, hiển thị thông báo lỗi
+              console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage: userName hoặc avatar không tồn tại');
+            }
+          } catch (error) {
+            console.error('Lỗi khi lưu thông tin người dùng vào AsyncStorage:', error);
+          }
+        };
+        
+    // Call getToken function to get token
+    getToken().then(token => {
+      if (token && phoneNumber) {
+        // Send GET request to API to get user info with phoneNumber
+        axios.get(`http://192.168.1.10:8081/api/v1/account/profile/${phoneNumber}`, {
           headers: {
-            Authorization: `Bearer ${data.token}`, // Add token to Authorization header
+            Authorization: `Bearer ${token}`, // Add token to Authorization header
           },
         })
         .then(response => {
@@ -45,7 +71,10 @@ export default function InformationDetail() {
         // Handle case when token or phoneNumber is not found in AsyncStorage
       }
     });
-  }, []);
+
+    // Call getPhoneNumber function to get phoneNumber
+    getPhoneNumber();
+  }, [phoneNumber]); // Thêm phoneNumber vào dependency array để useEffect chạy lại khi phoneNumber thay đổi
 
   return (
     <View style={styles.container}>
@@ -57,8 +86,8 @@ export default function InformationDetail() {
           <View style={{ flex: 2 }}>
             <Image source={require('../assets/cover_Image.jpg')} style={{width: '100%', height: '100%'}}/>
             {/* Render avatar */}
-            <View style={{ flex: 3, position: "absolute", top: "61%", width: "50%", paddingLeft: "5%" }}>
-              <Image style={{ width: 60, height: 60, borderRadius: 50, resizeMode: "contain" }} source={{ uri: userInfo.avatar }} />
+            <View style={{ flex: 3, position: "absolute", top: "65%", width: "50%", paddingLeft: "5%" }}>
+              <Image style={{ width: 60, height: 60, borderRadius: 60, resizeMode: "contain" }} source={{ uri: userInfo.avatar }} />
             </View>
             {/* Back button */}
             <Image style={{ position: "absolute", width: "16%", height: "8%", resizeMode: "contain", top: "10%" }}
@@ -90,9 +119,7 @@ export default function InformationDetail() {
               <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Điện thoại</Text>
               <View style={{ flex: 0.2 }}></View>
               <View style={{ flex: 1, flexDirection: "column" }}>
-                
-
-                <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.phoneNumber}</Text>
+                <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{phoneNumber}</Text>
                 <Text style={{ fontFamily: "Roboto", fontSize: 12 }}>Số điện thoại chỉ hiển thị với người có lưu số bạn trong danh bạ máy</Text>
               </View>
             </View>
