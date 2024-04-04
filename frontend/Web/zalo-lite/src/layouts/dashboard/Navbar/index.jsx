@@ -1,15 +1,18 @@
 import { Routes, Route, Link, useLocation } from "react-router-dom";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
+import PopupWindow from "../../../components/PopupWindow";
+
 // import fetch from "node-fetch";
 
 function Navbar() {
   const [profileData, setProfileData] = useState(null);
+  const [avatar, setAvatar] = useState('https://s120-ava-talk.zadn.vn/2/5/a/5/6/120/5ded83a5856f6d2af9fce6eac4b8d6d2.jpg');
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const location = useLocation();
   const token = location.state?.token;
   const phoneNumber = location.state?.phoneNumber;
@@ -32,6 +35,16 @@ function Navbar() {
   if (location.pathname === "/todo") {
     todoImage = "/todo-selected.png";
   }
+
+  const handleOpenPopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+    console.log(isPopupOpen);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(true);
+    console.log(isPopupOpen);
+  };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -62,7 +75,10 @@ function Navbar() {
           }
 
           const data = await response.json();
+          console.log(data);
           setProfileData(data);
+          setAvatar(data.avatar)
+          console.log(avatar);
         } catch (error) {
           console.error("Error fetching profile:", error);
           setProfileData(null);
@@ -72,6 +88,7 @@ function Navbar() {
       fetchProfile();
     }
   }, [token, phoneNumber]);
+
 
   console.log(profileData);
 
@@ -91,7 +108,8 @@ function Navbar() {
               >
                 <div>
                   <img
-                    src="https://s120-ava-talk.zadn.vn/2/5/a/5/6/120/5ded83a5856f6d2af9fce6eac4b8d6d2.jpg"
+                    // src="https://s120-ava-talk.zadn.vn/2/5/a/5/6/120/5ded83a5856f6d2af9fce6eac4b8d6d2.jpg"
+                    src={avatar}
                     className="w-14 rounded-full border "
                     alt="avatar"
                   />
@@ -123,10 +141,12 @@ function Navbar() {
                         height: 36,
                         color: "#081c36",
                       }}
-                      onClick={handleClose}
+                      onClick={handleOpenPopup}
                     >
                       Hồ sơ của bạn
+                      <PopupWindow isOpen={isPopupOpen} onClose={handleClosePopup} data={profileData} phoneNumber={phoneNumber} />
                     </MenuItem>
+                    
                     <MenuItem
                       sx={{
                         fontSize: 14,
@@ -157,6 +177,7 @@ function Navbar() {
               </Menu>
             </div>
           </li>
+            
           <li>
             <Link
               to="/"

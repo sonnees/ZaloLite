@@ -14,7 +14,9 @@ export default function SettingScreen() {
         <Text style={{fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color:"white"}}>Cài đặt</Text>
       </View>
       <View style={{flex: 15.75}}>
-        <View style={{flex: 0.75, backgroundColor: "#FFFFFF", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+        <View style={{flex: 0.75, backgroundColor: "#FFFFFF", flexDirection: "row", justifyContent: "center", alignItems: "center"}}
+          onStartShouldSetResponder={() => navigation.navigate("LoginNavigator" ,{ screen: "ConfirmAccountScreen" })}
+        >
           <Image style={{width: "15%", height: "40%", resizeMode: "contain", marginLeft: "-6%"}} source={require("../assets/shield.png")}></Image>
           <View style={{flex: 0.01}}></View>
           <View style={{justifyContent: "center"}}>
