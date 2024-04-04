@@ -42,8 +42,15 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Update("{$pull:{conversations: {chatID: ?1}}}")
     Mono<Long> removeConversation(String[] id, String idChat);
 
+    @Query(value = "{_id: ?0}")
+    @Update("{$pull:{conversations: {chatID: ?1}}}")
+    Mono<Long> removeConversation(String id, String idChat);
+
     @Query(value = "{_id:?0,'conversations.chatID': {$in: [?1,?2]}}")
     Mono<User> searchConversation(String senderID, String chatId1, String chatId2);
+
+    @Query(value = "{_id:?0,'conversations.chatID': ?1}")
+    Mono<User> searchConversation(String senderID, String chatId);
 
     @Query(value = "{'conversations.chatID': ?0}")
     @Update(update = "{$set:{'conversations.$.lastUpdateAt': ?1, 'conversations.$.deliveries': ?2, 'conversations.$.reads': ?3, 'conversations.$.topChatActivity': ?4}}")
@@ -56,5 +63,13 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Query(value = "{'friendRequests.userAvatar': ?0}")
     @Update(update = "{$set:{'conversations.$.chatAvatar': ?1}}")
     Mono<Long> updateAvatarInFriendRequest(String oldAvatar, String newAvatar);
+
+    @Query(value = "{_id: {$in: ?0}, 'conversations.chatID': ?1}")
+    @Update(update = "{$set:{'conversations.$.chatName': ?2}}")
+    Mono<Long> updateChatNameInConversation(String[] arrID,String chatId, String chatName);
+
+    @Query(value = "{_id: {$in: ?0}, 'conversations.chatID': ?1}")
+    @Update(update = "{$set:{'conversations.$.chatAvatar': ?2}}")
+    Mono<Long> updateAvatarInConversation(String[] arrID,String chatId, String newAvatar);
 
 }
