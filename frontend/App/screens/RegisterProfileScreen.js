@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios'; // Import thư viện Axios
 import cloudinaryConfig from '../config/cloudinaryConfig';
-import { API_RGT } from '../api/Api';
+import { API_REGISTER } from '../api/Api';
 
 const RegisterProfileScreen = () => {
   let navigation = useNavigation();
@@ -31,7 +31,7 @@ const RegisterProfileScreen = () => {
   };
 
   //Upload ảnh lên Cloudinary
-  const handleUpload = (image) =>{
+  const handleUpload = (image) => {
     const data = new FormData();
     data.append('file', image);
     data.append('upload_preset', 'ZaloLife');
@@ -41,9 +41,9 @@ const RegisterProfileScreen = () => {
       method: 'post',
       body: data
     }).then(res => res.json())
-    .then(data => {
-      console.log(data);
-    })
+      .then(data => {
+        console.log(data);
+      })
   }
 
   const handleRegister = async () => {
@@ -62,24 +62,24 @@ const RegisterProfileScreen = () => {
     const body = {
       phoneNumber: phoneNumber,
       password: "123", // Giá trị mặc định cho password
-      userName: userName ,
+      userName: userName,
       avatar: selectedImage ? selectedImage : "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712158193/bihirvugrglydydg1htz.jpg", // Sử dụng ảnh đã chọn hoặc ảnh mặc định nếu không có ảnh đã chọn
       gender: gender === "male" ? "true" : "false", // Chuyển đổi giá trị gender thành true hoặc false
-      birthday: birthDate, 
-      role: "USER" 
+      birthday: birthDate,
+      role: "USER"
     };
 
     console.log("Registration body:", body);
     try {
-      const response = await axios.post(API_RGT, body);
+      const response = await axios.post(API_REGISTER, body);
       console.log("Registration successful:", response.data);
       // Chuyển hướng sang màn hình TabNavigator sau khi đăng ký thành công
-      navigation.navigate('OtpScreen');
+      navigation.navigate('OtpScreen', { p: phoneNumber });
     } catch (error) {
       console.error("Registration failed:", error);
       Alert.alert("Đăng ký thất bại", "Vui lòng kiểm tra lại thông tin đăng ký và thử lại sau.");
     }
-};
+  };
 
 
   return (
@@ -89,10 +89,10 @@ const RegisterProfileScreen = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0} // Điều chỉnh offset nếu cần thiết
     >
       <StatusBar />
-      <View style={{ flex: 1}}>
+      <View style={{ flex: 1 }}>
         <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center", paddingVertical: 6, height: 50 }}>
           <Image style={{ width: "15%", height: "65%", resizeMode: "contain" }} source={require("../assets/back1.png")}
-             onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'RegisterDEScreen' })}
+            onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'RegisterDEScreen' })}
           ></Image>
           <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white", marginLeft: "2%" }}>Ảnh đại diện</Text>
         </View>
@@ -102,28 +102,28 @@ const RegisterProfileScreen = () => {
         </View>
         <View style={{ borderBottomColor: 'gray', borderBottomWidth: 1, width: '100%' }} />
         <View style={{ flex: 5, backgroundColor: "#fff", justifyContent: "center", alignItems: "center" }}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={{ width: "60%", height: "40%", resizeMode: "contain" }}
             onPress={handleChoosePhoto}
           >
-          <Image
-          style={{ width: 130, height: 130,borderRadius: 100, resizeMode: "cover", marginLeft: "25%" }}
-          source={selectedImage ? { uri: selectedImage } : require("../assets/avat.png")} // Sử dụng ảnh đã chọn hoặc mặc định
-          />
+            <Image
+              style={{ width: 130, height: 130, borderRadius: 100, resizeMode: "cover", marginLeft: "25%" }}
+              source={selectedImage ? { uri: selectedImage } : require("../assets/avat.png")} // Sử dụng ảnh đã chọn hoặc mặc định
+            />
           </TouchableOpacity>
 
-            <Text style={{fontSize: 14, color: "#999999", top: "3%"}}>Bạn có thể chỉnh sủa ảnh với nhiều tùy c</Text>
-            <Text style={{fontSize: 14, color: "#999999",top: "3%"}}>và chọn bộ lọc màu thú vị v</Text>
+          <Text style={{ fontSize: 14, color: "#999999", top: "3%" }}>Bạn có thể chỉnh sủa ảnh với nhiều tùy c</Text>
+          <Text style={{ fontSize: 14, color: "#999999", top: "3%" }}>và chọn bộ lọc màu thú vị v</Text>
         </View>
-        <View style={{flex: 3,backgroundColor: "#fff"}}></View>
-        <View style={{flex: 2, justifyContent: "center", paddingLeft: "70%",backgroundColor: "#fff"}}>
-        <TouchableOpacity style={{flex: 0.7, borderRadius: 20, justifyContent: "center", alignItems: "center"}} 
-        onPress={handleRegister} // Gọi hàm xử lý đăng ký khi người dùng nhấn nút
-        >
-          <Image style={{width: "70%", height: "50%", resizeMode: "contain"}} source={require("../assets/right-arrow.png")}></Image>
-        </TouchableOpacity>
-          
-        
+        <View style={{ flex: 3, backgroundColor: "#fff" }}></View>
+        <View style={{ flex: 2, justifyContent: "center", paddingLeft: "70%", backgroundColor: "#fff" }}>
+          <TouchableOpacity style={{ flex: 0.7, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
+            onPress={handleRegister} // Gọi hàm xử lý đăng ký khi người dùng nhấn nút
+          >
+            <Image style={{ width: "70%", height: "50%", resizeMode: "contain" }} source={require("../assets/right-arrow.png")}></Image>
+          </TouchableOpacity>
+
+
         </View>
       </View>
 
