@@ -1,11 +1,65 @@
+import { Cloudinary } from '@cloudinary/url-gen';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-export default function PopupWindow ({ isOpen, onClose, data, phoneNumber }) {
-    console.log(data);
-    console.log(phoneNumber);
-    const dateTime = new Date(data.birthday);
+export default function PopupWindow ({ isOpen, onClose, data, phoneNumber, token }) {
+  const [loadAvt, setLoadAvt] = useState(null);
+  const inputFileRef = useRef(null);
+
+  const cloudinary = new Cloudinary({cloud: {cloudName: 'du73a0oen'}});
+
+  console.log(data);
+  console.log(phoneNumber);
+  const dateTime = new Date(data.birthday);
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'bsqsytxl');
+    try {
+      let newAvatar = '';
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/du73a0oen/image/upload",
+        {
+          method: "POST",
+          // headers: {
+          //   "Content-Type": "application/json",
+          // },
+          body: formData,
+        },
+      )
+      .then(response=>response.json())
+      .then(data=>newAvatar=data.secure_url);
+
+      console.log(newAvatar);
+      
+      const res = await fetch(
+        "http://localhost:8081/api/v1/account/change-avatar",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: {"field":newAvatar},
+        },
+      )
+
+      if (res.ok) {
+        setLoadAvt(newAvatar)
+      }
+
+      
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+    }
+  };
+
+  const handleAvatarClick = () => {
+    inputFileRef.current.click();
+  };
+
   return (
     <>
       {isOpen && (
@@ -27,7 +81,10 @@ export default function PopupWindow ({ isOpen, onClose, data, phoneNumber }) {
 
               <div className="relative bg-cover bg-center bg-no-repeat p-4 h-44 mb-20" style={{backgroundImage: `url(${data.background})`}}>
                 <div className="absolute top-48 left-4 transform -translate-y-1/2">
-                  <img className="w-20 h-20 rounded-full border-4 border-white" src={data.avatar} alt="Avatar" />
+                  {/* =============================================== */}
+                  <input ref={inputFileRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }}/>
+                  <img className="w-20 h-20 rounded-full border-4 border-white" onClick={handleAvatarClick} src={data.avatar} alt="Avatar" />
+
                 </div>
                 <div className="absolute top-52 left-4 transform -translate-y-1/2  pl-28">
                   <h2 className=" text-lg font-semibold">{data.userName}</h2>
