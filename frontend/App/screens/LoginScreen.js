@@ -54,37 +54,19 @@ const LoginScreen = () => {
               },
             });
             const dataAccountInfor = await response.data;
-            return dataAccountInfor;
+            const userID = dataAccountInfor.profile.userID;
+            await AsyncStorage.setItem('userID', userID);
+            return userID;
           } catch (error) {
             console.error('Lỗi khi lấy thông tin cá nhân:', error);
             return null;
           }
         };
-
-        const fetchUserInfo = async (token) => {
-          try {
-            console.log("Token: ", token);
-            const accountInfor = await fetAccountInfor(token);
-            console.log("Account Infor: ", accountInfor);
-            const user = accountInfor.profile.userID;
-            console.log("User ID: ", user);
-            const response = await axios.get(`${API_INFOR_USER}${user}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            const dataUserInfor = await response.data;
-            console.log("User Infor:", dataUserInfor);
-            return dataUserInfor;
-          } catch (error) {
-            console.error('Lỗi khi lấy thông tin User:', error);
-            return null;
-          }
-        };
         const token = await getToken();
-        const dataUserInfor = await fetchUserInfo(token);
-        console.log("DATA: \n", dataUserInfor);
-        navigation.navigate('TabNavigator', { dataUserInfor: dataUserInfor });
+        const userID = await fetAccountInfor(token);
+        console.log("DATA: \n", userID);
+        console.log("TOKEN: \n", token);
+        navigation.navigate('TabNavigator', { userID: userID });
 
 
       } else {

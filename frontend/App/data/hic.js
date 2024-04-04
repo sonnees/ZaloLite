@@ -429,32 +429,3 @@ const conversations = [
         ]
     }
 ]
-
-function getDataFromConversations(conversations) {
-    return conversations
-        .filter(({ topChatActivity }) => topChatActivity.length > 0)
-        .map(({ chatID, chatName, chatAvatar, type, connectAt, lastUpdateAt, deliveries, reads, topChatActivity }) => ({
-            chatID,
-            chatName,
-            chatAvatar,
-            type,
-            connectAt,
-            lastUpdateAt,
-            deliveries,
-            reads,
-            lastTopChatActivity: topChatActivity[topChatActivity.length - 1],
-        }));
-}
-
-export { getDataFromConversations };
-// // // Sử dụng hàm để lấy dữ liệu từ mảng conversations
-// const extractedData = getDataFromConversations(conversations);
-// // console.log(extractedData);
-
-// extractedData.forEach(item => {
-//     if (item.lastTopChatActivity && item.lastTopChatActivity.contents.length > 0) {
-//         console.log(item.lastTopChatActivity.contents[0].value);
-//     } else {
-//         console.log("No chat activity available for:", item.chatName);
-//     }
-// });

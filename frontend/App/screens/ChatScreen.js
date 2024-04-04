@@ -3,10 +3,15 @@ import { TextInput } from 'react-native-gesture-handler';
 import React, { memo, useState, useRef, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
+import { useNavigation, useRoute } from '@react-navigation/native';
 // import { useNavigation } from '@react-navigation/native'
 // import chat from '../data/chat.js';
-export default function ChatScreen({ navigation }) {
-  // let navigation = useNavigation();
+const ChatScreen = () => {
+  let navigation = useNavigation();
+  let route = useRoute();
+  const chatData = route.params?.chatData;
+  console.log("Chat Screen Data: ", chatData);
+
   const chat = [{
     _id: "uuid1",
     chatActivity: [
@@ -197,8 +202,8 @@ export default function ChatScreen({ navigation }) {
           <Icon name='arrowleft' color={'white'} size={25}></Icon>
         </TouchableOpacity>
         <View style={{ flexDirection: "column", marginLeft: 20 }}>
-          <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>Trần Thiện Đạt </Text>
-          <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Truy cập 5 giờ trước</Text>
+          <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>{chatData.chatName}</Text>
+          <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Last seen 5 hourse ago</Text>
         </View>
 
         <View style={{ flex: 3 }}></View>
@@ -305,4 +310,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
 });
+export default ChatScreen;
 
