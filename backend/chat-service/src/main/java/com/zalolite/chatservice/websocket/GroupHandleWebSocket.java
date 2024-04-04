@@ -105,6 +105,9 @@ public class GroupHandleWebSocket {
                 .findById(info.getIdChat())
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
                 .flatMap(group -> {
+                    String[] arrayID = getListIDAdmin(group);
+                    boolean b = Arrays.stream(arrayID).anyMatch(s -> Objects.equals(s, personInfo.getUserID().toString()));
+                    if(b) return Mono.error(() -> new Throwable("CONFLICT"));
                     return groupRepository.appendAdmin(info.getIdChat().toString(), personInfo)
                             .flatMap(aLong -> {
                                 if(aLong<=0) return Mono.error(() -> new Throwable("append Admin"));
@@ -275,6 +278,12 @@ public class GroupHandleWebSocket {
         ArrayList<String> listID = new ArrayList<>();
         listID.add(group.getOwner().getUserID().toString());
         group.getMembers().forEach(p -> listID.add(p.getUserID().toString()));
+        group.getAdmin().forEach(p -> listID.add(p.getUserID().toString()));
+        return listID.toArray(new String[0]);
+    }
+
+    private static String[] getListIDAdmin(Group group) {
+        ArrayList<String> listID = new ArrayList<>();
         group.getAdmin().forEach(p -> listID.add(p.getUserID().toString()));
         return listID.toArray(new String[0]);
     }
