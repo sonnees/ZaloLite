@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-import PhoneNumberInput from './PhoneNumberInput'; // Import component PhoneNumberInput
-
-import { useNavigation } from '@react-navigation/native';
-import { CheckBox } from 'react-native-elements';
+import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
 import { API_URL } from '../api/Api';
 
-
-const RegisterScreen = () => {
+const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
+  const route = useRoute();
+  const newPassword = route.params?.newPassword;
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    console.log("newPassword:", newPassword); 
+    if (newPassword && isFocused) {
+      setPassword(newPassword);
+    }
+  }, [newPassword, isFocused]);
 
   const handleLogin = async () => {
     try {
@@ -25,19 +29,24 @@ const RegisterScreen = () => {
         },
         body: JSON.stringify({
           phoneNumber,
-          password,
+          password: password || newPassword,
         }),
       });
-
+  
       const data = await response.json();
+  
+      if (response.status === 200) {
+        // Đăng nhập thành công, lưu token vào AsyncStorage
+        await AsyncStorage.setItem('token', data.field);
 
-      if (response.ok) {
-        // Đăng nhập thành công, lưu thông tin đăng nhập vào AsyncStorage
-        await AsyncStorage.setItem('isLoggedIn', 'true');
+        console.log('data:', data.field);
+
+        // Lưu phoneNumber vào AsyncStorage
+        await AsyncStorage.setItem('phoneNumber', phoneNumber);
         // Chuyển hướng đến màn hình tiếp theo
         navigation.navigate('TabNavigator');
       } else {
-        // Đăng nhập không thành công, hiển thị thông báo lỗi
+        // Đăng nhập không thành công, hiển thị thông báo lỗi từ phản hồi của API
         Alert.alert('Lỗi', data.message);
       }
     } catch (error) {
@@ -99,7 +108,9 @@ const RegisterScreen = () => {
             onChangeText={setPassword}
           />       
         </View>
-        <Text style={{ fontSize: 15, marginLeft: "5%", marginTop: "15%", fontFamily: "Roboto", color: "#1E90FF", fontWeight: "bold" }}>
+        <Text style={{ fontSize: 15, marginLeft: "5%", marginTop: "15%", fontFamily: "Roboto", color: "#1E90FF", fontWeight: "bold" }}
+          onPress={() => navigation.navigate('CreatePasswordWhenForgotScreen')}
+        >
           Lấy lại mật khẩu
         </Text>
       {/* <View style={{flex: 0.5}}></View> */}         
@@ -126,4 +137,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default LoginScreen;

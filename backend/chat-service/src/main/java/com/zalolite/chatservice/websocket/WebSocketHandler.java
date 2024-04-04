@@ -2,7 +2,18 @@ package com.zalolite.chatservice.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zalolite.chatservice.dto.*;
+import com.zalolite.chatservice.dto.enums.TypeChatMessage;
+import com.zalolite.chatservice.dto.enums.TypeGroupMessage;
+import com.zalolite.chatservice.dto.enums.TypeNotify;
+import com.zalolite.chatservice.dto.enums.TypeUserMessage;
+import com.zalolite.chatservice.dto.handleChat.*;
+import com.zalolite.chatservice.dto.handleGroup.CreateGroupDTO;
+import com.zalolite.chatservice.dto.handleGroup.DeleteGroupDTO;
+import com.zalolite.chatservice.dto.handleGroup.GroupDTO;
+import com.zalolite.chatservice.dto.handleUser.*;
+import com.zalolite.chatservice.dto.notify.NotifyChat;
+import com.zalolite.chatservice.dto.notify.NotifyGroup;
+import com.zalolite.chatservice.dto.notify.NotifyUser;
 import com.zalolite.chatservice.entity.Type;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -51,6 +62,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
         };
     }
 
+    // ===== handleGroup =====
     private Mono<Void> handleGroup(WebSocketSession session, Flux<WebSocketMessage> sendFlux, String sessionId, String path) {
         return session
                 .send(sendFlux)
@@ -71,11 +83,10 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .create(arrayID, objectMapper.readValue(message, CreateGroupDTO.class))
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
-                                                            sendMessageToClient(path,sessionId,notify, "Pass | Create Group");
-                                                            sendMessageToAllClients(arrayID, obj.getOwner().getUserID().toString() ,obj);
-                                                        }
-                                                ))
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | Create Group");
+                                                    sendMessageToAllClients(arrayID, obj.getOwner().getUserID().toString() ,obj);
+                                                }))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
@@ -85,10 +96,30 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 });
                                     }
 
+                                    case TGM02 -> {
+                                        DeleteGroupDTO obj = objectMapper.readValue(message, DeleteGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .delete(obj.getIdChat())
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | Delete Group");
+                                                    sendMessageToAllClients(arrayID, arrayID[0] ,obj);
+
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | Create Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
                                     default -> Flux.empty();
                                 };
                             } catch (JsonProcessingException e) {
-                                log.error("** " + e);
+                                    log.error("** " + e);
                                 return Flux.empty();
                             }
                         })
@@ -101,7 +132,25 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                 .then();
     }
 
-    private void sendMessageToAllClients(String[] arrayID, String ignore, CreateGroupDTO obj) {
+    private void sendMessageToClient(String path, String sessionId, NotifyGroup notify, String logStr) {
+        log.info("** sendMessageToClient Group {}", logStr);
+        try {
+            String message = objectMapper.writeValueAsString(notify);
+            List<WebSocketSession> webSocketSessions = sessions.get(path);
+
+            webSocketSessions.forEach(session -> {
+                if(session.getId().equals(sessionId))
+                    session
+                            .send(Flux.just(session.textMessage(message)))
+                            .subscribe();
+            });
+
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private void sendMessageToAllClients(String[] arrayID, String ignore, GroupDTO obj) {
         log.info("** sendMessageToAllClients create group");
         try {
             String message = objectMapper.writeValueAsString(obj);
@@ -451,6 +500,5 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
             log.error(e.getMessage());
         }
     }
-
 
 }

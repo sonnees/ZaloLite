@@ -1,6 +1,6 @@
 package com.zalolite.chatservice.entity;
 
-import com.zalolite.chatservice.dto.CreateGroupDTO;
+import com.zalolite.chatservice.dto.handleGroup.CreateGroupDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

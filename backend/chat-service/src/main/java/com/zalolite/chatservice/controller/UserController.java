@@ -1,11 +1,8 @@
 package com.zalolite.chatservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.List;
-import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.chatservice.async.UpdateAsync;
-import com.zalolite.chatservice.dto.AppendConversationDTO;
 import com.zalolite.chatservice.entity.*;
 import com.zalolite.chatservice.repository.ChatRepository;
 import com.zalolite.chatservice.repository.GroupRepository;
@@ -36,6 +33,7 @@ public class UserController {
 
     @PostMapping("/create")
     public Mono<Boolean> createUser(@RequestParam String id){
+        log.info("** createUser");
         return userRepository.save(new User(id))
                 .flatMap(user -> Mono.just((user!=null)));
     }

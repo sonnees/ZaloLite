@@ -1,0 +1,145 @@
+import React, { useState } from 'react';
+import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+const CreatePasswordScreen = () => {
+  const navigation = useNavigation();
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const handleChangePassword = async () => {
+    // Validate passwords
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'Mật khẩu mới và xác nhận mật khẩu không khớp.');
+      return;
+    }
+  
+    // Send request to change password
+    try {
+      const response = await fetch('http://192.168.1.10:8081/api/v1/account/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          curPass: currentPassword,
+          newPass: newPassword,
+        }),
+      });
+  
+      // Check if response is successful
+      if (!response.ok) {
+        throw new Error('Đã xảy ra lỗi khi kết nối đến máy chủ.');
+      }
+  
+      // Parse response JSON
+      const data = await response.json();
+  
+      // Handle response
+      Alert.alert('Success', 'Đổi mật khẩu thành công.');
+  
+    } catch (error) {
+      console.error('Error:', error.message);
+      Alert.alert('Error', error.message);
+    }
+  };
+  
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+    >
+      <StatusBar />
+      <View style={{ flex: 1 }}>
+        <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center", paddingVertical: 6, height: 50 }}>
+          <Image style={{ width: "15%", height: "65%", resizeMode: "contain" }} source={require("../assets/back1.png")}
+             onStartShouldSetResponder={() => navigation.navigate('MeNavigator', { screen: 'SettingScreen' })}
+          ></Image>
+          <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white", marginLeft: "2%" }}>Cập nhật mật khẩu</Text>
+        </View>
+        <View style={{ flexDirection: "column", alignItems: "center",justifyContent: 'center', paddingVertical: 12, backgroundColor: "#DDDDDD", height: 55 }}>
+          <Text style={{ fontSize: 12, marginLeft: "6%" }}>Mật khẩu phải bao gồm chữ cái và số Không được </Text>
+          <Text style={{ fontSize: 12, marginLeft: "6%" }}>chứa năm sinh, username và tên Zalo của bạn </Text>
+        </View>
+
+        <Text style={{ fontSize: 16, fontWeight: "bold", fontFamily: "Roboto", marginLeft: "5%", marginTop: "5%" }}>Mật khẩu hiện tại:</Text>
+        <View style={{ flexDirection: "row", paddingHorizontal: 10 }}> 
+          <TextInput
+            style={{
+              marginRight: "5%",
+              borderBottomWidth: 1,
+              borderBottomColor: "#1E90FF",
+              fontSize: 16,
+              fontFamily: "Roboto",
+              top: "4%",
+              padding: 10,
+              flex: 1 
+            }}
+            placeholder='Nhập mật khẩu hiện tại'
+            secureTextEntry={true}
+            value={currentPassword}
+            onChangeText={setCurrentPassword}
+          />       
+        </View>
+        <View style={{ flex: 1,  top: "6%"}}></View>
+
+        <Text style={{ fontSize: 16, fontWeight: "bold", fontFamily: "Roboto", marginLeft: "5%", marginTop: "5%" }}>Nhập mật khẩu:</Text>
+        <View style={{ flexDirection: "row", paddingHorizontal: 10 }}> 
+          <TextInput
+            style={{
+              marginRight: "5%",
+              borderBottomWidth: 1,
+              borderBottomColor: "#1E90FF",
+              fontSize: 16,
+              fontFamily: "Roboto",
+              top: "4%",
+              padding: 10,
+              flex: 1 
+            }}
+            placeholder='Nhập mật khẩu mới'
+            secureTextEntry={true}
+            value={newPassword}
+            onChangeText={setNewPassword}
+          />       
+        </View>
+        <View style={{ flexDirection: "row", paddingHorizontal: 10 }}> 
+          <TextInput
+            style={{
+              marginRight: "5%",
+              borderBottomWidth: 1,
+              borderBottomColor: "#1E90FF",
+              fontSize: 16,
+              fontFamily: "Roboto",
+              top: "8%",
+              padding: 10,
+              flex: 1 
+            }}
+            placeholder='Nhập lại mật khẩu mới'
+            secureTextEntry={true}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />       
+        </View>
+        <View style={{ flex: 3,  top: "6%"}}></View>
+        <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", alignItems: "center", paddingVertical: 6, height: 50, marginLeft: "10%", marginRight: "10%"}}>
+          <TouchableOpacity style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#1E90FF"}} onPress={handleChangePassword}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>Cập nhật</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 7 }}></View>
+        
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+
+export default CreatePasswordScreen;

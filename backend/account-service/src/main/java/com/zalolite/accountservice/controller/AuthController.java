@@ -27,6 +27,7 @@ import reactor.core.publisher.Mono;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -58,7 +59,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public Mono<ResponseEntity<String>> create(@RequestBody AccountCreateDTO accountCreateDTO){
-        return accountRepository.insert(new Account(accountCreateDTO))
+        log.info("** create");
+        return accountRepository.save(new Account(accountCreateDTO))
                 .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("new account failed"))))
                 .flatMap(result -> {
                     WebClient webClient = builder.build();
@@ -74,7 +76,7 @@ public class AuthController {
                                 else return Mono.just(ResponseEntity.status(500).body(""));
                             });
                 })
-                .onErrorResume(e->Mono.just(ResponseEntity.status(409).body("")));
+                .onErrorResume(e->Mono.just(ResponseEntity.status(409).body(Arrays.toString(e.getStackTrace()))));
     }
 
     @PostMapping("/authenticate")

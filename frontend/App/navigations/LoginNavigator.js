@@ -2,6 +2,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 //Screen Của Login
 import LoginScreen from '../screens/LoginScreen';
+import CreatePasswordWhenForgotScreen from '../screens/CreatePasswordWhenForgotScreen';
+import CreatePasswordScreen from '../screens/CreatePasswordScreen';
+import ConfirmAccountScreen from '../screens/ConfirmAccountScreen';
 
 
 //Screen của Register
@@ -23,6 +26,10 @@ export default function LoginNavigator() {
           {/* Screen Của Login */}
           <Stack.Screen name='SlashScreen' component={SlashScreen} options={{ headerShown: false }}/>
           <Stack.Screen name='LoginScreen' component={LoginScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name='CreatePasswordWhenForgotScreen' component={CreatePasswordWhenForgotScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name='CreatePasswordScreen' component={CreatePasswordScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name='ConfirmAccountScreen' component={ConfirmAccountScreen} options={{ headerShown: false }}/>
+          {/* Screen của Register */}
 
         <Stack.Screen name="AddInforScreen" component={AddInforScreen} options={{headerShown: false}}/>
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} options={{headerShown: false}}/>

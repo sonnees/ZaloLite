@@ -30,11 +30,11 @@ public interface GroupRepository extends ReactiveMongoRepository<Group, UUID> {
 
     @Query(value = "{'_id': ?0}")
     @Update(update = "{$set: {'chatName': ?1}}")
-    Mono<Long> updateNameChat(String senderID, String chatName);
+    Mono<Long> updateNameChat(String id, String chatName);
 
     @Query(value = "{'_id': ?0}")
     @Update(update = "{$set: {'avatar': ?1}}")
-    Mono<Long> updateAvatar(String senderID, String avatar);
+    Mono<Long> updateAvatar(String id, String avatar);
 
     @Query(value = "{'_id': ?0}")
     @Update(update = "{$set: {'owner': ?1}}")
@@ -43,19 +43,19 @@ public interface GroupRepository extends ReactiveMongoRepository<Group, UUID> {
     // ===== setting =====
     @Query(value = "{'_id': ?0}")
     @Update(update = "{$set: {'setting': {'changeChatNameAndAvatar': ?1}}}")
-    Mono<Long> updateSetting_changeChatNameAndAvatar(String senderID, boolean changeChatNameAndAvatar);
+    Mono<Long> updateSetting_changeChatNameAndAvatar(String id, boolean changeChatNameAndAvatar);
 
     @Query(value = "{'_id': ?0}")
     @Update(update = "{$set: {'setting': {'pinMessages': ?1}}}")
-    Mono<Long> updateSetting_pinMessages(String senderID, boolean pinMessages);
+    Mono<Long> updateSetting_pinMessages(String id, boolean pinMessages);
 
     @Query(value = "{'_id': ?0}")
     @Update(update = "{$set: {'setting': {'sendMessages': ?1}}}")
-    Mono<Long> updateSetting_sendMessages(String senderID, boolean sendMessages);
+    Mono<Long> updateSetting_sendMessages(String id, boolean sendMessages);
 
     @Query(value = "{'_id': ?0}")
     @Update(update = "{$set: {'setting': {'membershipApproval': ?1}}}")
-    Mono<Long> updateSetting_membershipApproval(String senderID, boolean membershipApproval);
+    Mono<Long> updateSetting_membershipApproval(String id, boolean membershipApproval);
 
     @Query(value = "{'_id': ?0}")
     @Update(update = "{$set: {'setting': {'createNewPolls': ?1}}}")
