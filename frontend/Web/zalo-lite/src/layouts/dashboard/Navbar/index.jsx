@@ -115,7 +115,7 @@ function Navbar() {
                   <img
                     // src="https://s120-ava-talk.zadn.vn/2/5/a/5/6/120/5ded83a5856f6d2af9fce6eac4b8d6d2.jpg"
                     src={avatar}
-                    className="w-14 rounded-full border "
+                    className="rounded-full border w-12 h-12"
                     alt="avatar"
                   />
                 </div>

@@ -4,13 +4,25 @@ import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha'
 import { firebaseConfig } from '../config/config'
 import firebase from 'firebase/compat/app'
 import { set } from 'date-fns'
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 
 const OtpScreen = () => {
-    let navigation = useNavigation();
 
-    const [phoneNumber, setPhoneNumber] = useState('')
+    function convertPhoneNumber(phoneNumber) {
+        // Kiểm tra xem phoneNumber có tồn tại và có phải là một chuỗi không
+        if (typeof phoneNumber === 'string' && phoneNumber.startsWith('0')) {
+            // Xóa ký tự '0' đầu tiên và thêm dấu '+84'
+            return '+84' + phoneNumber.slice(1);
+        } else {
+            // Nếu số điện thoại không bắt đầu bằng '0' hoặc không phải là chuỗi, trả về số điện thoại không thay đổi
+            return phoneNumber;
+        }
+    }
+    let navigation = useNavigation();
+    let route = useRoute();
+    const p1 = route.params.p;
+    const phoneNumber = convertPhoneNumber(p1)
     const [code, setCode] = useState('')
     const [verificationId, setVerificationId] = useState(null)
     const recaptchaVerifier = useRef(null)
@@ -21,6 +33,8 @@ const OtpScreen = () => {
             .then(setVerificationId)
             .catch(console.error)
     }
+
+
 
     const confirmCode = () => {
         const credential = firebase.auth.PhoneAuthProvider.credential(
@@ -47,14 +61,6 @@ const OtpScreen = () => {
             <Text style={styles.optText}>
                 Login using OTP
             </Text>
-            <TextInput
-                style={styles.textInput}
-                placeholder="Phone Number with country code"
-                onChangeText={setPhoneNumber}
-                keyboardType='phone-pad'
-                autoComplete='tel'
-            />
-
             <TouchableOpacity style={styles.sendVerification} onPress={sendVerification}>
                 <Text style={styles.buttonText}>
                     Send Verification

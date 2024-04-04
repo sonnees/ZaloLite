@@ -146,6 +146,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
                                                     NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    if(e.getMessage().equals("CONFLICT")) notify.setTypeNotify(TypeNotify.CONFLICT);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | append admin Group");
                                                     return Mono.empty();
                                                 });
