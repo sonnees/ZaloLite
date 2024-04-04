@@ -1,14 +1,15 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Thêm useRoute vào đây
 import Icon from 'react-native-vector-icons/AntDesign';
 
 export default function MeScreen() {
   const navigation = useNavigation();
-  
+
 
   return (
     <View style={styles.container}>
+      <StatusBar />
       <StatusBar />
       <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", height: 48 }}>
         <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center", marginLeft: 14 }}>
@@ -30,19 +31,20 @@ export default function MeScreen() {
         </View>
       </View>
 
-      <View style={{ flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", alignItems: "center"}}>
+      <View style={{ flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", alignItems: "center" }}>
         <TouchableOpacity style={{ flex: 0.75, flexDirection: "row" }}
           onPress={() => navigation.navigate('MeNavigator', { screen: 'ProfileScreen' })}
         >
           <View style={{ flex: 0.1 }}></View>
-          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain" ,marginLeft: "5%" }} source={require("../assets/avata.jpg")}></Image>
+          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain", marginLeft: "5%" }} source={require("../assets/avata.jpg")}></Image>
           <View style={{ marginLeft: "7%" }}></View>
           <View style={{ justifyContent: "center" }}>
+            <Text style={{ fontFamily: "Roboto", fontSize: 18, fontWeight: "bold" }}>Lê Hữu Bằng</Text>
             <Text style={{ fontFamily: "Roboto", fontSize: 18, fontWeight: "bold" }}>Lê Hữu Bằng</Text>
             <Text style={{ fontFamily: "Roboto", fontSize: 15, color: "#808080" }}>Xem trang cá nhân</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={{ flex: 1, alignItems: "flex-end", marginRight: "5%"}}
+        <TouchableOpacity style={{ flex: 1, alignItems: "flex-end", marginRight: "5%" }}
           onPress={() => navigation.navigate('MeNavigator', { screen: 'SwitchAccountScreen' })}
         >
           <Image style={{ width: 28, height: 28, resizeMode: "contain" }} source={require("../assets/transfer.png")} />
@@ -55,7 +57,7 @@ export default function MeScreen() {
         <Image style={{ width: "15%", height: "40%", resizeMode: "contain" }} source={require("../assets/musical.png")}></Image>
         <View style={{ flex: 0.05 }}></View>
         <View style={{ justifyContent: "center" }}
-           onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'OtpScreen' })}
+          onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'OtpScreen' })}
         >
           <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Nhạc chờ Zalo</Text>
           <Text style={{ fontFamily: "Roboto", fontSize: 13, color: "#808080" }}>Đăng ký nhạc chờ, thể hiện cá tính</Text>
