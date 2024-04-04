@@ -30,7 +30,7 @@ const OtpScreen = () => {
         firebase.auth().signInWithCredential(credential)
         .then(() => {
             setCode('')
-            navigation.navigate('TabNavigator');
+            navigation.navigate('LoginNavigator', {screen: 'LoginScreen'});
         })
         .catch(error => {
             alert(error)
