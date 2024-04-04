@@ -1,6 +1,7 @@
 package com.zalolite.accountservice;
 
 import com.zalolite.accountservice.entity.Account;
+import com.zalolite.accountservice.entity.Profile;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.mongodb.repository.Update;
@@ -20,8 +21,8 @@ public interface AccountRepository extends ReactiveMongoRepository<Account, UUID
     Mono<Long> changePassword(String phoneNumber, String password);
 
     @Query(value = "{phoneNumber: ?0}")
-    @Update(update = "{$set: {profile: {avatar: ?1}}}")
-    Mono<Long> changeAvatar(String phoneNumber, String password);
+    @Update(update = "{$set: {profile: ?1}}")
+    Mono<Long> changeAvatar(String phoneNumber, Profile profile);
 
 }
 

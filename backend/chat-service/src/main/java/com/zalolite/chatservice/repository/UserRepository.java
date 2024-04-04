@@ -26,9 +26,9 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Update("{$pull: {friendRequests: {userID: ?1}}}")
     Mono<Long> removeFriendRequest(String sender, String receiver);
 
-    @Query(value = "{'_id': ?0, 'conversations.chatID': { $in: [?0, ?1] }}")
-    @Update(update = "{$set: {'conversations.$.type': ?2}}")
-    Mono<Long> updateTypeConversation(String senderID, String receiverID, String type);
+    @Query(value = "{'_id': ?0, 'conversations.chatID': { $in: [?1, ?2] }}")
+    @Update(update = "{$set: {'conversations.$.type': ?3}}")
+    Mono<Long> updateTypeConversation(String senderID, String chatID1, String chatID2, String type);
 
     @Query(value = "{'_id': ?0}")
     @Update("{$push:{'conversations': ?1}}")
@@ -38,12 +38,19 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Update("{$push:{'conversations': ?1}}")
     Mono<Long> appendConversation(String[] id, Conversation conversation);
 
-    @Query(value = "{}")
-    @Update("{$pull:{'conversations.chatID': {$in: ?0}}}")
-    Mono<Long> removeConversation(String[] id);
+    @Query(value = "{_id: {$in: ?0}}")
+    @Update("{$pull:{conversations: {chatID: ?1}}}")
+    Mono<Long> removeConversation(String[] id, String idChat);
+
+    @Query(value = "{_id: ?0}")
+    @Update("{$pull:{conversations: {chatID: ?1}}}")
+    Mono<Long> removeConversation(String id, String idChat);
 
     @Query(value = "{_id:?0,'conversations.chatID': {$in: [?1,?2]}}")
     Mono<User> searchConversation(String senderID, String chatId1, String chatId2);
+
+    @Query(value = "{_id:?0,'conversations.chatID': ?1}")
+    Mono<User> searchConversation(String senderID, String chatId);
 
     @Query(value = "{'conversations.chatID': ?0}")
     @Update(update = "{$set:{'conversations.$.lastUpdateAt': ?1, 'conversations.$.deliveries': ?2, 'conversations.$.reads': ?3, 'conversations.$.topChatActivity': ?4}}")
@@ -56,5 +63,13 @@ public interface UserRepository  extends ReactiveMongoRepository<User, UUID> {
     @Query(value = "{'friendRequests.userAvatar': ?0}")
     @Update(update = "{$set:{'conversations.$.chatAvatar': ?1}}")
     Mono<Long> updateAvatarInFriendRequest(String oldAvatar, String newAvatar);
+
+    @Query(value = "{_id: {$in: ?0}, 'conversations.chatID': ?1}")
+    @Update(update = "{$set:{'conversations.$.chatName': ?2}}")
+    Mono<Long> updateChatNameInConversation(String[] arrID,String chatId, String chatName);
+
+    @Query(value = "{_id: {$in: ?0}, 'conversations.chatID': ?1}")
+    @Update(update = "{$set:{'conversations.$.chatAvatar': ?2}}")
+    Mono<Long> updateAvatarInConversation(String[] arrID,String chatId, String newAvatar);
 
 }
