@@ -1,22 +1,21 @@
 package com.zalolite.chatservice.dto.handleGroup;
 
 import com.zalolite.chatservice.dto.enums.TypeGroupMessage;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class UpdateSettingGroupDTO extends GroupDTO {
     private String idChat;
-    private boolean isBoolean;
+    private boolean value;
 
-    public UpdateSettingGroupDTO(UUID id, TypeGroupMessage TGM, String idChat, boolean isBoolean) {
+    public UpdateSettingGroupDTO(UUID id, TypeGroupMessage TGM, String idChat, boolean value) {
         super(id, TGM);
         this.idChat = idChat;
-        this.isBoolean = isBoolean;
+        this.value = value;
     }
 }

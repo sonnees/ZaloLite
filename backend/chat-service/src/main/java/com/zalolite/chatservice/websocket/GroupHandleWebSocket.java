@@ -105,6 +105,9 @@ public class GroupHandleWebSocket {
                 .findById(info.getIdChat())
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
                 .flatMap(group -> {
+                    String[] arrayID = getListIDAdmin(group);
+                    boolean b = Arrays.stream(arrayID).anyMatch(s -> Objects.equals(s, personInfo.getUserID().toString()));
+                    if(b) return Mono.error(() -> new Throwable("CONFLICT"));
                     return groupRepository.appendAdmin(info.getIdChat().toString(), personInfo)
                             .flatMap(aLong -> {
                                 if(aLong<=0) return Mono.error(() -> new Throwable("append Admin"));
@@ -211,13 +214,13 @@ public class GroupHandleWebSocket {
     }
 
     public Mono<String[]> updateSetting_changeChatNameAndAvatar(UpdateSettingGroupDTO info){
-        log.info("** update setting changeChatNameAndAvatar: {} {}",info.getIdChat(), info.isBoolean());
+        log.info("** update setting change chat name and avatar: {} {}",info.getIdChat(), info.isValue());
         return groupRepository
                 .findById(UUID.fromString(info.getIdChat()))
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
                 .flatMap(group -> {
                     GroupSetting setting = group.getSetting();
-                    setting.setChangeChatNameAndAvatar(info.isBoolean());
+                    setting.setChangeChatNameAndAvatar(info.isValue());
                     return groupRepository.updateSetting(info.getIdChat(),setting)
                             .flatMap(aLong -> {
                                 if(aLong<=0) return Mono.error(() -> new Throwable("update setting change chat name and avatar"));
@@ -226,41 +229,70 @@ public class GroupHandleWebSocket {
                 });
     }
 
-//    public Mono<Void> updateSetting_pinMessages(String id, boolean approval){
-//        log.info("** update setting pinMessages: {}",id);
-//        return groupRepository.updateSetting_pinMessages(id, approval)
-//                .flatMap(aLong -> {
-//                    if(aLong<=0) return Mono.error(() -> new Throwable("update setting pinMessages"));
-//                    return Mono.empty();
-//                });
-//    }
-//
-//    public Mono<Void> updateSetting_sendMessages(String id, boolean approval){
-//        log.info("** update setting sendMessages: {}",id);
-//        return groupRepository.updateSetting_sendMessages(id, approval)
-//                .flatMap(aLong -> {
-//                    if(aLong<=0) return Mono.error(() -> new Throwable("update setting sendMessages"));
-//                    return Mono.empty();
-//                });
-//    }
-//
-//    public Mono<Void> updateSetting_membershipApproval(String id, boolean approval){
-//        log.info("** update setting membershipApproval: {}",id);
-//        return groupRepository.updateSetting_membershipApproval(id, approval)
-//                .flatMap(aLong -> {
-//                    if(aLong<=0) return Mono.error(() -> new Throwable("update setting membershipApproval"));
-//                    return Mono.empty();
-//                });
-//    }
-//
-//    public Mono<Void> updateSetting_createNewPolls(String id, boolean approval){
-//        log.info("** update setting createNewPolls: {}",id);
-//        return groupRepository.updateSetting_createNewPolls(id, approval)
-//                .flatMap(aLong -> {
-//                    if(aLong<=0) return Mono.error(() -> new Throwable("update setting createNewPolls"));
-//                    return Mono.empty();
-//                });
-//    }
+    public Mono<String[]> updateSetting_pinMessages(UpdateSettingGroupDTO info){
+        log.info("** update setting pin messages: {} {}",info.getIdChat(), info.isValue());
+        return groupRepository
+                .findById(UUID.fromString(info.getIdChat()))
+                .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
+                .flatMap(group -> {
+                    GroupSetting setting = group.getSetting();
+                    setting.setPinMessages(info.isValue());
+                    return groupRepository.updateSetting(info.getIdChat(),setting)
+                            .flatMap(aLong -> {
+                                if(aLong<=0) return Mono.error(() -> new Throwable("update setting pin messages"));
+                                return getMonoListID(group);
+                            });
+                });
+    }
+
+    public Mono<String[]> updateSetting_sendMessages(UpdateSettingGroupDTO info){
+        log.info("** update setting send messages: {} {}",info.getIdChat(), info.isValue());
+        return groupRepository
+                .findById(UUID.fromString(info.getIdChat()))
+                .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
+                .flatMap(group -> {
+                    GroupSetting setting = group.getSetting();
+                    setting.setSendMessages(info.isValue());
+                    return groupRepository.updateSetting(info.getIdChat(),setting)
+                            .flatMap(aLong -> {
+                                if(aLong<=0) return Mono.error(() -> new Throwable("update setting send messages"));
+                                return getMonoListID(group);
+                            });
+                });
+    }
+
+    public Mono<String[]> updateSetting_membershipApproval(UpdateSettingGroupDTO info){
+        log.info("** update setting membership approval: {} {}",info.getIdChat(), info.isValue());
+        return groupRepository
+                .findById(UUID.fromString(info.getIdChat()))
+                .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
+                .flatMap(group -> {
+                    GroupSetting setting = group.getSetting();
+                    setting.setMembershipApproval(info.isValue());
+                    return groupRepository.updateSetting(info.getIdChat(),setting)
+                            .flatMap(aLong -> {
+                                if(aLong<=0) return Mono.error(() -> new Throwable("update setting membership approval"));
+                                return getMonoListID(group);
+                            });
+                });
+    }
+
+    public Mono<String[]> updateSetting_createNewPolls(UpdateSettingGroupDTO info){
+        log.info("** update setting create new polls: {} {}",info.getIdChat(), info.isValue());
+        return groupRepository
+                .findById(UUID.fromString(info.getIdChat()))
+                .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
+                .flatMap(group -> {
+                    GroupSetting setting = group.getSetting();
+                    setting.setCreateNewPolls(info.isValue());
+                    log.info("** {}", setting.getCreateNewPolls());
+                    return groupRepository.updateSetting(info.getIdChat(),setting)
+                            .flatMap(aLong -> {
+                                if(aLong<=0) return Mono.error(() -> new Throwable("update setting create new polls"));
+                                return getMonoListID(group);
+                            });
+                });
+    }
 
     private static Mono<String[]> getMonoListID(Group group) {
         ArrayList<String> listID = new ArrayList<>();
@@ -275,6 +307,12 @@ public class GroupHandleWebSocket {
         ArrayList<String> listID = new ArrayList<>();
         listID.add(group.getOwner().getUserID().toString());
         group.getMembers().forEach(p -> listID.add(p.getUserID().toString()));
+        group.getAdmin().forEach(p -> listID.add(p.getUserID().toString()));
+        return listID.toArray(new String[0]);
+    }
+
+    private static String[] getListIDAdmin(Group group) {
+        ArrayList<String> listID = new ArrayList<>();
         group.getAdmin().forEach(p -> listID.add(p.getUserID().toString()));
         return listID.toArray(new String[0]);
     }
