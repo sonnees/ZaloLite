@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import moment from 'moment';
 import {
   View,
   KeyboardAvoidingView,
@@ -50,7 +51,7 @@ const RegisterDEScreen = () => {
   const handleConfirm = (date) => {
     hideDatePicker();
     setSelectedDate(date);
-    setBirthDate(date.toLocaleDateString());
+    setBirthDate(moment(date).format('YYYY-MM-DD'));
   };
 
   const handleNextScreen = () => {

@@ -7,6 +7,7 @@ import com.zalolite.accountservice.dto.AccountChangePassword;
 import com.zalolite.accountservice.dto.AccountCreateDTO;
 import com.zalolite.accountservice.dto.FieldDTO;
 import com.zalolite.accountservice.entity.Account;
+import com.zalolite.accountservice.entity.Profile;
 import com.zalolite.accountservice.jwt.AuthenticationManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,7 +103,9 @@ public class AccountController {
                                 return Mono.just(ResponseEntity.status(403).body("Error Token"));
                             }).then(Mono.empty()))
                             .flatMap(account -> {
-                                return accountRepository.changeAvatar(userDetailsPhoneNumber, dto.getField())
+                                Profile profile = account.getProfile();
+                                profile.setAvatar(dto.getField());
+                                return accountRepository.changeAvatar(userDetailsPhoneNumber, profile)
                                         .flatMap(aLong -> {
                                             if(aLong<=0) {
                                                 log.error("**  changeAvatar");
