@@ -26,6 +26,7 @@ import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import ForgotPasswordForm from "../pages/Login/ForgotPasswordForm";
 import ResetPasseordForm from "../pages/Login/ResetPasseordForm";
+// import RegisterUser from "../pages/Login/RegisterUser";
 
 const Loadable = (Component) => (props) => {
   return (
@@ -61,6 +62,7 @@ export default function Router() {
         { path: "login", element: <LoginForm /> },
         { path: "forgot-password", element: <ForgotPasswordForm /> },
         { path: "reset-password", element: <ResetPasseordForm /> },
+        // { path: "register-user", element: <RegisterUser /> },
       ],
     },
     {

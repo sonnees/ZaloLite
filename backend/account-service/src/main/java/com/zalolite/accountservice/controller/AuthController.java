@@ -127,7 +127,9 @@ public class AuthController {
                     image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
                 }
             }
+
             BufferedImage scaledImage = Scalr.crop(image, 30, 30, width-60, height-60);
+
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(scaledImage, "png", outputStream);
             byte[] imageBytes = outputStream.toByteArray();

@@ -1,6 +1,7 @@
 package com.zalolite.chatservice.repository;
 
 import com.zalolite.chatservice.entity.Group;
+import com.zalolite.chatservice.entity.GroupSetting;
 import com.zalolite.chatservice.entity.PersonInfo;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
@@ -42,25 +43,10 @@ public interface GroupRepository extends ReactiveMongoRepository<Group, UUID> {
 
     // ===== setting =====
     @Query(value = "{'_id': ?0}")
-    @Update(update = "{$set: {'setting': {'changeChatNameAndAvatar': ?1}}}")
-    Mono<Long> updateSetting_changeChatNameAndAvatar(String id, boolean changeChatNameAndAvatar);
+    @Update(update = "{$set: {'setting':  ?1}}")
+    Mono<Long> updateSetting(String id, GroupSetting setting);
 
-    @Query(value = "{'_id': ?0}")
-    @Update(update = "{$set: {'setting': {'pinMessages': ?1}}}")
-    Mono<Long> updateSetting_pinMessages(String id, boolean pinMessages);
-
-    @Query(value = "{'_id': ?0}")
-    @Update(update = "{$set: {'setting': {'sendMessages': ?1}}}")
-    Mono<Long> updateSetting_sendMessages(String id, boolean sendMessages);
-
-    @Query(value = "{'_id': ?0}")
-    @Update(update = "{$set: {'setting': {'membershipApproval': ?1}}}")
-    Mono<Long> updateSetting_membershipApproval(String id, boolean membershipApproval);
-
-    @Query(value = "{'_id': ?0}")
-    @Update(update = "{$set: {'setting': {'createNewPolls': ?1}}}")
-    Mono<Long> updateSetting_createNewPolls(String senderID, boolean createNewPolls);
-
+    // ===== update async =====
     @Query(value = "{'owner.userAvatar': ?0}")
     @Update(update = "{$set:{'owner.userAvatar': ?1}}")
     Mono<Long> updateAvatarInOwner(String oldAvatar, String newAvatar);

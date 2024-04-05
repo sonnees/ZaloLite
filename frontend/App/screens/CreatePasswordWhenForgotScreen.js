@@ -15,7 +15,7 @@ const CreatePasswordWhenForgotScreen = () => {
       if (status === 409) {
         // Số điện thoại đã được đăng ký
         // Chuyển hướng đến màn hình tiếp theo
-        navigation.navigate('CreatePasswordScreen', { phoneNumber: phoneNumber });
+        navigation.navigate('OPTLoginScreen', { phoneNumber: phoneNumber });
       } else if (status === 200) {
         // Số điện thoại chưa được đăng ký
         // Hiển thị thông báo hoặc xử lý theo yêu cầu của ứng dụng

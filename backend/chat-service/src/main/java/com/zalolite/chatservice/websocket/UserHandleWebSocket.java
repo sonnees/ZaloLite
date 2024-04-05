@@ -177,7 +177,30 @@ public class UserHandleWebSocket {
                 });
     }
 
+    public Mono<Void> appendConversation(String userID,Conversation conversation){
+        log.info("** appendConversation: {}",conversation.getChatID());
+        return userRepository.searchConversation(userID, conversation.getChatID().toString())
+                .switchIfEmpty(Mono.defer(() -> {
+                    return userRepository.appendConversation(userID, conversation)
+                            .flatMap(aLongR -> {
+                                if (aLongR <= 0) return Mono.error(() -> new Throwable("appendConversation failed"));
+                                return Mono.empty();
+                            });
+                }))
+                .flatMap(user -> Mono.empty());
+
+    }
+
     public Mono<Void> removeConversation(String[] userID, String idChat){
+        log.info("** removeConversation:");
+        return userRepository.removeConversation(userID,idChat)
+                .flatMap(aLongR -> {
+                    if(aLongR<=0) return Mono.error(() -> new Throwable("removeConversation failed"));
+                    return Mono.empty();
+                });
+    }
+
+    public Mono<Void> removeConversation(String userID, String idChat){
         log.info("** removeConversation:");
         return userRepository.removeConversation(userID,idChat)
                 .flatMap(aLongR -> {
@@ -188,7 +211,6 @@ public class UserHandleWebSocket {
 
     public Mono<Void> updateConversations(Chat chat){
         log.info("** updateConversations: {}",chat.getId());
-
         return userRepository.updateChatActivity(
                         chat.getId().toString(),
                         chat.getChatActivity().get(chat.getChatActivity().size()-1).getTimestamp(),
@@ -196,6 +218,24 @@ public class UserHandleWebSocket {
                         chat.getReads(),
                         chat.getChatActivity())
                 .then();
+    }
+
+    public Mono<Void> updateChatNameInConversation(String[] arrID,String chatID, String chatName){
+        log.info("** updateChatNameInConversation: {} {}",chatID, chatName);
+        return userRepository.updateChatNameInConversation(arrID,chatID,chatName)
+                .flatMap(aLong -> {
+                    if(aLong<=0) return Mono.error(() -> new Throwable("update chat name in conversation"));
+                    return Mono.empty();
+                });
+    }
+
+    public Mono<Void> updateAvatarInConversation(String[] arrID,String chatID, String newAvatar){
+        log.info("** updateAvatarInConversation: {} {}",chatID, newAvatar);
+        return userRepository.updateAvatarInConversation(arrID,chatID,newAvatar)
+                .flatMap(aLong -> {
+                    if(aLong<=0) return Mono.error(() -> new Throwable("update avatar in conversation"));
+                    return Mono.empty();
+                });
     }
 
 
