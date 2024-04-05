@@ -61,16 +61,18 @@ const MessagesScreen = () => {
       setLastConversation(updatedConversation);
       console.log("User Infor:", lastConversation);
       return lastConversation;
+
     } catch (error) {
       console.error('Lỗi khi lấy thông tin User:', error);
       return null;
     }
   };
-  const handlePress = (chatData) => {
+  const handlePress = (chatID) => {
     if (modalVisible) {
       setModalChatVisible(false);
     } else {
-      navigation.navigate("ChatScreen", { chatData: chatData });
+      console.log("CHATID nè:----------", chatID);
+      navigation.navigate("ChatScreen", { chatID: chatID });
     }
   };
 
@@ -83,11 +85,10 @@ const MessagesScreen = () => {
 
 
   const ChatElement = memo(({ item }) => {
-    const chatData = findConversationByID(conversation, item.chatID)
     return (
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
-          onPress={() => handlePress(chatData)}
+          onPress={() => handlePress(item.chatID)}
           onLongPress={handleLongPress}
           style={{ height: 75, flexDirection: 'row', width: '100%' }}
         >

@@ -5,30 +5,39 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_INFOR_USER } from '../api/Api';
-
+import { API_LIST_CHAT } from '../api/Api';
+import axios from 'axios';
 const ChatScreen = () => {
   let navigation = useNavigation();
   let route = useRoute();
-  const chatData = route.params?.chatData;
-  console.log("Chat Screen Data: ", chatData);
-  const chatActivity = chatData.topChatActivity
-  console.log("Top Chat Data: ", chatActivity);
+  const chatID = route.params?.chatID;
   const [myUserID, setMyUserID] = useState('');
-  const [conversation, setConversation] = useState([]);
+  const [listChat, setListChat] = useState([{}]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalChatVisible, setModalChatVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      // const token = await getToken();
-      // console.log(token);
-      const userID = await getUserID();
-      setMyUserID(userID)
-      console.log(userID);
-      // fetchConversation(token, userID);
-      // console.log(lastConversation);
+      try {
+        if (!chatID) {
+          console.error('ChatID không tồn tại hoặc không hợp lệ');
+          return;
+        }
+        const userID = await getUserID();
+        setMyUserID(userID);
+        console.log("USER ID: ", userID);
+        const token = await getToken();
+        console.log("TOKEN: ", token);
+        const data = await fetchListChat(token, chatID, 1, 20);
+        console.log("DATA CHAT: ", data);
+      } catch (error) {
+        console.error('Lỗi khi lấy dữ liệu chat:', error);
+      }
     };
     fetchData();
   }, []);
+
+
   const getUserID = async () => {
     try {
       const userID = await AsyncStorage.getItem('userID');
@@ -38,131 +47,47 @@ const ChatScreen = () => {
       return null;
     }
   };
-  const chat = [{
-    _id: "uuid1",
-    chatActivity: [
-      // Thêm các tin nhắn cũ hơn ở đây
-      {
-        messageID: "mmid4",
-        userID: "1",
-        timetamp: "2024-01-19T18:45:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Xin chào! Bạn đã ăn tối chưa?"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      }, {
-        messageID: "mmid5",
-        userID: "2",
-        timetamp: "2024-01-19T19:00:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Chưa, bạn muốn đi ăn cùng không?"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      }, {
-        messageID: "mmid6",
-        userID: "1",
-        timetamp: "2024-01-19T19:05:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Được chứ, hẹn bạn ở đâu?"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      }, {
-        messageID: "mmid7",
-        userID: "2",
-        timetamp: "2024-01-19T19:10:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Hôm nay mình ăn ở nhà hàng gần công viên."
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      },
-      {
-        messageID: "mmid1",
-        userID: "1",
-        timetamp: "2024-01-20T12:30:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Chào bạn! Hôm nay bạn đã làm gì mới?"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: [2]
-        }
-      },
-      {
-        messageID: "mmid2",
-        userID: "2",
-        timetamp: "2024-01-20T12:30:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Tôi đã đi chơi với bạn bè. 11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      },
-      {
-        messageID: "mmid3",
-        userID: "2",
-        timetamp: "2024-01-20T11:55:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Oke kkkk"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      },
 
-    ]
-  }]
-  const data = chat[0].chatActivity;
+  const getToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      return token;
+    } catch (error) {
+      console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+      return null;
+    }
+  };
+  const fetchListChat = async (token, chatID, x, y) => {
+    try {
+      console.log("TOKEN:------------- \n", token);
+      console.log("hehehehhhhhhhhhhhhhhhh: \n", token);
+      console.log("CHAT-------ID: \n", chatID);
+      const response = await axios.get(`${API_LIST_CHAT}?id=${chatID}&x=${x}&y=${y}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      console.log("Dữ liệu được trả về: ", data);
+      setListChat(data);
+      console.log("dữ liệu tronng chat:", data); // Log dữ liệu mới, không phải listChat
+      return data; // Trả về dữ liệu mới thay vì listChat
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin Chat:', error);
+      return null;
+    }
+  };
 
-  const [modalChatVisible, setModalChatVisible] = useState(false);
 
   const handlePress = () => {
-    // Kiểm tra nếu modal đã hiển thị, thì đóng modal
     if (modalVisible) {
       setModalChatVisible(false);
     } else {
-      // Nếu modal chưa hiển thị, thực hiện navigate qua TabNavigator
       navigation.navigate("ChatScreen");
     }
   };
 
   const handleLongPress = () => {
-    // Hiển thị modal khi người dùng nhấn giữ lâu hơn 0.5 giây
     setTimeout(() => {
       setModalChatVisible(true);
     }, 500);
@@ -182,9 +107,8 @@ const ChatScreen = () => {
         });
       }
     };
-
-    const alignmentStyle = item.userID === "1" ? { alignSelf: 'flex-start' } : { alignSelf: 'flex-end' };
-
+    const alignmentStyle = item.userID === myUserID ? { alignSelf: 'flex-end' } : { alignSelf: 'flex-start' };
+    const backgroundColorStyle = item.userID === myUserID ? { backgroundColor: '#CCFFFF' } : { backgroundColor: 'white' };
     return (
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
@@ -198,6 +122,7 @@ const ChatScreen = () => {
             marginHorizontal: 10,
             alignItems: 'center',
             ...alignmentStyle,
+            ...backgroundColorStyle,
             paddingHorizontal: 10,
             maxWidth: 280,
             marginLeft: 50
@@ -207,17 +132,22 @@ const ChatScreen = () => {
             onLayout={handleTextLayout}
             style={{ textAlign: 'center', flexWrap: 'wrap' }}
           >
-            {item.content[0].value}
+            {item.timestamp}
+            {/* hehe */}
           </Text>
         </TouchableOpacity>
         <View style={{ height: 8 }} />
       </View>
     );
-  });
+  },
+    //   (prevProps, nextProps) => {
+    //   return prevProps.item.messageID === nextProps.item.messageID;
+    // }
+  );
 
 
-
-
+  // 6a1c22fa - 73d8 - 4332 - a801 - 4445f06a642d
+  // 26ce60d1 - 64b9 - 45d2 - 8053 - 7746760a8354
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar></StatusBar>
@@ -228,7 +158,7 @@ const ChatScreen = () => {
           <Icon name='arrowleft' color={'white'} size={25}></Icon>
         </TouchableOpacity>
         <View style={{ flexDirection: "column", marginLeft: 20 }}>
-          <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>{chatData.chatName}</Text>
+          <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>He He</Text>
           <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Last seen 5 hourse ago</Text>
         </View>
 
@@ -254,10 +184,11 @@ const ChatScreen = () => {
       <View style={{ flex: 9 }}>
 
         <FlatList
-          data={data}
-          renderItem={({ item }) => <ChatItem item={item} />}
-          keyExtractor={(item) => item.messageID} // Sử dụng trường messageID làm key
+          data={listChat}
+          renderItem={({ item }) => item && <ChatItem item={item} />}
+          keyExtractor={(item, index) => item?.messageID ?? index.toString()}
         />
+
 
       </View>
 

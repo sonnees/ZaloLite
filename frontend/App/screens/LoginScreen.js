@@ -64,9 +64,9 @@ const LoginScreen = () => {
         };
         const token = await getToken();
         const userID = await fetAccountInfor(token);
-        console.log("DATA: \n", userID);
-        console.log("TOKEN: \n", token);
-        navigation.navigate('TabNavigator', { userID: userID });
+        console.log("TOKEN từ LOGIN: \n", token);
+        console.log("USERID từ LOGIN: \n", userID);
+        navigation.navigate('TabNavigator');
 
 
       } else {
