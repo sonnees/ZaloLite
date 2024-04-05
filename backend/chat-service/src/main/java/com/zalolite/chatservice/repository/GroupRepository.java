@@ -46,6 +46,7 @@ public interface GroupRepository extends ReactiveMongoRepository<Group, UUID> {
     @Update(update = "{$set: {'setting':  ?1}}")
     Mono<Long> updateSetting(String id, GroupSetting setting);
 
+    // ===== update async =====
     @Query(value = "{'owner.userAvatar': ?0}")
     @Update(update = "{$set:{'owner.userAvatar': ?1}}")
     Mono<Long> updateAvatarInOwner(String oldAvatar, String newAvatar);
