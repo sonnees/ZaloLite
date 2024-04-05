@@ -1,18 +1,15 @@
 function getTimeDifference(timestamp) {
     const currentTime = new Date();
     const sentTime = new Date(timestamp);
+    const timezoneOffset = currentTime.getTimezoneOffset() / 60;
 
-    // Lấy chênh lệch múi giờ giữa múi giờ hiện tại và múi giờ UTC
-    const timezoneOffset = currentTime.getTimezoneOffset() / 60; // Đổi sang giờ
-
-    // Thêm chênh lệch múi giờ vào thời gian
     const sentTimeVN = new Date(sentTime.getTime() + (timezoneOffset + 7) * 60 * 60 * 1000);
     const currentTimeVN = new Date(currentTime.getTime() + (timezoneOffset + 7) * 60 * 60 * 1000);
 
     console.log("Sent time: " + sentTimeVN);
     console.log("Current time: " + currentTimeVN);
 
-    const timeDifference = Math.abs(currentTimeVN - sentTimeVN) / 1000; // Chuyển đổi sang giây
+    const timeDifference = Math.abs(currentTimeVN - sentTimeVN) / 1000;
 
     if (timeDifference <= 60) {
         return '1 minute';

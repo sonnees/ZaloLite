@@ -1,91 +1,76 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Text, StatusBar, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
+import { getTimeDifference } from '../function/CalTime';
+import { getDataFromConversations } from '../function/DisplayLastChat';
+import { API_INFOR_USER } from '../api/Api';
+import { findConversationByID } from '../function/FindConservation';
 const MessagesScreen = () => {
   let navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [colorTextInView, setColorTextInView] = useState("gray");
   const [modalChatVisible, setModalChatVisible] = useState(false);
-  const data = [
-    {
-      id: 1,
-      userName: "Hà Anh Thảo",
-      userAvatar: "https://avatars.githubusercontent.com/u/81128952?v=4",
-      value: "Xin chào! Bạn đã ăn tối chưa?",
-      time: '1 hours'
-    },
-    {
-      id: 2,
-      userName: "Hiếu Đông",
-      userAvatar: "https://s120-ava-talk.zadn.vn/b/1/6/9/2/120/49c735f44a48922c94785739bc2b91e7.jpg",
-      value: "Biết Bằng bị Gay không",
-      time: '2 hours'
-    },
-    {
-      id: 3,
-      userName: "Bích Trâm",
-      userAvatar: "https://zpsocial-f48-org.zadn.vn/8f551df048eca6b2fffd.jpg",
-      value: "Dọ dọ em xin lỗi",
-      time: '1 min'
-    },
-    {
-      id: 4,
-      userName: "Pé Yêu",
-      userAvatar: "https://luv.vn/wp-content/uploads/2021/12/hinh-anh-gai-mat-vuong-xinh-dep-12.jpg",
-      value: "Hello Mother Fucker",
-      time: '4 min'
-    },
-    {
-      id: 5,
-      userName: "Mai Linh",
-      userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSS3FjhqmMmpDz8QyIE7PkxUm1xmHn1TY9ARw&usqp=CAU",
-      value: "Gì z ba",
-      time: '1 hours'
-    },
-    {
-      id: 6,
-      userName: "Quang Minh",
-      userAvatar: "https://htmediagroup.vn/wp-content/uploads/2021/06/Anh-profile-46.jpg",
-      value: "Hôm qua đi học trễ",
-      time: '1 hours'
-    },
-    {
-      id: 7,
-      userName: "Trang Hồ",
-      userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsxmJ_6AgWofnHmTSdCBopgOXiQMZPzvc-vWT_Vvd2B-BvMxzI6Vp7OCE3tuWuXIwx3aY&usqp=CAU",
-      value: "Hehe",
-      time: '1 hour'
-    },
-    {
-      id: 8,
-      userName: "Tuấn Kiệt",
-      userAvatar: "https://hthaostudio.com/wp-content/uploads/2019/08/Nam-11-min.jpg",
-      value: "Xin lỗi",
-      time: '1 hour'
-    },
-    {
-      id: 9,
-      userName: "Linh Nhi",
-      userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOjVTVcNlPaeEpJnMLi3IGfoSlmZ-jj4MJpA&usqp=CAU",
-      value: "Bạn là ai vậy ?",
-      time: '2 hours'
-    },
-    {
-      id: 10,
-      userName: "Phương Anh",
-      userAvatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRw6-fmpGWQFg8JA4eUKWwGwYNgS4H-FyLtnQ&usqp=CAU",
-      value: "Haha",
-      time: '4 hours'
-    },
-  ];
+  const [lastConversation, setLastConversation] = useState([]);
+  const [conversation, setConversation] = useState([]);
 
-  const handlePress = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = await getToken();
+      console.log(token);
+      const userID = await getUserID();
+      console.log(userID);
+      fetchConversation(token, userID);
+      console.log(lastConversation);
+    };
+    fetchData();
+  }, []);
+  const getToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      return token;
+    } catch (error) {
+      console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+      return null;
+    }
+  };
+
+  const getUserID = async () => {
+    try {
+      const userID = await AsyncStorage.getItem('userID');
+      return userID;
+    } catch (error) {
+      console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+      return null;
+    }
+  };
+
+  const fetchConversation = async (token, userID) => {
+    try {
+      const response = await axios.get(`${API_INFOR_USER}${userID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const userInfo = await response.data;
+      const c = userInfo.conversations
+      setConversation(c);
+      const updatedConversation = getDataFromConversations(c);
+      setLastConversation(updatedConversation);
+      console.log("User Infor:", lastConversation);
+      return lastConversation;
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin User:', error);
+      return null;
+    }
+  };
+  const handlePress = (chatData) => {
     if (modalVisible) {
       setModalChatVisible(false);
     } else {
-      navigation.navigate("ChatScreen");
+      navigation.navigate("ChatScreen", { chatData: chatData });
     }
   };
 
@@ -96,25 +81,27 @@ const MessagesScreen = () => {
   };
 
 
+
   const ChatElement = memo(({ item }) => {
+    const chatData = findConversationByID(conversation, item.chatID)
     return (
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
-          onPress={handlePress}
+          onPress={() => handlePress(chatData)}
           onLongPress={handleLongPress}
           style={{ height: 75, flexDirection: 'row', width: '100%' }}
         >
           <Image style={{ width: 55, height: 55, resizeMode: "contain", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
-            source={{ uri: item.userAvatar }} />
+            source={{ uri: item.chatAvatar }} />
 
           <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>
-            <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{item.userName}</Text>
-            <Text style={{ fontSize: 14, fontWeight: '400', color: 'gray', marginBottom: 10 }}>{item.value}</Text>
+            <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{item.chatName}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '400', color: 'gray', marginBottom: 10 }}>{item.lastTopChatActivity.contents[0].value}</Text>
           </View>
 
           <View style={{ justifyContent: 'flex-end', alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: 30, marginRight: -20 }}>
             <Icon name='pushpin' size={13} color={'#d9d9d9'} style={{ marginRight: 5 }}></Icon>
-            <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>{item.time}</Text>
+            <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>{getTimeDifference(item.lastTopChatActivity.timestamp)}</Text>
           </View>
 
           <View style={{ height: 17, width: 20, borderRadius: 45, backgroundColor: '#BBBBBB', marginTop: 45, marginRight: 15, alignItems: 'center', justifyContent: 'center' }}>
@@ -176,9 +163,9 @@ const MessagesScreen = () => {
         <View style={{ borderBottomColor: 'gray', borderBottomWidth: 0.2, width: '100%' }} />
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
           <FlatList
-            data={data}
+            data={lastConversation}
             renderItem={({ item }) => <ChatElement item={item} />}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.chatID}
           />
         </View>
       </View>
