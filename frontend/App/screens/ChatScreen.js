@@ -4,6 +4,7 @@ import React, { memo, useState, useRef, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { useNavigation } from '@react-navigation/native'
 // import chat from '../data/chat.js';
 const ChatScreen = () => {
@@ -11,7 +12,31 @@ const ChatScreen = () => {
   let route = useRoute();
   const chatData = route.params?.chatData;
   console.log("Chat Screen Data: ", chatData);
+  const chatActivity = chatData.topChatActivity
+  console.log("Top Chat Data: ", chatActivity);
+  const [myUserID, setMyUserID] = useState('');
 
+  useEffect(() => {
+    const fetchData = async () => {
+      // const token = await getToken();
+      // console.log(token);
+      const userID = await getUserID();
+      setMyUserID(userID)
+      console.log(userID);
+      // fetchConversation(token, userID);
+      // console.log(lastConversation);
+    };
+    fetchData();
+  }, []);
+  const getUserID = async () => {
+    try {
+      const userID = await AsyncStorage.getItem('userID');
+      return userID;
+    } catch (error) {
+      console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+      return null;
+    }
+  };
   const chat = [{
     _id: "uuid1",
     chatActivity: [
@@ -292,7 +317,7 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#abcdff',
+    backgroundColor: '#E0EEEE',
   },
   header: {
     height: 50,
