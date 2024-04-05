@@ -147,7 +147,10 @@ export default function LoginForm() {
         console.log(data);
         if (data.token != null) {
           // console.log(data.token);
-          navigate("/app", { token: data.token });
+          // navigate("/app", { token: data.token });
+          navigate("/app", {
+            state: { token: data.token, phoneNumber: data.phone },
+          });
         } else if (data.connect == "ACCEPT") {
           let device = navigator.userAgent.match("Windows") ? "Windows" : "MAC";
           let day = new Date();
