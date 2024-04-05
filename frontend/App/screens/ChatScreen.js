@@ -5,8 +5,8 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { useNavigation } from '@react-navigation/native'
-// import chat from '../data/chat.js';
+import { API_INFOR_USER } from '../api/Api';
+
 const ChatScreen = () => {
   let navigation = useNavigation();
   let route = useRoute();
@@ -15,6 +15,7 @@ const ChatScreen = () => {
   const chatActivity = chatData.topChatActivity
   console.log("Top Chat Data: ", chatActivity);
   const [myUserID, setMyUserID] = useState('');
+  const [conversation, setConversation] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
