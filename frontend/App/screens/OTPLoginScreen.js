@@ -15,8 +15,7 @@ const OPTLoginScreen = () => {
     const recaptchaVerifier = useRef(null);
 
     // Lấy giá trị phoneNumber từ tham số của route
-    const { params } = route;
-    const routePhoneNumber = params ? params.phoneNumber : ''; // Lấy phoneNumber từ params, nếu không tồn tại thì gán là chuỗi rỗng
+    const { phoneNumber: routePhoneNumber } = route.params;
 
     // Set giá trị phoneNumber từ route.params vào state khi màn hình được tạo
     useState(() => {
@@ -25,7 +24,7 @@ const OPTLoginScreen = () => {
             ? '+84' + routePhoneNumber.slice(1)
             : routePhoneNumber;
         setPhoneNumber(formattedPhoneNumber);
-    }, [routePhoneNumber]);
+    }, []);
 
     const sendVerification = () => {
         const phoneProvider = new firebase.auth.PhoneAuthProvider();

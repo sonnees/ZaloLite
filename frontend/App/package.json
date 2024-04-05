@@ -20,6 +20,7 @@
     "@react-navigation/stack": "^6.3.23",
     "axios": "^1.6.8",
     "cloudinary": "^2.0.3",
+    "cloudinary-react-native": "^0.3.0",
     "date-fns": "^3.6.0",
     "expo": "~50.0.8",
     "expo-barcode-scanner": "~12.9.3",

@@ -1,14 +1,13 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Thêm useRoute vào đây
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-
+import { API_PROFILE } from '../api/Api';
 export default function MeScreen() {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({ userName: '', avatar: '' });
-
 
   useEffect(() => {
     // Function to get token from AsyncStorage
@@ -25,7 +24,7 @@ export default function MeScreen() {
     // Function to fetch user info
     const fetchUserInfo = async (phoneNumber, token) => {
       try {
-        const response = await axios.get(`http://192.168.1.8:8081/api/v1/account/profile/${phoneNumber}`, {
+        const response = await axios.get(`${API_PROFILE}${phoneNumber}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -41,6 +40,7 @@ export default function MeScreen() {
     const getPhoneNumberAndToken = async () => {
       try {
         const phoneNumber = await AsyncStorage.getItem('phoneNumber');
+        console.log(phoneNumber);
         const token = await getToken();
         if (phoneNumber && token) {
           fetchUserInfo(phoneNumber, token);
@@ -54,7 +54,7 @@ export default function MeScreen() {
 
     getPhoneNumberAndToken();
   }, []);
-  
+
 
   return (
     <View style={styles.container}>
@@ -79,19 +79,19 @@ export default function MeScreen() {
         </View>
       </View>
 
-      <View style={{ flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", alignItems: "center"}}>
+      <View style={{ flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", alignItems: "center" }}>
         <TouchableOpacity style={{ flex: 0.75, flexDirection: "row" }}
           onPress={() => navigation.navigate('MeNavigator', { screen: 'ProfileScreen' })}
         >
           <View style={{ flex: 0.1 }}></View>
-          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain" ,marginLeft: "5%" }} source={{ uri: userInfo.avatar }}></Image>
+          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain", marginLeft: "5%" }} source={{ uri: userInfo.avatar }}></Image>
           <View style={{ marginLeft: "7%" }}></View>
           <View style={{ justifyContent: "center" }}>
             <Text style={{ fontFamily: "Roboto", fontSize: 18, fontWeight: "bold" }}>{userInfo.userName}</Text>
             <Text style={{ fontFamily: "Roboto", fontSize: 15, color: "#808080" }}>Xem trang cá nhân</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={{ flex: 1, alignItems: "flex-end", marginRight: "5%"}}
+        <TouchableOpacity style={{ flex: 1, alignItems: "flex-end", marginRight: "5%" }}
           onPress={() => navigation.navigate('MeNavigator', { screen: 'SwitchAccountScreen' })}
         >
           <Image style={{ width: 28, height: 28, resizeMode: "contain" }} source={require("../assets/transfer.png")} />
@@ -104,7 +104,7 @@ export default function MeScreen() {
         <Image style={{ width: "15%", height: "40%", resizeMode: "contain" }} source={require("../assets/musical.png")}></Image>
         <View style={{ flex: 0.05 }}></View>
         <View style={{ justifyContent: "center" }}
-           onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'OtpScreen' })}
+          onStartShouldSetResponder={() => navigation.navigate('LoginNavigator', { screen: 'OtpScreen' })}
         >
           <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Nhạc chờ Zalo</Text>
           <Text style={{ fontFamily: "Roboto", fontSize: 13, color: "#808080" }}>Đăng ký nhạc chờ, thể hiện cá tính</Text>

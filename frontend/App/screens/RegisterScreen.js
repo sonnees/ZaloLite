@@ -18,9 +18,9 @@ const RegisterScreen = () => {
 
   const checkPhoneNumber = async () => {
     try {
-      const response = await fetch(`http://192.168.1.8:8081/api/v1/auth/check-uniqueness-phone-number/${phoneNumber}`);
+      const response = await fetch(`${API_CHECKPHONE}${phoneNumber}`);
       const status = response.status; // Lấy mã trạng thái của phản hồi
-  
+
       if (status === 409) {
         // Số điện thoại đã được đăng ký
         Alert.alert('Thông báo', 'Số điện thoại đã được đăng ký. Vui lòng sử dụng số điện thoại khác.');
@@ -47,6 +47,8 @@ const RegisterScreen = () => {
       return;
     }
 
+    // Gọi hàm kiểm tra số điện thoại
+    checkPhoneNumber();
     // Gọi hàm kiểm tra số điện thoại
     checkPhoneNumber();
   };
