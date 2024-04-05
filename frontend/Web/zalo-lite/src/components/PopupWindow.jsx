@@ -2,11 +2,12 @@ import { Cloudinary } from '@cloudinary/url-gen';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function PopupWindow ({ isOpen, onClose, data, phoneNumber, token }) {
-  const [loadAvt, setLoadAvt] = useState(null);
+  const [loadAvt, setLoadAvt] = useState(data.avatar);
   const inputFileRef = useRef(null);
-
+  const navigate = useNavigate();
   const cloudinary = new Cloudinary({cloud: {cloudName: 'du73a0oen'}});
 
   console.log(data);
@@ -35,20 +36,28 @@ export default function PopupWindow ({ isOpen, onClose, data, phoneNumber, token
 
       console.log(newAvatar);
       
+
+      
+
+      const jsonAvt = {field: newAvatar}
+
       const res = await fetch(
         "http://localhost:8081/api/v1/account/change-avatar",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
-          body: {"field":newAvatar},
+          body: JSON.stringify(jsonAvt),
         },
       )
 
       if (res.ok) {
         setLoadAvt(newAvatar)
       }
+
+      
 
       
     } catch (error) {
@@ -74,7 +83,7 @@ export default function PopupWindow ({ isOpen, onClose, data, phoneNumber, token
               <div className='flex items-center p-4'>
                 <p className='flex-grow'>Thông tin tài khoản</p>
 
-                <p className="bg-gray-50 w-10 text-center cursor-pointer" onClick={onClose}>X</p>
+                <p className="bg-gray-50 w-10 text-center cursor-pointer" onClick={()=> {onClose(); navigate("/app", {state: { avt: loadAvt, token: token, phoneNumber:phoneNumber }})}}>X</p>
 
               </div>
 
@@ -83,7 +92,7 @@ export default function PopupWindow ({ isOpen, onClose, data, phoneNumber, token
                 <div className="absolute top-48 left-4 transform -translate-y-1/2">
                   {/* =============================================== */}
                   <input ref={inputFileRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }}/>
-                  <img className="w-20 h-20 rounded-full border-4 border-white" onClick={handleAvatarClick} src={data.avatar} alt="Avatar" />
+                  <img className="w-20 h-20 rounded-full border-4 border-white" onClick={handleAvatarClick} src={loadAvt} alt="Avatar" />
 
                 </div>
                 <div className="absolute top-52 left-4 transform -translate-y-1/2  pl-28">

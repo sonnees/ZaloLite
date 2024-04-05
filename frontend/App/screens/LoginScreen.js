@@ -7,6 +7,7 @@ import axios from 'axios';
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [tk, setTk] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
   const newPassword = route.params?.newPassword;
@@ -39,6 +40,7 @@ const LoginScreen = () => {
         const getToken = async () => {
           try {
             const token = await AsyncStorage.getItem('token');
+            setTk(token)
             return token;
           } catch (error) {
             console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);

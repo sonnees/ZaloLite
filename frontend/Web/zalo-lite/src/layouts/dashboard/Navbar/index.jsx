@@ -13,11 +13,14 @@ function Navbar() {
   const [profileData, setProfileData] = useState(null);
   const [avatar, setAvatar] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [userName, setUserName] = useState("");
   const location = useLocation();
   const token = location.state?.token;
   const phoneNumber = location.state?.phoneNumber;
-  console.log("Token: ", token);
-  console.log("Phone Number: ", phoneNumber);
+  const avt = location.state?.avt;
+  // console.log(avt); 
+  // console.log("Token: ", token);
+  // console.log("Phone Number: ", phoneNumber);
 
   let messageImage = "/message-outline.png";
   let contactImage = "/contact-book-outline.png";
@@ -57,6 +60,7 @@ function Navbar() {
 
   // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
   useEffect(() => {
+    
     if (token && phoneNumber) {
       const fetchProfile = async () => {
         try {
@@ -78,6 +82,8 @@ function Navbar() {
           console.log(data);
           setProfileData(data);
           setAvatar(data.avatar)
+          setUserName(data.userName)
+          
           console.log(avatar);
         } catch (error) {
           console.error("Error fetching profile:", error);
@@ -87,7 +93,7 @@ function Navbar() {
 
       fetchProfile();
     }
-  }, [token, phoneNumber]);
+  }, [token, phoneNumber, avt]);
 
 
   console.log(profileData);
@@ -110,7 +116,7 @@ function Navbar() {
                   <img
                     // src="https://s120-ava-talk.zadn.vn/2/5/a/5/6/120/5ded83a5856f6d2af9fce6eac4b8d6d2.jpg"
                     src={avatar}
-                    className="w-14 rounded-full border "
+                    className="rounded-full border w-12 h-12"
                     alt="avatar"
                   />
                 </div>
@@ -130,7 +136,7 @@ function Navbar() {
                 <div className="px-4 text-sm ">
                   <div className="py-2">
                     <span className="text-lg font-medium text-[#081c36]">
-                      Trần Huy
+                      {userName}
                     </span>
                   </div>
                   <div className="w-[270px] border-y py-1 text-sm ">
