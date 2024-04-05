@@ -332,7 +332,7 @@ Ví dụ:
         npm install @react-navigation/bottom-tabs @react-navigation/stack
         npm install react-native-elements react-native-popup-menu
         npm install react-native-gesture-handler@2.14.0 expo@~50.0.14 react-native@0.73.6
-        
+        npm install moment
   
 `THƯ VIỆN LIÊN QUAN ĐẾN LINEAR-GRADIENT`
         

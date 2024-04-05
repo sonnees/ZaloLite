@@ -40,8 +40,6 @@ public class Account implements UserDetails {
     private Setting setting;
 
     public Account(AccountCreateDTO accountCreateDTO) {
-        Random random = new Random();
-
         this.id = UUID.randomUUID();
         this.phoneNumber = accountCreateDTO.getPhoneNumber();
         this.pw = new BCryptPasswordEncoder().encode(accountCreateDTO.getPassword());
@@ -77,6 +75,10 @@ public class Account implements UserDetails {
             case SHOW_DM -> temp.setBirthday(new Date(0,temp.getBirthday().getMonth(),temp.getBirthday().getDay()));
         }
         return temp;
+    }
+
+    public Profile getProfile(){
+        return this.profile;
     }
 
     @Override

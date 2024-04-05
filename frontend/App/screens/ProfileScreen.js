@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, ImageBackground
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { API_PROFILE } from '../api/Api';
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
@@ -23,7 +24,7 @@ export default function ProfileScreen() {
     // Function to fetch user info
     const fetchUserInfo = async (phoneNumber, token) => {
       try {
-        const response = await axios.get(`http://192.168.1.10:8081/api/v1/account/profile/${phoneNumber}`, {
+        const response = await axios.get(`${API_PROFILE}${phoneNumber}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -60,11 +61,11 @@ export default function ProfileScreen() {
       source={require("../assets/cover_Image.jpg")}
     >
       <View style={{ flex: 1, flexDirection: "row" }}>
-      <Image style={{width: "7%", height: "30%", resizeMode: "contain", marginLeft:"5%", marginTop: "1%" }} source={require("../assets/back1.png")}
-          onStartShouldSetResponder={() => navigation.navigate('TabNavigator',{ screen: 'Me' })}
+        <Image style={{ width: "7%", height: "30%", resizeMode: "contain", marginLeft: "5%", marginTop: "1%" }} source={require("../assets/back1.png")}
+          onStartShouldSetResponder={() => navigation.navigate('TabNavigator', { screen: 'Me' })}
         ></Image>
         <View style={{ flex: 1.5 }}></View>
-        <Image style={{width: "7%", height: "30%", resizeMode: "contain", marginTop: "1%", marginRight: "5%"}} source={require("../assets/more.png")}
+        <Image style={{ width: "7%", height: "30%", resizeMode: "contain", marginTop: "1%", marginRight: "5%" }} source={require("../assets/more.png")}
           onStartShouldSetResponder={() => navigation.navigate("InformationScreen")}
         ></Image>
       </View>
@@ -80,8 +81,8 @@ export default function ProfileScreen() {
           <Text style={{ fontSize: 15, fontFamily: "Roboto", color: "blue", }}>Cập nhật giới thiệu bản thân</Text>
         </View>
         <View style={{ flex: 0.04 }}></View>
-        <View style={{flex: 0.3,justifyContent: "center", alignItems: "center"}}>
-          <Image style={{width: 100, height: 100,borderRadius: 50}} source={require("../assets/state.jpg")}></Image>
+        <View style={{ flex: 0.3, justifyContent: "center", alignItems: "center" }}>
+          <Image style={{ width: 100, height: 100, borderRadius: 50 }} source={require("../assets/state.jpg")}></Image>
         </View>
         <View style={{ flex: 0.1 }}>
           <Text style={{ textAlign: "center", fontFamily: "Roboto", fontSize: 15, fontWeight: "bold" }}>Hôm nay {userInfo.userName} có gì vui?</Text>
@@ -109,7 +110,7 @@ export default function ProfileScreen() {
           source={{ uri: userInfo.avatar }}
         ></Image>
       </View>
-      
+
     </ImageBackground>
   );
 }

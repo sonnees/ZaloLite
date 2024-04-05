@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.13.0",
+    "@cloudinary/url-gen": "^1.19.0",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.11.3",
@@ -25,6 +27,7 @@
     "date-fns": "^3.2.0",
     "date-fns-tz": "^2.0.0",
     "emoji-mart": "^5.5.2",
+    "firebase": "^10.10.0",
     "react": "^18.2.0",
     "react-custom-scrollbars-2": "^4.5.0",
     "react-dom": "^18.2.0",

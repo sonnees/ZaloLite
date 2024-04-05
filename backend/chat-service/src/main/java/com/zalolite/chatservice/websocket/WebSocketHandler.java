@@ -7,9 +7,7 @@ import com.zalolite.chatservice.dto.enums.TypeGroupMessage;
 import com.zalolite.chatservice.dto.enums.TypeNotify;
 import com.zalolite.chatservice.dto.enums.TypeUserMessage;
 import com.zalolite.chatservice.dto.handleChat.*;
-import com.zalolite.chatservice.dto.handleGroup.CreateGroupDTO;
-import com.zalolite.chatservice.dto.handleGroup.DeleteGroupDTO;
-import com.zalolite.chatservice.dto.handleGroup.GroupDTO;
+import com.zalolite.chatservice.dto.handleGroup.*;
 import com.zalolite.chatservice.dto.handleUser.*;
 import com.zalolite.chatservice.dto.notify.NotifyChat;
 import com.zalolite.chatservice.dto.notify.NotifyGroup;
@@ -104,7 +102,6 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                     NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | Delete Group");
                                                     sendMessageToAllClients(arrayID, arrayID[0] ,obj);
-
                                                     return Mono.empty();
                                                 })
                                                 .thenMany(Flux.just(message))
@@ -112,6 +109,235 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                     log.error("** " + e);
                                                     NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | Create Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM03 -> {
+                                        AppendMemberGroupDTO obj = objectMapper.readValue(message, AppendMemberGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .appendMember(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | append Member Group");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    if(e.getMessage().equals("CONFLICT")) notify.setTypeNotify(TypeNotify.CONFLICT);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | append Member Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+                                    case TGM04 -> {
+                                        AppendMemberGroupDTO obj = objectMapper.readValue(message, AppendMemberGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .appendAdmin(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | append admin Group");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    if(e.getMessage().equals("CONFLICT")) notify.setTypeNotify(TypeNotify.CONFLICT);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | append admin Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM05 -> {
+                                        AppendMemberGroupDTO obj = objectMapper.readValue(message, AppendMemberGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .removeAdmin(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | remove admin Group");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | remove admin Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM06 -> {
+                                        AppendMemberGroupDTO obj = objectMapper.readValue(message, AppendMemberGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .removeMember(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | remove member Group");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | remove member Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM07 -> {
+                                        AppendMemberGroupDTO obj = objectMapper.readValue(message, AppendMemberGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .changeOwner(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | change owner Group");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | change owner Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM08 -> {
+                                        ChangeNameChatGroupDTO obj = objectMapper.readValue(message, ChangeNameChatGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .updateNameChat(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | change chat name Group");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | change chat name Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM09 -> {
+                                        ChangeAvatarGroupDTO obj = objectMapper.readValue(message, ChangeAvatarGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .updateAvatar(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | change avatar Group");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | change avatar Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM10 -> {
+                                        UpdateSettingGroupDTO obj = objectMapper.readValue(message, UpdateSettingGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .updateSetting_changeChatNameAndAvatar(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | update setting change chat name and avatar Group");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | update setting change chat name and avatar Group");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM11 -> {
+                                        UpdateSettingGroupDTO obj = objectMapper.readValue(message, UpdateSettingGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .updateSetting_pinMessages(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | update setting pin messages");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | update setting pin messages");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM12 -> {
+                                        UpdateSettingGroupDTO obj = objectMapper.readValue(message, UpdateSettingGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .updateSetting_sendMessages(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | update setting send messages");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | update setting send messages");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM13 -> {
+                                        UpdateSettingGroupDTO obj = objectMapper.readValue(message, UpdateSettingGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .updateSetting_membershipApproval(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | update setting membership approval");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | update setting membership approval");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TGM14 -> {
+                                        UpdateSettingGroupDTO obj = objectMapper.readValue(message, UpdateSettingGroupDTO.class);
+                                        yield groupHandleWebSocket
+                                                .updateSetting_createNewPolls(obj)
+                                                .flatMapMany(arrayID -> {
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
+                                                    sendMessageToClient(path,sessionId,notify, "Pass | update setting create new polls");
+                                                    sendMessageToAllClients(arrayID, "" ,obj);
+                                                    return Mono.empty();
+                                                })
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | update setting create new polls");
                                                     return Mono.empty();
                                                 });
                                     }

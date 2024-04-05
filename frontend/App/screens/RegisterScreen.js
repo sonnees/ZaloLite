@@ -3,6 +3,7 @@ import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Ima
 import PhoneNumberInput from './PhoneNumberInput'; // Import component PhoneNumberInput
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
+import { API_CHECKPHONE } from '../api/Api';
 
 const RegisterScreen = () => {
   let navigation = useNavigation();
@@ -15,6 +16,26 @@ const RegisterScreen = () => {
   const [isCheckedTerm1, setIsCheckedTerm1] = useState(false);
   const [isCheckedTerm2, setIsCheckedTerm2] = useState(false);
 
+  const checkPhoneNumber = async () => {
+    try {
+      const response = await fetch(`${API_CHECKPHONE}${phoneNumber}`);
+      const status = response.status; // Lấy mã trạng thái của phản hồi
+
+      if (status === 409) {
+        // Số điện thoại đã được đăng ký
+        Alert.alert('Thông báo', 'Số điện thoại đã được đăng ký. Vui lòng sử dụng số điện thoại khác.');
+      } else if (status === 200) {
+        // Số điện thoại chưa được đăng ký
+        navigation.navigate('RegisterDEScreen', { userName: userName, phoneNumber: phoneNumber });
+      } else {
+        // Xử lý các trường hợp khác nếu cần
+      }
+    } catch (error) {
+      console.error('Lỗi khi kiểm tra số điện thoại:', error);
+      Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi kiểm tra số điện thoại.');
+    }
+  };
+
   const handleNext = () => {
     if (phoneNumber.trim() === '' || phoneNumber.length !== 10) {
       Alert.alert('Lỗi', 'Số điện thoại không hợp lệ. Vui lòng kiểm tra lại.');
@@ -26,8 +47,9 @@ const RegisterScreen = () => {
       return;
     }
 
-    // Truyền userName sang màn hình tiếp theo (nếu cần)
-    navigation.navigate('RegisterDEScreen', { userName: userName, phoneNumber: phoneNumber });
+    // Gọi hàm kiểm tra số điện thoại
+    checkPhoneNumber();
+
   };
 
   return (
