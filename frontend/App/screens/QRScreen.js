@@ -42,7 +42,7 @@ const QRScannerScreen = () => {
     
     try {
       // Mở WebSocket và gửi dữ liệu
-      const newSocket = new WebSocket('ws://192.168.137.198:8081/ws/auth/' + data);
+      const newSocket = new WebSocket('ws://192.168.137.180:8081/ws/auth/' + data);
       setScanned(true);
       navigation.navigate('ConfirmQRScreen', {data: data});
       await waitForWebSocketOpen(newSocket);

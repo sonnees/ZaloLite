@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useContext } from 'react';
 import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Text, StatusBar, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,7 +7,7 @@ import axios from 'axios';
 import { getTimeDifference } from '../function/CalTime';
 import { getDataFromConversations } from '../function/DisplayLastChat';
 import { API_INFOR_USER } from '../api/Api';
-import { findConversationByID } from '../function/FindConservation';
+import { UserInfoContext } from '../App';
 const MessagesScreen = () => {
   let navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
@@ -15,7 +15,7 @@ const MessagesScreen = () => {
   const [modalChatVisible, setModalChatVisible] = useState(false);
   const [lastConversation, setLastConversation] = useState([]);
   const [conversation, setConversation] = useState([]);
-
+  const { userInfo, setUserInfo, chatID, setChatID } = useContext(UserInfoContext)
   useEffect(() => {
     const fetchData = async () => {
       const token = await getToken();
@@ -54,8 +54,9 @@ const MessagesScreen = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const userInfo = await response.data;
-      const c = userInfo.conversations
+      const user = await response.data;
+      setUserInfo(user)
+      const c = user.conversations
       setConversation(c);
       const updatedConversation = getDataFromConversations(c);
       setLastConversation(updatedConversation);
@@ -71,8 +72,8 @@ const MessagesScreen = () => {
     if (modalVisible) {
       setModalChatVisible(false);
     } else {
-      console.log("CHATID nè:----------", chatID);
-      navigation.navigate("ChatScreen", { chatID: chatID });
+      setChatID(chatID)
+      navigation.navigate("ChatScreen");
     }
   };
 
@@ -81,8 +82,6 @@ const MessagesScreen = () => {
       setModalChatVisible(true);
     }, 500);
   };
-
-
 
   const ChatElement = memo(({ item }) => {
     return (
@@ -93,10 +92,10 @@ const MessagesScreen = () => {
           style={{ height: 75, flexDirection: 'row', width: '100%' }}
         >
           <Image style={{ width: 55, height: 55, resizeMode: "contain", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
-            source={{ uri: item.chatAvatar }} />
+            source={{ uri: item.chatAvatar ? item.chatAvatar : null }} />
 
           <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>
-            <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{item.chatName}</Text>
+            <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{item.chatName ? item.chatName : null}</Text>
             <Text style={{ fontSize: 14, fontWeight: '400', color: 'gray', marginBottom: 10 }}>{item.lastTopChatActivity.contents[0].value}</Text>
           </View>
 

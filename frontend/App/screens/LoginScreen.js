@@ -7,7 +7,6 @@ import axios from 'axios';
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
-  const [tk, setTk] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
   const newPassword = route.params?.newPassword;
@@ -40,7 +39,6 @@ const LoginScreen = () => {
         const getToken = async () => {
           try {
             const token = await AsyncStorage.getItem('token');
-            setTk(token)
             return token;
           } catch (error) {
             console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
@@ -66,9 +64,9 @@ const LoginScreen = () => {
         };
         const token = await getToken();
         const userID = await fetAccountInfor(token);
-        console.log("TOKEN từ LOGIN: \n", token);
-        console.log("USERID từ LOGIN: \n", userID);
-        navigation.navigate('TabNavigator');
+        console.log("DATA: \n", userID);
+        console.log("TOKEN: \n", token);
+        navigation.navigate('TabNavigator', { userID: userID });
 
 
       } else {
@@ -95,7 +93,7 @@ const LoginScreen = () => {
           <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white", marginLeft: "2%" }}>Đăng nhập</Text>
         </View>
         <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 12, backgroundColor: "#DDDDDD", height: 45 }}>
-          <Text style={{ fontSize: 14, marginLeft: "6%" }}>Vui lòng nhập số tài khoản và mật khẩu để đăng nhập </Text>
+          <Text style={{ fontSize: 14, marginLeft: "6%" }}>Vui lòng nhập số tài khoản và mật khẩu để đăng nhập n</Text>
         </View>
 
         <View style={{ flexDirection: "row", paddingHorizontal: 10 }}>
