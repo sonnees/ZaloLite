@@ -108,6 +108,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { NavLink, Outlet } from "react-router-dom";
 import TabList from "@mui/lab/TabList";
+import { useLocation } from 'react-router-dom';
 
 import AddFriendDialog from "../../components/models/AddFriend";
 
@@ -115,6 +116,18 @@ const Message = lazy(() => import(".")); // Lazy load Message component
 const OtherMessage = lazy(() => import("./OtherMessage")); // Lazy load OtherMessage component
 
 function MessageFilterBar() {
+  const location = useLocation();
+  const { state } = location;
+
+  // Kiểm tra xem state có tồn tại không trước khi truy cập
+  if (state) {
+    const { token, phoneNumber } = state;
+    // Bây giờ bạn có thể sử dụng token và phoneNumber ở đây
+    // console.log(">>>>>>>TOKEN>>>>>>>>>>", token);
+    // console.log(">>>>>>>PHONENUMBER>>>>>>>>", phoneNumber);
+  }
+
+  // console.log(">>>>STATE>>>>>>>>>",state);
   const [searchTerm, setSearchTerm] = useState("");
   const [item, setItem] = useState("UuTien");
   const [Component, setComponent] = useState(() => Message); // Use uppercase Component

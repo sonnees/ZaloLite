@@ -75,25 +75,68 @@
 // export default Message;
 
 import React, { useState, useEffect } from "react";
-import conversations from "../../data/conversations";
+// import conversations from "../../data/conversations";
 import ChatElement from "../../components/ChatElement";
 import { Link, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import Cookies from "universal-cookie";
+import { decryptData } from "../../utils/cookies";
 
 function Message() {
+  const cookies = new Cookies();
   const navigate = useNavigate();
-  // const [conversations, setConversations] = useState([]);
-  
+  const location = useLocation();
+  const { state } = location;
+  const [conversations, setConversations] = useState([]);
+
+  // Kiểm tra xem state có tồn tại không trước khi truy cập
+  if (state) {
+    const { token, phoneNumber } = state;
+    // Bây giờ bạn có thể sử dụng token và phoneNumber ở đây
+    // console.log(">>>>>>>TOKEn in message>>>>>>>>>>",token);
+    // console.log(">>>>>>>PHONENUMBER in message>>>>>>>>",phoneNumber);
+  }
+
+  const [userIDFromCookies, setUserIDFromCookies] = useState("");
+  const [tokenFromCookies, setTokenFromCookies] = useState("");
+
+  // Hàm để lấy userID từ cookies và giải mã nó
+  const getUserIDFromCookie = () => {
+    // Lấy userID từ cookies
+    const userIDFromCookie = cookies.get("userID");
+
+    // Nếu có userID từ cookies, giải mã và trả về
+    if (userIDFromCookie) {
+      // const userIDDecrypted = decryptData(userIDFromCookie);
+      return userIDFromCookie;
+    }
+
+    // Nếu không có userID từ cookies, trả về null
+    return null;
+  };
+
+  // Sử dụng useEffect để lấy userID từ cookies khi component được mount
   useEffect(() => {
+    // Gán giá trị lấy được từ cookies vào state userIDFromCookies
+    const userID = getUserIDFromCookie();
+    setUserIDFromCookies(userID);
+
+    // Lấy token từ cookies và giải mã nó
+    const tokenFromCookie = cookies.get("token");
+    if (tokenFromCookie) {
+      // const tokenDecrypted = decryptData(tokenFromCookie);
+      setTokenFromCookies(tokenFromCookie);
+    }
+
     const fetchConversations = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8082/api/v1/user/info/3000f6da-e5c7-43eb-9733-f772672779e1",
+          `http://localhost:8082/api/v1/user/info/${userID}`,
           {
             credentials: "include",
             headers: {
               "Content-Type": "application/json",
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6IjAwMDAwMDAwMDAiLCJpYXQiOjE3MTE2MTg0NjcsImV4cCI6MTcxMTcyNjQ2N30.kZkUgVoIYj_97LgkWHMPhmVHmalSR1IH88oBr0DCvD8",
+              Authorization: "Bearer " + tokenFromCookie,
             },
             method: "GET",
           },
@@ -102,17 +145,24 @@ function Message() {
           throw new Error("Failed to fetch conversations");
         }
         const data = await response.json();
-        // setConversations(data); // Cập nhật state với dữ liệu từ API
-        console.log('====================================');
-        console.log(data);
-        console.log('====================================');
+        console.table(data.conversations);
+        setConversations(data.conversations); // Cập nhật state với dữ liệu từ API
       } catch (error) {
         console.error("Error fetching conversations:", error);
       }
     };
+    console.log("userID>>>>>>>>>>", userID);
+    console.log("tokenFromCookie?????????????", tokenFromCookie);
+    if (userID && tokenFromCookie) {
+      fetchConversations();
+    }
+  }, []); // Rỗng để chỉ chạy một lần sau khi component được mount
 
-    fetchConversations();
-  }, []); // Sử dụng dependency array rỗng để fetch dữ liệu chỉ một lần khi component được render
+  console.log("userIDFromCookies", userIDFromCookies);
+
+  // useEffect(() => {
+    
+  // }, [userIDFromCookies, tokenFromCookies]);
 
   const handleConversationClick = (conversation) => {
     // Di chuyển đến route Conversation với các query parameters tương ứng
@@ -123,14 +173,18 @@ function Message() {
     <div className="h-[calc(100vh-95px)] w-full overflow-auto">
       {conversations.map((conversation) => (
         <Link
-          key={conversation.userID}
-          to={`chat?id=${conversation.userID}&type=individual-chat`}
+          key={conversation.chatID}
+          to={{
+            pathname: `chat`,
+            search: `?id=${conversation.chatID}&type=individual-chat&chatName=${conversation.chatName}&chatAvatar=${conversation.chatAvatar}`,
+          }}
           className="block cursor-pointer hover:bg-slate-50"
         >
           <ChatElement
-            id={conversation.userID}
-            key={conversation.userID}
-            name={conversation.userName}
+            id={conversation.chatID}
+            key={conversation.chatID}
+            chatName={conversation.chatName}
+            chatAvatar={conversation.chatAvatar}
             {...conversation}
           />
         </Link>

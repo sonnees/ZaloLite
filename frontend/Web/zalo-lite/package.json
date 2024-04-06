@@ -24,10 +24,14 @@
     "@mui/lab": "^5.0.0-alpha.160",
     "@mui/material": "^5.15.4",
     "@mui/styled-engine-sc": "^6.0.0-alpha.12",
+    "axios": "^1.6.8",
+    "crypto-js": "^4.2.0",
     "date-fns": "^3.2.0",
     "date-fns-tz": "^2.0.0",
     "emoji-mart": "^5.5.2",
     "firebase": "^10.10.0",
+    "js-cookie": "^3.0.5",
+    "query-string": "^9.0.0",
     "react": "^18.2.0",
     "react-custom-scrollbars-2": "^4.5.0",
     "react-dom": "^18.2.0",
@@ -35,7 +39,9 @@
     "react-router-dom": "^6.21.1",
     "react-virtualized": "^9.22.5",
     "socket.io-client": "^4.7.5",
-    "styled-components": "^6.1.8"
+    "styled-components": "^6.1.8",
+    "universal-cookie": "^7.1.4",
+    "websocket": "^1.0.34"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

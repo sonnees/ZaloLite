@@ -1,16 +1,24 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { useLocation } from "react-router-dom";
+import queryString from "query-string";
+import Cookies from "universal-cookie";
+import { decryptData } from "../utils/cookies";
+import axios from "axios";
+import socketIOClient from "socket.io-client";
 
 import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import MessageDetail from "./MessageDetail";
 import MessageInput from "./MessageInput";
+import TextField from "@mui/material/TextField";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -54,86 +62,211 @@ const Message = ({ sender, content, timestamp }) => (
   </div>
 );
 
+// const sendMessageWithTextViaSocket = (textMessage) => {
+//   const socket = socketIOClient(
+//     "ws://localhost:8082/ws/chat/5b685d06-8fbe-4ab7-8053-7746760a8001",
+//   );
+
+//   socket.onopen = () => {
+//     console.log("WebSocket connected successfully!");
+//     socket.emit(
+//       "message",
+//       JSON.stringify({
+//         id: "49a9768c-a2a8-0040-9653-5291b9718d11",
+//         tcm: "TCM01",
+//         userID: "26ce60d1-64b9-45d2-8053-7746760a8354",
+//         userAvatar:
+//           "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
+//         userName: "Tran Huy",
+//         timestamp: new Date().toISOString(),
+//         parentID: null,
+//         contents: [
+//           {
+//             key: "text",
+//             value: textMessage,
+//           },
+//         ],
+//       }),
+//     );
+//   };
+
+//   socket.onerror = (error) => {
+//     console.error("WebSocket error:", error);
+//   };
+
+//   socket.onclose = () => {
+//     console.log("WebSocket connection closed.");
+//   };
+// };
+
 const Conversation = () => {
-  const handleSendMessage = (newMessage) => {
-    // Xử lý logic gửi tin nhắn, có thể thêm tin nhắn mới vào danh sách messages
-    // hoặc sử dụng một hàm callback để truyền tin nhắn lên component cha.
-    console.log("Gửi tin nhắn:", newMessage);
+  const cookies = new Cookies();
+  const [tokenFromCookies, setTokenFromCookies] = useState("");
+  // const params = useParams();
+  // console.log("Params:", params);
+  // const { id, type } = params;
+  // console.log("ID:", id);
+  // console.log("Type:", type);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const { id } = queryString.parse(location.search);
+  console.log("Chat ID:", id);
+  const chatName = searchParams.get("chatName");
+  const chatAvatar = searchParams.get("chatAvatar");
+  // console.log("Chat Name:", chatName);
+  // console.log("Chat Avatar:", chatAvatar);
+
+  const [messages, setMessages] = useState([]);
+  const [startIndex, setStartIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(15);
+
+  const [message, setMessage] = useState("");
+  const [socket, setSocket] = useState(null);
+
+  const handleInputChange = (e) => {
+    setMessage(e.target.value);
   };
-  const messages = [
-    {
-      sender: "other",
-      content: "Hello!",
-      timestamp: "15:30",
-      avatar: "avatar_url",
-    },
-    {
-      sender: "me",
-      content: "Hi there!",
-      timestamp: "15:32",
-      avatar: "my_avatar_url",
-    },
-    {
-      sender: "other",
-      content: "How are you doing today?",
-      timestamp: "15:35",
-      avatar: "avatar_url",
-    },
-    {
-      sender: "me",
-      content: "I'm doing well, thank you. How about you?",
-      timestamp: "15:37",
-      avatar: "my_avatar_url",
-    },
-    {
-      sender: "other",
-      content: "I'm great! What have you been up to lately?",
-      timestamp: "15:40",
-      avatar: "avatar_url",
-    },
-    {
-      sender: "me",
-      content: "Not much, just working on some projects. How about you?",
-      timestamp: "15:42",
-      avatar: "my_avatar_url",
-    },
-    {
-      sender: "other",
-      content:
-        "I've been busy with work too. Do you have any plans for the weekend?",
-      timestamp: "15:45",
-      avatar: "avatar_url",
-    },
-    {
-      sender: "me",
-      content:
-        "I'm thinking of relaxing and maybe catching up on some movies. How about you?",
-      timestamp: "15:47",
-      avatar: "my_avatar_url",
-    },
-    {
-      sender: "other",
-      content:
-        "That sounds nice! I might go hiking with friends. Would you like to join?",
-      timestamp: "15:50",
-      avatar: "avatar_url",
-    },
-    
-    {
-      sender: "me",
-      content: "Thanks for the invitation! I'll let you know if I can make it.",
-      timestamp: "15:52",
-      avatar: "my_avatar_url",
-    },
-    {
-      sender: "me",
-      content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero adipisci itaque, quis fugiat dolore recusandae cum esse et ducimus blanditiis magni explicabo. Illo, architecto sed! Ad quod tempore sed quo. Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores velit, ex voluptas sint modi iste unde ipsam explicabo ducimus, animi doloremque nostrum, delectus ab suscipit aliquid cupiditate reiciendis sed architecto? Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore laudantium doloribus ullam quidem ipsa sed commodi sit quod ipsam, pariatur voluptatum minus fugit esse autem quibusdam tempore? Vel, autem inventore!",
-      timestamp: "15:52",
-      avatar: "my_avatar_url",
-    },
-    // Thêm tin nhắn khác nếu cần
-  ];
+  console.log("Message:", message);
+
+  // Hàm gửi tin nhắn qua WebSocket với nội dung là text từ input
+  // const handleSendMessage = () => {
+  //   if (message.trim() !== "") {
+  //     console.log("Gửi tin nhắn:", message);
+  //     sendMessageWithTextViaSocket(message);
+  //     setMessage(""); // Xóa nội dung của input message sau khi gửi
+  //   }
+  // };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+      console.error("Enter key is pressed");
+    }
+  };
+
+  // const handleSendMessage = (newMessage) => {
+  //   // Xử lý logic gửi tin nhắn, có thể thêm tin nhắn mới vào danh sách messages
+  //   // hoặc sử dụng một hàm callback để truyền tin nhắn lên component cha.
+  //   console.log("Gửi tin nhắn:", newMessage);
+  // };
+
+  const fetchMessages = async (id, x, y, token) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8082/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      console.log("Data:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    // Lấy token từ cookies và giải mã nó
+    const tokenFromCookie = cookies.get("token");
+    if (tokenFromCookie) {
+      const tokenDecrypted = decryptData(tokenFromCookie);
+      setTokenFromCookies(tokenDecrypted);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchedMessages = await fetchMessages(
+        id,
+        startIndex,
+        endIndex,
+        tokenFromCookies,
+      );
+      setMessages(fetchedMessages);
+    };
+    const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+    newSocket.onopen = () => {
+      console.log("WebSocket connected >>>>>>>>HUy");
+    };
+    setSocket(newSocket);
+    // return () => {
+    //   newSocket.close();
+    // };
+    fetchData();
+  }, [id, tokenFromCookies, message]);
+
+  const sendMessageWithTextViaSocket = (textMessage) => {
+    if (socket) {
+      const message = {
+        id: "49a9768c-a2a8-0040-9653-5291c9718d11",
+        tcm: "TCM01",
+        userID: "26ce60d1-64b9-45d2-8053-7746760a8354",
+        userAvatar:
+          "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
+        userName: "Tran Huy",
+        timestamp: new Date().toISOString(),
+        parentID: null,
+        contents: [
+          {
+            key: "text",
+            value: textMessage,
+          },
+        ],
+      };
+      socket.send(JSON.stringify(message));
+    } else {
+      console.error("WebSocket is not initialized.");
+    }
+  };
+
+  const handleSendMessage = () => {
+    if (message.trim() !== "") {
+      console.log("Gửi tin nhắn:", message);
+      sendMessageWithTextViaSocket(message);
+      setMessage(""); // Xóa nội dung của input message sau khi gửi
+    }
+  };
+
+  const loadMoreMessages = async () => {
+    const newStartIndex = startIndex + 10;
+    const newEndIndex = endIndex + 10;
+    const moreMessages = await fetchMessages(
+      id,
+      newStartIndex,
+      newEndIndex,
+      tokenFromCookies,
+    );
+    setMessages((prevMessages) => [...moreMessages.reverse(), ...prevMessages]);
+    setStartIndex(newStartIndex);
+    setEndIndex(newEndIndex);
+  };
+
+  // const loadOlderMessages = async () => {
+  //   const newStartIndex = startIndex + 10;
+  //   const newEndIndex = endIndex + 10;
+  //   const moreMessages = await fetchMessages(
+  //     id,
+  //     newStartIndex,
+  //     newEndIndex,
+  //     tokenFromCookies,
+  //   );
+  //   // Đảo ngược danh sách tin nhắn mới và cập nhật state
+  //   const reversedMoreMessages = moreMessages.reverse();
+  //   setMessages((prevMessages) => [...reversedMoreMessages, ...prevMessages]);
+  //   setStartIndex(newStartIndex);
+  //   setEndIndex(newEndIndex);
+  // };
+
+  // const handleScroll = (e) => {
+  //   const { scrollTop } = e.target;
+  //   // Kiểm tra nếu người dùng cuộn đến đầu trang
+  //   if (scrollTop === 0) {
+  //     loadOlderMessages();
+  //   }
+  // };
 
   const [openPicker, setOpenPicker] = useState(false);
 
@@ -152,13 +285,13 @@ const Conversation = () => {
                 <Avatar
                   sx={{ width: 48, height: 48 }}
                   alt="Name"
-                  src="https://zpsocial-f50-org.zadn.vn/b460c9d113d8fd86a4c9.jpg"
+                  src={chatAvatar}
                 />
               </StyledBadge>
             </div>
             <div className="flex flex-col">
               <div className="text-lg font-medium text-[#081c36]">
-                <span>Nguyễn Anh Vũ</span>
+                <span>{chatName}</span>
               </div>
               <div className="flex items-center text-sm text-[#7589a3]">
                 <span>Vừa truy cập</span>
@@ -202,12 +335,19 @@ const Conversation = () => {
         </div>
       </div>
       {/* -68 */}
-      <div className="h-[calc(100vh-174px)] w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3">
+      <div
+        className="h-[calc(100vh-174px)] w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3"
+        // onScroll={handleScroll}
+      >
         {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
         <Message sender="me" content="Chào bạn!" timestamp="15:32" />
         Thêm tin nhắn khác ở đây */}
         {messages.map((message, index) => (
-          <MessageDetail key={index} message={message} />
+          <MessageDetail
+            key={index}
+            message={message}
+            chatAvatar={chatAvatar}
+          />
         ))}
       </div>
       <div className="border-t">
@@ -293,7 +433,52 @@ const Conversation = () => {
         </div>
         <div className="h-[58.5px]">
           {/* Thêm phần nhập tin nhắn ở đây */}
-          <MessageInput onSendMessage={handleSendMessage} />
+          {/* <MessageInput
+            onSendMessage={handleSendMessage}
+            onKeySendMessage={handleKeyPress}
+          /> */}
+          <div
+            className="flex w-full items-center bg-white"
+            style={{ height: "58.5px" }}
+          >
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="Nhập tin nhắn..."
+              value={message}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              inputProps={{ style: { fontSize: 15 } }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderTop: "1px solid",
+                  borderBottom: "none",
+                  borderLeft: "none",
+                  borderRight: "none",
+                  borderColor: "#CFD6DC",
+                  borderRadius: 2,
+                },
+                "& .MuiOutlinedInput-root:hover": {
+                  borderTop: "1px solid",
+                  borderBottom: "none",
+                  borderLeft: "none",
+                  borderRight: "none",
+                  borderRadius: 2,
+                  borderColor: "blue",
+                },
+                "& .Mui-focused": {
+                  borderTop: "1px solid",
+                  borderBottom: "none",
+                  borderLeft: "none",
+                  borderRight: "none",
+                  borderRadius: 2,
+                },
+              }}
+            />
+            {/* <IconButton color="primary" onClick={handleSendMessage}>
+        <SendIcon />
+      </IconButton> */}
+          </div>
         </div>
       </div>
     </div>

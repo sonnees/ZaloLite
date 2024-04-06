@@ -1,11 +1,17 @@
 import { faLock, faMobileScreen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import QR_Test from "./../../assets/QR_Test.png";
+import Cookies from "universal-cookie";
 // import { WebSocket } from 'vite';
+import { encryptData } from "../../utils/cookies";
 
 export default function LoginForm() {
+  const cookies = new Cookies();
+
+  const [token, setToken] = useState(null);
+
   const [isSelectQR, setIsSelectQR] = useState(true);
   const navigate = useNavigate();
   const [qrCodeUrl, setQrCodeUrl] = useState('');
@@ -13,6 +19,43 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [socket, setSocket] = useState(null);
   const [flag, setFlag] = useState(false);
+
+  // // Hàm để đặt user ID vào cookie khi người dùng đăng nhập
+  //   const setUserIdInCookie = (id) => {
+  //       // Tạo chuỗi cookie với tên là "userId", giá trị là user ID, và hạn sử dụng là 1 ngày
+  //       document.cookie = `userId=${id}; expires=${new Date(Date.now() + 86400e3).toUTCString()}; path=/`;
+  //       // Cập nhật state userId
+  //       setUserId(id);
+  //   };
+
+    // Hàm để đặt token vào cookie
+    const setTokenInCookie = (tokenValue) => {
+      const tokenEncoded = encryptData(tokenValue);
+      // Đặt cookie token với thời gian hết hạn là 1 ngày và các tùy chọn bảo mật
+      cookies.set("token", tokenValue, {
+        expires: new Date(Date.now() + 86400e3), // Thời gian hết hạn: 1 ngày
+        // secure: true, // Chỉ truy cập thông qua HTTPS
+        // sameSite: 'strict', // Giới hạn truy cập cookie trong cùng một trang web
+        // httpOnly: true // Ngăn chặn việc truy cập cookie bằng JavaScript
+      }); 
+    };
+
+   // Hàm để mã hóa số điện thoại và đặt vào cookie
+    const setPhoneNumberInCookie = (phoneNumberValue) => {
+      // Mã hóa số điện thoại trước khi lưu vào cookie
+      const phoneNumberEncoded = encryptData(phoneNumberValue);
+      
+      // Tính toán thời gian hết hạn bằng cách thêm số lượng millisecond tương ứng với một ngày vào thời điểm hiện tại
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 1); // Thêm một ngày
+      
+      // Đặt cookie số điện thoại với thời gian hết hạn và các tùy chọn bảo mật
+      cookies.set("phoneNumber", phoneNumberValue, {
+        expires: expirationDate,
+      }); 
+    };
+
+  
 
   //=========================================================
   function isJSON(str) {
@@ -36,50 +79,50 @@ export default function LoginForm() {
 //=========================================================
   
 
-  useEffect(() => {
-    // Gọi API ở đây
-    const fetchQrCode = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:8081/api/v1/auth/authenticate/qr-code",
-        );
-        // Nếu sử dụng axios:
-        // const response = await axios.post('your_api_url_here', { key: 'value' });
+    useEffect(() => {
+      // Gọi API ở đây
+      const fetchQrCode = async () => {
+        try {
+          const response = await fetch(
+            "http://localhost:8081/api/v1/auth/authenticate/qr-code",
+          );
+          // Nếu sử dụng axios:
+          // const response = await axios.post('your_api_url_here', { key: 'value' });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch QR code");
+          if (!response.ok) {
+            throw new Error("Failed to fetch QR code");
+          }
+
+          const data = await response.json();
+          // console.log(data);
+          setQrCodeUrl("data:image/png;base64," + data.field2); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
+          // console.log(qrCodeUrl);
+          //=========SOCKET=========
+          const socketLink = data.field1;
+          const newSocket = new WebSocket('ws://localhost:8081/ws/auth/' + data.field1);
+          // console.log(data.field1);
+          newSocket.onopen = () => {
+            console.log("WebSocket connected");
+          };
+
+          setSocket(newSocket);
+          return () => {
+            newSocket.close();
+          };
+          //========================
+        } catch (error) {
+          console.error("Error fetching QR code:", error.message);
         }
+      };
 
-        const data = await response.json();
-        // console.log(data);
-        setQrCodeUrl("data:image/png;base64," + data.field2); // Thay "qrCodeUrl" bằng trường dữ liệu thực tế từ API
-        // console.log(qrCodeUrl);
-        //=========SOCKET=========
-        const socketLink = data.field1;
-        const newSocket = new WebSocket('ws://localhost:8081/ws/auth/' + data.field1);
-        console.log(data.field1);
-        newSocket.onopen = () => {
-          console.log("WebSocket connected");
-        };
+      fetchQrCode();
+    }, []); // useEffect sẽ chạy một lần khi component được render
 
-        setSocket(newSocket);
-        return () => {
-          newSocket.close();
-        };
-        //========================
-      } catch (error) {
-        console.error("Error fetching QR code:", error.message);
+    useEffect(() => {
+      if (socket) {
+        handleReceiveToken();
       }
-    };
-
-    fetchQrCode();
-  }, []); // useEffect sẽ chạy một lần khi component được render
-
-  useEffect(() => {
-    if (socket) {
-      handleReceiveToken();
-    }
-  });
+    });
 //=========================================================
 
   async function fetchData(link) {
@@ -122,11 +165,16 @@ export default function LoginForm() {
         // Xử lý khi API trả về thành công
         
         const token = await response.json();
-        console.log(">>>>>>>TOKEN>>>>>>>>>>", token.field);
         // navigate('/app', {token: token.field});
         navigate("/app", {
           state: { token: token.field, phoneNumber: phoneNumber },
         });
+
+        //Lưu userID, token vào cookie
+        setTokenInCookie(token.field);
+        // console.log(token.field);
+        setPhoneNumberInCookie(phoneNumber);
+
         console.log("API call successful");
       } else {
         // Xử lý khi API trả về lỗi
@@ -144,7 +192,7 @@ export default function LoginForm() {
     socket.onmessage = async (event) => {
       if (isJSON(event.data)) {
         let data = JSON.parse(event.data);
-        console.log(data);
+        // console.log(data);
         if (data.token != null) {
           // console.log(data.token);
           navigate("/app", { token: data.token });

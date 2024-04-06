@@ -8,6 +8,7 @@ import Conversation from "../../components/Conversation";
 
 function DashboardLayout({ children, component }) {
   const [width, setWidth] = useState(window.innerWidth);
+  const [userID, setUserID] = useState(""); // State để lưu userID
 
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -20,6 +21,12 @@ function DashboardLayout({ children, component }) {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  // // Hàm để cập nhật userID
+  // const updateUserID = (newUserID) => {
+  //   setUserID(newUserID);
+  // };
+  // console.log("userID in dashboard layout", userID);
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
@@ -37,7 +44,7 @@ function DashboardLayout({ children, component }) {
             </div>
           </div>
         </div> */}
-        <Outlet/>
+        <Outlet />
       </div>
     </div>
   );
