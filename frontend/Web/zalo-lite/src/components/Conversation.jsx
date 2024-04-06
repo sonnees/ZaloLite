@@ -101,6 +101,7 @@ const Message = ({ sender, content, timestamp }) => (
 // };
 
 const Conversation = () => {
+  const messagesEndRef = useRef(null);
   const cookies = new Cookies();
   const [tokenFromCookies, setTokenFromCookies] = useState("");
   // const params = useParams();
@@ -244,7 +245,6 @@ const Conversation = () => {
     }
   };
 
-
   const handleSendMessage = () => {
     if (message.trim() !== "") {
       console.log("Gửi tin nhắn:", message);
@@ -311,8 +311,6 @@ const Conversation = () => {
   //   }
   // }, [socket]);
 
-
-  
   useEffect(() => {
     if (socket) {
       socket.onmessage = (event) => {
@@ -344,8 +342,15 @@ const Conversation = () => {
     }
   }, [socket, messages, userIDFromCookies]);
 
-
-  console.table("Messages:", messages);
+  // Hàm cuộn xuống dưới cùng của khung chat
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]); // Cuộn xuống dưới cùng mỗi khi danh sách tin nhắn thay đổi
 
   return (
     <div className="h-screen w-full">
@@ -426,6 +431,7 @@ const Conversation = () => {
             chatAvatar={chatAvatar}
           />
         ))}
+        <div ref={messagesEndRef} />
       </div>
       <div className="border-t">
         <div className="flex h-[47px] flex-row justify-items-start bg-white">
