@@ -7,6 +7,7 @@ import { API_AUTHENTICATE } from '../api/Api';
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [tk, setTk] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
   const newPassword = route.params?.newPassword;
@@ -43,8 +44,59 @@ const LoginScreen = () => {
 
         // Lưu phoneNumber vào AsyncStorage
         await AsyncStorage.setItem('phoneNumber', phoneNumber);
-        // Chuyển hướng đến màn hình tiếp theo
-        navigation.navigate('TabNavigator');
+
+        const getToken = async () => {
+          try {
+            const token = await AsyncStorage.getItem('token');
+            setTk(token)
+            return token;
+          } catch (error) {
+            console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+            return null;
+          }
+        };
+
+        const fetAccountInfor = async (token) => {
+          try {
+            const response = await axios.get(API_INFOR_ACCOUNT, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const dataAccountInfor = await response.data;
+            return dataAccountInfor;
+          } catch (error) {
+            console.error('Lỗi khi lấy thông tin cá nhân:', error);
+            return null;
+          }
+        };
+
+        const fetchUserInfo = async (token) => {
+          try {
+            console.log("Token: ", token);
+            const accountInfor = await fetAccountInfor(token);
+            console.log("Account Infor: ", accountInfor);
+            const user = accountInfor.profile.userID;
+            console.log("User ID: ", user);
+            const response = await axios.get(`${API_INFOR_USER}${user}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const dataUserInfor = await response.data;
+            console.log("User Infor:", dataUserInfor);
+            return dataUserInfor;
+          } catch (error) {
+            console.error('Lỗi khi lấy thông tin User:', error);
+            return null;
+          }
+        };
+        const token = await getToken();
+        const dataUserInfor = await fetchUserInfo(token);
+        console.log("DATA: \n", dataUserInfor);
+        navigation.navigate('TabNavigator', { dataUserInfor: dataUserInfor });
+
+
       } else {
         // Đăng nhập không thành công, hiển thị thông báo lỗi từ phản hồi của API
         Alert.alert('Lỗi', data.message);
