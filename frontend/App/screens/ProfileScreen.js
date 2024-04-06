@@ -47,15 +47,88 @@ export default function ProfileScreen() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [1, 1],
+      aspect: [4, 3],
       quality: 1,
     });
-  
+
+    console.log(result);
+
     if (!result.cancelled) {
-      setSelectedImage(result.uri);
-      uploadAvatar(result.uri);
+      setSelectedImage(result.assets[0].uri); // Lưu trữ ảnh đã chọn
+      handleUpload(result.assets[0].uri);
+      changeAvatar(result.assets[0].uri, token);
+       // Cập nhật state của selectedImage với URL của ảnh mới
+  setSelectedImage(imageUrl);
+  
+  // Cập nhật state của userInfo với URL của ảnh mới
+  setUserInfo(prevState => ({ ...prevState, avatar: imageUrl }));
+
+  // Chuyển đến màn hình InformationDetail và truyền avatar mới
+  navigation.navigate('InformationDetail', { newAvatar: imageUrl });
+
+  // Gọi hàm handleUpload để tải ảnh lên Cloudinary và thay đổi avatar trên server (nếu cần)
+  handleUpload(imageUrl);
     }
   };
+  const handleUpload = async (imageUri) => {
+    try {
+      const data = new FormData();
+      data.append('file', {
+        uri: imageUri,
+        type: 'image/jpeg', // hoặc 'image/png'
+        name: 'avatar.jpg', // tên tùy ý
+      });
+      data.append('upload_preset', 'ZaloLife');
+      data.append('cloud_name', 'dbmkvqy3b');
+  
+      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
+        method: 'POST',
+        body: data,
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to upload image to Cloudinary');
+      }
+  
+      const responseData = await response.json();
+      console.log('Upload successful:', responseData);
+      
+      // Ở đây bạn có thể xử lý responseData để lấy URL của ảnh từ Cloudinary
+      // Ví dụ: const imageUrl = responseData.secure_url;
+      
+      // Sau khi có URL, bạn có thể lưu nó vào state hoặc gửi lên server để lưu trữ
+    } catch (error) {
+      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
+      Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi tải ảnh lên Cloudinary.');
+    }
+  };
+  
+  const changeAvatar = async (imageUrl, token) => {
+    try {
+      const requestBody = {
+        field: imageUrl,
+      };
+  
+      const response = await axios.post('http://192.168.1.66:8081/api/v1/account/change-avatar', requestBody, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.status === 200) {
+        console.log('Thay đổi avatar thành công');
+        // Xử lý logic khi thay đổi avatar thành công
+      } else {
+        console.error('Thay đổi avatar không thành công:', response.data);
+        // Xử lý logic khi thay đổi avatar không thành công
+      }
+    } catch (error) {
+      console.error('Lỗi khi gửi yêu cầu thay đổi avatar:', error);
+      // Xử lý logic khi gặp lỗi
+    }
+  };
+  
   
   
 
