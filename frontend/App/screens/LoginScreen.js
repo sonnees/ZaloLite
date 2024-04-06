@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
-import { API_AUTHENTICATE, API_INFOR_ACCOUNT, API_INFOR_USER } from '../api/Api';
-import axios from 'axios';
+import { API_AUTHENTICATE } from '../api/Api';
+
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
@@ -12,6 +12,7 @@ const LoginScreen = () => {
   const route = useRoute();
   const newPassword = route.params?.newPassword;
   const isFocused = useIsFocused();
+
   useEffect(() => {
     console.log("newPassword:", newPassword);
     if (newPassword && isFocused) {
@@ -21,6 +22,7 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
+      // Gửi yêu cầu đăng nhập đến API
       const response = await fetch(API_AUTHENTICATE, {
         method: 'POST',
         headers: {
@@ -31,10 +33,16 @@ const LoginScreen = () => {
           password: password || newPassword,
         }),
       });
+
       const data = await response.json();
+
       if (response.status === 200) {
+        // Đăng nhập thành công, lưu token vào AsyncStorage
         await AsyncStorage.setItem('token', data.field);
+
         console.log('data:', data.field);
+
+        // Lưu phoneNumber vào AsyncStorage
         await AsyncStorage.setItem('phoneNumber', phoneNumber);
 
         const getToken = async () => {
@@ -90,6 +98,7 @@ const LoginScreen = () => {
 
 
       } else {
+        // Đăng nhập không thành công, hiển thị thông báo lỗi từ phản hồi của API
         Alert.alert('Lỗi', data.message);
       }
     } catch (error) {

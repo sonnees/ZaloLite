@@ -49,7 +49,8 @@ const RegisterScreen = () => {
 
     // Gọi hàm kiểm tra số điện thoại
     checkPhoneNumber();
-
+    // Gọi hàm kiểm tra số điện thoại
+    checkPhoneNumber();
   };
 
   return (
