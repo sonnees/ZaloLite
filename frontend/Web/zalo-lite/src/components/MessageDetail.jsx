@@ -97,8 +97,8 @@ const MessageDetail = ({ message, chatAvatar }) => {
 
     // Nếu có userID từ cookies, giải mã và trả về
     if (userIDFromCookie) {
-      const userIDDecrypted = decryptData(userIDFromCookie);
-      return userIDDecrypted;
+      // const userIDDecrypted = decryptData(userIDFromCookie);
+      return userIDFromCookie;
     }
 
     // Nếu không có userID từ cookies, trả về null

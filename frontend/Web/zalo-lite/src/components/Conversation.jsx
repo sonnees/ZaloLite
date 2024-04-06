@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,6 +19,7 @@ import Avatar from "@mui/material/Avatar";
 import MessageDetail from "./MessageDetail";
 import MessageInput from "./MessageInput";
 import TextField from "@mui/material/TextField";
+import { v4 as uuidv4 } from "uuid";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -122,6 +123,8 @@ const Conversation = () => {
 
   const [message, setMessage] = useState("");
   const [socket, setSocket] = useState(null);
+  const [userIDFromCookies, setUserIDFromCookies] = useState("");
+  const [flag, setFlag] = useState(false);
 
   const handleInputChange = (e) => {
     setMessage(e.target.value);
@@ -168,12 +171,30 @@ const Conversation = () => {
     }
   };
 
+  // Hàm để lấy userID từ cookies và giải mã nó
+  const getUserIDFromCookie = () => {
+    // Lấy userID từ cookies
+    const userIDFromCookie = cookies.get("userID");
+
+    // Nếu có userID từ cookies, giải mã và trả về
+    if (userIDFromCookie) {
+      // const userIDDecrypted = decryptData(userIDFromCookie);
+      return userIDFromCookie;
+    }
+
+    // Nếu không có userID từ cookies, trả về null
+    return null;
+  };
+
   useEffect(() => {
+    // Gán giá trị lấy được từ cookies vào state userIDFromCookies
+    const userID = getUserIDFromCookie();
+    setUserIDFromCookies(userID);
     // Lấy token từ cookies và giải mã nó
     const tokenFromCookie = cookies.get("token");
     if (tokenFromCookie) {
-      const tokenDecrypted = decryptData(tokenFromCookie);
-      setTokenFromCookies(tokenDecrypted);
+      // const tokenDecrypted = decryptData(tokenFromCookie);
+      setTokenFromCookies(tokenFromCookie);
     }
   }, []);
 
@@ -196,14 +217,14 @@ const Conversation = () => {
     //   newSocket.close();
     // };
     fetchData();
-  }, [id, tokenFromCookies, message]);
+  }, [id, tokenFromCookies, message, flag]);
 
   const sendMessageWithTextViaSocket = (textMessage) => {
     if (socket) {
       const message = {
-        id: "49a9768c-a2a8-0040-9653-5291c9718d11",
+        id: uuidv4(),
         tcm: "TCM01",
-        userID: "26ce60d1-64b9-45d2-8053-7746760a8354",
+        userID: userIDFromCookies || "26ce60d1-64b9-45d2-8053-7746760a8354",
         userAvatar:
           "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
         userName: "Tran Huy",
@@ -217,10 +238,12 @@ const Conversation = () => {
         ],
       };
       socket.send(JSON.stringify(message));
+      setMessage(""); // Xóa nội dung của input message sau khi gửi
     } else {
       console.error("WebSocket is not initialized.");
     }
   };
+
 
   const handleSendMessage = () => {
     if (message.trim() !== "") {
@@ -269,6 +292,60 @@ const Conversation = () => {
   // };
 
   const [openPicker, setOpenPicker] = useState(false);
+
+  // useEffect(() => {
+  //   console.log("Socket:", socket);
+  //   if (socket) {
+  //     // Lắng nghe các tin nhắn mới từ socket
+  //     socket.onmessage = async (event) => {
+  //       const newMessage = JSON.parse(event.data);
+  //       console.log("New message++++++++++++++++++++:", event);
+  //       // Cập nhật tin nhắn mới vào state messages
+  //       setMessages((messages) => [...messages, newMessage]);
+  //     };
+
+  //     // Ensure that the socket is closed when the component unmounts
+  //     return () => {
+  //       socket.onmessage = null;
+  //     };
+  //   }
+  // }, [socket]);
+
+
+  
+  useEffect(() => {
+    if (socket) {
+      socket.onmessage = (event) => {
+        const data = event.data;
+        console.log("Received data:", data);
+        try {
+          const jsonData = JSON.parse(data);
+          console.log("Received JSON data:", jsonData);
+          // Kiểm tra xem tin nhắn không phải từ bạn
+          const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
+          if (messageFromOtherUser) {
+            // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
+            const messageExists = messages.some(
+              (msg) => msg.id === jsonData.id,
+            );
+            if (!messageExists) {
+              setMessages((prevMessages) => [...prevMessages, jsonData]);
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing JSON data:", error);
+        }
+      };
+
+      // Ensure that the socket is closed when the component unmounts
+      return () => {
+        socket.onmessage = null;
+      };
+    }
+  }, [socket, messages, userIDFromCookies]);
+
+
+  console.table("Messages:", messages);
 
   return (
     <div className="h-screen w-full">

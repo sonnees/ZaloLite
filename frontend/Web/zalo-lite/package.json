@@ -41,6 +41,7 @@
     "socket.io-client": "^4.7.5",
     "styled-components": "^6.1.8",
     "universal-cookie": "^7.1.4",
+    "uuid": "^9.0.1",
     "websocket": "^1.0.34"
   },
   "devDependencies": {

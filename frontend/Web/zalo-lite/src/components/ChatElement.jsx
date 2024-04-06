@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import {
   differenceInMinutes,
   differenceInHours,
@@ -48,7 +48,6 @@ function ChatElement({
       );
     }
   }, [topChatActivity]);
-  
 
   //Tính số lượng tin nhắn chưa đọc
   // function countUnreadMessages(data) {
@@ -115,70 +114,75 @@ function ChatElement({
 
   return (
     <>
-    {topChatActivity.length > 0 ? 
-      <div
-        className={`flex h-[74px] w-full items-center pr-2 ${
-          // countTopChatActivity <= 10 ? "pr-1" : ""
-          "pr-1"
-        }`}
-      >
-        <img
-          src={chatAvatar}
-          alt="avatar"
-          className="aspect-w-1 aspect-h-1 h-12 w-14 rounded-full object-cover"
-        />
-        <div className="flex grow justify-between pl-3 md:w-[342px]" id="content">
-          <div className="">
-            {unreadCount != 0 ? (
-              <>
-                <div className="grid gap-y-1">
-                  <div>
-                    <span className="text-base font-semibold text-[#081C36]">
-                      {chatName}
-                    </span>
+      {topChatActivity.length >= 0 ? (
+        <div
+          className={`flex h-[74px] w-full items-center pr-2 ${
+            // countTopChatActivity <= 10 ? "pr-1" : ""
+            "pr-1"
+          }`}
+        >
+          <img
+            src={chatAvatar}
+            alt="avatar"
+            className="aspect-w-1 aspect-h-1 h-12 w-14 rounded-full object-cover"
+          />
+          <div
+            className="flex grow justify-between pl-3 md:w-[342px]"
+            id="content"
+          >
+            <div className="">
+              {unreadCount != 0 ? (
+                <>
+                  <div className="grid gap-y-1">
+                    <div>
+                      <span className="text-base font-semibold text-[#081C36]">
+                        {chatName}
+                      </span>
+                    </div>
+                    <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200  md:min-w-full">
+                      <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
+                        {messageContent}
+                      </span>
+                    </div>
                   </div>
-                  <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200  md:min-w-full">
-                    <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-                      {messageContent}
-                    </span>
+                </>
+              ) : (
+                <>
+                  <div className="grid gap-y-1">
+                    <div>
+                      <span className="text-base font-semibold text-[#081C36]">
+                        {userName}
+                      </span>
+                    </div>
+                    <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#7589A3] duration-200 md:w-[175px] md:min-w-full">
+                      <span>Bạn:&nbsp;</span>
+                      <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
+                        {messageContent}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="grid gap-y-1">
-                  <div>
-                    <span className="text-base font-semibold text-[#081C36]">
-                      {userName}
-                    </span>
-                  </div>
-                  <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#7589A3] duration-200 md:w-[175px] md:min-w-full">
-                    <span>Bạn:&nbsp;</span>
-                    <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-                      {messageContent}
-                    </span>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="mt-[-4px] grid gap-y-1 ">
-            <div>
-              <span className="truncate text-xs">{timeDifference}</span>
+                </>
+              )}
             </div>
-            {unreadCount != 0 ? (
-              <>
-                {/* <div className="flex h-4 w-4 flex-grow items-center justify-center place-self-end rounded-full bg-[#C81A1F] text-white">
+            <div className="mt-[-4px] grid gap-y-1 ">
+              <div>
+                <span className="truncate text-xs">{timeDifference}</span>
+              </div>
+              {unreadCount != 0 ? (
+                <>
+                  {/* <div className="flex h-4 w-4 flex-grow items-center justify-center place-self-end rounded-full bg-[#C81A1F] text-white">
                   <span className="text-xs">{unreadCount}</span>
                 </div> */}
-              </>
-            ) : (
-              <></>
-            )}
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      : <></>}
+      ) : (
+        <></>
+      )}
     </>
   );
 }
