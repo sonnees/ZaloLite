@@ -48,6 +48,7 @@ const QRScannerScreen = () => {
       await waitForWebSocketOpen(newSocket);
       console.log('WebSocket connection is now open.');
       newSocket.send(JSON.stringify({connect:"ACCEPT"}));
+      // console.log("ACCEPT");
       
 
       
