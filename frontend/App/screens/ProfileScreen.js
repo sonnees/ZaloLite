@@ -4,12 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
-import { API_PROFILE } from '../api/Api';
+import { API_PROFILE, API_UpdateProfile } from '../api/Api';
+
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({ userName: '', avatar: '' });
   const [selectedImage, setSelectedImage] = useState(null);
+  const [newAvatar, setNewAvatar] = useState(null); // Khai báo newAvatar state
 
   useEffect(() => {
     const fetchUserInfo = async (phoneNumber, token) => {
@@ -44,64 +46,63 @@ export default function ProfileScreen() {
   }, []);
 
   const handleChoosePhoto = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  console.log(result);
+
+  if (!result.cancelled) {
+    try {
+      const imageUrl = await handleUpload(result.assets[0].uri);
+      setSelectedImage(imageUrl);
+      setUserInfo(prevState => ({ ...prevState, avatar: imageUrl }));
+      await AsyncStorage.setItem('newAvatar', imageUrl);
+    } catch (error) {
+      console.error('Lỗi khi xử lý ảnh:', error);
+      Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi xử lý ảnh.');
+    }
+  }
+};
+
+const handleUpload = async (imageUri) => {
+  try {
+    const data = new FormData();
+    data.append('file', {
+      uri: imageUri,
+      type: 'image/jpeg',
+      name: 'avatar.jpg',
+    });
+    data.append('upload_preset', 'ZaloLife');
+    data.append('cloud_name', 'dbmkvqy3b');
+
+    const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
+      method: 'POST',
+      body: data,
     });
 
-    console.log(result);
-
-    if (!result.cancelled) {
-      setSelectedImage(result.assets[0].uri); // Lưu trữ ảnh đã chọn
-      handleUpload(result.assets[0].uri);
-      changeAvatar(result.assets[0].uri, token);
-       // Cập nhật state của selectedImage với URL của ảnh mới
-  setSelectedImage(imageUrl);
-  
-  // Cập nhật state của userInfo với URL của ảnh mới
-  setUserInfo(prevState => ({ ...prevState, avatar: imageUrl }));
-
-  // Chuyển đến màn hình InformationDetail và truyền avatar mới
-  navigation.navigate('InformationDetail', { newAvatar: imageUrl });
-
-  // Gọi hàm handleUpload để tải ảnh lên Cloudinary và thay đổi avatar trên server (nếu cần)
-  handleUpload(imageUrl);
+    if (!response.ok) {
+      throw new Error('Failed to upload image to Cloudinary');
     }
-  };
-  const handleUpload = async (imageUri) => {
-    try {
-      const data = new FormData();
-      data.append('file', {
-        uri: imageUri,
-        type: 'image/jpeg', // hoặc 'image/png'
-        name: 'avatar.jpg', // tên tùy ý
-      });
-      data.append('upload_preset', 'ZaloLife');
-      data.append('cloud_name', 'dbmkvqy3b');
+
+    const responseData = await response.json();
+    console.log('Upload successful:', responseData);
+
+    const imageUrl = responseData.secure_url;
+    await AsyncStorage.setItem('newAvatar', imageUrl); // Lưu URL của ảnh mới vào AsyncStorage
+    setUserInfo(prevState => ({ ...prevState, avatar: imageUrl })); // Cập nhật state userInfo với URL của ảnh mới
+    setNewAvatar(imageUrl); // Cập nhật giá trị newAvatar với URL của ảnh mới
+    return imageUrl;
+  } catch (error) {
+    console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
+    throw error;
+  }
+};
+
   
-      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
-        method: 'POST',
-        body: data,
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to upload image to Cloudinary');
-      }
-  
-      const responseData = await response.json();
-      console.log('Upload successful:', responseData);
-      
-      // Ở đây bạn có thể xử lý responseData để lấy URL của ảnh từ Cloudinary
-      // Ví dụ: const imageUrl = responseData.secure_url;
-      
-      // Sau khi có URL, bạn có thể lưu nó vào state hoặc gửi lên server để lưu trữ
-    } catch (error) {
-      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
-      Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi tải ảnh lên Cloudinary.');
-    }
-  };
   
   const changeAvatar = async (imageUrl, token) => {
     try {
@@ -109,12 +110,13 @@ export default function ProfileScreen() {
         field: imageUrl,
       };
   
-      const response = await axios.post('http://192.168.1.66:8081/api/v1/account/change-avatar', requestBody, {
+      const response = await axios.post(API_UpdateProfile, requestBody, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
+      console.log('Response from API_UpdateProfile:', response.data);
   
       if (response.status === 200) {
         console.log('Thay đổi avatar thành công');
@@ -128,6 +130,21 @@ export default function ProfileScreen() {
       // Xử lý logic khi gặp lỗi
     }
   };
+  useEffect(() => {
+    const getNewAvatar = async () => {
+      try {
+        const newAvatar = await AsyncStorage.getItem('newAvatar');
+        if (newAvatar) {
+          setNewAvatar(newAvatar); // Gán giá trị newAvatar từ AsyncStorage vào state
+          console.log('newAvatar:', newAvatar);
+        }
+      } catch (error) {
+        console.error('Lỗi khi lấy newAvatar từ AsyncStorage:', error);
+      }
+    };
+
+    getNewAvatar();
+  }, []);
   
   
   
@@ -187,7 +204,7 @@ export default function ProfileScreen() {
       >
         <Image
           style={{ width: 100, height: 100, borderRadius: 50 }}
-          source={{ uri: selectedImage || userInfo.avatar }}
+          source={{ uri: selectedImage || newAvatar || userInfo.avatar }}
         />
       </TouchableOpacity>
     </ImageBackground>

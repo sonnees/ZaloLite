@@ -8,6 +8,8 @@ import { API_PROFILE } from '../api/Api';
 export default function InformationDetail() {
   const [userInfo, setUserInfo] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
+  const [newAvatar, setNewAvatar] = useState(null); // Thêm state để lưu giá trị avatar mới
+
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -53,9 +55,22 @@ export default function InformationDetail() {
     getPhoneNumber();
   }, [phoneNumber]);
 
-  // Lấy avatar mới từ props route
-  const newAvatar = route.params?.newAvatar;
-
+  useEffect(() => {
+    const getNewAvatar = async () => {
+      try {
+        const newAvatar = await AsyncStorage.getItem('newAvatar');
+        if (newAvatar !== null) {
+          setNewAvatar(newAvatar);
+        }
+      } catch (error) {
+        console.error('Lỗi khi lấy giá trị newAvatar từ AsyncStorage:', error);
+      }
+    };
+  
+    getNewAvatar();
+  }, []);
+  
+  
   return (
     <View style={styles.container}>
       {userInfo && (
