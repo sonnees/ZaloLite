@@ -1,4 +1,4 @@
-const Port = 'http://192.168.1.10:8081';
+const Port = 'http://192.168.1.66:8081';
 
 
 export const API_AUTHENTICATE = `${Port}/api/v1/auth/authenticate`;
@@ -9,8 +9,6 @@ export const API_CHANGE_PASS = `${Port}/api/v1/account/change-password`;
 export const API_RESET_PASS = `${Port}/api/v1/auth/reset-password`;
 export const API_INFOR_ACCOUNT = `${Port}/api/v1/account/info`;
 
-export const API_UpdateProfile = `${Port}/api/v1/account/change-avatar`;
-
-const PortChat = 'http://192.168.1.10:8082';
+const PortChat = 'http://192.168.1.66:8082';
 export const API_INFOR_USER = `${PortChat}/api/v1/user/info/`;
 
