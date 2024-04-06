@@ -1,9 +1,11 @@
 package com.zalolite.chatservice.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zalolite.chatservice.jwt.AuthenticationManager;
 import com.zalolite.chatservice.jwt.SecurityContextRepository;
 import io.netty.resolver.DefaultAddressResolverGroup;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import java.util.Arrays;
@@ -24,6 +27,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebFluxSecurity
 @AllArgsConstructor
+@Slf4j
 public class SecurityConfig {
     private AuthenticationManager authenticationManager;
     private SecurityContextRepository securityContextRepository;

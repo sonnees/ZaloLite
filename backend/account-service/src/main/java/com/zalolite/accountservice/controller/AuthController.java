@@ -10,6 +10,7 @@ import com.zalolite.accountservice.dto.*;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.entity.Profile;
 import com.zalolite.accountservice.jwt.JwtService;
+import com.zalolite.accountservice.serialization.JsonConverter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.imgscalr.Scalr;
@@ -36,14 +37,17 @@ import java.util.UUID;
 @RequestMapping("/api/v1/auth")
 @Slf4j
 public class AuthController {
-    private WebClient.Builder builder;
-    private AccountRepository accountRepository;
-    private JwtService jwtService;
-    private ObjectMapper objectMapper;
-    private PasswordEncoder passwordEncoder;
+    private final WebClient.Builder builder;
+    private final AccountRepository accountRepository;
+    private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final JsonConverter jsonConverter;
 
     @GetMapping("/check-uniqueness-phone-number/{phoneNumber}")
-    public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber) throws RuntimeException {
+    public Mono<ResponseEntity<String>> checkUniquenessPhoneNumber(@PathVariable String phoneNumber){
+        log.info("### enter check uniqueness phone number ###");
+        log.info("# {} #", phoneNumber);
         return accountRepository.searchByPhoneNumber(phoneNumber)
                 .flatMap(account -> {
                     Profile profile = new Profile();
@@ -51,7 +55,7 @@ public class AuthController {
                     try {
                         return Mono.just(ResponseEntity.status(409).body(objectMapper.writeValueAsString(profile)));
                     } catch (JsonProcessingException e) {
-                        log.error("** "+ e);
+                        log.error("# {} #", e+"");
                         return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                     }
                 }).switchIfEmpty(Mono.just(ResponseEntity.ok("")));
@@ -59,7 +63,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public Mono<ResponseEntity<String>> create(@RequestBody AccountCreateDTO accountCreateDTO){
-        log.info("** create");
+        log.info("### enter register ###");
+        log.info("# {} #", jsonConverter.objToString(accountCreateDTO));
         return accountRepository.save(new Account(accountCreateDTO))
                 .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("new account failed"))))
                 .flatMap(result -> {
@@ -81,6 +86,8 @@ public class AuthController {
 
     @PostMapping("/authenticate")
     public Mono<ResponseEntity<String>> login(@RequestBody AccountLoginDTO accountLoginDTO) {
+        log.info("### enter authenticate ###");
+        log.info("# {} #", jsonConverter.objToString(accountLoginDTO));
         return accountRepository.searchByPhoneNumber(accountLoginDTO.getPhoneNumber())
                 .flatMap(account -> {
                     if (!new BCryptPasswordEncoder().matches(accountLoginDTO.getPassword(), account.getPassword()))
@@ -90,32 +97,18 @@ public class AuthController {
                     try {
                         return Mono.just(ResponseEntity.status(200).body(objectMapper.writeValueAsString(oneFieldDTO)));
                     } catch (JsonProcessingException e) {
-                        log.error("** "+ e);
+                        log.error("# {} #", e+"");
                         return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                     }
                 })
                 .switchIfEmpty(Mono.just(ResponseEntity.status(401).body("")));
     }
 
-    @GetMapping("/check-token/{token}")
-    public Mono<Boolean> checkToken(@PathVariable String token) {
-        return Mono.just(jwtService.isTokenExpired(token));
-    }
-
-    @GetMapping("/get-userid/{token}")
-    public Mono<String> getPhoneNumber(@PathVariable String token) {
-        return accountRepository.searchByPhoneNumber(jwtService.extractUsername(token))
-                .flatMap(account -> {
-                    if(account!=null)
-                        return Mono.just(account.getProfile().getUserID()+"");
-                    else return Mono.just("");
-                });
-    }
-
     //true: pixel đen
     //cot x, hang y
     @GetMapping("/authenticate/qr-code")
     public ResponseEntity<String> loginQRCode() {
+        log.info("### enter authenticate qr-code ###");
         String endpointWebSocket = UUID.randomUUID().toString();
         try {
             int width = 200;
@@ -127,9 +120,7 @@ public class AuthController {
                     image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
                 }
             }
-
             BufferedImage scaledImage = Scalr.crop(image, 30, 30, width-60, height-60);
-
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ImageIO.write(scaledImage, "png", outputStream);
             byte[] imageBytes = outputStream.toByteArray();
@@ -137,21 +128,41 @@ public class AuthController {
             Field2DTO dto = new Field2DTO(endpointWebSocket, base64Image);
             return ResponseEntity.ok().body(objectMapper.writeValueAsString(dto));
         } catch (Exception e) {
-            log.error("***" + e);
-            return ResponseEntity.status(500).body("Gen QR code error");
+            log.error("# {} #", e+"");
+            return ResponseEntity.status(500).body("Error gen QR code");
         }
     }
 
     @PostMapping("/reset-password")
     public Mono<ResponseEntity<String>> resetPassword(@RequestBody Field2DTO dto){
+        log.info("### enter reset password ###");
+        log.info("# {} #", jsonConverter.objToString(dto));
         return accountRepository.changePassword(dto.getField1(), passwordEncoder.encode(dto.getField2()))
                 .switchIfEmpty(Mono.empty())
                 .flatMap(aLong -> {
                      if(aLong<=0) {
-                         log.error("** change password");
-                         return Mono.just(ResponseEntity.status(403).body("Error"));
+                         log.error("# Error: {} Field1: {} Field2: {} #", "changePassword", dto.getField1(), dto.getField2());
+                         return Mono.just(ResponseEntity.status(500).body("Error"));
                      }
                         return Mono.just(ResponseEntity.ok("Success"));
+                });
+    }
+
+
+    @GetMapping("/check-token/{token}")
+    public Mono<Boolean> checkToken(@PathVariable String token) {
+        return Mono.just(jwtService.isTokenExpired(token));
+    }
+
+    @GetMapping("/get-userid/{token}")
+    public Mono<String> getPhoneNumber(@PathVariable String token) {
+        log.info("### enter reset password ###");
+        log.info("# {} #", token);
+        return accountRepository.searchByPhoneNumber(jwtService.extractUsername(token))
+                .flatMap(account -> {
+                    if(account!=null)
+                        return Mono.just(account.getProfile().getUserID()+"");
+                    else return Mono.just("");
                 });
     }
 }
