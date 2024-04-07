@@ -5,7 +5,7 @@ import { firebaseConfig } from '../config/config';
 import firebase from 'firebase/compat/app';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const OPTLoginScreen = () => {
+const OtpScreen = () => {
     let navigation = useNavigation();
     let route = useRoute();
 

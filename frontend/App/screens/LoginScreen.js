@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
-import { API_AUTHENTICATE } from '../api/Api';
+import { API_AUTHENTICATE, API_INFOR_ACCOUNT, API_INFOR_USER } from '../api/Api';
 
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
