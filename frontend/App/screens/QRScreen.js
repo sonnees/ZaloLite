@@ -19,7 +19,7 @@ const QRScannerScreen = () => {
       setHasPermission(status === 'granted');
     })();
 
-    
+
   }, []);
 
   // useEffect(() => {
@@ -29,7 +29,7 @@ const QRScannerScreen = () => {
   //   }
   // }, [scanned]);
 
-  
+
 
   const handleBarCodeScanned = async ({ type, data }) => {
     // setScanned(false);
@@ -39,29 +39,30 @@ const QRScannerScreen = () => {
     }
 
     // const newSocket = new WebSocket('ws://192.168.1.19:8081/ws/auth/' + data);
-    
+
     try {
       // Mở WebSocket và gửi dữ liệu
-      const newSocket = new WebSocket('ws://192.168.137.180:8081/ws/auth/' + data);
+      const newSocket = new WebSocket('ws://192.168.137.198:8081/ws/auth/' + data);
       setScanned(true);
-      navigation.navigate('ConfirmQRScreen', {data: data});
+      navigation.navigate('ConfirmQRScreen', { data: data });
       await waitForWebSocketOpen(newSocket);
       console.log('WebSocket connection is now open.');
-      newSocket.send(JSON.stringify({connect:"ACCEPT"}));
-      
-
-      
+      newSocket.send(JSON.stringify({ connect: "ACCEPT" }));
+      // console.log("ACCEPT");
 
 
-      
+
+
+
+
       // Chuyển sang màn hình ConfirmQRScreen
-      
+
 
     } catch (error) {
       console.error('Failed to establish WebSocket connection:', error);
       // Alert.alert('Error', 'Failed to establish WebSocket connection');
     }
-    
+
     // Alert.alert(
     //   `QR Code Scanned!`,
     //   `Type: ${type}\nData: ${data}`,
@@ -94,7 +95,7 @@ const QRScannerScreen = () => {
   }
 
   return (
-    <View  style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <Camera
         style={{ flex: 1 }}
         type={Camera.Constants.Type.back}
