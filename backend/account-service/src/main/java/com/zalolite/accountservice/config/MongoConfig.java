@@ -9,7 +9,7 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
     @Override
     @NonNull
     protected String getDatabaseName() {
-        return "AccountService";
+        return "ZaloLite";
     }
 
     @Override

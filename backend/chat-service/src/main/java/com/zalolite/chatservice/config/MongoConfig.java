@@ -13,7 +13,7 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
     @Override
     @NonNull
     protected String getDatabaseName() {
-        return "ChatService";
+        return "ZaloLite";
     }
 
     @Override
