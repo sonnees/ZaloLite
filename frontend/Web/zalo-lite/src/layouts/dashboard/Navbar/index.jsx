@@ -119,6 +119,7 @@ function Navbar() {
           // console.log(data);
           setProfileData(data);
           setAvatar(data.avatar);
+          localStorage.setItem("avatar", data.avatar);
           setUserName(data.userName);
           const userIDTemp = data.userID;
           setUserID(data.userID);
@@ -133,7 +134,6 @@ function Navbar() {
 
       fetchProfile();
     }
-    
   }, [token, phoneNumber, avt]);
 
   // console.log(profileData);
@@ -186,7 +186,7 @@ function Navbar() {
                 >
                   <div>
                     <img
-                      src={profileData.avatar}
+                      src={localStorage.getItem("avatar")}
                       className="h-12 w-12 rounded-full border "
                       alt="avatar"
                     />
@@ -288,9 +288,16 @@ function Navbar() {
                       }}
                       onClick={() => {
                         handleClose(); // Đóng menu sau khi nhấp vào
-                        cookies.remove("phoneNumber"); // Xoá cookie phoneNumber
-                        cookies.remove("token"); // Xoá cookie token
-                        cookies.remove("userID"); // Xoá cookie userID
+                        // cookies.remove("phoneNumber"); // Xoá cookie phoneNumber
+                        // cookies.remove("token"); // Xoá cookie token
+                        // cookies.remove("userID"); // Xoá cookie userID
+                        // Lấy tất cả cookies
+                        const allCookies = cookies.getAll();
+
+                        // Lặp qua từng cookie và xóa nó
+                        for (const cookie in allCookies) {
+                          cookies.remove(cookie);
+                        }
                       }}
                     >
                       Đăng xuất

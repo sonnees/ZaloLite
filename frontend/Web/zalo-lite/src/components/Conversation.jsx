@@ -20,6 +20,7 @@ import MessageDetail from "./MessageDetail";
 import MessageInput from "./MessageInput";
 import TextField from "@mui/material/TextField";
 import { v4 as uuidv4 } from "uuid";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -63,46 +64,66 @@ const Message = ({ sender, content, timestamp }) => (
   </div>
 );
 
-// const sendMessageWithTextViaSocket = (textMessage) => {
-//   const socket = socketIOClient(
-//     "ws://localhost:8082/ws/chat/5b685d06-8fbe-4ab7-8053-7746760a8001",
-//   );
-
-//   socket.onopen = () => {
-//     console.log("WebSocket connected successfully!");
-//     socket.emit(
-//       "message",
-//       JSON.stringify({
-//         id: "49a9768c-a2a8-0040-9653-5291b9718d11",
-//         tcm: "TCM01",
-//         userID: "26ce60d1-64b9-45d2-8053-7746760a8354",
-//         userAvatar:
-//           "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
-//         userName: "Tran Huy",
-//         timestamp: new Date().toISOString(),
-//         parentID: null,
-//         contents: [
-//           {
-//             key: "text",
-//             value: textMessage,
-//           },
-//         ],
-//       }),
-//     );
-//   };
-
-//   socket.onerror = (error) => {
-//     console.error("WebSocket error:", error);
-//   };
-
-//   socket.onclose = () => {
-//     console.log("WebSocket connection closed.");
-//   };
-// };
-
 const Conversation = () => {
   const messagesEndRef = useRef(null);
   const cookies = new Cookies();
+
+  const cld = new Cloudinary({ cloud: { cloudName: "djs0jhrpz" } });
+  const [imageUrl, setImageUrl] = useState("");
+
+  // const handleFileUpload = async (file) => {
+  //   try {
+  //     // URL của Cloudinary để tải lên file
+  //     const cloudinaryUrl = `https://api.cloudinary.com/v1_1/djs0jhrpz/upload`;
+
+  //     // Tạo formData để chứa file
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+  //     formData.append("upload_preset", "huydev"); // Thay YOUR_UPLOAD_PRESET bằng upload preset của bạn
+
+  //     // Gửi request lên Cloudinary để tải lên file
+  //     const response = await axios.post(cloudinaryUrl, formData);
+
+  //     // Lấy đường link của file từ Cloudinary và sử dụng nó cho mục đích gửi đi hoặc lưu trữ
+  //     const imageUrl = response.data.secure_url;
+  //     setImageUrl(imageUrl);
+  //     console.log("Uploaded image URL:", imageUrl);
+  //   } catch (error) {
+  //     console.error("Error uploading file to Cloudinary:", error);
+  //   }
+  // };
+
+  function handleFileUpload(file) {
+    const preset_key = "huydev09";
+    const cloud_name = "djs0jhrpz";
+    const file2 = file;
+    const formData = new FormData();
+    formData.append("file", file2);
+    formData.append("upload_preset", preset_key);
+    console.log("Uploading file to Cloudinary...")
+    axios
+      .post(
+        `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+        formData,
+      )
+      .then((response) => {
+        console.log("Upload Complete! | Uploaded image URL:", response.data.secure_url);
+        setImageUrl(response.data.secure_url);
+      })
+      .catch((error) => {
+        console.error("Error uploading file to Cloudinary:", error);
+      });
+  }
+
+  // Hàm xử lý khi người dùng chọn file
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    // console.log("Selected file:", selectedFile);
+    if (selectedFile) {
+      handleFileUpload(selectedFile);
+    }
+  };
+
   const [tokenFromCookies, setTokenFromCookies] = useState("");
   // const params = useParams();
   // console.log("Params:", params);
@@ -123,6 +144,7 @@ const Conversation = () => {
   const [endIndex, setEndIndex] = useState(15);
 
   const [message, setMessage] = useState("");
+  const [keyTypeMessage, setKeyTypeMessage] = useState("text");
   const [socket, setSocket] = useState(null);
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const [flag, setFlag] = useState(false);
@@ -233,7 +255,7 @@ const Conversation = () => {
         parentID: null,
         contents: [
           {
-            key: "text",
+            key: keyTypeMessage,
             value: textMessage,
           },
         ],
@@ -292,24 +314,6 @@ const Conversation = () => {
   // };
 
   const [openPicker, setOpenPicker] = useState(false);
-
-  // useEffect(() => {
-  //   console.log("Socket:", socket);
-  //   if (socket) {
-  //     // Lắng nghe các tin nhắn mới từ socket
-  //     socket.onmessage = async (event) => {
-  //       const newMessage = JSON.parse(event.data);
-  //       console.log("New message++++++++++++++++++++:", event);
-  //       // Cập nhật tin nhắn mới vào state messages
-  //       setMessages((messages) => [...messages, newMessage]);
-  //     };
-
-  //     // Ensure that the socket is closed when the component unmounts
-  //     return () => {
-  //       socket.onmessage = null;
-  //     };
-  //   }
-  // }, [socket]);
 
   useEffect(() => {
     if (socket) {
@@ -477,13 +481,19 @@ const Conversation = () => {
               </a>
             </div>
             <div className="mr-2 flex w-10 items-center justify-center">
-              <a href="#">
+              <label htmlFor="fileInput">
                 <img
                   src="/chatbar-attach.png"
                   alt=""
-                  className="h-[24px] w-[24px] opacity-65"
+                  className="h-[24px] w-[24px] cursor-pointer opacity-65 hover:opacity-100"
                 />
-              </a>
+              </label>
+              <input
+                id="fileInput"
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+              />
             </div>
             <div className="mr-2 flex w-10 items-center justify-center">
               <a href="#">

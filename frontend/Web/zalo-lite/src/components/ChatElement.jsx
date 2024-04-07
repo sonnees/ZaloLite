@@ -124,7 +124,7 @@ function ChatElement({
           <img
             src={chatAvatar}
             alt="avatar"
-            className="aspect-w-1 aspect-h-1 h-12 w-14 rounded-full object-cover"
+            className="aspect-w-1 aspect-h-1 h-12 w-12 rounded-full object-cover"
           />
           <div
             className="flex grow justify-between pl-3 md:w-[342px]"
