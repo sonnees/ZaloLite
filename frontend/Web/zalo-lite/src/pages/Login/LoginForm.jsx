@@ -165,6 +165,7 @@ export default function LoginForm() {
         // Xử lý khi API trả về thành công
         
         const token = await response.json();
+        localStorage.setItem("token", token.field);
         // navigate('/app', {token: token.field});
         navigate("/app", {
           state: { token: token.field, phoneNumber: phoneNumber },

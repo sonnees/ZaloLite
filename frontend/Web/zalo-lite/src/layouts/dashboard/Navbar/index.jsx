@@ -10,15 +10,17 @@ import { set } from "date-fns";
 // import Cookies from "js-cookie";
 import Cookies from "universal-cookie";
 import { decryptData, encryptData } from "../../../utils/cookies";
+import { useUser } from "../../../context/UserContext";
 
 // import fetch from "node-fetch";
 
-function Navbar() {
+function Navbar({ onNavbarReady }) {
   const cookies = new Cookies();
+  const { setUserID } = useUser();
 
   const [phoneNumberCookies, setPhoneNumberCookies] = useState(null);
   const [tokenFromCookies, setTokenFromCookies] = useState(null);
-  const [userID, setUserID] = useState(null);
+  const [userID2, setUserID2] = useState(null);
 
   const [profileData, setProfileData] = useState(null);
   const [avatar, setAvatar] = useState(null);
@@ -71,6 +73,23 @@ function Navbar() {
     });
   };
 
+  useEffect(() => {
+    // Lấy số điện thoại từ cookies và giải mã nó
+    const phoneNumberFromCookie = cookies.get("phoneNumber");
+    if (phoneNumberFromCookie) {
+      // const phoneNumberDecrypted = decryptData(phoneNumberFromCookie);
+      setPhoneNumberCookies(phoneNumberFromCookie);
+    }
+
+    // Lấy token từ cookies và giải mã nó
+    const tokenFromCookie = cookies.get("token");
+    if (tokenFromCookie) {
+      // const tokenDecrypted = decryptData(tokenFromCookie);
+      setTokenFromCookies(tokenFromCookie);
+    }
+    onNavbarReady();
+  }, []);
+
   // Hàm để đặt token vào cookie
   // const setTokenInCookie = (tokenValue) => {
   //   // Mã hóa token trước khi lưu vào cookie
@@ -120,8 +139,11 @@ function Navbar() {
           setProfileData(data);
           setAvatar(data.avatar);
           localStorage.setItem("avatar", data.avatar);
+          localStorage.setItem("userID", data.userID);
+          onNavbarReady(data.userID);
           setUserName(data.userName);
           const userIDTemp = data.userID;
+          setUserID2(data.userID);
           setUserID(data.userID);
           // console.log(avatar);
 
@@ -134,7 +156,7 @@ function Navbar() {
 
       fetchProfile();
     }
-  }, [token, phoneNumber, avt]);
+  }, [token, phoneNumber]);
 
   // console.log(profileData);
 
@@ -152,21 +174,8 @@ function Navbar() {
   //   }
 
   // }, []); // Chỉ chạy một lần sau khi component được render
-  useEffect(() => {
-    // Lấy số điện thoại từ cookies và giải mã nó
-    const phoneNumberFromCookie = cookies.get("phoneNumber");
-    if (phoneNumberFromCookie) {
-      // const phoneNumberDecrypted = decryptData(phoneNumberFromCookie);
-      setPhoneNumberCookies(phoneNumberFromCookie);
-    }
-
-    // Lấy token từ cookies và giải mã nó
-    const tokenFromCookie = cookies.get("token");
-    if (tokenFromCookie) {
-      // const tokenDecrypted = decryptData(tokenFromCookie);
-      setTokenFromCookies(tokenFromCookie);
-    }
-  }, []);
+  
+  
   // console.log("PhoneNumber on Cookies", phoneNumberCookies);
   // console.log("Token on Cookies", tokenFromCookies);
   return (

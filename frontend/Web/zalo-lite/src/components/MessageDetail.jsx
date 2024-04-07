@@ -79,7 +79,8 @@ const MessageDetail = ({ message, chatAvatar }) => {
         return <LinkPreview key={index} url={content.value} />;
       } else if (
         content.key.startsWith("zip") ||
-        content.key.startsWith("pdf")
+        content.key.startsWith("pdf") ||
+        content.key.startsWith("xlsx")
       ) {
         const [fileLabel, fileName, fileSize] = content.key.split("|");
         return (
@@ -105,6 +106,7 @@ const MessageDetail = ({ message, chatAvatar }) => {
     });
   };
 
+  // avatar = "https://avatars.githubusercontent.com/u/81128952?v=4";
   const messageRef = useRef(null);
   const [isMyMessage, setIsMyMessage] = useState(false);
   const [isHovered, setIsHovered] = useState(false);

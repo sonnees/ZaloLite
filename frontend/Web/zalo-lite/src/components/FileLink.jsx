@@ -11,6 +11,8 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
       return "doc";
     } else if (fileExtension === "pdf") {
       return "pdf";
+    } else if (fileExtension === "xlsx") {
+      return "xlsx";
     } else {
       return "default";
     }
@@ -25,6 +27,9 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
         return <img src="/doc.png" alt="Doc Icon" className="h-14 w-14" />;
       case "pdf":
         return <img src="/file-pdf.png" alt="PDF Icon" className="h-14 w-14" />;
+      case "xlsx":
+        return <img src="/xlsx.png" alt="PDF Icon" className="h-14 w-14" />;
+      // xlsx.png
       default:
         return (
           <img src="/default.png" alt="Default Icon" className="h-14 w-14" />
