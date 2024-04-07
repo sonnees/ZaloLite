@@ -675,20 +675,15 @@ const Conversation = () => {
         // onScroll={handleScroll}
       >
         {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
-  <Message sender="me" content="Chào bạn!" timestamp="15:32" />
-  Thêm tin nhắn khác ở đây */}
-        {messages.map(
-          (message, index) =>
-            // Thay đổi ở đây
-            message.recall === false && (
-              <MessageDetail
-                key={index}
-                message={message}
-                chatAvatar={chatAvatar}
-                socket={socket}
-              />
-            ),
-        )}
+        <Message sender="me" content="Chào bạn!" timestamp="15:32" />
+        Thêm tin nhắn khác ở đây */}
+        {messages.map((message, index) => (
+          <MessageDetail
+            key={index}
+            message={message}
+            chatAvatar={chatAvatar}
+          />
+        ))}
         <div ref={messagesEndRef} />
       </div>
       <div className="border-t">
@@ -733,10 +728,10 @@ const Conversation = () => {
                 accept="image/*"
                 style={{ display: "none" }}
                 onChange={handleImageSelection}
-                id="fileInput"
+                id="fileInput2"
               />
               {/* Hình ảnh để mở cửa sổ chọn tệp ảnh */}
-              <label htmlFor="fileInput">
+              <label htmlFor="fileInput2">
                 <img
                   src="/chatbar-photo.png"
                   alt=""
@@ -757,6 +752,7 @@ const Conversation = () => {
                 type="file"
                 onChange={handleFileChange}
                 className="hidden"
+                accept=".txt, .pdf, .doc, .csv, .zip, .rar, .xlsx, .xls, .ppt, .pptx, .docx, .json"
               />
             </div>
             <div className="mr-2 flex w-10 items-center justify-center">
