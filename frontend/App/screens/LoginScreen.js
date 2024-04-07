@@ -19,6 +19,7 @@ const LoginScreen = () => {
   }, [newPassword, isFocused]);
 
   const handleLogin = async () => {
+    console.log(phoneNumber + ":" + password);
     try {
       const response = await fetch(API_AUTHENTICATE, {
         method: 'POST',
@@ -31,43 +32,22 @@ const LoginScreen = () => {
         }),
       });
       const data = await response.json();
+      console.log("DATA:\n", data);
       if (response.status === 200) {
         await AsyncStorage.setItem('token', data.field);
-        console.log('data:', data.field);
+        console.log('TOKEN:\n', data.field);
         await AsyncStorage.setItem('phoneNumber', phoneNumber);
-
-        const getToken = async () => {
-          try {
-            const token = await AsyncStorage.getItem('token');
-            return token;
-          } catch (error) {
-            console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
-            return null;
-          }
-        };
-
-        const fetAccountInfor = async (token) => {
-          try {
-            const response = await axios.get(API_INFOR_ACCOUNT, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            const dataAccountInfor = await response.data;
-            const userID = dataAccountInfor.profile.userID;
-            await AsyncStorage.setItem('userID', userID);
-            return userID;
-          } catch (error) {
-            console.error('Lỗi khi lấy thông tin cá nhân:', error);
-            return null;
-          }
-        };
         const token = await getToken();
+        if (!token) {
+          console.log("Chưa có Token");
+        }
         const userID = await fetAccountInfor(token);
+        if (!userID) {
+          console.log("Lỗi khi thực hiện fetAccountInfor");
+        }
         console.log("DATA: \n", userID);
         console.log("TOKEN: \n", token);
         navigation.navigate('TabNavigator', { userID: userID });
-
 
       } else {
         Alert.alert('Lỗi', data.message);
@@ -78,6 +58,32 @@ const LoginScreen = () => {
     }
   };
 
+  const fetAccountInfor = async (token) => {
+    try {
+      const response = await axios.get(API_INFOR_ACCOUNT, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const dataAccountInfor = await response.data;
+      const userID = dataAccountInfor.profile.userID;
+      await AsyncStorage.setItem('userID', userID);
+      console.log("USER ID: \n", userID);
+      return userID;
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin cá nhân:', error);
+      return null;
+    }
+  };
+  const getToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      return token;
+    } catch (error) {
+      console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+      return null;
+    }
+  };
   return (
     <KeyboardAvoidingView
       style={styles.container}

@@ -115,10 +115,6 @@ const MessagesScreen = () => {
   }, (prevProps, nextProps) => {
     return prevProps.item.id === nextProps.item.id;
   });
-
-
-
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
