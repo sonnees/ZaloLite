@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/account")
@@ -46,6 +48,26 @@ public class AccountController {
                 .map(authentication -> {
                     String userDetailsPhoneNumber = (String) authentication.getPrincipal();
                     return accountRepository.searchByPhoneNumber(phoneNumber)
+                            .flatMap(account -> {
+                                try {
+                                    return Mono.just(ResponseEntity.ok(objectMapper.writeValueAsString(account.getProfile(userDetailsPhoneNumber))));
+                                } catch (JsonProcessingException e) {
+                                    log.error("# {} #", e+"");
+                                    return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
+                                }
+                            }).switchIfEmpty(Mono.just(ResponseEntity.status(404).body("User not found")));
+                }).flatMap(responseEntityMono -> responseEntityMono);
+    }
+
+    @GetMapping("/profile/userID/{userID}")
+    public Mono<ResponseEntity<String>> getProfileByPhoneNumber(@PathVariable UUID userID){
+        log.info("### enter get profile by id user ###");
+        log.info("# {} #", userID);
+        return  ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .map(authentication -> {
+                    String userDetailsPhoneNumber = (String) authentication.getPrincipal();
+                    return accountRepository.searchByUserID(userID)
                             .flatMap(account -> {
                                 try {
                                     return Mono.just(ResponseEntity.ok(objectMapper.writeValueAsString(account.getProfile(userDetailsPhoneNumber))));

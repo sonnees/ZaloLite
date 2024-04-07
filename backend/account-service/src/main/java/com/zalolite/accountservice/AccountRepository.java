@@ -24,5 +24,8 @@ public interface AccountRepository extends ReactiveMongoRepository<Account, UUID
     @Update(update = "{$set: {profile: ?1}}")
     Mono<Long> changeAvatar(String phoneNumber, Profile profile);
 
+    @Query(value = "{'profile.userID': ?0}")
+    Mono<Account> searchByUserID(UUID userID);
+
 }
 
