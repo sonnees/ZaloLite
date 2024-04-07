@@ -28,10 +28,10 @@ const OPTLoginScreen = () => {
     }, [routePhoneNumber]);
 
     const sendVerification = () => {
-        const phoneProvider = new firebase.auth.PhoneAuthProvider();
+        const phoneProvider = new firebase.auth.PhoneAuthProvider()
         phoneProvider.verifyPhoneNumber(phoneNumber, recaptchaVerifier.current)
             .then(setVerificationId)
-            .catch(console.error);
+            .catch(console.error)
     }
 
     const confirmCode = () => {
@@ -41,14 +41,13 @@ const OPTLoginScreen = () => {
         );
         firebase.auth().signInWithCredential(credential)
             .then(() => {
-                setCode('');
-                navigation.navigate('LoginNavigator', { screen: 'CreatePasswordScreen', params: { phoneNumber: phoneNumber } });
-
+                setCode('')
+                navigation.navigate('LoginNavigator', { screen: 'LoginScreen' });
             })
             .catch(error => {
-                alert(error);
-            });
-        Alert.alert('Phone authentication successful 👍');
+                alert(error)
+            })
+        Alert.alert('Phone authentication successful 👍')
     }
 
     return (
@@ -89,10 +88,10 @@ const OPTLoginScreen = () => {
                 </Text>
             </TouchableOpacity>
         </View>
-    );
+    )
 }
 
-export default OPTLoginScreen;
+export default OtpScreen
 
 const styles = StyleSheet.create({
 
@@ -134,4 +133,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 20
     }
-});
+})

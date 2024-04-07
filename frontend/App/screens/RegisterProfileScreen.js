@@ -103,7 +103,7 @@ const RegisterProfileScreen = () => {
       const response = await axios.post(API_REGISTER, body);
       console.log("Registration successful:", response.data);
       // Chuyển hướng sang màn hình TabNavigator sau khi đăng ký thành công
-      navigation.navigate('OPTLoginScreen', { phoneNumber: phoneNumber });
+      navigation.navigate('OtpScreen', { p: phoneNumber });
     } catch (error) {
       console.error("Registration failed:", error);
       Alert.alert("Đăng ký thất bại", "Vui lòng kiểm tra lại thông tin đăng ký và thử lại sau.");

@@ -46,70 +46,70 @@ export default function ProfileScreen() {
   }, []);
 
   const handleChoosePhoto = async () => {
-  let result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.All,
-    allowsEditing: true,
-    aspect: [4, 3],
-    quality: 1,
-  });
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-  console.log(result);
+    console.log(result);
 
-  if (!result.cancelled) {
+    if (!result.cancelled) {
+      try {
+        const imageUrl = await handleUpload(result.assets[0].uri);
+        setSelectedImage(imageUrl);
+        setUserInfo(prevState => ({ ...prevState, avatar: imageUrl }));
+        await AsyncStorage.setItem('newAvatar', imageUrl);
+      } catch (error) {
+        console.error('Lỗi khi xử lý ảnh:', error);
+        Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi xử lý ảnh.');
+      }
+    }
+  };
+
+  const handleUpload = async (imageUri) => {
     try {
-      const imageUrl = await handleUpload(result.assets[0].uri);
-      setSelectedImage(imageUrl);
-      setUserInfo(prevState => ({ ...prevState, avatar: imageUrl }));
-      await AsyncStorage.setItem('newAvatar', imageUrl);
+      const data = new FormData();
+      data.append('file', {
+        uri: imageUri,
+        type: 'image/jpeg',
+        name: 'avatar.jpg',
+      });
+      data.append('upload_preset', 'ZaloLife');
+      data.append('cloud_name', 'dbmkvqy3b');
+
+      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image to Cloudinary');
+      }
+
+      const responseData = await response.json();
+      console.log('Upload successful:', responseData);
+
+      const imageUrl = responseData.secure_url;
+      await AsyncStorage.setItem('newAvatar', imageUrl); // Lưu URL của ảnh mới vào AsyncStorage
+      setUserInfo(prevState => ({ ...prevState, avatar: imageUrl })); // Cập nhật state userInfo với URL của ảnh mới
+      setNewAvatar(imageUrl); // Cập nhật giá trị newAvatar với URL của ảnh mới
+      return imageUrl;
     } catch (error) {
-      console.error('Lỗi khi xử lý ảnh:', error);
-      Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi xử lý ảnh.');
+      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
+      throw error;
     }
-  }
-};
+  };
 
-const handleUpload = async (imageUri) => {
-  try {
-    const data = new FormData();
-    data.append('file', {
-      uri: imageUri,
-      type: 'image/jpeg',
-      name: 'avatar.jpg',
-    });
-    data.append('upload_preset', 'ZaloLife');
-    data.append('cloud_name', 'dbmkvqy3b');
 
-    const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
-      method: 'POST',
-      body: data,
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to upload image to Cloudinary');
-    }
-
-    const responseData = await response.json();
-    console.log('Upload successful:', responseData);
-
-    const imageUrl = responseData.secure_url;
-    await AsyncStorage.setItem('newAvatar', imageUrl); // Lưu URL của ảnh mới vào AsyncStorage
-    setUserInfo(prevState => ({ ...prevState, avatar: imageUrl })); // Cập nhật state userInfo với URL của ảnh mới
-    setNewAvatar(imageUrl); // Cập nhật giá trị newAvatar với URL của ảnh mới
-    return imageUrl;
-  } catch (error) {
-    console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
-    throw error;
-  }
-};
-
-  
-  
   const changeAvatar = async (imageUrl, token) => {
     try {
       const requestBody = {
         field: imageUrl,
       };
-  
+
       const response = await axios.post(API_UpdateProfile, requestBody, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ const handleUpload = async (imageUri) => {
         },
       });
       console.log('Response from API_UpdateProfile:', response.data);
-  
+
       if (response.status === 200) {
         console.log('Thay đổi avatar thành công');
         // Xử lý logic khi thay đổi avatar thành công
@@ -145,9 +145,9 @@ const handleUpload = async (imageUri) => {
 
     getNewAvatar();
   }, []);
-  
-  
-  
+
+
+
 
   return (
     <ImageBackground

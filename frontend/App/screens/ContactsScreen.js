@@ -1,9 +1,13 @@
-import React from 'react';
-import { View, TextInput, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, ScrollView, Text, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, ScrollView, Text, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native'
-const YourComponent = () => {
-  let navigation = useNavigation();
+const ContactsScreen = () => {
+  const navigation = useNavigation();
+  const [friendViews, setFriendViews] = useState(true)
+  const [groupsViews, setGroupsViews] = useState(false)
+  const [OAViews, setOAViews] = useState(false)
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -31,19 +35,119 @@ const YourComponent = () => {
         </View>
 
         <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between", paddingVertical: 12, backgroundColor: "#fff", height: 45 }}>
-          <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}>
+          <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
+            onPress={() => {
+              setFriendViews(true)
+              setGroupsViews(false)
+              setOAViews(false)
+            }}
+          >
             <Text style={{ fontSize: 16 }}> Friends</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}>
+          <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
+            onPress={() => {
+              setFriendViews(false)
+              setGroupsViews(true)
+              setOAViews(false)
+            }}
+          >
             <Text style={{ fontSize: 16 }}> Groups</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}>
+          <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
+            onPress={() => {
+              setFriendViews(false)
+              setGroupsViews(false)
+              setOAViews(true)
+            }}
+          >
             <Text style={{ fontSize: 16 }}> OA</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ borderBottomColor: 'gray', borderBottomWidth: 1, width: '100%', }} />
+        <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 1, width: '100%' }} />
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
-          {/* Your remaining content */}
+          {friendViews && (
+            <View>
+              <View style={{ height: 160 }}>
+                <TouchableOpacity
+                  style={{ height: 40, flexDirection: 'row', marginTop: 10 }}
+                  onPress={() => navigation.navigate('FriendRequestScreen')}
+                >
+                  <View style={{
+                    backgroundColor: '#4876FF', height: 35, width: 35, borderRadius: 12,
+                    marginLeft: 20, justifyContent: 'center', alignItems: 'center'
+                  }}>
+                    <FontAwesome name='user-plus' size={18} color={'white'}></FontAwesome>
+                  </View>
+                  <Text
+                    style={{
+                      marginLeft: 20, color: 'black', alignSelf: 'center',
+                      fontWeight: '500', fontSize: 15, marginBottom: 8
+                    }}> Friend request</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ height: 40, flexDirection: 'row', marginTop: 10 }}
+                >
+                  <View style={{
+                    backgroundColor: '#4876FF', height: 35, width: 35, borderRadius: 12,
+                    marginLeft: 20, justifyContent: 'center', alignItems: 'center'
+                  }}>
+                    <FontAwesome name='address-book' size={20} color={'white'}></FontAwesome>
+                  </View>
+                  <Text
+                    style={{
+                      marginLeft: 20, color: 'black', alignSelf: 'center',
+                      fontWeight: '500', fontSize: 15, marginBottom: 8
+                    }}> Phonebook</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ height: 40, flexDirection: 'row', marginTop: 10 }}
+                >
+                  <View style={{
+                    backgroundColor: '#4876FF', height: 35, width: 35, borderRadius: 12,
+                    marginLeft: 20, justifyContent: 'center', alignItems: 'center'
+                  }}>
+                    <FontAwesome name='birthday-cake' size={20} color={'white'}></FontAwesome>
+                  </View>
+                  <Text
+                    style={{
+                      marginLeft: 20, color: 'black', alignSelf: 'center',
+                      fontWeight: '500', fontSize: 15, marginBottom: 8
+                    }}> Birthday clendar</Text>
+                </TouchableOpacity>
+
+              </View>
+              <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 8, width: '100%' }} />
+              <View></View>
+            </View>
+          )}
+          {groupsViews && (
+            <View>
+              <View style={{ height: 80 }}>
+                <TouchableOpacity
+                  style={{ height: 40, flexDirection: 'row', marginTop: 10 }}
+                >
+                  <View style={{
+                    backgroundColor: '#63B8FF', height: 50, width: 50, borderRadius: 50,
+                    marginLeft: 20, justifyContent: 'center', alignItems: 'center'
+                  }}>
+                    <FontAwesome name='users' size={20} color={'white'}></FontAwesome>
+                  </View>
+                  <Text
+                    style={{
+                      marginLeft: 20, color: 'black', alignSelf: 'center',
+                      fontWeight: '400', fontSize: 15, marginTop: 5
+                    }}> Create new group</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 8, width: '100%' }} />
+              <View></View>
+            </View>
+          )}
+          {OAViews && (
+            <View>
+
+            </View>
+          )}
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -56,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default YourComponent;
+export default ContactsScreen;
