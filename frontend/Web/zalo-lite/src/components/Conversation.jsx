@@ -21,6 +21,7 @@ import MessageInput from "./MessageInput";
 import TextField from "@mui/material/TextField";
 import { v4 as uuidv4 } from "uuid";
 import { Cloudinary } from "@cloudinary/url-gen";
+import { set } from "date-fns";
 
 // import {uploadFileToS3} from "../utils/savefiletoaws";
 
@@ -117,6 +118,15 @@ const Conversation = () => {
   //     });
   // }
 
+  // Hàm xử lý khi chọn emoji từ picker
+  const handleEmojiSelect = (emoji) => {
+    console.log("Emoji selected:", emoji);
+    // Gửi emoji qua WebSocket
+    sendMessageWithTextViaSocket(emoji, "emoji");
+    // Đóng picker emoji sau khi chọn
+    setOpenPicker(false);
+  };
+
   const uploadFileToS3 = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -159,6 +169,48 @@ const Conversation = () => {
     }
   };
 
+  // const handleFileUpload = (file) => {
+  //   const preset_key = "huydev09";
+  //   const cloud_name = "djs0jhrpz";
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   formData.append("upload_preset", preset_key);
+  //   console.log("Uploading file to Cloudinary...");
+
+  //   axios
+  //     .post(
+  //       `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+  //       formData,
+  //     )
+  //     .then((response) => {
+  //       console.log(
+  //         "Upload Complete! | Uploaded image URL:",
+  //         response.data.secure_url,
+  //       );
+  //       setImageUrl(response.data.secure_url);
+
+  //       // Tạo key cho file upload
+  //       const fileExtension = file.name.split(".").pop(); // Lấy phần đuôi của file
+  //       const fileSizeKB = Math.round(file.size / 1024); // Kích thước file tính bằng KB
+  //       const key = `${fileExtension}|${file.name}|${fileSizeKB}KB`;
+
+  //       // Gửi tin nhắn chứa link ảnh và key cho người nhận
+  //       const imageMessage = {
+  //         contents: [
+  //           {
+  //             key: key,
+  //             value: response.data.secure_url,
+  //           },
+  //         ],
+  //       };
+  //       console.log("Image message:", imageMessage);
+  //       sendMessageWithTextViaSocket(imageMessage, "file");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error uploading file to Cloudinary:", error);
+  //     });
+  // };
+
   const handleFileUpload = (file) => {
     const preset_key = "huydev09";
     const cloud_name = "djs0jhrpz";
@@ -179,16 +231,11 @@ const Conversation = () => {
         );
         setImageUrl(response.data.secure_url);
 
-        // Tạo key cho file upload
-        const fileExtension = file.name.split(".").pop(); // Lấy phần đuôi của file
-        const fileSizeKB = Math.round(file.size / 1024); // Kích thước file tính bằng KB
-        const key = `${fileExtension}|${file.name}|${fileSizeKB}KB`;
-
         // Gửi tin nhắn chứa link ảnh và key cho người nhận
         const imageMessage = {
           contents: [
             {
-              key: key,
+              key: "image",
               value: response.data.secure_url,
             },
           ],
@@ -199,6 +246,48 @@ const Conversation = () => {
       .catch((error) => {
         console.error("Error uploading file to Cloudinary:", error);
       });
+  };
+
+  // const handleFileUpload = (file) => {
+  //   const preset_key = "huydev09";
+  //   const cloud_name = "djs0jhrpz";
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   formData.append("upload_preset", preset_key);
+
+  //   axios
+  //     .post(
+  //       `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+  //       formData,
+  //     )
+  //     .then((response) => {
+  //       console.log(
+  //         "Upload Complete! | Uploaded image URL:",
+  //         response.data.secure_url,
+  //       );
+
+  //       // Tạo tin nhắn chứa link ảnh theo định dạng mong muốn
+  //       const imageMessage = {
+  //         key: "image",
+  //         value: response.data.secure_url,
+  //       };
+
+  //       console.log("Image message:", imageMessage);
+  //       // Gửi tin nhắn qua WebSocket
+  //       sendMessageWithTextViaSocket(imageMessage, "image");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error uploading file to Cloudinary:", error);
+  //     });
+  // };
+
+  // Hàm xử lý khi người dùng chọn ảnh
+  const handleImageSelection = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      handleFileUpload(file);
+      setContentType("image");
+    }
   };
 
   // // Hàm xử lý khi người dùng chọn file
@@ -247,7 +336,6 @@ const Conversation = () => {
 
   const [sentMessage, setSentMessage] = useState(null);
 
-
   const handleInputChange = (e) => {
     setMessage(e.target.value);
     setContentType("text");
@@ -266,7 +354,6 @@ const Conversation = () => {
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSendMessage();
-      console.error("Enter key is pressed");
     }
   };
 
@@ -389,15 +476,16 @@ const Conversation = () => {
           value: messageContent,
         });
       } else if (contentType === "file") {
-        console.log(
-          "Message content previous send message: ",
-          messageContent.contents[0],
-        );
         // Lấy phần tử đầu tiên trong mảng contents
         const fileContent = messageContent.contents[0];
         message.contents.push({
           key: fileContent.key,
           value: fileContent.value, // Đây là đường dẫn URL của file
+        });
+      } else if (contentType === "emoji") {
+        message.contents.push({
+          key: "emoji",
+          value: messageContent,
         });
       }
 
@@ -516,6 +604,7 @@ const Conversation = () => {
     }
   }, [sentMessage]);
 
+
   return (
     <div className="h-screen w-full">
       <div className="h-[68px] w-full px-4">
@@ -605,6 +694,7 @@ const Conversation = () => {
                 href="#"
                 onClick={() => {
                   setOpenPicker(!openPicker);
+                  setContentType("emoji");
                 }}
               >
                 <img
@@ -627,18 +717,27 @@ const Conversation = () => {
                 data={data}
                 onEmojiSelect={(emoji) => {
                   console.log(emoji.native);
-                  // handleEmojiClick(emoji.native);
+                  handleEmojiSelect(emoji.native);
                 }}
               />
             </Box>
             <div className="mr-2 flex w-10 items-center justify-center">
-              <a href="#">
+              {/* Input file ẩn để chọn ảnh */}
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleImageSelection}
+                id="fileInput"
+              />
+              {/* Hình ảnh để mở cửa sổ chọn tệp ảnh */}
+              <label htmlFor="fileInput">
                 <img
                   src="/chatbar-photo.png"
                   alt=""
-                  className="h-[24px] w-[24px] opacity-65"
+                  className="h-[24px] w-[24px] cursor-pointer opacity-65"
                 />
-              </a>
+              </label>
             </div>
             <div className="mr-2 flex w-10 items-center justify-center">
               <label htmlFor="fileInput">
