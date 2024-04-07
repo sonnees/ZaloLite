@@ -48,7 +48,11 @@ const MessageDetail = ({ message, chatAvatar }) => {
         );
       } else if (content.key === "link") {
         return <LinkPreview key={index} url={content.value} />;
-      } else if (content.key.startsWith("zip") || content.key.startsWith("pdf")) {
+      } else if (
+        content.key.startsWith("zip") ||
+        content.key.startsWith("pdf") ||
+        content.key.startsWith("xlsx")
+      ) {
         const [fileLabel, fileName, fileSize] = content.key.split("|");
         return (
           <FileLink
@@ -73,7 +77,6 @@ const MessageDetail = ({ message, chatAvatar }) => {
       return null; // Trường hợp không xác định, trả về null
     });
   };
-
 
   // avatar = "https://avatars.githubusercontent.com/u/81128952?v=4";
   const messageRef = useRef(null);
