@@ -24,7 +24,7 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
       case "doc":
         return <img src="/doc.png" alt="Doc Icon" className="h-14 w-14" />;
       case "pdf":
-        return <img src="/pdf.png" alt="PDF Icon" className="h-14 w-14" />;
+        return <img src="/file-pdf.png" alt="PDF Icon" className="h-14 w-14" />;
       default:
         return (
           <img src="/default.png" alt="Default Icon" className="h-14 w-14" />

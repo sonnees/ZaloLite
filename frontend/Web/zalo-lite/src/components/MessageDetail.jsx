@@ -21,6 +21,10 @@ const MessageDetail = ({ message, chatAvatar }) => {
 
   // Hàm render nội dung của tin nhắn
   const renderContent = () => {
+    // if (contents === undefined) {
+    //   console.error("Contents is undefined");
+    //   return null; // hoặc một giá trị mặc định khác tùy thuộc vào logic của bạn
+    // }
     return contents.map((content, index) => {
       if (content.key === "image") {
         return (
@@ -44,7 +48,7 @@ const MessageDetail = ({ message, chatAvatar }) => {
         );
       } else if (content.key === "link") {
         return <LinkPreview key={index} url={content.value} />;
-      } else if (content.key.startsWith("zip")) {
+      } else if (content.key.startsWith("zip") || content.key.startsWith("pdf")) {
         const [fileLabel, fileName, fileSize] = content.key.split("|");
         return (
           <FileLink
