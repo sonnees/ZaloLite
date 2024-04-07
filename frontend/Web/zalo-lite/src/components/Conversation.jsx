@@ -675,15 +675,20 @@ const Conversation = () => {
         // onScroll={handleScroll}
       >
         {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
-        <Message sender="me" content="Chào bạn!" timestamp="15:32" />
-        Thêm tin nhắn khác ở đây */}
-        {messages.map((message, index) => (
-          <MessageDetail
-            key={index}
-            message={message}
-            chatAvatar={chatAvatar}
-          />
-        ))}
+  <Message sender="me" content="Chào bạn!" timestamp="15:32" />
+  Thêm tin nhắn khác ở đây */}
+        {messages.map(
+          (message, index) =>
+            // Thay đổi ở đây
+            message.recall === false && (
+              <MessageDetail
+                key={index}
+                message={message}
+                chatAvatar={chatAvatar}
+                socket={socket}
+              />
+            ),
+        )}
         <div ref={messagesEndRef} />
       </div>
       <div className="border-t">

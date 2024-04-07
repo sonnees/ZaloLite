@@ -41,13 +41,25 @@ function ChatElement({
   //   console.log("topChatActivity is empty");
   // }
 
-  useEffect(() => {
-    if (topChatActivity.length > 0) {
-      setMessageContent(
-        topChatActivity[topChatActivity.length - 1].contents[0].value,
-      );
+  // useEffect(() => {
+  //   if (topChatActivity.length > 0 ) {
+  //     setMessageContent(
+  //       topChatActivity[topChatActivity.length - 1].contents[0].value,
+  //     );
+  //   }
+  // }, [topChatActivity]);
+
+useEffect(() => {
+  // Duyệt ngược qua mảng chatActivity để tìm tin nhắn gần nhất có thuộc tính recall là true
+  for (let i = topChatActivity.length - 1; i >= 0; i--) {
+    if (topChatActivity[i].recall !== true) {
+      setMessageContent(topChatActivity[i].contents[0].value);
+      return; // Kết thúc vòng lặp ngay khi tìm thấy tin nhắn thỏa mãn
     }
-  }, [topChatActivity]);
+  }
+}, [topChatActivity]);
+
+
 
   //Tính số lượng tin nhắn chưa đọc
   // function countUnreadMessages(data) {
