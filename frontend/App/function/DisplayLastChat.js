@@ -455,12 +455,9 @@ const findChatIDByUserID = (data, userID, myUserID) => {
             if (topChatActivity.userID !== myUserID && topChatActivity.userID === userID) {
                 return conversation.chatID;
             }
-            else if (topChatActivity.userID !== myUserID) {
-                return conversation.chatID;
-            }
         }
-    }
-    return null; // Trả về null nếu không tìm thấy userID
+    }// Trả về null nếu không tìm thấy userID
+    return '5b685d06-8fbe-4ab7-8053-7746760a8001';
 };
 // const myUserID = '26ce60d1-64b9-45d2-8053-7746760a8354'
 // const userID = 'f1cee7b8-7712-4042-9e94-17bd21209a62'

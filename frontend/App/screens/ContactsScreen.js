@@ -28,7 +28,7 @@ const ContactsScreen = () => {
 
 
           <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "flex-end", marginRight: 12 }}
-            onPress={() => { setModalVisible(true) }}
+            onPress={() => { navigation.navigate("AddFriendScreen", { typeScreen: 'ContactsScreen' }) }}
           >
             <Icon name='adduser' size={23} color={'white'} />
           </TouchableOpacity>

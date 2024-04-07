@@ -49,20 +49,17 @@ const AddFriendScreen = () => {
       return response.data;
     } catch (error) {
       if (error.response) {
-        // Nếu có phản hồi từ máy chủ và status code không phải 404, trả về status code
         if (error.response.status !== 404) {
           return {
             status: error.response.status,
             message: 'Lỗi khi lấy thông tin cá nhân'
           };
         }
-        // Nếu status code là 404, trả về status code
         return {
           status: 404,
           message: 'Không tìm thấy thông tin cá nhân'
         };
       } else {
-        // Nếu không có phản hồi từ máy chủ, trả về thông báo lỗi chung
         return {
           status: -1,
           message: 'Lỗi kết nối máy chủ'
@@ -97,16 +94,24 @@ const AddFriendScreen = () => {
       }, 5000);
       return;
     }
-
     // Xử lý các trường hợp lỗi khác
-    if (userInfo.status !== 200) {
-      console.log("Lỗi khi lấy thông tin cá nhân:", userInfo.message);
-      // Xử lý lỗi ở đây nếu cần thiết
-      return;
-    }
-    navigation.navigate('ProfileFriendScreen', { userInfo: userInfo });
+    // if (userInfo.status !== 200) {
+    //   console.log("Lỗi khi lấy thông tin cá nhân:", userInfo.message);
+    //   // Xử lý lỗi ở đây nếu cần thiết
+    //   return;
+    // }
+    navigation.navigate('ProfileFriendScreen', { profile: userInfo });
   }
-
+  const handleNavi = (typeScreen) => {
+    if (typeScreen === 'PofileFriendScreen') {
+      navigation.navigate("PofileFriendScreen")
+    } else if (typeScreen == 'ContactsScreen') {
+      navigation.navigate("TabNavigator", { screen: typeScreen })
+    }
+    else {
+      navigation.navigate("TabNavigator", { screen: typeScreen })
+    }
+  }
   const changeColor = () => {
     setBorderColor('#0033CC');
     setBackgroundPhone('#99CCFF')
@@ -121,7 +126,7 @@ const AddFriendScreen = () => {
       <StatusBar />
       <View style={{ flexDirection: "row", paddingVertical: 8, height: 48, alignItems: 'center' }}>
         <TouchableOpacity style={{ paddingLeft: 10, paddingRight: 15 }}
-          onPress={() => navigation.navigate("TabNavigator", { screen: typeScreen })}
+          onPress={() => handleNavi(typeScreen)}
         >
           <Icon name='arrowleft' size={22} color={'black'} />
         </TouchableOpacity>

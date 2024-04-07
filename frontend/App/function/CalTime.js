@@ -35,3 +35,44 @@ function getTimeDifference(timestamp) {
     }
 }
 export { getTimeDifference };
+
+
+
+// Hàm lấy giờ, phút từ đối tượng thời gian
+const getTime = (timestamp) => {
+    const date = new Date(timestamp.$date);
+    const hours = date.getHours().toString().padStart(2, '0'); // Lấy giờ (00 đến 23)
+    const minutes = date.getMinutes().toString().padStart(2, '0'); // Lấy phút (00 đến 59)
+    return `${hours}:${minutes}`; // Trả về chuỗi giờ/phút
+};
+
+const formatDateTime = (timestamp) => {
+    // Chuyển đổi timestamp thành đối tượng Date
+    const date = new Date(timestamp.$date);
+
+    // Lấy giờ và phút
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    // Lấy ngày, tháng, năm
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Tháng bắt đầu từ 0 nên cần cộng thêm 1
+    const year = date.getFullYear();
+
+    // Định dạng lại thành chuỗi giờ:phút ngày/tháng/năm
+    const formattedDateTime = `${hours}:${minutes} ${day}/${month}/${year}`;
+
+    return formattedDateTime;
+};
+
+// Sử dụng hàm để lấy giờ và phút từ dữ liệu timestamp
+const timestamp = {
+    $date: "2024-03-29T09:11:55.075Z"
+};
+const formattedDateTime = formatDateTime(timestamp);
+console.log(formattedDateTime);
+
+// Sử dụng hàm để lấy ngày/tháng/năm và giờ/phút từ timestamp
+const time = getTime(timestamp);
+
+console.log(time);

@@ -6,7 +6,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserInfoContext } from '../App';
-import VideoPlayer from 'expo-video-player';
+// import VideoPlayer from 'expo-video-player';
 // import Video from 'react-native-video';
 import { Video } from 'expo-av';
 import { ResizeMode } from 'expo-av'
