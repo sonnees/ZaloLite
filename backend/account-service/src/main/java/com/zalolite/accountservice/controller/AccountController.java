@@ -38,6 +38,8 @@ import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.UUID;
 
+import java.util.UUID;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/account")
