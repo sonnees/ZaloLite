@@ -9,16 +9,29 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
 import { v4 as uuidv4 } from "uuid";
+import { useLocation } from "react-router-dom";
+import queryString from "query-string";
 
-
-const MessageDetail = ({ message, chatAvatar }) => {
+const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
+  // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const { userID, contents, timestamp, hasEmotion } = message;
+  const [socket, setSocket] = useState(socketFromConservation);
+  const [flag, setFlag] = useState(false);
+
+  const [isRecalled, setIsRecalled] = useState(false);
+  // const location = useLocation();
+  // const { id } = queryString.parse(location.search);
+  // console.log("Chat ID:", id);
 
   const formattedTime = (timestamp) => {
-    const parsedTimestamp = parseISO(timestamp);
-    return format(parsedTimestamp, "HH:mm");
+    if (timestamp) {
+      const parsedTimestamp = parseISO(timestamp);
+      return format(parsedTimestamp, "HH:mm");
+    } else {
+      return ""; // Trả về chuỗi rỗng nếu timestamp không tồn tại
+    }
   };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -46,64 +59,93 @@ const MessageDetail = ({ message, chatAvatar }) => {
 
     // Replace this line with your WebSocket send function
     console.log("Sending recall message:", recallMessage);
+    socket.send(JSON.stringify(recallMessage));
+  };
+
+  const hidenMessage = (messageID) => {
+    const hiddenMessage = {
+      id: uuidv4(),
+      tcm: "TCM04",
+      userID: userIDFromCookies,
+      messageID: messageID,
+    };
+
+    // Replace this line with your WebSocket send function
+    console.log("Sending hidden message:", hiddenMessage);
+    socket.send(JSON.stringify(hiddenMessage));
+  };
+
+  const handleHidenMessage = (messageID) => {
+    hidenMessage(messageID);
+    setIsRecalled(true);
+    handleClose();
   };
 
   const handleRecall = (messageID) => {
     sendRecallMessage(messageID);
+    setIsRecalled(true);
     handleClose();
   };
 
   const renderContent = () => {
-    return contents.map((content, index) => {
-      if (content.key === "image") {
-        return (
-          <img
-            key={index}
-            src={content.value}
-            alt="Image"
-            className="mb-2 mr-2 h-auto max-w-[200px]"
-          />
-        );
-      } else if (content.key === "text") {
-        return (
-          <p
-            key={index}
-            className={`text-[#081c36] ${
-              userID !== userIDFromCookies ? "" : ""
-            }`}
-          >
-            {content.value}
-          </p>
-        );
-      } else if (content.key === "link") {
-        return <LinkPreview key={index} url={content.value} />;
-      } else if (
-        content.key.startsWith("zip") ||
-        content.key.startsWith("pdf") ||
-        content.key.startsWith("xlsx")
-      ) {
-        const [fileLabel, fileName, fileSize] = content.key.split("|");
-        return (
-          <FileLink
-            key={index}
-            fileName={fileName}
-            fileSize={fileSize}
-            fileURL={content.value}
-            fileKey={content.key}
-          />
-        );
-      } else if (content.key === "mp4") {
-        return (
-          <video key={index} controls className="h-auto max-w-[200px]">
-            <source src={content.value} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        );
-      } else if (content.key === "emoji") {
-        return <p key={index}>{content.value}</p>;
-      }
-      return null;
-    });
+    if (isRecalled) {
+      return (
+        <div className="text-[15px] text-[#98A1AC]">
+          Tin nhắn đã được thu hồi
+        </div>
+      );
+    } else if (contents && contents.length > 0) {
+      return contents.map((content, index) => {
+        if (content.key === "image") {
+          return (
+            <img
+              key={index}
+              src={content.value}
+              alt="Image"
+              className="mb-2 mr-2 h-auto max-w-[200px]"
+            />
+          );
+        } else if (content.key === "text") {
+          return (
+            <p
+              key={index}
+              className={`text-[#081c36] ${
+                userID !== userIDFromCookies ? "" : ""
+              }`}
+            >
+              {content.value}
+            </p>
+          );
+        } else if (content.key === "link") {
+          return <LinkPreview key={index} url={content.value} />;
+        } else if (
+          content.key.startsWith("zip") ||
+          content.key.startsWith("pdf") ||
+          content.key.startsWith("xlsx")
+        ) {
+          const [fileLabel, fileName, fileSize] = content.key.split("|");
+          return (
+            <FileLink
+              key={index}
+              fileName={fileName}
+              fileSize={fileSize}
+              fileURL={content.value}
+              fileKey={content.key}
+            />
+          );
+        } else if (content.key === "mp4") {
+          return (
+            <video key={index} controls className="h-auto max-w-[200px]">
+              <source src={content.value} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          );
+        } else if (content.key === "emoji") {
+          return <p key={index}>{content.value}</p>;
+        }
+        // return null;
+      });
+    }
   };
 
   // avatar = "https://avatars.githubusercontent.com/u/81128952?v=4";
@@ -167,39 +209,64 @@ const MessageDetail = ({ message, chatAvatar }) => {
               >
                 <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
                 <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
-                <MenuItem onClick={() => handleRecall(message.messageID)}>
+                <MenuItem
+                  onClick={() => {
+                    handleRecall(message.messageID);
+                    console.log("messageID thu hồi", message.messageID);
+                  }}
+                >
                   Thu hồi
                 </MenuItem>
-                <MenuItem onClick={handleClose}>Xoá chỉ ở phía tôi</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleHidenMessage(message.messageID);
+                  }}
+                >
+                  Xoá chỉ ở phía tôi
+                </MenuItem>
               </Menu>
             </div>
           ) : (
-            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
+            // <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
+            <></>
           )}
         </div>
       )}
-      {userID !== userIDFromCookies && (
-        <Avatar src={chatAvatar} alt="Avatar" className="mr-3" />
-      )}
-      <div
-        className={`${
-          userID === userIDFromCookies ? "bg-[#E5EFFF]" : "bg-[#FFFFFF]"
-        } relative flex flex-col items-start rounded-md p-3 transition-all duration-300`}
-      >
-        <div className="flex-1 items-center">{renderContent()}</div>
-        <span className="mt-3 text-xs text-gray-500">
-          {formattedTime(timestamp)}
-        </span>
-        {hasEmotion && isHovered && isMyMessage && (
-          <div className="absolute bottom-0 right-0 mb-1 mr-1">
-            <img
-              src="/path/to/emotion-icon.png"
-              alt="Emotion Icon"
-              className="h-4 w-4"
-            />
+      {message && message.hidden && message.hidden.includes(userID) ? null : (
+        <>
+          {userID !== userIDFromCookies && (
+            <Avatar src={chatAvatar} alt="Avatar" className="mr-3" />
+          )}
+          <div
+            className={`${
+              userID === userIDFromCookies ? "bg-[#E5EFFF]" : "bg-[#FFFFFF]"
+            } relative flex flex-col items-start rounded-md p-3 transition-all duration-300`}
+          >
+            <div className="flex-1 items-center">
+              {message.recall === true ? (
+                <div className="text-[15px] text-[#98A1AC]">
+                  Tin nhắn đã được thu hồi
+                </div>
+              ) : (
+                renderContent()
+              )}
+            </div>
+            <span className="mt-3 text-xs text-gray-500">
+              {formattedTime(timestamp)}
+            </span>
+            {hasEmotion && isHovered && isMyMessage && (
+              <div className="absolute bottom-0 right-0 mb-1 mr-1">
+                <img
+                  src="/path/to/emotion-icon.png"
+                  alt="Emotion Icon"
+                  className="h-4 w-4"
+                />
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
+
       {userID !== userIDFromCookies && (
         <div className="flex w-[155px] items-end">
           {isHovered ? (
@@ -232,7 +299,13 @@ const MessageDetail = ({ message, chatAvatar }) => {
               >
                 <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
                 <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
-                <MenuItem onClick={handleClose}>Xoá chỉ ở phía tôi</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleHidenMessage(message.messageID);
+                  }}
+                >
+                  Xoá chỉ ở phía tôi
+                </MenuItem>
               </Menu>
             </div>
           ) : (

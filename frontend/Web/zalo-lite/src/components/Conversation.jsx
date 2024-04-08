@@ -472,7 +472,7 @@ const Conversation = () => {
       // Thêm nội dung tương ứng vào tin nhắn
       if (contentType === "text") {
         message.contents.push({
-          key: keyTypeMessage,
+          key: "text",
           value: messageContent,
         });
       } else if (contentType === "file") {
@@ -487,8 +487,12 @@ const Conversation = () => {
           key: "emoji",
           value: messageContent,
         });
+      } else if (contentType === "link") {
+        message.contents.push({
+          key: "link",
+          value: messageContent,
+        });
       }
-
       socket.send(JSON.stringify(message));
       setMessage(""); // Xóa nội dung của input message sau khi gửi
       setSentMessage(message); // Cập nhật state của sentMessage
@@ -506,7 +510,10 @@ const Conversation = () => {
   // };
 
   const handleSendMessage = () => {
-    if (contentType === "text" && message.trim() !== "") {
+    if (message.startsWith("http://") || message.startsWith("https://")) {
+      setKeyTypeMessage("link");
+      sendMessageWithTextViaSocket(message, "link");
+    } else if (contentType === "text" && message.trim() !== "") {
       console.log("Gửi tin nhắn:", message);
       sendMessageWithTextViaSocket(message, "text");
     } else if (contentType === "file" && imageUrl) {
@@ -604,7 +611,6 @@ const Conversation = () => {
     }
   }, [sentMessage]);
 
-
   return (
     <div className="h-screen w-full">
       <div className="h-[68px] w-full px-4">
@@ -682,6 +688,8 @@ const Conversation = () => {
             key={index}
             message={message}
             chatAvatar={chatAvatar}
+            socketFromConservation={socket}
+            messagesF={messages}
           />
         ))}
         <div ref={messagesEndRef} />
