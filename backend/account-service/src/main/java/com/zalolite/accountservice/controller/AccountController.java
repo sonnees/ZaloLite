@@ -2,9 +2,13 @@ package com.zalolite.accountservice.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
 import com.zalolite.accountservice.AccountRepository;
 import com.zalolite.accountservice.dto.AccountChangePassword;
 import com.zalolite.accountservice.dto.AccountCreateDTO;
+import com.zalolite.accountservice.dto.Field2DTO;
 import com.zalolite.accountservice.dto.FieldDTO;
 import com.zalolite.accountservice.entity.Account;
 import com.zalolite.accountservice.entity.Profile;
@@ -12,6 +16,7 @@ import com.zalolite.accountservice.jwt.AuthenticationManager;
 import com.zalolite.accountservice.serialization.JsonConverter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.imgscalr.Scalr;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +30,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.UUID;
 
 @RestController
@@ -155,5 +165,39 @@ public class AccountController {
                 }).flatMap(responseEntityMono -> responseEntityMono);
     }
 
+    @GetMapping("/info/qr-code")
+    public Mono<ResponseEntity<String>> getInfoByQR() {
+        log.info("### enter get info account by qr code ###");
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .map(authentication -> {
+                    String userDetailsPhoneNumber = (String) authentication.getPrincipal();
+                    return Mono.fromCallable(() -> {
+                        try {
+                            Field2DTO dto = new Field2DTO("QR1",userDetailsPhoneNumber);
+                            String objToString = jsonConverter.objToString(dto);
+                            int width = 200;
+                            int height = 200;
+                            BitMatrix matrix = new MultiFormatWriter().encode(objToString, BarcodeFormat.QR_CODE, width, height);
+                            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                            for (int x = 0; x < width; x++)
+                                for (int y = 0; y < height; y++)
+                                    image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+
+                            BufferedImage scaledImage = Scalr.crop(image, 30, 30, width-60, height-60);
+                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                            ImageIO.write(scaledImage, "png", outputStream);
+                            byte[] imageBytes = outputStream.toByteArray();
+                            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                            FieldDTO fieldDTO = new FieldDTO(base64Image);
+                            return ResponseEntity.ok().body(jsonConverter.objToString(fieldDTO));
+                        } catch (Exception e) {
+                            log.error("# {} #", e+"");
+                            return ResponseEntity.status(500).body("Error gen QR code");
+                        }
+                    }).subscribeOn(Schedulers.boundedElastic());
+
+                }).flatMap(responseEntityMono -> responseEntityMono);
+    }
 }
 
