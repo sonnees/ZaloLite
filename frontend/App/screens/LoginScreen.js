@@ -38,13 +38,8 @@ const LoginScreen = () => {
       const data = await response.json();
 
       if (response.status === 200) {
-        // Đăng nhập thành công, lưu token vào AsyncStorage
-        // await AsyncStorage.setItem('token', data.field);
         logIn(data.field)
-
         console.log('data:', data.field);
-
-        // Lưu phoneNumber vào AsyncStorage
         await AsyncStorage.setItem('phoneNumber', phoneNumber);
 
         const getToken = async () => {
