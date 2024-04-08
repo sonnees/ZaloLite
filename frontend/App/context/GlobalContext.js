@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useState } from "react";
 
 export const GlobalContext = createContext();
@@ -7,14 +8,18 @@ export const GlobalProvider = ({ children }) => {
     const [chatID, setChatID] = useState({})
     const [listChatID, setListChatID] = useState([])
 
-    const logIn = (token = "") => {
+    const logIn = async (token = "") => {
         if (!token.trim()) return;
 
-        return localStorage.setItem("access_token", token);
+        try {
+            await AsyncStorage.setItem('token', token);
+        } catch (error) {
+            console.error("Error saving token:", error);
+        }
     };
 
-    const logOut = () => {
-        localStorage.removeItem("access_token");
+    const logOut = async () => {
+        await AsyncStorage.removeItem("token");
         return setUser({});
     };
 

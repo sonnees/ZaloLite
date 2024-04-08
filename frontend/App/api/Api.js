@@ -8,6 +8,8 @@ export const API_CHECKPHONE = `http://${Port}:8081/api/v1/auth/check-uniqueness-
 export const API_CHANGE_PASS = `http://${Port}:8081/api/v1/account/change-password`;
 export const API_RESET_PASS = `http://${Port}:8081/api/v1/auth/reset-password`;
 export const API_INFOR_ACCOUNT = `http://${Port}:8081/api/v1/account/info`;
+export const API_PROFILE_BY_USERID = `http://${Port}:8081/api/v1/account/profile/userID/`;
 
 export const API_INFOR_USER = `http://${Port}:8082/api/v1/user/info/`;
+
 

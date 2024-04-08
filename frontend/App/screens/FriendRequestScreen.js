@@ -7,6 +7,9 @@ import { UserInfoContext } from '../App';
 import { getTimeDifference } from '../function/CalTime';
 import { findChatIDByUserID } from '../function/DisplayLastChat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_PROFILE_BY_USERID } from '../api/Api';
+import axios from 'axios';
+import { fetchProfileInfoByUserID } from '../function/FetchData';
 
 const FriendRequestScreen = () => {
     const { userInfo, setUserInfo, chatID, setChatID } = useContext(UserInfoContext)
@@ -19,6 +22,8 @@ const FriendRequestScreen = () => {
     const [modalChatVisible, setModalChatVisible] = useState(false);
     const [selectedFriendRequest, setSelectedFriendRequest] = useState(null);
     const [isSender, setIsSender] = useState(true);
+    const [profileFriendRequest, setProfileFriendRequest] = useState({});
+
     // Sử dụng useEffect để lắng nghe sự thay đổi của userInfo và cập nhật dataFriendRequest
     useEffect(() => {
         // Kiểm tra userInfo đã được cung cấp chưa và có thuộc tính friendRequests không
@@ -26,6 +31,46 @@ const FriendRequestScreen = () => {
             setDataFriendRequest(userInfo.friendRequests);
         }
     }, [userInfo]);
+    const getToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            return token;
+        } catch (error) {
+            console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
+            return null;
+        }
+    };
+    const fetchProfileInfo = async (userID, token) => {
+        try {
+            const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log("PROFILE FRIEND REQUEST:\n", response.data);
+            setProfileFriendRequest(response.data)
+            console.log("PROFILE FRIEND REQUEST HEHE:\n", profileFriendRequest);
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                if (error.response.status !== 404) {
+                    return {
+                        status: error.response.status,
+                        message: 'Lỗi khi lấy thông tin cá nhân'
+                    };
+                }
+                return {
+                    status: 404,
+                    message: 'Không tìm thấy thông tin cá nhân'
+                };
+            } else {
+                return {
+                    status: -1,
+                    message: 'Lỗi kết nối máy chủ'
+                };
+            }
+        }
+    };
 
     const countFalseSenders = (dataArray) => {
         let count = 0;
@@ -46,25 +91,24 @@ const FriendRequestScreen = () => {
         });
         return count;
     };
-    const openModal = (friendRequest) => {
+    const openModal = async (friendRequest) => {
+        const token = await getToken();
+        fetchProfileInfo(friendRequest.userID, token)
+        console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
+        console.log("DATAFR:  ", profileFriendRequest);
         setSelectedFriendRequest(friendRequest);
+
         setModalChatVisible(true);
     }
     const handleOpenChat = async (userID) => {
-        // Kiểm tra xem selectedFriendRequest có giá trị không
         if (selectedFriendRequest) {
             console.log("selectedFriendRequest:", selectedFriendRequest);
             const myUserID = await AsyncStorage.getItem('userID');
-            // Kiểm tra xem myUserID và userID có giá trị không
             if (myUserID && userID) {
-                // Gọi hàm findChatIDByUserID với các tham số cần thiết
                 const data = findChatIDByUserID(userInfo, myUserID, userID);
                 console.log("DATA IN FRIENDREQUESTSCREEN", data);
                 setChatID(data)
-                // Kiểm tra xem chatID có giá trị không
                 if (chatID) {
-                    // Chuyển hướng đến màn hình ChatScreen với chatID
-                    // setChatID(data)
                     console.log("Chat ID In FRIENDREQUESTSCREEN: ", chatID);
                     navigation.navigate("ChatScreen");
                 } else {
@@ -204,7 +248,6 @@ const FriendRequestScreen = () => {
                         />
                     </View>
                 )}
-
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -215,7 +258,7 @@ const FriendRequestScreen = () => {
                     <TouchableWithoutFeedback onPress={() => setModalChatVisible(false)}>
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
                             <View style={{ backgroundColor: 'white', height: 420, width: 300, borderRadius: 8, elevation: 5 }}>
-                                <Image source={{ uri: 'https://i.pinimg.com/736x/c2/e9/02/c2e902e031e1d9d932411dd0b8ab5eef.jpg' }}
+                                <Image source={{ uri: profileFriendRequest.background }}
                                     style={{ height: 160, width: '100%', alignSelf: 'center' }}
                                 />
                                 <Image
