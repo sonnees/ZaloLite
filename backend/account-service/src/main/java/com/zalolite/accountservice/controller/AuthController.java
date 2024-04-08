@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -107,30 +108,33 @@ public class AuthController {
     //true: pixel đen
     //cot x, hang y
     @GetMapping("/authenticate/qr-code")
-    public ResponseEntity<String> loginQRCode() {
+    public Mono<ResponseEntity<String>> loginQRCode() {
         log.info("### enter authenticate qr-code ###");
         String endpointWebSocket = UUID.randomUUID().toString();
-        try {
-            int width = 200;
-            int height = 200;
-            BitMatrix matrix = new MultiFormatWriter().encode(endpointWebSocket, BarcodeFormat.QR_CODE, width, height);
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
-                }
+        return Mono.fromCallable(() -> {
+            try {
+                int width = 200;
+                int height = 200;
+                BitMatrix matrix = new MultiFormatWriter().encode(endpointWebSocket, BarcodeFormat.QR_CODE, width, height);
+                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                for (int x = 0; x < width; x++)
+                    for (int y = 0; y < height; y++)
+                        image.setRGB(x, y, matrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+
+                BufferedImage scaledImage = Scalr.crop(image, 30, 30, width-60, height-60);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ImageIO.write(scaledImage, "png", outputStream);
+                byte[] imageBytes = outputStream.toByteArray();
+                String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                Field2DTO dto = new Field2DTO(endpointWebSocket, base64Image);
+                return ResponseEntity.ok().body(objectMapper.writeValueAsString(dto));
+            } catch (Exception e) {
+                log.error("# {} #", e+"");
+                return ResponseEntity.status(500).body("Error gen QR code");
             }
-            BufferedImage scaledImage = Scalr.crop(image, 30, 30, width-60, height-60);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            ImageIO.write(scaledImage, "png", outputStream);
-            byte[] imageBytes = outputStream.toByteArray();
-            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-            Field2DTO dto = new Field2DTO(endpointWebSocket, base64Image);
-            return ResponseEntity.ok().body(objectMapper.writeValueAsString(dto));
-        } catch (Exception e) {
-            log.error("# {} #", e+"");
-            return ResponseEntity.status(500).body("Error gen QR code");
-        }
+        }).subscribeOn(Schedulers.boundedElastic());
+
+
     }
 
     @PostMapping("/reset-password")
