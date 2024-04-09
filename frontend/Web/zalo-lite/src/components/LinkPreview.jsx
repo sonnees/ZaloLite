@@ -8,7 +8,7 @@ const LinkPreview = ({ url }) => {
     const fetchPreviewData = async () => {
       try {
         const response = await axios.get(
-          `https://api.linkpreview.net/?key=2188c46006760183c629bc3a98e909d2&q=${encodeURIComponent(
+          `https://api.linkpreview.net/?key=13591e41bdb3556d908a2dc32c06e054&q=${encodeURIComponent(
             url,
           )}`,
         );
