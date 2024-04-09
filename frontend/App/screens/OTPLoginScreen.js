@@ -5,7 +5,7 @@ import { firebaseConfig } from '../config/config';
 import firebase from 'firebase/compat/app';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const OtpScreen = () => {
+const OPTLoginScreen = () => {
     let navigation = useNavigation();
     let route = useRoute();
 
@@ -15,8 +15,7 @@ const OtpScreen = () => {
     const recaptchaVerifier = useRef(null);
 
     // Lấy giá trị phoneNumber từ tham số của route
-    const { params } = route;
-    const routePhoneNumber = params ? params.phoneNumber : ''; // Lấy phoneNumber từ params, nếu không tồn tại thì gán là chuỗi rỗng
+    const { phoneNumber: routePhoneNumber } = route.params;
 
     // Set giá trị phoneNumber từ route.params vào state khi màn hình được tạo
     useState(() => {
@@ -25,13 +24,13 @@ const OtpScreen = () => {
             ? '+84' + routePhoneNumber.slice(1)
             : routePhoneNumber;
         setPhoneNumber(formattedPhoneNumber);
-    }, [routePhoneNumber]);
+    }, []);
 
     const sendVerification = () => {
-        const phoneProvider = new firebase.auth.PhoneAuthProvider()
+        const phoneProvider = new firebase.auth.PhoneAuthProvider();
         phoneProvider.verifyPhoneNumber(phoneNumber, recaptchaVerifier.current)
             .then(setVerificationId)
-            .catch(console.error)
+            .catch(console.error);
     }
 
     const confirmCode = () => {
@@ -41,13 +40,14 @@ const OtpScreen = () => {
         );
         firebase.auth().signInWithCredential(credential)
             .then(() => {
-                setCode('')
-                navigation.navigate('LoginNavigator', { screen: 'LoginScreen' });
+                setCode('');
+                navigation.navigate('LoginNavigator', { screen: 'CreatePasswordScreen', params: { phoneNumber: phoneNumber } });
+
             })
             .catch(error => {
-                alert(error)
-            })
-        Alert.alert('Phone authentication successful 👍')
+                alert(error);
+            });
+        Alert.alert('Phone authentication successful 👍');
     }
 
     return (
@@ -88,10 +88,10 @@ const OtpScreen = () => {
                 </Text>
             </TouchableOpacity>
         </View>
-    )
+    );
 }
 
-export default OtpScreen
+export default OPTLoginScreen;
 
 const styles = StyleSheet.create({
 
@@ -133,4 +133,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 20
     }
-})
+});
