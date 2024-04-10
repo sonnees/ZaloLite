@@ -30,7 +30,6 @@ function Navbar({ onNavbarReady }) {
   const token = location.state?.token;
   const phoneNumber = location.state?.phoneNumber;
   const avt = location.state?.avt;
-  // console.log(avt);
   // console.log("Token: ", token);
   // console.log("Phone Number: ", phoneNumber);
 
@@ -127,6 +126,7 @@ function Navbar({ onNavbarReady }) {
 
   // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
   useEffect(() => {
+    
     if (token && phoneNumber) {
       const fetchProfile = async () => {
         try {
