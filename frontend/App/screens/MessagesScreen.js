@@ -1,51 +1,26 @@
-import React, { memo, useState } from "react";
-import {
-  View,
-  Modal,
-  KeyboardAvoidingView,
-  StyleSheet,
-  Platform,
-  TouchableOpacity,
-  Image,
-  Text,
-  StatusBar,
-  TouchableWithoutFeedback,
-} from "react-native";
-import Icon from "react-native-vector-icons/AntDesign";
-import { useNavigation, useRoute } from '@react-navigation/native';
-
+import React, { memo, useState, useEffect, useContext } from 'react';
+import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Text, StatusBar, TouchableWithoutFeedback } from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import { getTimeDifference } from '../function/CalTime';
+import { getDataFromConversationsAndChatData } from '../function/DisplayLastChat';
+import { API_GET_LIST_CHATACTIVITY } from '../api/Api';
+import { GlobalContext } from '../context/GlobalContext';
 const MessagesScreen = () => {
   let navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
-  const [colorTextInView, setColorTextInView] = useState("gray");
   const [modalChatVisible, setModalChatVisible] = useState(false);
-
-
-  let route = useRoute();
-  const data = [
-    {
-      id: 1,
-      userName: "Hà Anh Thảo",
-      userAvatar: "https://avatars.githubusercontent.com/u/81128952?v=4",
-      value: "Xin chào! Bạn đã ăn tối chưa?",
-      time: "1 hours",
-    },
-    {
-      id: 2,
-      userName: "Hiếu Đông",
-      userAvatar:
-        "https://s120-ava-talk.zadn.vn/b/1/6/9/2/120/49c735f44a48922c94785739bc2b91e7.jpg",
-      value: "Biết Bằng bị Gay không",
-      time: "2 hours",
-    },
-
-  ];
-
-  const handlePress = () => {
+  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext)
+  useEffect(() => {
+    navigation.navigate("TabNavigator", { screen: 'Messages' });
+  }, [myUserInfo]);
+  const handlePress = (data) => {
     if (modalVisible) {
       setModalChatVisible(false);
     } else {
-      navigation.navigate("ChatScreen");
+      navigation.navigate("ChatScreen", { conversationOpponent: data });
     }
   };
 
@@ -54,115 +29,96 @@ const MessagesScreen = () => {
       setModalChatVisible(true);
     }, 500);
   };
+  const fetchAllChatbychatID = async (chatID, token) => {
+    try {
+      const response = await axios.get(`${API_GET_LIST_CHATACTIVITY}${chatID}&x=0&y=1000`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const allChatActivity = await response.data;
+      console.log("ALL CHATACTIVITY: ", allChatActivity);
+      if (allChatActivity)
+        return allChatActivity;
+      else
+        return null;
 
-  const ChatElement = memo(
-    ({ item }) => {
-      return (
-        <View style={{ alignItems: "center" }}>
-          <TouchableOpacity
-            onPress={handlePress}
-            onLongPress={handleLongPress}
-            style={{ height: 75, flexDirection: "row", width: "100%" }}
-          >
-            <Image
-              style={{
-                width: 55,
-                height: 55,
-                resizeMode: "contain",
-                borderRadius: 50,
-                margin: 12,
-                marginLeft: 20,
-                marginRight: 20,
-              }}
-              source={{ uri: item.userAvatar }}
-            />
-
-            <View
-              style={{
-                flexDirection: "column",
-                justifyContent: "center",
-                flex: 4,
-              }}
-            >
-              <Text
-                style={{ fontSize: 18, fontWeight: "400", marginBottom: 10 }}
-              >
-                {item.userName}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "400",
-                  color: "gray",
-                  marginBottom: 10,
-                }}
-              >
-                {item.value}
-              </Text>
-            </View>
-
-            <View
-              style={{
-                justifyContent: "flex-end",
-                alignItems: "center",
-                flex: 1,
-                flexDirection: "row",
-                marginBottom: 30,
-                marginRight: -20,
-              }}
-            >
-              <Icon
-                name="pushpin"
-                size={13}
-                color={"#d9d9d9"}
-                style={{ marginRight: 5 }}
-              ></Icon>
-              <Text
-                style={{ fontSize: 12.5, fontWeight: "600", color: "black" }}
-              >
-                {item.time}
-              </Text>
-            </View>
-
-            <View
-              style={{
-                height: 17,
-                width: 20,
-                borderRadius: 45,
-                backgroundColor: "#BBBBBB",
-                marginTop: 45,
-                marginRight: 15,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 10,
-                  fontWeight: "500",
-                  color: "white",
-                  textAlign: "center",
-                }}
-              >
-                2+
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <View
-            style={{
-              borderBottomColor: "#EEEEEE",
-              borderBottomWidth: 0.45,
-              width: "100%",
-              marginLeft: 100,
-            }}
-          />
-        </View>
-      );
-    },
-    (prevProps, nextProps) => {
-      return prevProps.item.id === nextProps.item.id;
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin tất cả đoạn chat:', error);
+      return null;
     }
-  );
+  }
+  const fetchConversationOpponent = async (conversationOpponent) => {
+    console.log("CONVERSATION", conversationOpponent);
+    const chatID = conversationOpponent.chatID;
+    const token = await AsyncStorage.getItem('token')
+    const chatData = await fetchAllChatbychatID(chatID, token);
+    const newChatData = getDataFromConversationsAndChatData(conversationOpponent, chatData);
+    if (newChatData) {
+      console.log("CONVERSATION WITH ALL CHATACTIVITY:\n", newChatData);
+      return newChatData;
+    }
+    else {
+      console.log("ERROR WHEN GET CONVERSATION WITH ALL CHATACTIVITY\n");
+    }
+  }
+  const ChatElement = memo(({ item }) => {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        const newData = await fetchConversationOpponent(item);
+        setData(newData);
+      };
+
+      fetchData();
+    }, [item]);
+
+    if (!data) {
+      return null; // hoặc hiển thị một phần tử tải dữ liệu
+    }
+    console.log("DATA IN CHATELEMENT:\n", data);
+    return (
+      <View style={{ alignItems: 'center' }}>
+        <TouchableOpacity
+          onPress={() => handlePress(data)}
+          onLongPress={handleLongPress}
+          style={{ height: 75, flexDirection: 'row', width: '100%' }}
+        >
+          <Image style={{ width: 55, height: 55, resizeMode: "contain", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
+            source={{ uri: item.chatAvatar ? data.chatAvatar : null }} />
+
+          <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>
+            <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{data.chatName ? data.chatName : null}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '400', color: 'gray', marginBottom: 10 }}>
+              {data.topChatActivity && data.topChatActivity.length > 0 ? data.topChatActivity[data.topChatActivity.length - 1].contents[0].value : 'Chưa có cuộc trò chuyện nào'}
+            </Text>
+
+          </View>
+
+          <View style={{ justifyContent: 'flex-end', alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: 30, marginRight: -20 }}>
+            <Icon name='pushpin' size={13} color={'#d9d9d9'} style={{ marginRight: 5 }}></Icon>
+            <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>
+              <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>
+                {/* hello */}
+                {data.topChatActivity && data.topChatActivity.length > 0 ? getTimeDifference(data.topChatActivity[data.topChatActivity.length - 1].timestamp) : ''}
+              </Text>
+
+            </Text>
+          </View>
+
+          <View style={{ height: 17, width: 20, borderRadius: 45, backgroundColor: '#BBBBBB', marginTop: 45, marginRight: 15, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 10, fontWeight: '500', color: 'white', textAlign: 'center' }}>2+</Text>
+          </View>
+
+        </TouchableOpacity>
+        <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 0.45, width: '100%', marginLeft: 100 }} />
+      </View>
+    );
+  }, (prevProps, nextProps) => {
+    return prevProps.item.chatID === nextProps.item.chatID;
+  });
+
 
   return (
     <KeyboardAvoidingView
@@ -259,27 +215,10 @@ const MessagesScreen = () => {
             }}
           >
             <TouchableOpacity style={styles.buttonNav}>
-              <Text
-                style={{
-                  fontSize: 15.5,
-                  color: colorTextInView,
-                  fontWeight: "500",
-                }}
-              >
-                Focused
-              </Text>
+              <Text style={{ fontSize: 15.5, color: "gray", fontWeight: '500' }}>Focused</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.buttonNav}>
-              <Text
-                style={{
-                  fontSize: 15.5,
-                  color: colorTextInView,
-                  fontWeight: "500",
-                }}
-              >
-                {" "}
-                Other
-              </Text>
+              <Text style={{ fontSize: 15.5, color: "gray", fontWeight: '500' }}> Other</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity
@@ -293,25 +232,19 @@ const MessagesScreen = () => {
             <Icon name="filter" size={24} color={"gray"}></Icon>
           </TouchableOpacity>
         </View>
-        {/* End of Navigation Tabs */}
+        <View style={{ borderBottomColor: 'gray', borderBottomWidth: 0.2, width: '100%' }} />
 
-        <View
-          style={{
-            borderBottomColor: "gray",
-            borderBottomWidth: 0.2,
-            width: "100%",
-          }}
-        />
-
-        {/* Removed FlatList and replaced with ChatElement */}
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
-          {data.map((item) => (
-            <ChatElement key={item.id} item={item} />
-          ))}
+          <FlatList
+            data={myUserInfo.conversations}
+            renderItem={({ item }) => <ChatElement item={item} />}
+            keyExtractor={(item) => item.chatID}
+          />
         </View>
+
       </View>
 
-      {/* Modal for additional options */}
+      {/* MODAL */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -446,8 +379,7 @@ const MessagesScreen = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-
-      {/* Modal for chat options */}
+      {/* MODAL CHAT */}
       <Modal
         animationType="slide"
         transparent={true}

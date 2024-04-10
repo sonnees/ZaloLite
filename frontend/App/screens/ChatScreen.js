@@ -1,147 +1,32 @@
-import { View, Text, SafeAreaView, StyleSheet, Image, FlatList, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, FlatList, TouchableOpacity, StatusBar, Linking, ActivityIndicator } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import React, { memo, useState, useRef, useEffect } from 'react';
+import React, { memo, useState, useRef, useEffect, useContext } from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
-// import { useNavigation } from '@react-navigation/native'
-// import chat from '../data/chat.js';
-export default function ChatScreen({ navigation }) {
-  // let navigation = useNavigation();
-  const chat = [{
-    _id: "uuid1",
-    chatActivity: [
-      // Thêm các tin nhắn cũ hơn ở đây
-      {
-        messageID: "mmid4",
-        userID: "1",
-        timetamp: "2024-01-19T18:45:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Xin chào! Bạn đã ăn tối chưa?"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      }, {
-        messageID: "mmid5",
-        userID: "2",
-        timetamp: "2024-01-19T19:00:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Chưa, bạn muốn đi ăn cùng không?"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      }, {
-        messageID: "mmid6",
-        userID: "1",
-        timetamp: "2024-01-19T19:05:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Được chứ, hẹn bạn ở đâu?"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      }, {
-        messageID: "mmid7",
-        userID: "2",
-        timetamp: "2024-01-19T19:10:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Hôm nay mình ăn ở nhà hàng gần công viên."
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      },
-      {
-        messageID: "mmid1",
-        userID: "1",
-        timetamp: "2024-01-20T12:30:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Chào bạn! Hôm nay bạn đã làm gì mới?"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: [2]
-        }
-      },
-      {
-        messageID: "mmid2",
-        userID: "2",
-        timetamp: "2024-01-20T12:30:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Tôi đã đi chơi với bạn bè. 11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      },
-      {
-        messageID: "mmid3",
-        userID: "2",
-        timetamp: "2024-01-20T11:55:00Z",
-        parentID: "",
-        content: [{
-          key: "text",
-          value: "Oke kkkk"
-        }],
-        status: {
-          isSent: true,
-          delivery: ["1"],
-          read: []
-        }
-      },
+import { useNavigation, useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import VideoPlayer from 'expo-video-player';
+// import Video from 'react-native-video';
+import { Video } from 'expo-av';
+import { ResizeMode } from 'expo-av'
+import { GlobalContext } from '../context/GlobalContext';
 
-    ]
-  }]
-  const data = chat[0].chatActivity;
+const ChatScreen = () => {
+  let navigation = useNavigation();
+  const route = useRoute();
+  const conversationOpponent = route.params?.conversationOpponent;
+  console.log("conversationOpponent data from MESSAGESCREEN \n", conversationOpponent);
 
-  const [modalChatVisible, setModalChatVisible] = useState(false);
-
-  const handlePress = () => {
-    // Kiểm tra nếu modal đã hiển thị, thì đóng modal
-    if (modalVisible) {
-      setModalChatVisible(false);
-    } else {
-      // Nếu modal chưa hiển thị, thực hiện navigate qua TabNavigator
-      navigation.navigate("ChatScreen");
-    }
-  };
-
-  const handleLongPress = () => {
-    // Hiển thị modal khi người dùng nhấn giữ lâu hơn 0.5 giây
-    setTimeout(() => {
-      setModalChatVisible(true);
-    }, 500);
-  };
-
+  const [videoKey, setVideoKey] = useState(0);
+  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext)
+  console.log("MY USER ID\n", myUserInfo.id);
+  useEffect(() => {
+    navigation.navigate("ChatScreen", { conversationOpponent: conversationOpponent });
+  }, [myUserInfo]);
 
   const ChatItem = memo(({ item }) => {
     const [textHeight, setTextHeight] = useState(0);
     const touchableRef = useRef(null);
-
     const handleTextLayout = (e) => {
       const { height } = e.nativeEvent.layout;
       setTextHeight(height);
@@ -151,41 +36,252 @@ export default function ChatScreen({ navigation }) {
         });
       }
     };
+    const [imageSize, setImageSize] = useState({ width: null, height: null });
 
-    const alignmentStyle = item.userID === "1" ? { alignSelf: 'flex-start' } : { alignSelf: 'flex-end' };
+    const handleImageLoad = (event) => {
+      const { width, height } = event.nativeEvent.source;
+      setImageSize({ width, height });
+    };
+    const alignmentStyle = item.userID === myUserInfo.id ? { alignSelf: 'flex-end' } : { alignSelf: 'flex-start' };
+    if (item.contents[0].key === 'text' || item.contents[0].key === 'emoji') {
+      if (item.userID !== myUserInfo.id) {
+        return (
+          <View style={{ flexDirection: 'column' }}>
+            <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+              <Image
+                source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
+                style={{ height: 30, width: 30, borderRadius: 50, marginRight: 8 }}
+              />
 
-    return (
-      <View style={{ alignItems: 'center' }}>
-        <TouchableOpacity
-          ref={touchableRef}
-          onPress={handlePress}
-          onLongPress={handleLongPress}
-          style={{
-            flexDirection: 'row',
-            borderRadius: 12,
-            backgroundColor: 'white',
-            marginHorizontal: 10,
-            alignItems: 'center',
-            ...alignmentStyle,
-            paddingHorizontal: 10,
-            maxWidth: 280,
-            marginLeft: 50
-          }}
-        >
-          <Text
-            onLayout={handleTextLayout}
-            style={{ textAlign: 'center', flexWrap: 'wrap' }}
+              <TouchableOpacity
+                ref={touchableRef}
+                style={{
+                  flexDirection: 'row',
+                  borderRadius: 12,
+                  backgroundColor: 'white',
+                  marginHorizontal: 10,
+                  alignItems: 'center',
+                  ...alignmentStyle,
+                  paddingHorizontal: 10,
+                  maxWidth: 280,
+                }}
+              >
+                <Text
+                  onLayout={handleTextLayout}
+                  style={{ flexWrap: 'wrap', fontSize: 15 }}
+
+                >
+                  {item.contents[0].value}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ height: 8 }} />
+          </View>
+        );
+      }
+    }
+    if (item.contents[0].key === 'image') {
+      if (item.contents.length > 1) {
+        return (
+          <View style={{ alignItems: 'center' }}>
+            {item.contents.map((content, index) => (
+              <View style={{
+                ...alignmentStyle,
+              }}>
+                <TouchableOpacity
+                  key={index}
+                  style={{
+                    flexDirection: 'row',
+                    marginHorizontal: 10,
+                    ...alignmentStyle,
+                    width: imageSize.width,
+                    height: imageSize.height,
+                    maxHeight: 300,
+                    maxWidth: '60%',
+                    marginLeft: 50
+                  }}
+                >
+                  <Image
+                    source={{ uri: content.value }}
+                    style={{ height: '100%', width: '100%' }}
+                    resizeMode="cover"
+                    onLoad={handleImageLoad}
+                  />
+                </TouchableOpacity>
+                <View style={{ height: 8 }} />
+              </View>
+            ))}
+            <View style={{ height: 8 }} />
+          </View>
+        );
+      } else {
+        return (
+          <View style={{ alignItems: 'center' }}>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                borderRadius: 12,
+                backgroundColor: 'white',
+                marginHorizontal: 10,
+                ...alignmentStyle,
+                paddingHorizontal: 10,
+                width: imageSize.width,
+                height: imageSize.height,
+                maxHeight: 300,
+                maxWidth: '60%',
+                marginLeft: 50
+              }}
+            >
+              <Image
+                source={{ uri: item.contents[0].value }}
+                style={{ height: '100%', width: '100%' }}
+              // resizeMode="contain"
+              // onLoad={handleImageLoad}
+              />
+            </TouchableOpacity>
+            <View style={{ height: 8 }} />
+          </View>
+        );
+      }
+    } else if (item.contents[0].key.startsWith('zip')) {
+      // Hiển thị nội dung cho tệp ZIP
+      const parts = item.contents[0].key.split('|');
+      const fileName = parts[1];
+      const fileSize = parts[2];
+      const fileUrl = item.contents[0].value;
+
+      return (
+        <View style={{ alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => Linking.openURL(fileUrl)} // Mở liên kết khi người dùng chạm vào
+            style={{
+              flexDirection: 'row',
+              borderRadius: 12,
+              backgroundColor: 'white',
+              marginHorizontal: 10,
+              alignItems: 'center',
+              ...alignmentStyle,
+              paddingHorizontal: 10,
+              maxWidth: 280,
+              marginLeft: 50,
+              maxHeight: 70, height: 100
+            }}
           >
-            {item.content[0].value}
-          </Text>
-        </TouchableOpacity>
-        <View style={{ height: 8 }} />
-      </View>
-    );
+            <Image source={require('../assets/zip-folder.png')} style={{ width: 50, height: 50, marginRight: 10, marginLeft: 10 }} />
+            <View style={{ flexDirection: 'column' }}>
+              <Text
+                onLayout={handleTextLayout}
+                style={{ flexWrap: 'wrap', fontSize: 15, fontWeight: '400' }}
+              >{fileName}</Text>
+              <Text
+                onLayout={handleTextLayout}
+                style={{ flexWrap: 'wrap', fontSize: 11, fontWeight: '400' }}
+              >{fileSize}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    else if (item.contents[0].key === 'link') {
+      const linkUrl = item.contents[0].value;
+      console.log("LINK URL: ", linkUrl);
+
+      const [linkPreview, setLinkPreview] = useState(null);
+
+      useEffect(() => {
+        fetch(`https://api.linkpreview.net/?key=94bc443dd1d2ec0588af9aff4e012f6d&q=${encodeURIComponent(linkUrl)}`)
+          .then(response => response.json())
+          .then(data => {
+            const { title, description, image } = data;
+            setLinkPreview({ title, description, image });
+          })
+          .catch(error => {
+            console.error('Error fetching link preview:', error);
+          });
+      }, [linkUrl]);
+
+      return (
+        <View style={{ alignItems: 'center' }}>
+          {linkPreview ? (
+            <TouchableOpacity
+              onPress={() => Linking.openURL(linkUrl)} // Mở liên kết khi người dùng chạm vào
+              style={{
+                flexDirection: 'row',
+                borderRadius: 12,
+                backgroundColor: '#B0E2FF',
+                marginHorizontal: 10,
+                alignItems: 'center',
+                ...alignmentStyle,
+                paddingHorizontal: 10,
+                maxWidth: 280,
+                marginLeft: 50
+              }}
+            >
+
+              <View style={{ flex: 1 }}>
+                <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15, marginTop: 10, marginHorizontal: 10 }}>{linkPreview.title}</Text>
+                <View style={{ margin: 10, backgroundColor: 'white' }}>
+                  {linkPreview.image && <Image source={{ uri: linkPreview.image }} style={{ width: '100%', height: 100, resizeMode: 'contain' }} />}
+                </View>
+                <Text style={{ fontSize: 15, marginHorizontal: 10, marginVertical: '10', marginBottom: 10 }}>{linkPreview.description}</Text>
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                borderRadius: 12,
+                backgroundColor: 'white',
+                marginHorizontal: 10,
+                alignItems: 'center',
+                ...alignmentStyle,
+                paddingHorizontal: 10,
+                maxWidth: 280,
+                marginLeft: 50
+              }}
+            >
+              <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15 }}>{linkUrl}</Text>
+            </TouchableOpacity>
+          )}
+          <View style={{ height: 8 }} />
+        </View>
+      );
+    }
+
+    else if (item.contents[0].key === 'mp4') {
+      return (
+        <View style={{ flexDirection: 'column' }}>
+          <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+            <Image
+              source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
+              style={{ height: 30, width: 30, borderRadius: 50, marginRight: 8 }}
+            />
+            <TouchableOpacity
+              onPress={() => {
+
+              }}
+              style={{
+                flexDirection: 'row',
+                marginHorizontal: 10,
+                ...alignmentStyle,
+                maxHeight: 300,
+                maxWidth: '60%',
+                backgroundColor: 'white'
+              }}
+            >
+              <Video
+                key={videoKey} // Sử dụng videoKey ở đây để kích hoạt việc rerender
+                source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
+                shouldPlay
+                style={{ width: '100%', height: 300 }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={{ height: 8 }} />
+        </View>
+      );
+    }
   });
-
-
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -197,8 +293,11 @@ export default function ChatScreen({ navigation }) {
           <Icon name='arrowleft' color={'white'} size={25}></Icon>
         </TouchableOpacity>
         <View style={{ flexDirection: "column", marginLeft: 20 }}>
-          <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>Trần Thiện Đạt </Text>
-          <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Truy cập 5 giờ trước</Text>
+          <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>
+            {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}
+            {/* Hehe */}
+          </Text>
+          <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Last seen 5 hourse ago</Text>
         </View>
 
         <View style={{ flex: 3 }}></View>
@@ -217,40 +316,64 @@ export default function ChatScreen({ navigation }) {
           onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
         />
       </View>
-
-
-
-      <View style={{ flex: 9 }}>
-
+      {conversationOpponent.topChatActivity && conversationOpponent.topChatActivity.length > 0 && (
         <FlatList
-          data={data}
+          style={{ flex: 1 }}
+          ListHeaderComponent={(
+            <View
+              style={{ height: 205, width: '85%', alignSelf: 'center', margin: 30, marginTop: 10, backgroundColor: 'white', borderRadius: 10 }}
+            >
+              <Image source={{ uri: 'https://i.pinimg.com/736x/c2/e9/02/c2e902e031e1d9d932411dd0b8ab5eef.jpg' }}
+                style={{ height: 120, width: '100%', alignSelf: 'center' }}
+              />
+              <View style={{ flexDirection: 'row' }}>
+                <Image
+                  source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
+                  style={{ height: 70, width: 70, borderRadius: 50, margin: 10 }}
+                />
+
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={{ fontSize: 16, fontWeight: '700', marginTop: 12, marginLeft: 10 }}>
+                    {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}</Text>
+                  <Text style={{ fontSize: 12, marginTop: 7, marginLeft: 10 }}>
+                    No one can change my life</Text>
+                </View>
+              </View>
+            </View>
+          )}
+          data={conversationOpponent.topChatActivity}
           renderItem={({ item }) => <ChatItem item={item} />}
-          keyExtractor={(item) => item.messageID} // Sử dụng trường messageID làm key
+          keyExtractor={(item) => item.messageID}
+          ListFooterComponent={(
+            <View style={{ height: 10 }}></View>
+          )}
         />
+      )}
+      {!conversationOpponent.topChatActivity || conversationOpponent.topChatActivity.length === 0 && (
+        <View style={{ flex: 1 }}>
+          <View
+            style={{ height: 205, width: '85%', alignSelf: 'center', margin: 30, marginTop: 10, backgroundColor: 'white', borderRadius: 10 }}
+          >
+            <Image source={{ uri: 'https://i.pinimg.com/736x/c2/e9/02/c2e902e031e1d9d932411dd0b8ab5eef.jpg' }}
+              style={{ height: 120, width: '100%', alignSelf: 'center' }}
+            />
+            <View style={{ flexDirection: 'row' }}>
+              <Image
+                source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
+                style={{ height: 70, width: 70, borderRadius: 50, margin: 10 }}
+              />
 
-      </View>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <View style={styles.foter}>
+              <View style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 16, fontWeight: '700', marginTop: 12, marginLeft: 10 }}>
+                  {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}</Text>
+                <Text style={{ fontSize: 12, marginTop: 7, marginLeft: 10 }}>
+                  No one can change my life</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      )}
+      < View style={styles.foter} >
         <Image
           style={{ width: 22, height: 22, resizeMode: "contain", marginLeft: 8 }}
           source={require("../assets/face.png")}
@@ -280,14 +403,15 @@ export default function ChatScreen({ navigation }) {
             <EvilIcon name='image' size={38} color={'gray'}></EvilIcon>
           </TouchableOpacity>
         </View>
-      </View>
-    </SafeAreaView>
-  )
+      </View >
+    </SafeAreaView >
+  );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#abcdff',
+    backgroundColor: '#E0EEEE',
   },
   header: {
     height: 50,
@@ -302,7 +426,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 10,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
 });
 
+export default ChatScreen;

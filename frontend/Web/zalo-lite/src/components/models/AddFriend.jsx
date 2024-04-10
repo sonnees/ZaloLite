@@ -182,7 +182,7 @@ export default function AddFriendDialog() {
                   //   <Avatar src={search.avatar} alt={search.name} />
                   //   <span>{search.name}</span>
                   // </li>
-                  <AvatarNameItem data={data} type={"AF"} />
+                  <AvatarNameItem key={index} data={data} type={"AF"} />
                 ))}
               </ul>
             </div>

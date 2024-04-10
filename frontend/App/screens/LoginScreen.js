@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
-import { API_AUTHENTICATE } from '../api/Api';
-
+import { API_AUTHENTICATE, API_INFOR_ACCOUNT, API_INFOR_USER } from '../api/Api';
+import axios from 'axios';
+import { GlobalContext } from '../context/GlobalContext';
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
@@ -12,6 +13,7 @@ const LoginScreen = () => {
   const route = useRoute();
   const newPassword = route.params?.newPassword;
   const isFocused = useIsFocused();
+  const { logIn, myUserInfo, setMyUserInfo } = useContext(GlobalContext)
 
   useEffect(() => {
     console.log("newPassword:", newPassword);
@@ -37,18 +39,14 @@ const LoginScreen = () => {
       const data = await response.json();
 
       if (response.status === 200) {
-        // Đăng nhập thành công, lưu token vào AsyncStorage
-        await AsyncStorage.setItem('token', data.field);
-
+        logIn(data.field)
         console.log('data:', data.field);
-
-        // Lưu phoneNumber vào AsyncStorage
         await AsyncStorage.setItem('phoneNumber', phoneNumber);
 
         const getToken = async () => {
           try {
             const token = await AsyncStorage.getItem('token');
-            setTk(token)
+            console.log("TOKEN: \n", token);
             return token;
           } catch (error) {
             console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
@@ -84,7 +82,9 @@ const LoginScreen = () => {
               },
             });
             const dataUserInfor = await response.data;
+
             console.log("User Infor:", dataUserInfor);
+            setMyUserInfo(dataUserInfor);
             return dataUserInfor;
           } catch (error) {
             console.error('Lỗi khi lấy thông tin User:', error);
@@ -94,7 +94,7 @@ const LoginScreen = () => {
         const token = await getToken();
         const dataUserInfor = await fetchUserInfo(token);
         console.log("DATA: \n", dataUserInfor);
-        navigation.navigate('TabNavigator', { dataUserInfor: dataUserInfor });
+        navigation.navigate('TabNavigator');
 
 
       } else {

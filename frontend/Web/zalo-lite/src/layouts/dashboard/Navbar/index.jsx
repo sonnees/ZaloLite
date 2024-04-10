@@ -6,10 +6,22 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Fade from "@mui/material/Fade";
 import PopupWindow from "../../../components/PopupWindow";
+import { set } from "date-fns";
+// import Cookies from "js-cookie";
+import Cookies from "universal-cookie";
+import { decryptData, encryptData } from "../../../utils/cookies";
+import { useUser } from "../../../context/UserContext";
 
 // import fetch from "node-fetch";
 
-function Navbar() {
+function Navbar({ onNavbarReady }) {
+  const cookies = new Cookies();
+  const { setUserID } = useUser();
+
+  const [phoneNumberCookies, setPhoneNumberCookies] = useState(null);
+  const [tokenFromCookies, setTokenFromCookies] = useState(null);
+  const [userID2, setUserID2] = useState(null);
+
   const [profileData, setProfileData] = useState(null);
   const [avatar, setAvatar] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -18,7 +30,6 @@ function Navbar() {
   const token = location.state?.token;
   const phoneNumber = location.state?.phoneNumber;
   const avt = location.state?.avt;
-  // console.log(avt); 
   // console.log("Token: ", token);
   // console.log("Phone Number: ", phoneNumber);
 
@@ -26,10 +37,7 @@ function Navbar() {
   let contactImage = "/contact-book-outline.png";
   let todoImage = "/todo-outline.png";
 
-  if (
-    location.pathname === "/app" ||
-    location.pathname === "/app/other-message"
-  ) {
+  if (location.pathname.startsWith("/app")) {
     messageImage = "/message.png";
   }
   if (location.pathname === "/contact") {
@@ -41,13 +49,61 @@ function Navbar() {
 
   const handleOpenPopup = () => {
     setIsPopupOpen(true);
-    console.log(isPopupOpen);
+    // console.log(isPopupOpen);
   };
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
-    console.log(isPopupOpen);
+    // console.log(isPopupOpen);
   };
+
+  const setUserIDInCookie = (userID) => {
+    // Mã hóa userID trước khi lưu vào cookie
+    const userIDEncoded = encryptData(userID);
+
+    // Tính toán thời gian hết hạn bằng cách thêm số lượng millisecond tương ứng với một ngày vào thời điểm hiện tại
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 1); // Thêm một ngày
+
+    // Đặt cookie userID với thời gian hết hạn và các tùy chọn bảo mật
+    cookies.set("userID", userID, {
+      expires: expirationDate,
+      // Các tùy chọn bảo mật khác nếu cần
+    });
+  };
+
+  useEffect(() => {
+    // Lấy số điện thoại từ cookies và giải mã nó
+    const phoneNumberFromCookie = cookies.get("phoneNumber");
+    if (phoneNumberFromCookie) {
+      // const phoneNumberDecrypted = decryptData(phoneNumberFromCookie);
+      setPhoneNumberCookies(phoneNumberFromCookie);
+    }
+
+    // Lấy token từ cookies và giải mã nó
+    const tokenFromCookie = cookies.get("token");
+    if (tokenFromCookie) {
+      // const tokenDecrypted = decryptData(tokenFromCookie);
+      setTokenFromCookies(tokenFromCookie);
+    }
+    onNavbarReady();
+  }, []);
+
+  // Hàm để đặt token vào cookie
+  // const setTokenInCookie = (tokenValue) => {
+  //   // Mã hóa token trước khi lưu vào cookie
+  //   const tokenEncoded = encryptData(tokenValue);
+
+  //   // Tính toán thời gian hết hạn bằng cách thêm số lượng millisecond tương ứng với một ngày vào thời điểm hiện tại
+  //   const expirationDate = new Date();
+  //   expirationDate.setDate(expirationDate.getDate() + 1); // Thêm một ngày
+
+  //   // Đặt cookie token với thời gian hết hạn và các tùy chọn bảo mật
+  //   cookies.set('token', tokenEncoded, {
+  //     expires: expirationDate,
+  //     // Các tùy chọn bảo mật khác nếu cần
+  //   });
+  // };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -69,7 +125,7 @@ function Navbar() {
             {
               method: "GET",
               headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${token}`,
               },
             },
           );
@@ -79,12 +135,19 @@ function Navbar() {
           }
 
           const data = await response.json();
-          console.log(data);
+          // console.log(data);
           setProfileData(data);
-          setAvatar(data.avatar)
-          setUserName(data.userName)
-          
-          console.log(avatar);
+          setAvatar(data.avatar);
+          localStorage.setItem("avatar", data.avatar);
+          localStorage.setItem("userID", data.userID);
+          onNavbarReady(data.userID);
+          setUserName(data.userName);
+          const userIDTemp = data.userID;
+          setUserID2(data.userID);
+          setUserID(data.userID);
+          // console.log(avatar);
+
+          setUserIDInCookie(userIDTemp);
         } catch (error) {
           console.error("Error fetching profile:", error);
           setProfileData(null);
@@ -93,18 +156,71 @@ function Navbar() {
 
       fetchProfile();
     }
-  }, [token, phoneNumber, avt]);
+  }, [token, phoneNumber]);
 
+  // console.log(profileData);
 
-  console.log(profileData);
+  // useEffect(() => {
+  //   // Kiểm tra nếu đã có số điện thoại được lưu trong cookie, thì điền vào trường input số điện thoại
+  //   const phoneNumberFromCookie = Cookies.get('phoneNumber');
+  //   if (phoneNumberFromCookie) {
+  //     const phoneNumberDecrypted = decryptData(phoneNumberFromCookie);
+  //     setPhoneNumberCookies(phoneNumberDecrypted);
+  //   }
+  //   const tokenFromCookie = Cookies.get('token');
+  //   if (tokenFromCookie) {
+  //     const tokenDecrypted = decryptData(tokenFromCookie);
+  //     setTokenFromCookies(tokenDecrypted);
+  //   }
 
+  // }, []); // Chỉ chạy một lần sau khi component được render
+  
+  
+  // console.log("PhoneNumber on Cookies", phoneNumberCookies);
+  // console.log("Token on Cookies", tokenFromCookies);
   return (
     <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
       <nav className="w-full">
         <ul className="grid w-full items-center justify-center">
           <li className="pb-[14px]">
             <div className="">
-              <Button
+              {profileData ? (
+                <Button
+                  id="fade-button"
+                  aria-controls={open ? "fade-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                  disableTouchRipple
+                >
+                  <div>
+                    <img
+                      src={localStorage.getItem("avatar")}
+                      className="h-12 w-12 rounded-full border "
+                      alt="avatar"
+                    />
+                  </div>
+                </Button>
+              ) : (
+                // Hiển thị một phần tử loading hoặc hình ảnh mặc định
+                <Button
+                  id="fade-button"
+                  aria-controls={open ? "fade-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                  disableTouchRipple
+                >
+                  <div>
+                    <img
+                      src="user-loading.jpg"
+                      className="w-14 rounded-full border "
+                      alt="avatar"
+                    />
+                  </div>
+                </Button>
+              )}
+              {/* <Button
                 id="fade-button"
                 aria-controls={open ? "fade-menu" : undefined}
                 aria-haspopup="true"
@@ -120,7 +236,7 @@ function Navbar() {
                     alt="avatar"
                   />
                 </div>
-              </Button>
+              </Button> */}
               <Menu
                 id="fade-menu"
                 MenuListProps={{
@@ -151,7 +267,13 @@ function Navbar() {
                     >
                       Hồ sơ của bạn
                     </MenuItem>
-                      <PopupWindow isOpen={isPopupOpen} onClose={handleClosePopup} data={profileData} phoneNumber={phoneNumber} token={token} />
+                    <PopupWindow
+                      isOpen={isPopupOpen}
+                      onClose={handleClosePopup}
+                      data={profileData}
+                      phoneNumber={phoneNumber}
+                      token={token}
+                    />
                     <MenuItem
                       sx={{
                         fontSize: 14,
@@ -173,7 +295,19 @@ function Navbar() {
                         height: 36,
                         color: "#081c36",
                       }}
-                      onClick={handleClose}
+                      onClick={() => {
+                        handleClose(); // Đóng menu sau khi nhấp vào
+                        // cookies.remove("phoneNumber"); // Xoá cookie phoneNumber
+                        // cookies.remove("token"); // Xoá cookie token
+                        // cookies.remove("userID"); // Xoá cookie userID
+                        // Lấy tất cả cookies
+                        const allCookies = cookies.getAll();
+
+                        // Lặp qua từng cookie và xóa nó
+                        for (const cookie in allCookies) {
+                          cookies.remove(cookie);
+                        }
+                      }}
                     >
                       Đăng xuất
                     </MenuItem>
@@ -182,15 +316,12 @@ function Navbar() {
               </Menu>
             </div>
           </li>
-            
+
           <li>
             <Link
-              to="/"
+              to="/app"
               className={`flex justify-center p-4 py-5 ${
-                location.pathname === "/app" ||
-                location.pathname === "/app/other-message"
-                  ? "bg-[#006edc]"
-                  : ""
+                location.pathname.startsWith("/app") ? "bg-[#006edc]" : ""
               }`}
             >
               <img
