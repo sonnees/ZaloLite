@@ -123,33 +123,97 @@ const MessagesScreen = () => {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : null}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+      behavior={Platform.OS === "ios" ? "padding" : null}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40 : 0}
     >
       <StatusBar />
       <View style={{ flex: 1 }}>
-        <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", height: 48 }}>
-          <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center", marginLeft: 14 }}>
-            <Icon name='search1' size={22} color={'white'} />
+        {/* Header and navigation */}
+        <View
+          style={{
+            backgroundColor: "#1E90FF",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            height: 48,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              marginLeft: 14,
+            }}
+          >
+            <Icon name="search1" size={22} color={"white"} />
           </TouchableOpacity>
-          <TouchableOpacity style={{ flex: 7, borderRadius: 5, backgroundColor: "transparent", height: 40, width: 300, justifyContent: "center", alignItems: "flex-start" }}
+          <TouchableOpacity
+            style={{
+              flex: 7,
+              borderRadius: 5,
+              backgroundColor: "transparent",
+              height: 40,
+              width: 300,
+              justifyContent: "center",
+              alignItems: "flex-start",
+            }}
             onPress={() => navigation.navigate("SearchScreen")}
           >
-            <Text style={{ marginLeft: 20, fontSize: 15.5, color: "#CCCCCC" }}>Search</Text>
+            <Text style={{ marginLeft: 20, fontSize: 15.5, color: "#CCCCCC" }}>
+              Search
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center", marginRight: 18 }}
-            onPress={() => navigation.navigate('MeNavigator', { screen: 'QRScreen' })}
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 18,
+            }}
+            onPress={() =>
+              navigation.navigate("MeNavigator", { screen: "QRScreen" })
+            }
           >
-            <Image style={{ width: 22, height: 22, resizeMode: "contain" }} source={require("../assets/qr-code.png")} />
+            <Image
+              style={{ width: 22, height: 22, resizeMode: "contain" }}
+              source={require("../assets/qr-code.png")}
+            />
           </TouchableOpacity>
-          <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center", marginRight: 10 }}
-            onPress={() => { setModalVisible(true) }}
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 10,
+            }}
+            onPress={() => {
+              setModalVisible(true);
+            }}
           >
-            <Icon name='plus' size={28} color={'white'} />
+            <Icon name="plus" size={28} color={"white"} />
           </TouchableOpacity>
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between", backgroundColor: "#fff", height: 43 }}>
-          <View style={{ flex: 1, flexDirection: "row", justifyContent: "center", alignContent: "space-between" }}>
+        {/* End of Header and navigation */}
+
+        {/* Navigation Tabs */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignContent: "space-between",
+            backgroundColor: "#fff",
+            height: 43,
+          }}
+        >
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignContent: "space-between",
+            }}
+          >
             <TouchableOpacity style={styles.buttonNav}>
               <Text style={{ fontSize: 15.5, color: "gray", fontWeight: '500' }}>Focused</Text>
             </TouchableOpacity>
@@ -157,8 +221,15 @@ const MessagesScreen = () => {
               <Text style={{ fontSize: 15.5, color: "gray", fontWeight: '500' }}> Other</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "flex-end", marginRight: 15 }}>
-            <Icon name='filter' size={24} color={'gray'}></Icon>
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "flex-end",
+              marginRight: 15,
+            }}
+          >
+            <Icon name="filter" size={24} color={"gray"}></Icon>
           </TouchableOpacity>
         </View>
         <View style={{ borderBottomColor: 'gray', borderBottomWidth: 0.2, width: '100%' }} />
@@ -180,49 +251,126 @@ const MessagesScreen = () => {
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(false);
-        }}>
+        }}
+      >
         <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-          <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end', backgroundColor: 'transparent', margin: 6 }}>
-            <View style={{ backgroundColor: 'white', height: 285, width: 200, borderRadius: 2, elevation: 5 }}>
-              <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end', backgroundColor: 'transparent', margin: 6 }}>
-                <View style={{ backgroundColor: 'white', height: 285, width: 200, borderRadius: 2, elevation: 5 }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "flex-start",
+              alignItems: "flex-end",
+              backgroundColor: "transparent",
+              margin: 6,
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "white",
+                height: 285,
+                width: 200,
+                borderRadius: 2,
+                elevation: 5,
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "flex-start",
+                  alignItems: "flex-end",
+                  backgroundColor: "transparent",
+                  margin: 6,
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    height: 285,
+                    width: 200,
+                    borderRadius: 2,
+                    elevation: 5,
+                  }}
+                >
                   <TouchableOpacity
                     style={styles.buttonInModal}
                     onPress={() => {
-                      navigation.navigate('AddFriendScreen', { typeScreen: "MessagesScreen" });
-                      setModalVisible(false)
-                    }}>
-                    <Icon name='adduser' size={22} color={"gray"} style={{ marginRight: 5 }}></Icon>
+                      navigation.navigate("AddFriendScreen", {
+                        typeScreen: "MessagesScreen",
+                      });
+                      setModalVisible(false);
+                    }}
+                  >
+                    <Icon
+                      name="adduser"
+                      size={22}
+                      color={"gray"}
+                      style={{ marginRight: 5 }}
+                    ></Icon>
                     <Text style={styles.textInModal}>Add friend</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonInModal}
-                    onPress={() => setModalVisible(false)}>
-                    <Icon name='addusergroup' size={22} color={"gray"} style={{ marginRight: 5 }}></Icon>
+                    onPress={() => {
+                      setModalVisible(false);
+                      navigation.navigate("CreactGroupScreen", {
+                        typeScreen: "MessagesScreen",
+                      });
+                    }}
+                  >
+                    <Icon
+                      name="addusergroup"
+                      size={22}
+                      color={"gray"}
+                      style={{ marginRight: 5 }}
+                    ></Icon>
                     <Text style={styles.textInModal}>Create group</Text>
                   </TouchableOpacity>
+
                   <TouchableOpacity
                     style={styles.buttonInModal}
-                    onPress={() => setModalVisible(false)}>
-                    <Icon name='cloudo' size={22} color={"gray"} style={{ marginRight: 5 }}></Icon>
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Icon
+                      name="cloudo"
+                      size={22}
+                      color={"gray"}
+                      style={{ marginRight: 5 }}
+                    ></Icon>
                     <Text style={styles.textInModal}>My Cloud</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonInModal}
-                    onPress={() => setModalVisible(false)}>
-                    <Icon name='calendar' size={22} color={"gray"} style={{ marginRight: 5 }}></Icon>
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Icon
+                      name="calendar"
+                      size={22}
+                      color={"gray"}
+                      style={{ marginRight: 5 }}
+                    ></Icon>
                     <Text style={styles.textInModal}>Zalo Calendar</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonInModal}
-                    onPress={() => setModalVisible(false)}>
-                    <Icon name='videocamera' size={22} color={"gray"} style={{ marginRight: 5 }}></Icon>
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Icon
+                      name="videocamera"
+                      size={22}
+                      color={"gray"}
+                      style={{ marginRight: 5 }}
+                    ></Icon>
                     <Text style={styles.textInModal}>Create group call</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.buttonInModal}
-                    onPress={() => setModalVisible(false)}>
-                    <Icon name='iconfontdesktop' size={22} color={"gray"} style={{ marginRight: 5 }}></Icon>
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Icon
+                      name="iconfontdesktop"
+                      size={22}
+                      color={"gray"}
+                      style={{ marginRight: 5 }}
+                    ></Icon>
                     <Text style={styles.textInModal}>Logged-in devices</Text>
                   </TouchableOpacity>
                 </View>
@@ -238,17 +386,63 @@ const MessagesScreen = () => {
         visible={modalChatVisible}
         onRequestClose={() => {
           setModalChatVisible(false);
-        }}>
+        }}
+      >
         <TouchableWithoutFeedback onPress={() => setModalChatVisible(false)}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <View style={{ backgroundColor: 'white', height: 420, width: 300, borderRadius: 2, elevation: 5 }}>
-              <View style={{ flexDirection: 'row', height: 70, alignItems: 'center' }}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 20 }}>Thiện Đạt</Text>
-                <TouchableOpacity style={{ borderWidth: 0.2, borderRadius: 50, width: 24, height: 24, justifyContent: 'center', alignItems: 'center', margin: 10, marginRight: 20 }}>
-                  <Image style={{ width: 13, height: 13, resizeMode: "contain" }} source={require("../assets/draw.png")} />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "white",
+                height: 420,
+                width: 300,
+                borderRadius: 2,
+                elevation: 5,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  height: 70,
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{ fontSize: 20, fontWeight: "bold", marginLeft: 20 }}
+                >
+                  Thiện Đạt
+                </Text>
+                <TouchableOpacity
+                  style={{
+                    borderWidth: 0.2,
+                    borderRadius: 50,
+                    width: 24,
+                    height: 24,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: 10,
+                    marginRight: 20,
+                  }}
+                >
+                  <Image
+                    style={{ width: 13, height: 13, resizeMode: "contain" }}
+                    source={require("../assets/draw.png")}
+                  />
                 </TouchableOpacity>
               </View>
-              <View style={{ borderBottomColor: 'gray', borderBottomWidth: 0.2, width: '100%' }} />
+              <View
+                style={{
+                  borderBottomColor: "gray",
+                  borderBottomWidth: 0.2,
+                  width: "100%",
+                }}
+              />
               <TouchableOpacity style={styles.buttonInChatModal}>
                 <Text style={styles.textInModal}>Move to Other</Text>
               </TouchableOpacity>
@@ -283,28 +477,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonInModal: {
-    flexDirection: 'row',
+    flexDirection: "row",
     margin: 11.5,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 13,
-    marginLeft: 20
+    marginLeft: 20,
   },
   textInModal: {
     marginLeft: 10,
-    fontSize: 16
+    fontSize: 16,
   },
   buttonNav: {
     flex: 1,
     borderRadius: 20,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   buttonInChatModal: {
-    flexDirection: 'row',
+    flexDirection: "row",
     margin: 11.5,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 15,
-    marginLeft: 20
+    marginLeft: 20,
   },
 });
 
