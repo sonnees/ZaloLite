@@ -1,45 +1,27 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Text, StatusBar, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native'
-import { UserInfoContext } from '../App';
 import { getTimeDifference } from '../function/CalTime';
 import { findChatIDByUserID } from '../function/DisplayLastChat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_PROFILE_BY_USERID } from '../api/Api';
 import axios from 'axios';
-import { fetchProfileInfoByUserID } from '../function/FetchData';
+import { GlobalContext } from '../context/GlobalContext';
 
 const FriendRequestScreen = () => {
-    const { userInfo, setUserInfo, chatID, setChatID } = useContext(UserInfoContext)
-    console.log('DATA USERINFO', userInfo);
+    const { myUserInfo, setmyUserInfo, chatID, setChatID } = useContext(GlobalContext)
+    console.log('DATA FRIENDREQUESTS', myUserInfo.friendRequests);
     const navigation = useNavigation();
-    const [receivedViews, setReceivedViews] = useState(true)
-    const [sentViews, setSentViews] = useState(false)
-    const [dataFriendRequest, setDataFriendRequest] = useState(userInfo.friendRequests);
-    console.log('DATA FRIENDREQUEST: \n', dataFriendRequest);
+    const [isSender, setIsSender] = useState(true);
+    const [views, setViews] = useState("received");
     const [modalChatVisible, setModalChatVisible] = useState(false);
     const [selectedFriendRequest, setSelectedFriendRequest] = useState(null);
-    const [isSender, setIsSender] = useState(true);
     const [profileFriendRequest, setProfileFriendRequest] = useState({});
 
-    // Sử dụng useEffect để lắng nghe sự thay đổi của userInfo và cập nhật dataFriendRequest
-    useEffect(() => {
-        // Kiểm tra userInfo đã được cung cấp chưa và có thuộc tính friendRequests không
-        if (userInfo && userInfo.friendRequests) {
-            setDataFriendRequest(userInfo.friendRequests);
-        }
-    }, [userInfo]);
-    const getToken = async () => {
-        try {
-            const token = await AsyncStorage.getItem('token');
-            return token;
-        } catch (error) {
-            console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
-            return null;
-        }
-    };
+    // Sử dụng useEffect để lắng nghe sự thay đổi của myUserInfo và cập nhật dataFriendRequest
+    // useEffect(() => {
+    // }, [myUserInfo]);
     const fetchProfileInfo = async (userID, token) => {
         try {
             const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
@@ -92,25 +74,23 @@ const FriendRequestScreen = () => {
         return count;
     };
     const openModal = async (friendRequest) => {
-        const token = await getToken();
+        const token = await AsyncStorage.getItem('token');
         fetchProfileInfo(friendRequest.userID, token)
         console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
         console.log("DATAFR:  ", profileFriendRequest);
         setSelectedFriendRequest(friendRequest);
-
         setModalChatVisible(true);
     }
     const handleOpenChat = async (userID) => {
         if (selectedFriendRequest) {
             console.log("selectedFriendRequest:", selectedFriendRequest);
-            const myUserID = await AsyncStorage.getItem('userID');
-            if (myUserID && userID) {
-                const data = findChatIDByUserID(userInfo, myUserID, userID);
+
+            if (myUserInfo.id && userID) {
+                const data = findChatIDByUserID(myUserInfo, myUserInfo.id, userID);
                 console.log("DATA IN FRIENDREQUESTSCREEN", data);
                 setChatID(data)
                 if (chatID) {
-                    console.log("Chat ID In FRIENDREQUESTSCREEN: ", chatID);
-                    navigation.navigate("ChatScreen");
+                    // navigation.navigate("ChatScreen");
                 } else {
                     console.log("Không thể tìm thấy chatID");
                 }
@@ -123,6 +103,7 @@ const FriendRequestScreen = () => {
     }
 
     const FriendRequestElement = ({ item }) => {
+        console.log("FRIENDREQUEST: \n", item);
         if (item.isSender !== isSender) {
             return (
                 <View>
@@ -203,30 +184,28 @@ const FriendRequestScreen = () => {
                 <View style={{ flexDirection: "row", justifyContent: "center", alignContent: "space-between", paddingVertical: 12, backgroundColor: "#fff", height: 45 }}>
                     <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
                         onPress={() => {
-                            setReceivedViews(true)
-                            setSentViews(false)
                             setIsSender(true)
+                            setViews("received")
                         }}
                     >
-                        <Text style={{ fontSize: 16 }}> Received {countFalseSenders(dataFriendRequest)}</Text>
+                        <Text style={{ fontSize: 16 }}> Received {countFalseSenders(myUserInfo.friendRequests)}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
                         onPress={() => {
-                            setReceivedViews(false)
-                            setSentViews(true)
                             setIsSender(false)
+                            setViews("sent")
                         }}
                     >
-                        <Text style={{ fontSize: 16 }}> Sent {countTrueSenders(dataFriendRequest)}</Text>
+                        <Text style={{ fontSize: 16 }}> Sent {countTrueSenders(myUserInfo.friendRequests)}</Text>
                     </TouchableOpacity>
 
                 </View>
                 <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 1, width: '100%' }} />
-                {receivedViews && (
+                {views === 'received' && (
                     <View style={{ flex: 1, backgroundColor: "#fff" }}>
                         <FlatList
                             style={{ flex: 1 }}
-                            data={dataFriendRequest}
+                            data={myUserInfo.friendRequests}
                             renderItem={({ item }) => <FriendRequestElement item={item} />}
                             keyExtractor={(item) => item.userID}
                             ListFooterComponent={(
@@ -235,11 +214,11 @@ const FriendRequestScreen = () => {
                         />
                     </View>
                 )}
-                {sentViews && (
+                {views === 'sent' && (
                     <View style={{ flex: 1, backgroundColor: "#fff" }}>
                         <FlatList
                             style={{ flex: 1 }}
-                            data={dataFriendRequest}
+                            data={myUserInfo.friendRequests}
                             renderItem={({ item }) => <FriendRequestElement item={item} />}
                             keyExtractor={(item) => item.userID}
                             ListFooterComponent={(
