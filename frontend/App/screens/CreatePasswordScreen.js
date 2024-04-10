@@ -6,7 +6,7 @@ import { API_RESET_PASS } from '../api/Api';
 const CreatePasswordScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const phoneNumber = route.params.phoneNumber.startsWith('+84') ? '0' + route.params.phoneNumber.slice(3) : route.params.phoneNumber; // Xử lý phoneNumber từ màn hình trước
+  const phoneNumber = route.params.phoneNumber;
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
