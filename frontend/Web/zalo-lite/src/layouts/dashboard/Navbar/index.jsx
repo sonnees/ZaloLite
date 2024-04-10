@@ -115,6 +115,16 @@ function Navbar({ onNavbarReady }) {
     setAnchorEl(null);
   };
 
+  /* Fix lỗi hiển thị avatar khi load lại dữ liệu */
+  useEffect(() => {
+    const avatarLoad = localStorage.getItem("avatar");
+    if (avatarLoad) {
+      setAvatar(avatarLoad);
+    }
+  }, []);
+
+  console.log("chạy lại nha Avatar: ", avatar);
+
   // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
   useEffect(() => {
     if (token && phoneNumber) {
@@ -174,17 +184,17 @@ function Navbar({ onNavbarReady }) {
   //   }
 
   // }, []); // Chỉ chạy một lần sau khi component được render
-  
-  
+
   // console.log("PhoneNumber on Cookies", phoneNumberCookies);
   // console.log("Token on Cookies", tokenFromCookies);
+  console.log("chạy lại nha:>>>>>>>>>>>>>>>");
   return (
     <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
       <nav className="w-full">
         <ul className="grid w-full items-center justify-center">
           <li className="pb-[14px]">
             <div className="">
-              {profileData ? (
+              {avatar ? (
                 <Button
                   id="fade-button"
                   aria-controls={open ? "fade-menu" : undefined}
@@ -195,7 +205,7 @@ function Navbar({ onNavbarReady }) {
                 >
                   <div>
                     <img
-                      src={localStorage.getItem("avatar")}
+                      src={avatar}
                       className="h-12 w-12 rounded-full border "
                       alt="avatar"
                     />
