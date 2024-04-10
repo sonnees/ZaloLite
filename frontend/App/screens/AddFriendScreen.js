@@ -72,7 +72,8 @@ const AddFriendScreen = () => {
                   onBlur={revertColor}
                 ></TextInput>
               </View>
-              <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#DDDDDD', borderRadius: 50, width: 45, height: 45, justifyContent: 'center', alignItems: 'center', margin: 10, marginRight: 20 }}>
+              <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#DDDDDD', borderRadius: 50, width: 45, height: 45, justifyContent: 'center', alignItems: 'center', margin: 10, marginRight: 20 }}
+              >
                 <Icon name='arrowright' size={22} color={'black'} />
               </TouchableOpacity>
             </View>

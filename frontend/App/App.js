@@ -11,6 +11,7 @@ import SearchScreen from './screens/SearchScreen';
 // import MainNavigator from './navigations/MainNavigator'
 import ListCountryScreen from './screens/ListCountryScreen';
 import AddFriendScreen from './screens/AddFriendScreen';
+import CreactGroupScreen from './screens/CreactGroupScreen';
 const Stack = createStackNavigator();
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         {/* <Stack.Screen name='HoldButtonExample' component={HoldButtonExample} options={{ headerShown: false }}></Stack.Screen> */}
         <Stack.Screen name='TabNavigator' component={TabNavigator} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='AddFriendScreen' component={AddFriendScreen} options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name='CreactGroupScreen' component={CreactGroupScreen} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='ListCountryScreen' component={ListCountryScreen} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='SearchScreen' component={SearchScreen} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='OpionNavigator' component={OpionNavigator} options={{ headerShown: false }}></Stack.Screen>

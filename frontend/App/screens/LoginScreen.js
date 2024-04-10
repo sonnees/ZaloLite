@@ -77,7 +77,7 @@ const LoginScreen = () => {
             const accountInfor = await fetAccountInfor(token);
             console.log("Account Infor: ", accountInfor);
             const user = accountInfor.profile.userID;
-            console.log("User ID: ", user);
+            // console.log("User ID: ", user);
             const response = await axios.get(`${API_INFOR_USER}${user}`, {
               headers: {
                 Authorization: `Bearer ${token}`,
