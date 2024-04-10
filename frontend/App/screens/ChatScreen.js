@@ -5,55 +5,24 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserInfoContext } from '../App';
 // import VideoPlayer from 'expo-video-player';
 // import Video from 'react-native-video';
 import { Video } from 'expo-av';
 import { ResizeMode } from 'expo-av'
+import { GlobalContext } from '../context/GlobalContext';
 
 const ChatScreen = () => {
   let navigation = useNavigation();
-  const { userInfo, setUserInfo, chatID, setChatID } = useContext(UserInfoContext);
-  console.log("USER INFO IN CHATSCREEN \n", userInfo);
   const route = useRoute();
-  console.log("chatID in chatscreen \n", chatID);
-  const [chatData, setChatData] = useState(findConversationByID(userInfo, chatID));
-  console.log("Chat Screen Data: \n", chatData);
-  const [modalChatVisible, setModalChatVisible] = useState(false);
-  const [myUserID, setMyUserID] = useState('');
-  const [videoPaused, setVideoPaused] = useState(true);
-  const [videoKey, setVideoKey] = useState(0); // Thêm state mới để theo dõi sự thay đổi trong video
+  const conversationOpponent = route.params?.conversationOpponent;
+  console.log("conversationOpponent data from MESSAGESCREEN \n", conversationOpponent);
 
-  function findConversationByID(userInfor, chatID) {
-    const conversations = userInfor.conversations;
-    return conversations.find(conversation => conversation.chatID === chatID);
-  }
-
+  const [videoKey, setVideoKey] = useState(0);
+  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext)
+  console.log("MY USER ID\n", myUserInfo.id);
   useEffect(() => {
-    console.log("USER INFO IN CHATSCREEN \n", userInfo);
-    console.log("chatID in chatscreen \n", chatID);
-    if (userInfo && chatID) {
-      const newChatData = findConversationByID(userInfo, chatID);
-      setChatData(newChatData);
-    }
-    console.log("Chat Screen Data: \n", chatData);
-    const fetchData = async () => {
-      const userID = await getUserID();
-      setMyUserID(userID);
-      console.log("MY USERID: \n", userID);
-    };
-    fetchData();
-  }, [userInfo, chatID]);
-
-  const getUserID = async () => {
-    try {
-      const userID = await AsyncStorage.getItem('userID');
-      return userID;
-    } catch (error) {
-      console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
-      return null;
-    }
-  };
+    navigation.navigate("ChatScreen", { conversationOpponent: conversationOpponent });
+  }, [myUserInfo]);
 
   const ChatItem = memo(({ item }) => {
     const [textHeight, setTextHeight] = useState(0);
@@ -73,14 +42,14 @@ const ChatScreen = () => {
       const { width, height } = event.nativeEvent.source;
       setImageSize({ width, height });
     };
-    const alignmentStyle = item.userID === myUserID ? { alignSelf: 'flex-end' } : { alignSelf: 'flex-start' };
+    const alignmentStyle = item.userID === myUserInfo.id ? { alignSelf: 'flex-end' } : { alignSelf: 'flex-start' };
     if (item.contents[0].key === 'text' || item.contents[0].key === 'emoji') {
-      if (item.userID !== myUserID) {
+      if (item.userID !== myUserInfo.id) {
         return (
           <View style={{ flexDirection: 'column' }}>
             <View style={{ alignItems: 'center', flexDirection: 'row' }}>
               <Image
-                source={chatData.chatAvatar ? { uri: chatData.chatAvatar } : null}
+                source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
                 style={{ height: 30, width: 30, borderRadius: 50, marginRight: 8 }}
               />
 
@@ -159,15 +128,15 @@ const ChatScreen = () => {
                 width: imageSize.width,
                 height: imageSize.height,
                 maxHeight: 300,
-                maxWidth: '50%',
+                maxWidth: '60%',
                 marginLeft: 50
               }}
             >
               <Image
                 source={{ uri: item.contents[0].value }}
                 style={{ height: '100%', width: '100%' }}
-                resizeMode="contain"
-                onLoad={handleImageLoad}
+              // resizeMode="contain"
+              // onLoad={handleImageLoad}
               />
             </TouchableOpacity>
             <View style={{ height: 8 }} />
@@ -281,28 +250,33 @@ const ChatScreen = () => {
 
     else if (item.contents[0].key === 'mp4') {
       return (
-        <View style={{ alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={() => {
-
-            }}
-            style={{
-              flexDirection: 'row',
-              marginHorizontal: 10,
-              ...alignmentStyle,
-              maxHeight: 300,
-              maxWidth: '60%',
-              marginLeft: 50,
-              backgroundColor: 'white'
-            }}
-          >
-            <Video
-              key={videoKey} // Sử dụng videoKey ở đây để kích hoạt việc rerender
-              source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
-              shouldPlay
-              style={{ width: '100%', height: 300 }}
+        <View style={{ flexDirection: 'column' }}>
+          <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+            <Image
+              source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
+              style={{ height: 30, width: 30, borderRadius: 50, marginRight: 8 }}
             />
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+
+              }}
+              style={{
+                flexDirection: 'row',
+                marginHorizontal: 10,
+                ...alignmentStyle,
+                maxHeight: 300,
+                maxWidth: '60%',
+                backgroundColor: 'white'
+              }}
+            >
+              <Video
+                key={videoKey} // Sử dụng videoKey ở đây để kích hoạt việc rerender
+                source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
+                shouldPlay
+                style={{ width: '100%', height: 300 }}
+              />
+            </TouchableOpacity>
+          </View>
           <View style={{ height: 8 }} />
         </View>
       );
@@ -320,7 +294,7 @@ const ChatScreen = () => {
         </TouchableOpacity>
         <View style={{ flexDirection: "column", marginLeft: 20 }}>
           <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>
-            {chatData && chatData.chatName ? chatData.chatName : null}
+            {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}
             {/* Hehe */}
           </Text>
           <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Last seen 5 hourse ago</Text>
@@ -342,10 +316,41 @@ const ChatScreen = () => {
           onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
         />
       </View>
+      {conversationOpponent.topChatActivity && conversationOpponent.topChatActivity.length > 0 && (
+        <FlatList
+          style={{ flex: 1 }}
+          ListHeaderComponent={(
+            <View
+              style={{ height: 205, width: '85%', alignSelf: 'center', margin: 30, marginTop: 10, backgroundColor: 'white', borderRadius: 10 }}
+            >
+              <Image source={{ uri: 'https://i.pinimg.com/736x/c2/e9/02/c2e902e031e1d9d932411dd0b8ab5eef.jpg' }}
+                style={{ height: 120, width: '100%', alignSelf: 'center' }}
+              />
+              <View style={{ flexDirection: 'row' }}>
+                <Image
+                  source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
+                  style={{ height: 70, width: 70, borderRadius: 50, margin: 10 }}
+                />
 
-      <FlatList
-        style={{ flex: 1 }}
-        ListHeaderComponent={(
+                <View style={{ flexDirection: 'column' }}>
+                  <Text style={{ fontSize: 16, fontWeight: '700', marginTop: 12, marginLeft: 10 }}>
+                    {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}</Text>
+                  <Text style={{ fontSize: 12, marginTop: 7, marginLeft: 10 }}>
+                    No one can change my life</Text>
+                </View>
+              </View>
+            </View>
+          )}
+          data={conversationOpponent.topChatActivity}
+          renderItem={({ item }) => <ChatItem item={item} />}
+          keyExtractor={(item) => item.messageID}
+          ListFooterComponent={(
+            <View style={{ height: 10 }}></View>
+          )}
+        />
+      )}
+      {!conversationOpponent.topChatActivity || conversationOpponent.topChatActivity.length === 0 && (
+        <View style={{ flex: 1 }}>
           <View
             style={{ height: 205, width: '85%', alignSelf: 'center', margin: 30, marginTop: 10, backgroundColor: 'white', borderRadius: 10 }}
           >
@@ -354,27 +359,20 @@ const ChatScreen = () => {
             />
             <View style={{ flexDirection: 'row' }}>
               <Image
-                source={chatData.chatAvatar ? { uri: chatData.chatAvatar } : null}
+                source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
                 style={{ height: 70, width: 70, borderRadius: 50, margin: 10 }}
               />
 
               <View style={{ flexDirection: 'column' }}>
                 <Text style={{ fontSize: 16, fontWeight: '700', marginTop: 12, marginLeft: 10 }}>
-                  {chatData && chatData.chatName ? chatData.chatName : null}</Text>
+                  {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}</Text>
                 <Text style={{ fontSize: 12, marginTop: 7, marginLeft: 10 }}>
                   No one can change my life</Text>
               </View>
             </View>
           </View>
-        )}
-        data={chatData.topChatActivity}
-        renderItem={({ item }) => <ChatItem item={item} />}
-        keyExtractor={(item) => item.messageID}
-        ListFooterComponent={(
-          <View style={{ height: 10 }}></View>
-        )}
-      />
-
+        </View>
+      )}
       < View style={styles.foter} >
         <Image
           style={{ width: 22, height: 22, resizeMode: "contain", marginLeft: 8 }}
