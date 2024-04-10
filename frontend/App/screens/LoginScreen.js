@@ -13,7 +13,8 @@ const LoginScreen = () => {
   const route = useRoute();
   const newPassword = route.params?.newPassword;
   const isFocused = useIsFocused();
-  const { logIn } = useContext(GlobalContext)
+  const { logIn, myUserInfo, setMyUserInfo } = useContext(GlobalContext)
+
   useEffect(() => {
     console.log("newPassword:", newPassword);
     if (newPassword && isFocused) {
@@ -45,7 +46,7 @@ const LoginScreen = () => {
         const getToken = async () => {
           try {
             const token = await AsyncStorage.getItem('token');
-            setTk(token)
+            console.log("TOKEN: \n", token);
             return token;
           } catch (error) {
             console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);
@@ -74,14 +75,16 @@ const LoginScreen = () => {
             const accountInfor = await fetAccountInfor(token);
             console.log("Account Infor: ", accountInfor);
             const user = accountInfor.profile.userID;
-            console.log("User ID: ", user);
+            // console.log("User ID: ", user);
             const response = await axios.get(`${API_INFOR_USER}${user}`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             });
             const dataUserInfor = await response.data;
+
             console.log("User Infor:", dataUserInfor);
+            setMyUserInfo(dataUserInfor);
             return dataUserInfor;
           } catch (error) {
             console.error('Lỗi khi lấy thông tin User:', error);
@@ -91,7 +94,7 @@ const LoginScreen = () => {
         const token = await getToken();
         const dataUserInfor = await fetchUserInfo(token);
         console.log("DATA: \n", dataUserInfor);
-        navigation.navigate('TabNavigator', { dataUserInfor: dataUserInfor });
+        navigation.navigate('TabNavigator');
 
 
       } else {

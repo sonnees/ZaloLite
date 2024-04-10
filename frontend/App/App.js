@@ -10,6 +10,7 @@ import LoginNavigator from './navigations/LoginNavigator';
 import SearchScreen from './screens/SearchScreen';
 import ListCountryScreen from './screens/ListCountryScreen';
 import AddFriendScreen from './screens/AddFriendScreen';
+import CreactGroupScreen from './screens/CreactGroupScreen';
 import ProfileFriendScreen from './screens/ProfileFriendScreen';
 import FriendRequestScreen from './screens/FriendRequestScreen';
 import { GlobalProvider } from './context/GlobalContext'; // Assuming GlobalProvider is defined in GlobalContext.js
@@ -25,22 +26,21 @@ function App() {
   return (
     <GlobalProvider>
       <SocketProvider>
-        <UserInfoContext.Provider value={{ userInfo, setUserInfo, chatID, setChatID }}>
-          <NavigationContainer>
-            <Stack.Navigator>
-              <Stack.Screen name='LoginNavigator' component={LoginNavigator} options={{ headerShown: false }} />
-              <Stack.Screen name='TabNavigator' component={TabNavigator} options={{ headerShown: false }} />
-              <Stack.Screen name='AddFriendScreen' component={AddFriendScreen} options={{ headerShown: false }} />
-              <Stack.Screen name='ListCountryScreen' component={ListCountryScreen} options={{ headerShown: false }} />
-              <Stack.Screen name='SearchScreen' component={SearchScreen} options={{ headerShown: false }} />
-              <Stack.Screen name='OpionNavigator' component={OpionNavigator} options={{ headerShown: false }} />
-              <Stack.Screen name='MeNavigator' component={MeNavigator} options={{ headerShown: false }} />
-              <Stack.Screen name='ChatScreen' component={ChatScreen} options={{ headerShown: false }} />
-              <Stack.Screen name='ProfileFriendScreen' component={ProfileFriendScreen} options={{ headerShown: false }} />
-              <Stack.Screen name='FriendRequestScreen' component={FriendRequestScreen} options={{ headerShown: false }} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </UserInfoContext.Provider>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name='LoginNavigator' component={LoginNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name='TabNavigator' component={TabNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name='AddFriendScreen' component={AddFriendScreen} options={{ headerShown: false }} />
+            <Stack.Screen name='ListCountryScreen' component={ListCountryScreen} options={{ headerShown: false }} />
+            <Stack.Screen name='CreactGroupScreen' component={CreactGroupScreen} options={{ headerShown: false }}></Stack.Screen>
+            <Stack.Screen name='SearchScreen' component={SearchScreen} options={{ headerShown: false }} />
+            <Stack.Screen name='OpionNavigator' component={OpionNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name='MeNavigator' component={MeNavigator} options={{ headerShown: false }} />
+            <Stack.Screen name='ChatScreen' component={ChatScreen} options={{ headerShown: false }} />
+            <Stack.Screen name='ProfileFriendScreen' component={ProfileFriendScreen} options={{ headerShown: false }} />
+            <Stack.Screen name='FriendRequestScreen' component={FriendRequestScreen} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
       </SocketProvider>
     </GlobalProvider>
   );
