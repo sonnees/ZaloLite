@@ -29,6 +29,16 @@ function Message() {
     return null;
   };
 
+  // Sử dụng useEffect để lưu conversations vào localStorage khi component unmount
+  useEffect(() => {
+    const conversations = localStorage.getItem("conversations");
+    if (conversations) {
+      console.log("conversations", JSON.parse(conversations));
+      setConversations(JSON.parse(conversations));
+    }
+  }, []);
+
+
   // Sử dụng useEffect để lấy userID từ cookies khi component được mount
   useEffect(() => {
     // Gán giá trị lấy được từ cookies vào state userIDFromCookies
