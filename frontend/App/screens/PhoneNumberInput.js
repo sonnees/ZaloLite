@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Image, StyleSheet } from 'react-native';
-import CountryPicker from 'react-native-country-picker-modal';
+// import CountryPicker from 'react-native-country-picker-modal';
 
 const PhoneNumberInput = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -9,7 +9,7 @@ const PhoneNumberInput = () => {
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-        <CountryPicker
+        {/* <CountryPicker
           countryCode={countryCode}
           withFlagButton={true}
           withFilter={true}
@@ -18,7 +18,7 @@ const PhoneNumberInput = () => {
           withCallingCodeButton={false} // Không hiển thị calling code
           withAlphaFilter={true}
           onSelect={(country) => setCountryCode(country.cca2)}
-        />
+        /> */}
       </View>
     </View>
   );

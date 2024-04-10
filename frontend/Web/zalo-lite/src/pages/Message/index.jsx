@@ -38,6 +38,7 @@ function Message() {
     }
   }, []);
 
+
   // Sử dụng useEffect để lấy userID từ cookies khi component được mount
   useEffect(() => {
     // Gán giá trị lấy được từ cookies vào state userIDFromCookies

@@ -71,7 +71,6 @@ function Navbar({ onNavbarReady }) {
       // Các tùy chọn bảo mật khác nếu cần
     });
   };
-
   useEffect(() => {
     // Lấy số điện thoại từ cookies và giải mã nó
     const phoneNumberFromCookie = cookies.get("phoneNumber");
@@ -188,6 +187,7 @@ function Navbar({ onNavbarReady }) {
   // console.log("PhoneNumber on Cookies", phoneNumberCookies);
   // console.log("Token on Cookies", tokenFromCookies);
   console.log("chạy lại nha:>>>>>>>>>>>>>>>");
+
   return (
     <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
       <nav className="w-full">

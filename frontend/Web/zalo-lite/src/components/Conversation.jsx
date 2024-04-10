@@ -351,8 +351,6 @@ const Conversation = () => {
   //   }
   // };
 
-  
-
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSendMessage();
