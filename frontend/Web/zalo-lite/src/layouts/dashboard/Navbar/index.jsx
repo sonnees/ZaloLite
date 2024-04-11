@@ -114,16 +114,6 @@ function Navbar({ onNavbarReady }) {
     setAnchorEl(null);
   };
 
-  /* Fix lỗi hiển thị avatar khi load lại dữ liệu */
-  useEffect(() => {
-    const avatarLoad = localStorage.getItem("avatar");
-    if (avatarLoad) {
-      setAvatar(avatarLoad);
-    }
-  }, []);
-
-  console.log("chạy lại nha Avatar: ", avatar);
-
   // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
   useEffect(() => {
     
@@ -131,11 +121,11 @@ function Navbar({ onNavbarReady }) {
       const fetchProfile = async () => {
         try {
           const response = await fetch(
-            `http://localhost:8081/api/v1/account/profile/${phoneNumber}`,
+            `http://localhost:8081/api/v1/account/profile/${cookies.get("phoneNumber")}`,
             {
               method: "GET",
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${cookies.get("token")}`,
               },
             },
           );
@@ -150,6 +140,8 @@ function Navbar({ onNavbarReady }) {
           setAvatar(data.avatar);
           localStorage.setItem("avatar", data.avatar);
           localStorage.setItem("userID", data.userID);
+          localStorage.setItem("user", JSON.stringify(data));
+          localStorage.setItem("phone", phoneNumber);
           onNavbarReady(data.userID);
           setUserName(data.userName);
           const userIDTemp = data.userID;
@@ -184,18 +176,17 @@ function Navbar({ onNavbarReady }) {
   //   }
 
   // }, []); // Chỉ chạy một lần sau khi component được render
-
+  
+  
   // console.log("PhoneNumber on Cookies", phoneNumberCookies);
   // console.log("Token on Cookies", tokenFromCookies);
-  console.log("chạy lại nha:>>>>>>>>>>>>>>>");
-
   return (
     <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
       <nav className="w-full">
         <ul className="grid w-full items-center justify-center">
           <li className="pb-[14px]">
             <div className="">
-              {avatar ? (
+              {profileData ? (
                 <Button
                   id="fade-button"
                   aria-controls={open ? "fade-menu" : undefined}
@@ -206,7 +197,7 @@ function Navbar({ onNavbarReady }) {
                 >
                   <div>
                     <img
-                      src={avatar}
+                      src={localStorage.getItem("avatar")}
                       className="h-12 w-12 rounded-full border "
                       alt="avatar"
                     />
@@ -281,9 +272,9 @@ function Navbar({ onNavbarReady }) {
                     <PopupWindow
                       isOpen={isPopupOpen}
                       onClose={handleClosePopup}
-                      data={profileData}
-                      phoneNumber={phoneNumber}
-                      token={token}
+                      data={JSON.parse(localStorage.getItem("user"))}
+                      phoneNumber={localStorage.getItem("phone")}
+                      token={localStorage.getItem("token")}
                     />
                     <MenuItem
                       sx={{
