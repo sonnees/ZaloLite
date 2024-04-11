@@ -317,6 +317,7 @@ function Navbar({ onNavbarReady }) {
                         for (const cookie in allCookies) {
                           cookies.remove(cookie);
                         }
+                        localStorage.clear();
                       }}
                     >
                       Đăng xuất

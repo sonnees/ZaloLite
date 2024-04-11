@@ -15,6 +15,30 @@ function Message() {
   const [flag, setFlag] = useState(false);
   const { userID } = useUser();
 
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (userID) {
+      const newSocket = new WebSocket(`ws://localhost:8082/ws/user/${userID}`);
+      newSocket.onopen = () => {
+        console.warn(
+          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          userID,
+          " OPENED",
+        );
+      };
+      newSocket.onmessage = (event) => {
+        console.log("Message received:", event.data);
+        // Xử lý dữ liệu được gửi đến ở đây
+      };
+      setSocket(newSocket);
+
+      return () => {
+        newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+      };
+    }
+  }, [userID]);
+
   // Hàm để lấy userID từ cookies và giải mã nó
   const getUserIDFromCookie = () => {
     // Lấy userID từ cookies
@@ -37,7 +61,6 @@ function Message() {
       setConversations(JSON.parse(conversations));
     }
   }, []);
-
 
   // Sử dụng useEffect để lấy userID từ cookies khi component được mount
   useEffect(() => {
