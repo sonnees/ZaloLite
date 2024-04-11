@@ -25,6 +25,7 @@ public class ChatActivity {
     private UUID messageID;
     @Field(targetType = FieldType.STRING)
     private UUID userID;
+    private String userAvatar;
     @Indexed()
     private Date timestamp;
     @Field(targetType = FieldType.STRING)
@@ -53,6 +54,7 @@ public class ChatActivity {
         this.messageID = messageID;
         this.hidden = new ArrayList<>();
         this.recall = false;
+        this.userAvatar = m.getUserAvatar();
     }
 
     public ChatActivity(MessageAppendDTO m) {
