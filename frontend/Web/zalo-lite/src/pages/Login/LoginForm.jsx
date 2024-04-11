@@ -135,7 +135,7 @@ export default function LoginForm() {
   const handleSubmitLogin = async (e) => {
     e.preventDefault();
 
-
+    
     try {
       const response = await fetch(
         "http://localhost:8081/api/v1/auth/authenticate",
