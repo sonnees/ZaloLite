@@ -136,18 +136,18 @@ public class UserHandleWebSocket {
                                 if(chat == null) return Mono.error(() -> new Throwable("new chat"));
                                 Conversation conversationOurSender = null;
                                 switch (type){
-                                    case FRIEND -> conversationOurSender = new Conversation(idChat,info.getReceiverName(),info.getReceiverAvatar(), Type.FRIEND);
-                                    case STRANGER -> conversationOurSender = new Conversation(idChat,info.getReceiverName(),info.getReceiverAvatar(), Type.STRANGER);
-                                    default -> conversationOurSender = new Conversation(idChat,info.getReceiverName(),info.getReceiverAvatar(), Type.REQUESTS);
+                                    case FRIEND -> conversationOurSender = new Conversation(idChat,info.getReceiverID(),info.getReceiverName(),info.getReceiverAvatar(), Type.FRIEND);
+                                    case STRANGER -> conversationOurSender = new Conversation(idChat,info.getReceiverID(),info.getReceiverName(),info.getReceiverAvatar(), Type.STRANGER);
+                                    default -> conversationOurSender = new Conversation(idChat,info.getReceiverID(),info.getReceiverName(),info.getReceiverAvatar(), Type.REQUESTS);
                                 }
                                 return userRepository.appendConversation(info.getSenderID()+"",conversationOurSender) // in sender
                                         .flatMap(aLongS -> {
                                             if(aLongS<=0) return Mono.error(() -> new Throwable("append conversation sender"));
                                             Conversation conversationOurReceiver = null;
                                             switch (type){
-                                                case FRIEND -> conversationOurReceiver = new Conversation(idChat,info.getSenderName(),info.getSenderAvatar(),Type.FRIEND);
-                                                case STRANGER -> conversationOurReceiver = new Conversation(idChat,info.getSenderName(),info.getSenderAvatar(),Type.STRANGER);
-                                                default -> conversationOurReceiver = new Conversation(idChat,info.getSenderName(),info.getSenderAvatar(),Type.REQUESTED);
+                                                case FRIEND -> conversationOurReceiver = new Conversation(idChat,info.getSenderID(),info.getSenderName(),info.getSenderAvatar(),Type.FRIEND);
+                                                case STRANGER -> conversationOurReceiver = new Conversation(idChat,info.getSenderID(),info.getSenderName(),info.getSenderAvatar(),Type.STRANGER);
+                                                default -> conversationOurReceiver = new Conversation(idChat,info.getSenderID(),info.getSenderName(),info.getSenderAvatar(),Type.REQUESTED);
                                             }
                                             return userRepository.appendConversation(info.getReceiverID()+"",conversationOurReceiver) // in receiver
                                                     .flatMap(aLongR -> {
@@ -179,7 +179,6 @@ public class UserHandleWebSocket {
                             return Mono.empty();
                         })))
                 .flatMap(user -> Mono.empty());
-
     }
 
     public Mono<Void> removeConversation(String[] userID, String idChat){
