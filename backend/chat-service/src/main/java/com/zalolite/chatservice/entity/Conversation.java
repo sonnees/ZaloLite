@@ -21,6 +21,8 @@ public class Conversation {
     @Field(targetType = FieldType.STRING)
     @Indexed()
     private UUID chatID;
+    @Field(targetType = FieldType.STRING)
+    private UUID ID_UserOrGroup;
     private String chatName;
     private String chatAvatar;
     private Type type;
@@ -31,8 +33,9 @@ public class Conversation {
     private List<Delivery> reads;
     private List<ChatActivity> topChatActivity;
 
-    public Conversation(UUID chatID, String chatName, String chatAvatar, Type type) {
+    public Conversation(UUID chatID, UUID ID_UserOrGroup, String chatName, String chatAvatar, Type type) {
         this.chatID = chatID;
+        this.ID_UserOrGroup = ID_UserOrGroup;
         this.chatName = chatName;
         this.chatAvatar = chatAvatar;
         this.type = type;
@@ -42,4 +45,5 @@ public class Conversation {
         this.reads = new ArrayList<>();
         this.topChatActivity = new ArrayList<>();
     }
+
 }

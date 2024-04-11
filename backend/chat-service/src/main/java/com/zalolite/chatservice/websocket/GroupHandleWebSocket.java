@@ -48,6 +48,7 @@ public class GroupHandleWebSocket {
                 .flatMap(group1 -> {
                     Conversation conversation = new Conversation(
                             info.getId(),
+                            group.getId(),
                             info.getChatName(),
                             info.getAvatar(),
                             Type.GROUP
@@ -89,6 +90,7 @@ public class GroupHandleWebSocket {
                                         info.getUserID().toString(),
                                         new Conversation(
                                                 info.getIdChat(),
+                                                group.getId(),
                                                 group.getChatName(),
                                                 group.getAvatar(),
                                                 Type.GROUP
