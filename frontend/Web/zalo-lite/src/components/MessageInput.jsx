@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import SendIcon from "@mui/icons-material/Send";
 
-const MessageInput = ({ onSendMessage }) => {
+const MessageInput = ({ onSendMessage, onKeySendMessage }) => {
   const [message, setMessage] = useState("");
 
   const handleInputChange = (e) => {
@@ -35,7 +35,7 @@ const MessageInput = ({ onSendMessage }) => {
         value={message}
         onChange={handleInputChange}
         onKeyPress={handleKeyPress}
-        inputProps={{ style: { fontSize: 15} }}
+        inputProps={{ style: { fontSize: 15 } }}
         sx={{
           "& .MuiOutlinedInput-root": {
             borderTop: "1px solid",
