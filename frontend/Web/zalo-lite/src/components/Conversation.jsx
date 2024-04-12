@@ -568,19 +568,42 @@ const Conversation = () => {
         const data = event.data;
         console.log("Received data:", data);
         try {
-          const jsonData = data;
-          console.log("Received JSON data:", jsonData);
-          // Kiểm tra xem tin nhắn không phải từ bạn
-          const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
-          if (messageFromOtherUser) {
-            // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
-            const messageExists = messages.some(
-              (msg) => msg.id === jsonData.id,
-            );
-            if (!messageExists) {
-              setMessages((prevMessages) => [...prevMessages, jsonData]);
+          if (data && data.startsWith("{")) {
+            const jsonData = JSON.parse(data);
+            console.log("Received JSON data:", jsonData);
+            // Kiểm tra xem tin nhắn không phải từ bạn
+            const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
+            // console.log("Message from other user: ==========================================", messageFromOtherUser);
+            if (messageFromOtherUser && jsonData.contents) {
+              if (jsonData) {
+                // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
+                const messageExists = messages.some(
+                  (msg) => msg.id === jsonData.id,
+                );
+                if (!messageExists) {
+                  setMessages((prevMessages) => [...prevMessages, jsonData]);
+                }
+              }
+            }
+            if (jsonData.tcm === "TCM05") {
+              const messageIDToRecall = jsonData.messageID;
+              const updatedMessages = messages.map((msg) => {
+                if (msg.messageID === messageIDToRecall) {
+                  // Thay đổi nội dung của tin nhắn thành "Tin nhắn đã được thu hồi"
+                  return {
+                    ...msg,
+                    contents: [
+                      { key: "text", value: "Tin nhắn đã được thu hồi" },
+                    ],
+                    recall: true, // Có thể đánh dấu tin nhắn này đã được thu hồi
+                  };
+                }
+                return msg;
+              });
+              setMessages(updatedMessages);
             }
           }
+          // console.log("Message ++++++++++", messages);
         } catch (error) {
           console.error("Error parsing JSON data:", error);
         }
@@ -592,6 +615,7 @@ const Conversation = () => {
       };
     }
   }, [socket, messages, userIDFromCookies]);
+  
 
   // Hàm cuộn xuống dưới cùng của khung chat
   const scrollToBottom = () => {
@@ -691,6 +715,7 @@ const Conversation = () => {
             message={message}
             chatAvatar={message.userAvatar}
             socketFromConservation={socket}
+            setSocketFromConservation={setSocket}
             messagesF={messages}
           />
         ))}

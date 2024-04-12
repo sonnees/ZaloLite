@@ -9,6 +9,7 @@ import {
   differenceInYears,
 } from "date-fns";
 function ChatElement({
+  id,
   chatAvatar,
   chatName,
   msg,
@@ -18,6 +19,7 @@ function ChatElement({
   topChatActivity,
   lastUpdateAt,
 }) {
+  const [socket, setSocket] = useState(null);
   // console.log(">>>>>>>>>>>>>>", topChatActivity);
   // const countTopChatActivity = topChatActivity.length;
   // const a = topChatActivity.length - 1;
@@ -50,17 +52,56 @@ function ChatElement({
   //   }
   // }, [topChatActivity]);
 
-useEffect(() => {
-  // Duyệt ngược qua mảng chatActivity để tìm tin nhắn gần nhất có thuộc tính recall là true
-  for (let i = topChatActivity.length - 1; i >= 0; i--) {
-    if (topChatActivity[i].recall !== true) {
-      setMessageContent(topChatActivity[i].contents[0].value);
-      return; // Kết thúc vòng lặp ngay khi tìm thấy tin nhắn thỏa mãn
+  useEffect(() => {
+    // Duyệt ngược qua mảng chatActivity để tìm tin nhắn gần nhất có thuộc tính recall là true
+    for (let i = topChatActivity.length - 1; i >= 0; i--) {
+      if (topChatActivity[i].recall !== true) {
+        setMessageContent(topChatActivity[i].contents[0].value);
+        return; // Kết thúc vòng lặp ngay khi tìm thấy tin nhắn thỏa mãn
+      }
     }
-  }
-}, [topChatActivity]);
+  }, [topChatActivity]);
 
+  useEffect(() => {
+    if (id) {
+      const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+      newSocket.onopen = () => {
+        console.warn(
+          "WebSocket 'ws://localhost:8082/ws/user/' for chatID: ",
+          id,
+          " OPENED",
+        );
+      };
+      newSocket.onmessage = (event) => {
+        const data = event.data;
+        if (isJSON(data)) {
+          const jsonData = JSON.parse(data);
+          console.log("Message received:", jsonData);
+          // Xử lý dữ liệu được gửi đến ở đây
+          // if (jsonData) {
 
+          // }
+        } else {
+          // console.error("Received data is not valid JSON:", data);
+          // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
+        }
+      };
+      function isJSON(data) {
+        try {
+          JSON.parse(data);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      setSocket(newSocket);
+
+      // return () => {
+      //   newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+      // };
+    }
+  }, [id]);
 
   //Tính số lượng tin nhắn chưa đọc
   // function countUnreadMessages(data) {
