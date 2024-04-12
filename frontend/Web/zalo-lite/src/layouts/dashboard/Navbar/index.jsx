@@ -125,7 +125,6 @@ function Navbar({ onNavbarReady }) {
 
   // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
   useEffect(() => {
-    
     if (token && phoneNumber) {
       const fetchProfile = async () => {
         try {
@@ -264,7 +263,7 @@ function Navbar({ onNavbarReady }) {
                 <div className="px-4 text-sm ">
                   <div className="py-2">
                     <span className="text-lg font-medium text-[#081c36]">
-                      {userName}
+                      {userName ? userName : localStorage.getItem("userName")}
                     </span>
                   </div>
                   <div className="w-[270px] border-y py-1 text-sm ">
