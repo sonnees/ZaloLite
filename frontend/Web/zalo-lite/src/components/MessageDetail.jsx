@@ -12,7 +12,12 @@ import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
 import queryString from "query-string";
 
-const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
+const MessageDetail = ({
+  message,
+  chatAvatar,
+  socketFromConservation,
+  setSocketFromConservation,
+}) => {
   // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
@@ -73,6 +78,7 @@ const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
     // Replace this line with your WebSocket send function
     console.log("Sending hidden message:", hiddenMessage);
     socket.send(JSON.stringify(hiddenMessage));
+    setSocketFromConservation(socket);
   };
 
   const handleHidenMessage = (messageID) => {

@@ -585,6 +585,23 @@ const Conversation = () => {
                 }
               }
             }
+            if (jsonData.tcm === "TCM05") {
+              const messageIDToRecall = jsonData.messageID;
+              const updatedMessages = messages.map((msg) => {
+                if (msg.messageID === messageIDToRecall) {
+                  // Thay đổi nội dung của tin nhắn thành "Tin nhắn đã được thu hồi"
+                  return {
+                    ...msg,
+                    contents: [
+                      { key: "text", value: "Tin nhắn đã được thu hồi" },
+                    ],
+                    recall: true, // Có thể đánh dấu tin nhắn này đã được thu hồi
+                  };
+                }
+                return msg;
+              });
+              setMessages(updatedMessages);
+            }
           }
           // console.log("Message ++++++++++", messages);
         } catch (error) {
@@ -597,7 +614,7 @@ const Conversation = () => {
         socket.onmessage = null;
       };
     }
-  }, [socket]);
+  }, [socket, messages, userIDFromCookies]);
   
 
   // Hàm cuộn xuống dưới cùng của khung chat
@@ -696,6 +713,7 @@ const Conversation = () => {
             message={message}
             chatAvatar={chatAvatar}
             socketFromConservation={socket}
+            setSocketFromConservation={setSocket}
             messagesF={messages}
           />
         ))}
