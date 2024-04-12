@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Fragment, useState, useEffect} from "react";
+import { Fragment, useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -19,14 +19,19 @@ import {
   alpha,
   getContrastRatio,
 } from "@mui/material/styles";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Switch from "@mui/material/Switch";
+import { message, Space } from "antd";
+import { motion } from "framer-motion";
 
 import AvatarNameItem from "../AvatarNameItem";
 
 import countries from "../../data/countries";
 import { Axios } from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 const theme = createTheme({
   palette: {
@@ -96,8 +101,23 @@ function handleOpenDialog3(setOpenDialog) {
 
 const AddFriendDialog2 = ({ data, setOpenDialog }) => {
   const dateTime = new Date(data.birthday);
+   const [isVisible, setIsVisible] = useState(false);
+
+   useEffect(() => {
+     setIsVisible(true);
+   }, []);
   return (
-    <div className="h-[551.5px] w-[400px]">
+    <motion.div
+      className="h-[551.5px] w-[400px]"
+      initial={{ x: "-50vw" }} // Vị trí ban đầu: ngoài màn hình bên trái
+      animate={{ x: 0 }} // Vị trí sau khi xuất hiện: giữa màn hình
+      transition={{
+        type: "spring",
+        stiffness: 150,
+        damping: 20,
+        duration: 0.7,
+      }}
+    >
       <div className="flex h-full">
         <div className="relative w-full max-w-md overflow-hidden rounded-lg bg-white shadow-xl ">
           {/* Content of the popup */}
@@ -179,25 +199,34 @@ const AddFriendDialog2 = ({ data, setOpenDialog }) => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-const AddFriendDialog3 = ({ data }) => {
+const AddFriendDialog3 = ({ data, updateText, text }) => {
   const dateTime = new Date(data.birthday);
-  const defaultText = `Xin chào, mình là ${data.userName}. Mình tìm thấy bạn bằng số điện thoại. Kết bạn với mình nhé!`;
-  const maxLength = 150;
 
-  const [text, setText] = useState(defaultText);
+  const maxLength = 150;
 
   const handleChange = (event) => {
     const newText = event.target.value;
     if (newText.length <= maxLength) {
-      setText(newText);
+      // setText(newText);
+      updateText(newText);
     }
   };
   return (
-    <div className="h-[485.5px] w-[400px]">
+    <motion.div
+      className="h-[485.5px] w-[400px]"
+      initial={{ x: "-50vw" }} // Vị trí ban đầu: ngoài màn hình bên trái
+      animate={{ x: 0 }} // Vị trí sau khi xuất hiện: giữa màn hình
+      transition={{
+        type: "spring",
+        stiffness: 150,
+        damping: 20,
+        duration: 0.5,
+      }}
+    >
       <div className="flex h-full">
         <div className="relative w-full max-w-md overflow-hidden rounded-lg bg-white shadow-xl ">
           {/* Content of the popup */}
@@ -236,18 +265,19 @@ const AddFriendDialog3 = ({ data }) => {
               {text.length}/{maxLength} ký tự
             </div>
           </div>
-          <div className="m-3 pl-3 flex h-11 items-center justify-between bg-[#F3F5F6] text-tblack rounded">
+          <div className="m-3 flex h-11 items-center justify-between rounded bg-[#F3F5F6] pl-3 text-tblack">
             <p className="text-sm">Chặn người này xem nhật ký của tôi</p>
             <Switch />
           </div>
         </div>
       </div>
-    </div>
-  );
+    </motion.div>)
 };
 
 /* Main */
 export default function AddFriendDialog() {
+  const defaultText = `Xin chào! Mình tìm thấy bạn bằng số điện thoại. Kết bạn với mình nhé!`;
+  const [text, setText] = useState(defaultText);
   const [userID, setUserID] = useState("");
   const [socket, setSocket] = useState(null);
   const [open, setOpen] = useState(false);
@@ -264,6 +294,18 @@ export default function AddFriendDialog() {
     code: "VN",
     dial_code: "+84",
   });
+  const [messageApi, contextHolder] = message.useMessage();
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "This is a success message",
+    });
+  };
+
+  // Hàm callback để cập nhật giá trị text
+  const updateDisplayText = (newText) => {
+    setText(newText);
+  };
 
   // Hàm để lấy userID từ cookies và giải mã nó
   const getUserIDFromCookie = () => {
@@ -278,8 +320,6 @@ export default function AddFriendDialog() {
     // Nếu không có userID từ cookies, trả về null
     return null;
   };
-
-
 
   useEffect(() => {
     if (userID) {
@@ -316,6 +356,7 @@ export default function AddFriendDialog() {
 
   const handleClose = () => {
     setUserFound({});
+    setPhoneNumber("");
     setOpenDialog("");
     setOpen(false);
   };
@@ -374,30 +415,58 @@ export default function AddFriendDialog() {
   };
 
   const sendMessage = () => {
+    const receiverID = userFound.userID;
     const message = {
-      id: "7d011a36-3bfb-4cb7-aa26-205e3d4a8288",
+      id: uuidv4(),
       tum: "TUM01",
-      senderID: "f1cee7b8-7712-4042-9e94-17bd21209a62",
-      senderName: "Lê Hữu Bằng",
-      senderAvatar:
-        "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711638195/yaelqfegjxfkbjdmwyef.png",
-      receiverID: "26ce60d1-64b9-45d2-8053-7746760a8354",
-      receiverName: "Tran Huy",
-      receiverAvatar:
-        "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
-      description: "Tôi muốn được kết bạn với pro!",
+      senderID: Cookies.get("userID"),
+      senderName: localStorage.getItem("userName"),
+      senderAvatar: localStorage.getItem("avatar"),
+      receiverID: receiverID,
+      receiverName: userFound.userName,
+      receiverAvatar: userFound.avatar,
+      description: text,
     };
 
-    if (socket) {
-      socket.send(JSON.stringify(message));
-      console.log("Message sent:", message);
-    } else {
-      console.error("Socket is not initialized!");
+    if (userFound) {
+      const newSocket = new WebSocket(
+        `ws://localhost:8082/ws/user/${receiverID}`,
+      );
+
+      newSocket.onopen = () => {
+        console.warn(
+          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          receiverID,
+          " OPENED",
+        );
+
+        // Gửi tin nhắn khi kết nối thành công
+        newSocket.send(JSON.stringify(message));
+        console.log("Message sent:", message);
+      };
+
+      newSocket.onmessage = (event) => {
+        console.log("Message received:", event.data);
+        // Xử lý dữ liệu được gửi đến ở đây
+      };
+
+      newSocket.onclose = () => {
+        console.warn(
+          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          receiverID,
+          " CLOSED",
+        );
+      };
     }
   };
 
+  // const handleSendFriendRequest = () => {
+  //   console.log("Send friend request to: ", text);
+  // };
+
   return (
     <ThemeProvider theme={theme}>
+      {contextHolder}
       <div className="relative ml-1 inline-block py-1">
         <Fragment>
           <div className="w-8 px-1 hover:bg-gray-200">
@@ -436,7 +505,11 @@ export default function AddFriendDialog() {
                   setOpenDialog={setOpenDialog}
                 ></AddFriendDialog2>
               ) : openDialog === "dialog3" ? (
-                <AddFriendDialog3 data={userFound}></AddFriendDialog3>
+                <AddFriendDialog3
+                  data={userFound}
+                  updateText={updateDisplayText}
+                  text={text}
+                ></AddFriendDialog3>
               ) : (
                 <div className="flex items-center justify-center">
                   <div className="mt-1 w-1/3">
@@ -533,7 +606,11 @@ export default function AddFriendDialog() {
               <DialogActions className="border p-4">
                 <div className="py-1">
                   <Button
-                    onClick={handleClose}
+                    onClick={()=>{
+                      // handleClose();
+
+                      setOpenDialog("dialog2");
+                    }}
                     variant="contained"
                     color="silver"
                     style={{
@@ -546,12 +623,21 @@ export default function AddFriendDialog() {
                   >
                     Thông tin
                   </Button>
+
                   <Button
                     onClick={() => {
                       // handleAddFriend();
                       // handleFindUserByPhoneNumber();
                       // setOpenDialog("dialog2");
                       sendMessage();
+                      success();
+                      setText(defaultText);
+                      setPhoneNumber();
+                      setTimeout(() => {
+                        handleClose();
+                      }, 700);
+
+                      // handleSendFriendRequest();
                     }}
                     variant="contained"
                     color="primary"
@@ -609,7 +695,8 @@ export default function AddFriendDialog() {
         </Fragment>
         <div
           className="absolute inset-0 cursor-pointer rounded-md bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10"
-          onClick={()=>{handleClickOpen();
+          onClick={() => {
+            handleClickOpen();
             setUserID(getUserIDFromCookie());
           }}
         ></div>

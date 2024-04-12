@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
+import Snackbar from "@mui/material/Snackbar";
+import Fade from "@mui/material/Fade";
+import Slide from "@mui/material/Slide";
+import Grow from "@mui/material/Grow";
 import ChatElement from "../../components/ChatElement";
+import Alert from "@mui/material/Alert";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { useUser } from "../../context/UserContext";
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="up" />;
+}
 
 function Message() {
   const cookies = new Cookies();
@@ -16,6 +25,19 @@ function Message() {
   const { userID } = useUser();
 
   const [socket, setSocket] = useState(null);
+  const [stateNotification, setStateNotification] = React.useState({
+    open: false,
+    Transition: Fade,
+    name: "",
+  });
+
+  const handleClick = (Transition) => () => {
+    console.log("click");
+    setStateNotification({
+      open: true,
+      Transition,
+    });
+  };
 
   useEffect(() => {
     if (userID) {
@@ -28,9 +50,33 @@ function Message() {
         );
       };
       newSocket.onmessage = (event) => {
-        console.log("Message received:", event.data);
-        // Xử lý dữ liệu được gửi đến ở đây
+        const data = event.data;
+        if (isJSON(data)) {
+          const jsonData = JSON.parse(data);
+          console.log("Message received:", jsonData);
+          console.log("senderName", jsonData.senderName);
+          // Xử lý dữ liệu được gửi đến ở đây
+          if (jsonData) {
+            setStateNotification({
+              open: true,
+              SlideTransition,
+              name: jsonData.senderName,
+            });
+          }
+        } else {
+          // console.error("Received data is not valid JSON:", data);
+          // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
+        }
       };
+      function isJSON(data) {
+        try {
+          JSON.parse(data);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
       setSocket(newSocket);
 
       return () => {
@@ -38,6 +84,13 @@ function Message() {
       };
     }
   }, [userID]);
+
+  const handleClose = () => {
+    setStateNotification({
+      ...state,
+      open: false,
+    });
+  };
 
   // Hàm để lấy userID từ cookies và giải mã nó
   const getUserIDFromCookie = () => {
@@ -144,6 +197,25 @@ function Message() {
           duyệt này.
         </p>
       </div>
+      <Snackbar
+        open={stateNotification.open}
+        onClose={handleClose}
+        TransitionComponent={stateNotification.Transition}
+        message="Bạn có lời mời kết bạn mới!"
+        key={stateNotification.Transition}
+        autoHideDuration={4000}
+        style={{ bottom: 20, left: 65, paddingX: 0, marginX: 0 }}
+      >
+        <Alert
+          onClose={handleClose}
+          severity="info"
+          variant="filled"
+          sx={{ width: "100%", paddingX: 1, marginX: 0, marginLeft: 0 }}
+        >
+          Bạn có lời mời kết bạn từ{" "}
+          <strong>{stateNotification.name}</strong>
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
