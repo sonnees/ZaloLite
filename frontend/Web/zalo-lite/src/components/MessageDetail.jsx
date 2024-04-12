@@ -13,6 +13,7 @@ import { useLocation } from "react-router-dom";
 import queryString from "query-string";
 
 const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
+  console.log(message);
   // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");

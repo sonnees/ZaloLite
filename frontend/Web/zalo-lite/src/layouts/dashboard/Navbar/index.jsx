@@ -23,7 +23,7 @@ function Navbar({ onNavbarReady }) {
   const [userID2, setUserID2] = useState(null);
 
   const [profileData, setProfileData] = useState(null);
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState("user-loading.jpg");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [userName, setUserName] = useState("");
   const location = useLocation();
@@ -34,87 +34,6 @@ function Navbar({ onNavbarReady }) {
   // console.log("Token: ", token);
   // console.log("Phone Number: ", phoneNumber);
 
-  let messageImage = "/message-outline.png";
-  let contactImage = "/contact-book-outline.png";
-  let todoImage = "/todo-outline.png";
-
-  if (location.pathname.startsWith("/app")) {
-    messageImage = "/message.png";
-  }
-  if (location.pathname === "/contact") {
-    contactImage = "/contact-selected.png";
-  }
-  if (location.pathname === "/todo") {
-    todoImage = "/todo-selected.png";
-  }
-
-  const handleOpenPopup = () => {
-    setIsPopupOpen(true);
-    // console.log(isPopupOpen);
-  };
-
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
-    // console.log(isPopupOpen);
-  };
-
-  const setUserIDInCookie = (userID) => {
-    // Mã hóa userID trước khi lưu vào cookie
-    const userIDEncoded = encryptData(userID);
-
-    // Tính toán thời gian hết hạn bằng cách thêm số lượng millisecond tương ứng với một ngày vào thời điểm hiện tại
-    const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + 1); // Thêm một ngày
-
-    // Đặt cookie userID với thời gian hết hạn và các tùy chọn bảo mật
-    cookies.set("userID", userID, {
-      expires: expirationDate,
-      // Các tùy chọn bảo mật khác nếu cần
-    });
-  };
-  useEffect(() => {
-    // Lấy số điện thoại từ cookies và giải mã nó
-    const phoneNumberFromCookie = cookies.get("phoneNumber");
-    if (phoneNumberFromCookie) {
-      // const phoneNumberDecrypted = decryptData(phoneNumberFromCookie);
-      setPhoneNumberCookies(phoneNumberFromCookie);
-    }
-
-    // Lấy token từ cookies và giải mã nó
-    const tokenFromCookie = cookies.get("token");
-    if (tokenFromCookie) {
-      // const tokenDecrypted = decryptData(tokenFromCookie);
-      setTokenFromCookies(tokenFromCookie);
-    }
-    onNavbarReady();
-  }, []);
-
-  // Hàm để đặt token vào cookie
-  // const setTokenInCookie = (tokenValue) => {
-  //   // Mã hóa token trước khi lưu vào cookie
-  //   const tokenEncoded = encryptData(tokenValue);
-
-  //   // Tính toán thời gian hết hạn bằng cách thêm số lượng millisecond tương ứng với một ngày vào thời điểm hiện tại
-  //   const expirationDate = new Date();
-  //   expirationDate.setDate(expirationDate.getDate() + 1); // Thêm một ngày
-
-  //   // Đặt cookie token với thời gian hết hạn và các tùy chọn bảo mật
-  //   cookies.set('token', tokenEncoded, {
-  //     expires: expirationDate,
-  //     // Các tùy chọn bảo mật khác nếu cần
-  //   });
-  // };
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
   useEffect(() => {
     
     if (token && phoneNumber) {
@@ -160,6 +79,95 @@ function Navbar({ onNavbarReady }) {
     }
   }, [token, phoneNumber]);
 
+
+
+
+  let messageImage = "/message-outline.png";
+  let contactImage = "/contact-book-outline.png";
+  let todoImage = "/todo-outline.png";
+
+  if (location.pathname.startsWith("/app")) {
+    messageImage = "/message.png";
+  }
+  if (location.pathname === "/contact") {
+    contactImage = "/contact-selected.png";
+  }
+  if (location.pathname === "/todo") {
+    todoImage = "/todo-selected.png";
+  }
+
+  const handleOpenPopup = () => {
+    setIsPopupOpen(true);
+    // console.log(isPopupOpen);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    // console.log(isPopupOpen);
+  };
+
+  const setUserIDInCookie = (userID) => {
+    // Mã hóa userID trước khi lưu vào cookie
+    const userIDEncoded = encryptData(userID);
+
+    // Tính toán thời gian hết hạn bằng cách thêm số lượng millisecond tương ứng với một ngày vào thời điểm hiện tại
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + 1); // Thêm một ngày
+
+    // Đặt cookie userID với thời gian hết hạn và các tùy chọn bảo mật
+    cookies.set("userID", userID, {
+      expires: expirationDate,
+      // Các tùy chọn bảo mật khác nếu cần
+    });
+  };
+
+  useEffect(() => {
+    // Lấy số điện thoại từ cookies và giải mã nó
+    const phoneNumberFromCookie = cookies.get("phoneNumber");
+    if (phoneNumberFromCookie) {
+      // const phoneNumberDecrypted = decryptData(phoneNumberFromCookie);
+      setPhoneNumberCookies(phoneNumberFromCookie);
+    }
+
+    // Lấy token từ cookies và giải mã nó
+    const tokenFromCookie = cookies.get("token");
+    if (tokenFromCookie) {
+      // const tokenDecrypted = decryptData(tokenFromCookie);
+      setTokenFromCookies(tokenFromCookie);
+    }
+    onNavbarReady();
+  }, []);
+
+
+
+  // Hàm để đặt token vào cookie
+  // const setTokenInCookie = (tokenValue) => {
+  //   // Mã hóa token trước khi lưu vào cookie
+  //   const tokenEncoded = encryptData(tokenValue);
+
+  //   // Tính toán thời gian hết hạn bằng cách thêm số lượng millisecond tương ứng với một ngày vào thời điểm hiện tại
+  //   const expirationDate = new Date();
+  //   expirationDate.setDate(expirationDate.getDate() + 1); // Thêm một ngày
+
+  //   // Đặt cookie token với thời gian hết hạn và các tùy chọn bảo mật
+  //   cookies.set('token', tokenEncoded, {
+  //     expires: expirationDate,
+  //     // Các tùy chọn bảo mật khác nếu cần
+  //   });
+  // };
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
+  
+
   // console.log(profileData);
 
   // useEffect(() => {
@@ -180,6 +188,15 @@ function Navbar({ onNavbarReady }) {
   
   // console.log("PhoneNumber on Cookies", phoneNumberCookies);
   // console.log("Token on Cookies", tokenFromCookies);
+
+  /* Fix lỗi hiển thị avatar khi load lại dữ liệu */
+  useEffect(() => {
+    const avatarLoad = localStorage.getItem("avatar");
+    if (avatarLoad) {
+      setAvatar(avatarLoad);
+    }
+  }, []);
+  console.log("avt:"+avatar);
   return (
     <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
       <nav className="w-full">
@@ -215,7 +232,7 @@ function Navbar({ onNavbarReady }) {
                 >
                   <div>
                     <img
-                      src="user-loading.jpg"
+                      src={avatar}
                       className="w-14 rounded-full border "
                       alt="avatar"
                     />
@@ -254,7 +271,7 @@ function Navbar({ onNavbarReady }) {
                 <div className="px-4 text-sm ">
                   <div className="py-2">
                     <span className="text-lg font-medium text-[#081c36]">
-                      {userName}
+                      {JSON.parse(localStorage.getItem("user"))? JSON.parse(localStorage.getItem("user")).userName : ""} 
                     </span>
                   </div>
                   <div className="w-[270px] border-y py-1 text-sm ">
