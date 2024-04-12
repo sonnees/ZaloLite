@@ -2,7 +2,7 @@ export { MyMessageNoneRecall }
 import React, { memo, useState, useRef, useEffect, useMemo } from 'react';
 import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Video } from 'expo-av';
-import { getTime } from '../function/CalTime';
+import { getTime } from '../utils/CalTime';
 const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => {
     const [textHeight, setTextHeight] = useState(40);
     const touchableRef = useRef(null);

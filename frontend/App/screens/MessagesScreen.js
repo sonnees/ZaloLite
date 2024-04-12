@@ -4,8 +4,8 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import { getTimeDifference } from '../function/CalTime';
-import { getDataFromConversationsAndChatData } from '../function/DisplayLastChat';
+import { getTimeDifference } from '../utils/CalTime';
+import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import { API_GET_LIST_CHATACTIVITY } from '../api/Api';
 import { GlobalContext } from '../context/GlobalContext';
 const MessagesScreen = () => {

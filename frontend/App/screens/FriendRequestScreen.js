@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Text, StatusBar, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native'
-import { getTimeDifference } from '../function/CalTime';
-import { findChatIDByUserID } from '../function/DisplayLastChat';
+import { getTimeDifference } from '../utils/CalTime';
+import { findChatIDByUserID } from '../utils/DisplayLastChat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_PROFILE_BY_USERID } from '../api/Api';
 import axios from 'axios';

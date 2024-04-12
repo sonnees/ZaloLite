@@ -3,7 +3,7 @@ import React, { memo, useState, useRef, useEffect, useMemo } from 'react';
 import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/';
 import { Video } from 'expo-av';
-import { getTime } from '../function/CalTime';
+import { getTime } from '../utils/CalTime';
 const ChatOfReCall = ({ item, myUserInfo, conversationOpponent }) => {
     const myMessage = '#B0E2FF';
     const [textHeight, setTextHeight] = useState(40);
