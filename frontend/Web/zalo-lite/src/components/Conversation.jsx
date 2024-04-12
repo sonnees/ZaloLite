@@ -460,7 +460,7 @@ const Conversation = () => {
       const message = {
         id: uuidv4(),
         tcm: "TCM01",
-        userID: userIDFromCookies || "26ce60d1-64b9-45d2-8053-7746760a8354",
+        userID: userIDFromCookies,
         userAvatar:
           "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
         userName: "Tran Huy",
@@ -568,19 +568,25 @@ const Conversation = () => {
         const data = event.data;
         console.log("Received data:", data);
         try {
-          const jsonData = data;
-          console.log("Received JSON data:", jsonData);
-          // Kiểm tra xem tin nhắn không phải từ bạn
-          const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
-          if (messageFromOtherUser) {
-            // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
-            const messageExists = messages.some(
-              (msg) => msg.id === jsonData.id,
-            );
-            if (!messageExists) {
-              setMessages((prevMessages) => [...prevMessages, jsonData]);
+          if (data && data.startsWith("{")) {
+            const jsonData = JSON.parse(data);
+            console.log("Received JSON data:", jsonData);
+            // Kiểm tra xem tin nhắn không phải từ bạn
+            const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
+            // console.log("Message from other user: ==========================================", messageFromOtherUser);
+            if (messageFromOtherUser && jsonData.contents) {
+              if (jsonData) {
+                // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
+                const messageExists = messages.some(
+                  (msg) => msg.id === jsonData.id,
+                );
+                if (!messageExists) {
+                  setMessages((prevMessages) => [...prevMessages, jsonData]);
+                }
+              }
             }
           }
+          // console.log("Message ++++++++++", messages);
         } catch (error) {
           console.error("Error parsing JSON data:", error);
         }
@@ -591,7 +597,8 @@ const Conversation = () => {
         socket.onmessage = null;
       };
     }
-  }, [socket, messages, userIDFromCookies]);
+  }, [socket]);
+  
 
   // Hàm cuộn xuống dưới cùng của khung chat
   const scrollToBottom = () => {

@@ -128,7 +128,6 @@ function Message() {
       setTokenFromCookies(tokenFromCookie);
     }
     setFlag(true);
-    console.log("chayyyyy");
     console.log("userIDFromCookies", userID);
     console.log("tokenFromCookies", tokenFromCookie);
   }, [flag]); // Sử dụng flag làm dependency của useEffect này
@@ -170,27 +169,73 @@ function Message() {
   const handleConversationClick = (conversation) => {
     navigate(`chat?id=${conversation.userID}&type=individual-chat`);
   };
-  console.log("chay render", conversations);
+  // console.log("chay render", conversations);
+
+  const openFullSocketForChar = (chatID ) => {
+    console.log("chatID", chatID);
+    if (chatID) {
+      const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${chatID}`);
+      newSocket.onopen = () => {
+        console.warn(
+          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          chatID,
+          " OPENED",
+        );
+      };
+      newSocket.onmessage = (event) => {
+        const data = event.data;
+        if (isJSON(data)) {
+          const jsonData = JSON.parse(data);
+          console.log("Message received:", jsonData);
+          // Xử lý dữ liệu được gửi đến ở đây
+          // if (jsonData) {
+
+          // }
+        } else {
+          // console.error("Received data is not valid JSON:", data);
+          // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
+        }
+      };
+      function isJSON(data) {
+        try {
+          JSON.parse(data);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      setSocket(newSocket);
+
+      return () => {
+        newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+      };
+    }
+  };
+
   return (
     <div className="h-[calc(100vh-95px)] w-full overflow-auto">
-      {conversations.map((conversation) => (
-        <Link
-          key={conversation.chatID}
-          to={{
-            pathname: `chat`,
-            search: `?id=${conversation.chatID}&type=individual-chat&chatName=${conversation.chatName}&chatAvatar=${conversation.chatAvatar}`,
-          }}
-          className="block cursor-pointer hover:bg-slate-50"
-        >
-          <ChatElement
-            id={conversation.chatID}
+      {conversations.map((conversation) => {
+        // openFullSocketForChar(conversation.chatID);
+        return (
+          <Link
             key={conversation.chatID}
-            chatName={conversation.chatName}
-            chatAvatar={conversation.chatAvatar}
-            {...conversation}
-          />
-        </Link>
-      ))}
+            to={{
+              pathname: `chat`,
+              search: `?id=${conversation.chatID}&type=individual-chat&chatName=${conversation.chatName}&chatAvatar=${conversation.chatAvatar}`,
+            }}
+            className="block cursor-pointer hover:bg-slate-50"
+          >
+            <ChatElement
+              id={conversation.chatID}
+              key={conversation.chatID}
+              chatName={conversation.chatName}
+              chatAvatar={conversation.chatAvatar}
+              {...conversation}
+            />
+          </Link>
+        );
+      })}
       <div className="h-[60px]">
         <p className="mt-5 text-center text-sm">
           Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên trình
@@ -212,8 +257,7 @@ function Message() {
           variant="filled"
           sx={{ width: "100%", paddingX: 1, marginX: 0, marginLeft: 0 }}
         >
-          Bạn có lời mời kết bạn từ{" "}
-          <strong>{stateNotification.name}</strong>
+          Bạn có lời mời kết bạn từ <strong>{stateNotification.name}</strong>
         </Alert>
       </Snackbar>
     </div>
