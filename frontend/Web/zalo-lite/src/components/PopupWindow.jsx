@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function PopupWindow ({ isOpen, onClose, data, phoneNumber, token }) {
+  console.log(data);
   const [loadAvt, setLoadAvt] = useState(data.avatar);
   const inputFileRef = useRef(null);
   const navigate = useNavigate();
