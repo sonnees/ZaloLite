@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 const sendFriendRequest = (yourProfile, myProfile, desc) => {
-    const websocketURL = `ws://localhost:8082/ws/user/${yourProfile.userID}`;
+    const websocketURL = `ws://192.168.1.10:8082/ws/user/${yourProfile.userID}`;
     const message = {
         "id": uuidv4(),
         "tum": "TUM01",

@@ -12,20 +12,35 @@ import {
 import { TextInput } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/AntDesign';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function ChatGroupScreen({ route, navigation }) {
+export default function  ChatGroupScreen ({ route, navigation }) {
   const { groupId, groupName, groupImage, members, owner } = route.params;
-
-
+  useEffect(() => {
+    // Lưu dữ liệu vào local storage
+    const saveData = async () => {
+      try {
+        await AsyncStorage.setItem('@groupData:groupId', groupId);
+        await AsyncStorage.setItem('@groupData:groupName', groupName);
+        await AsyncStorage.setItem('@groupData:groupImage', groupImage);
+        await AsyncStorage.setItem('@groupData:members', JSON.stringify(members));
+        await AsyncStorage.setItem('@groupData:owner', JSON.stringify(owner)); // Chuyển owner sang chuỗi
+      } catch (error) {
+        console.error('Lỗi khi lưu dữ liệu:', error);
+      }
+    };
+  
+    saveData();
+  }, [groupId, groupName, groupImage, members, owner]);
+  
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar />
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('TabNavigator',
-          {screen: 'MessagesScreen', params: { groupImage, groupName}}
-          )}>
+          onPress={() => navigation.navigate('TabNavigator', { screen: 'MessagesScreen' })}
+        >
           <Icon name='arrowleft' color={'white'} size={25} />
         </TouchableOpacity>
         <View style={{ flexDirection: "column", marginLeft: 20 }}>
@@ -60,7 +75,6 @@ export default function ChatGroupScreen({ route, navigation }) {
         </View>
         <View style={{flex: 8}}>
           {/* Thêm code để hiển thị các tin nhắn trong nhóm ở đây hiện thị thông tin */}
-          
         </View>
       </View>
 
@@ -124,3 +138,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
 });
+
