@@ -568,7 +568,7 @@ const Conversation = () => {
         const data = event.data;
         console.log("Received data:", data);
         try {
-          const jsonData = JSON.parse(data);
+          const jsonData = data;
           console.log("Received JSON data:", jsonData);
           // Kiểm tra xem tin nhắn không phải từ bạn
           const messageFromOtherUser = jsonData.userID !== userIDFromCookies;

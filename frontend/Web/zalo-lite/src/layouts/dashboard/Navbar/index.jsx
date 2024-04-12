@@ -144,11 +144,13 @@ function Navbar({ onNavbarReady }) {
           }
 
           const data = await response.json();
+          // console.log("data+++++++++++++++", data);
           // console.log(data);
           setProfileData(data);
           setAvatar(data.avatar);
           localStorage.setItem("avatar", data.avatar);
           localStorage.setItem("userID", data.userID);
+          localStorage.setItem("userName", data.userName);
           onNavbarReady(data.userID);
           setUserName(data.userName);
           const userIDTemp = data.userID;
@@ -317,6 +319,7 @@ function Navbar({ onNavbarReady }) {
                         for (const cookie in allCookies) {
                           cookies.remove(cookie);
                         }
+                        localStorage.clear();
                       }}
                     >
                       Đăng xuất

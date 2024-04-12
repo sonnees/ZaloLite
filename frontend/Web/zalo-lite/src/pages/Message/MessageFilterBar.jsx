@@ -137,6 +137,7 @@ function MessageFilterBar() {
   const [item, setItem] = useState("UuTien");
   const [Component, setComponent] = useState(() => Message); // Use uppercase Component
 
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -154,6 +155,8 @@ function MessageFilterBar() {
       setComponent(() => OtherMessage);
     }
   };
+
+
 
   return (
     <div className="flex h-screen w-full grid-flow-col ">
