@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -99,13 +99,26 @@ function handleOpenDialog3(setOpenDialog) {
   setOpenDialog("dialog3");
 }
 
-const AddFriendDialog2 = ({ data, setOpenDialog }) => {
+const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber}) => {
   const dateTime = new Date(data.birthday);
-   const [isVisible, setIsVisible] = useState(false);
+  const conservation = JSON.parse(localStorage.getItem("conversations"));
+  const [type, setType] = useState("");
+  const [conservationFriend, setConservationFriend] = useState([]);
 
-   useEffect(() => {
-     setIsVisible(true);
-   }, []);
+  useEffect(() => {
+    const filteredConversations = conservation.filter(
+      (chat) => chat.chatName === data.userName,
+    );
+    console.log("filteredConversations", filteredConversations);
+    setConservationFriend(filteredConversations);
+    if (filteredConversations.length > 0) {
+      setType(filteredConversations[0].type);
+    }
+  }, [data]);
+
+  console.log("type", type);
+
+  const handleClose = () => {};
   return (
     <motion.div
       className="h-[551.5px] w-[400px]"
@@ -137,19 +150,47 @@ const AddFriendDialog2 = ({ data, setOpenDialog }) => {
 
               {/* <p className=" text-sm">Lorem ipsum dolor sit amet</p> */}
             </div>
-            <div className="flex flex-1 items-center justify-center pt-[227px]">
-              <button
-                className="mr-4 h-8 w-[178px] rounded border bg-[#EAEDF0] text-base font-medium text-tblack"
-                onClick={() => {
-                  handleOpenDialog3(setOpenDialog);
-                }}
-              >
-                Kết bạn
-              </button>
-              <button className="h-8 w-[178px] rounded border bg-[#E5EFFF] text-base font-medium text-[#005ae0]">
-                Nhắn tin
-              </button>
-            </div>
+
+            {type === "REQUESTED" ? (
+              <div className="flex flex-1 items-center justify-center pt-[227px]">
+                <button
+                  className="mr-4 h-8 w-[178px] rounded border bg-[#EAEDF0] text-base font-medium text-tblack"
+                  onClick={() => {
+                    handleClose();
+                  }}
+                >
+                  Huỷ kết bạn
+                </button>
+                <button className="h-8 w-[178px] rounded border bg-[#E5EFFF] text-base font-medium text-[#005ae0]">
+                  Nhắn tin
+                </button>
+              </div>
+            ) : type === "FRIEND" ? (
+              <div className="flex flex-1 items-center justify-center pt-[227px]">
+                <a
+                  href={`http://localhost:5173/app/chat?id=${conservationFriend[0].chatID}&type=individual-chat&chatName=${conservationFriend[0].chatName}&chatAvatar=${conservationFriend[0].chatAvatar}`}
+                  className="block w-full"
+                >
+                  <button className="h-8 w-full rounded border bg-[#E5EFFF] text-base font-medium text-[#005ae0]">
+                    Nhắn tin
+                  </button>
+                </a>
+              </div>
+            ) : (
+              <div className="flex flex-1 items-center justify-center pt-[227px]">
+                <button
+                  className="mr-4 h-8 w-[178px] rounded border bg-[#EAEDF0] text-base font-medium text-tblack"
+                  onClick={() => {
+                    handleOpenDialog3(setOpenDialog);
+                  }}
+                >
+                  Kết bạn
+                </button>
+                <button className="h-8 w-[178px] rounded border bg-[#E5EFFF] text-base font-medium text-[#005ae0]">
+                  Nhắn tin
+                </button>
+              </div>
+            )}
           </div>
 
           <hr className="h-1.5 bg-slate-200" />
@@ -180,6 +221,18 @@ const AddFriendDialog2 = ({ data, setOpenDialog }) => {
                   {dateTime.getFullYear()}
                 </p>
               </div>
+              {type === "FRIEND" ? (
+                <div className="flex pb-1 pt-3">
+                  <p className="w-[100px] flex-grow text-sm text-gray-700">
+                    Số điện thoại
+                  </p>
+                  <p className="w-72 text-left text-sm text-tblack">
+                    {phoneNumber}
+                  </p>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
           <hr className="h-1.5 bg-slate-200" />
@@ -190,7 +243,7 @@ const AddFriendDialog2 = ({ data, setOpenDialog }) => {
             </div>
             <div className="flex items-center py-2">
               <img src="/blocked.png" alt="" className="w-[18px]" />
-              <span className="ml-3 text-sm ">Chặn tin nhắn và cuột gọi</span>
+              <span className="ml-3 text-sm ">Chặn tin nhắn và cuộc gọi</span>
             </div>
             <div className="flex items-center py-2">
               <img src="/alert.png" alt="" className="w-[18px]" />
@@ -271,7 +324,8 @@ const AddFriendDialog3 = ({ data, updateText, text }) => {
           </div>
         </div>
       </div>
-    </motion.div>)
+    </motion.div>
+  );
 };
 
 /* Main */
@@ -460,6 +514,13 @@ export default function AddFriendDialog() {
     }
   };
 
+  const phoneNumberInputRef = useRef(null);
+  useEffect(() => {
+    if (phoneNumberInputRef.current) {
+      phoneNumberInputRef.current.focus();
+    }
+  }, [phoneNumberInputRef.current]);
+
   // const handleSendFriendRequest = () => {
   //   console.log("Send friend request to: ", text);
   // };
@@ -503,6 +564,7 @@ export default function AddFriendDialog() {
                   data={userFound}
                   // handleShowDialog3={handleOpenDialog3}
                   setOpenDialog={setOpenDialog}
+                  phoneNumber={phoneNumber}
                 ></AddFriendDialog2>
               ) : openDialog === "dialog3" ? (
                 <AddFriendDialog3
@@ -558,6 +620,7 @@ export default function AddFriendDialog() {
                       fullWidth
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
+                      inputRef={phoneNumberInputRef} // Đặt ref của input
                     />
                   </div>
                 </div>
@@ -606,7 +669,7 @@ export default function AddFriendDialog() {
               <DialogActions className="border p-4">
                 <div className="py-1">
                   <Button
-                    onClick={()=>{
+                    onClick={() => {
                       // handleClose();
 
                       setOpenDialog("dialog2");
