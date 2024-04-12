@@ -25,7 +25,7 @@ function SearchBox() {
         <div className="flex-1 text-gray-500 ">
           <div className="h-full w-full flex-1 flex-col">
             <div className="w-full flex-1 flex-col border-b px-4">
-              <div className="mb-4 flex items-center py-4 pb-3">
+              <div className="mb-2 flex items-center py-4 pb-3">
                 <FontAwesomeIcon
                   icon={faMagnifyingGlass}
                   size="sm"

@@ -456,14 +456,14 @@ const Conversation = () => {
   // };
 
   const sendMessageWithTextViaSocket = (messageContent, contentType) => {
+    const user = JSON.parse(localStorage.getItem("user"));
     if (socket) {
       const message = {
         id: uuidv4(),
         tcm: "TCM01",
-        userID: userIDFromCookies,
-        userAvatar:
-          "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
-        userName: "Tran Huy",
+        userID: user.userID,
+        userAvatar: user.avatar,
+        userName: user.userName,
         timestamp: new Date().toISOString(),
         parentID: null,
         contents: [],
@@ -635,6 +635,8 @@ const Conversation = () => {
     }
   }, [sentMessage]);
 
+  console.log(messages);
+
   return (
     <div className="h-screen w-full">
       <div className="h-[68px] w-full px-4">
@@ -711,7 +713,7 @@ const Conversation = () => {
           <MessageDetail
             key={index}
             message={message}
-            chatAvatar={chatAvatar}
+            chatAvatar={message.userAvatar}
             socketFromConservation={socket}
             setSocketFromConservation={setSocket}
             messagesF={messages}
