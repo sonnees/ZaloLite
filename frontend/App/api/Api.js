@@ -1,4 +1,4 @@
-const Port = '192.168.1.186';
+const Port = '192.168.1.10';
 
 
 export const API_AUTHENTICATE = `http://${Port}:8081/api/v1/auth/authenticate`;
