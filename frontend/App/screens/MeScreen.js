@@ -143,7 +143,9 @@ export default function MeScreen() {
         <View style={{ flex: 0.01 }}></View>
         <Image style={{ width: "15%", height: "40%", resizeMode: "contain" }} source={require("../assets/cloud.png")}></Image>
         <View style={{ flex: 0.01 }}></View>
-        <View style={{ justifyContent: "center" }}>
+        <View style={{ justifyContent: "center" }}
+          onStartShouldSetResponder={() => navigation.navigate('OpionNavigator', { screen: 'OptionGroupScreen' })}
+        >
           <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Cloud của tôi</Text>
         </View>
         <View style={{ flex: 1 }}></View>

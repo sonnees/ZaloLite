@@ -1,7 +1,16 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { Outlet } from 'react-router-dom'
 
 const MessageLayout = () => {
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+    newSocket.onopen = () => {
+      console.log("WebSocket connected >>>>>>>>HUy");
+    };
+    setSocket(newSocket);
+  }, [socket]);
   return (
     // <div className="flex h-screen w-full grid-flow-col ">
     //   <div className="ml-16 w-full max-w-fit flex-1 border-r md:w-[345px]">

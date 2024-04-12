@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
+import Avatar from "@mui/material/Avatar";
 import { useState, useEffect } from "react";
 import {
   differenceInMinutes,
@@ -133,10 +134,15 @@ useEffect(() => {
             "pr-1"
           }`}
         >
-          <img
+          {/* <img
             src={chatAvatar}
             alt="avatar"
             className="aspect-w-1 aspect-h-1 h-12 w-12 rounded-full object-cover"
+          /> */}
+          <Avatar
+            // alt="avatar"
+            src={chatAvatar}
+            sx={{ width: 48, height: 48 }}
           />
           <div
             className="flex grow justify-between pl-3 md:w-[342px]"
