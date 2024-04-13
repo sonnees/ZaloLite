@@ -22,6 +22,7 @@ import TextField from "@mui/material/TextField";
 import { v4 as uuidv4 } from "uuid";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { set } from "date-fns";
+import { Link } from "react-router-dom";
 
 // import {uploadFileToS3} from "../utils/savefiletoaws";
 
@@ -731,7 +732,10 @@ const Conversation = () => {
       <div className="h-[68px] w-full px-4">
         <div className="flex h-full w-full flex-row items-center justify-between">
           <div className="flex flex-row items-center gap-x-2">
-            <FontAwesomeIcon icon={faChevronLeft} className="pl-1 pr-3" />
+            <Link to="/app">
+              <FontAwesomeIcon icon={faChevronLeft} className="pl-1 pr-3" />
+            </Link>
+
             <div className="hidden lg:block">
               <StyledBadge
                 overlap="circular"
