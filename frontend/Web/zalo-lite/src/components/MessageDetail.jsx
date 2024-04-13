@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Cookies from "universal-cookie";
 import { useEffect } from "react";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, set } from "date-fns";
 import LinkPreview from "./LinkPreview";
 import FileLink from "./FileLink";
 import Menu from "@mui/material/Menu";
@@ -17,6 +17,9 @@ const MessageDetail = ({
   chatAvatar,
   socketFromConservation,
   setSocketFromConservation,
+  setMessageDeletedID,
+  setMessageRecalledID,
+  idA
 }) => {
   // console.log("message in component message detail", message);
   const cookies = new Cookies();
@@ -38,8 +41,7 @@ const MessageDetail = ({
       return ""; // Trả về chuỗi rỗng nếu timestamp không tồn tại
     }
   };
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -68,11 +70,13 @@ const MessageDetail = ({
   };
 
   const hidenMessage = (messageID) => {
+    const id = uuidv4();
+    setMessageRecalledID(id);
     const hiddenMessage = {
-      id: uuidv4(),
+      id: id,
       tcm: "TCM04",
       userID: userIDFromCookies,
-      messageID: messageID,
+      messageID: messageID || idA,
     };
 
     // Replace this line with your WebSocket send function
@@ -83,7 +87,6 @@ const MessageDetail = ({
 
   const handleHidenMessage = (messageID) => {
     hidenMessage(messageID);
-    setIsRecalled(true);
     handleClose();
   };
 
@@ -218,14 +221,18 @@ const MessageDetail = ({
                 <MenuItem
                   onClick={() => {
                     handleRecall(message.messageID);
+                    
                     console.log("messageID thu hồi", message.messageID);
+                    setMessageDeletedID(message.messageID);
                   }}
                 >
                   Thu hồi
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
+                    console.log("messageID thu hồi chỉ phía tôi là", message);
                     handleHidenMessage(message.messageID);
+                    setMessageDeletedID(message.messageID);
                   }}
                 >
                   Xoá chỉ ở phía tôi
@@ -308,6 +315,7 @@ const MessageDetail = ({
                 <MenuItem
                   onClick={() => {
                     handleHidenMessage(message.messageID);
+                    setMessageDeletedID(message.messageID);
                   }}
                 >
                   Xoá chỉ ở phía tôi

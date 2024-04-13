@@ -12,10 +12,6 @@ function ChatElement({
   id,
   chatAvatar,
   chatName,
-  msg,
-  time,
-  unread,
-  userID,
   topChatActivity,
   lastUpdateAt,
 }) {
@@ -67,39 +63,44 @@ function ChatElement({
       const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/user/' for chatID: ",
+          "WebSocket in CHAT ELEMENT: 'ws://localhost:8082/ws/chat/' for chatID: ",
           id,
           " OPENED",
         );
       };
       newSocket.onmessage = (event) => {
         const data = event.data;
+        function isJSON(data) {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
-          console.log("Message received:", jsonData);
+          console.log("Message received in CHAT ELEMENT:", jsonData);
           // Xử lý dữ liệu được gửi đến ở đây
-          // if (jsonData) {
-
-          // }
+          // if (jsonData.tcm === "TCM04") {
+          //   const messageIDToDelete = jsonData.messageID;
+          //   // Lọc ra các tin nhắn mà không có messageIDToDelete
+          //   const updatedMessages = conversationsIndex.filter(
+          //     (msg) => msg.messageID !== messageIDToDelete,
+          //   );
+          //   setConversationsIndex(updatedMessages);
+          //   console.log("Updated messages after deleting:", updatedMessages);
+          // } 
         } else {
           // console.error("Received data is not valid JSON:", data);
           // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
         }
       };
-      function isJSON(data) {
-        try {
-          JSON.parse(data);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
-
       setSocket(newSocket);
 
-      // return () => {
-      //   newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
-      // };
+      return () => {
+        newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+      };
     }
   }, [id]);
 

@@ -165,6 +165,15 @@ function Navbar({ onNavbarReady }) {
     setAnchorEl(null);
   };
 
+  /* Fix lỗi hiển thị avatar khi load lại dữ liệu */
+  useEffect(() => {
+    const avatarLoad = localStorage.getItem("avatar");
+    if (avatarLoad) {
+      setAvatar(avatarLoad);
+    }
+  }, []);
+
+
   // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
   useEffect(() => {
     if (token && phoneNumber) {
@@ -357,16 +366,27 @@ function Navbar({ onNavbarReady }) {
                       }}
                       onClick={() => {
                         handleClose(); // Đóng menu sau khi nhấp vào
-                        // cookies.remove("phoneNumber"); // Xoá cookie phoneNumber
-                        // cookies.remove("token"); // Xoá cookie token
-                        // cookies.remove("userID"); // Xoá cookie userID
-                        // Lấy tất cả cookies
-                        const allCookies = cookies.getAll();
 
-                        // Lặp qua từng cookie và xóa nó
-                        for (const cookie in allCookies) {
-                          cookies.remove(cookie);
-                        }
+                        // Danh sách các tên cookie cần xoá
+                        const cookieNames = ["phoneNumber", "token", "userID"];
+
+                        // Lặp qua danh sách cookieNames và gọi hàm cookies.remove cho mỗi tên cookie
+                        cookieNames.forEach((cookieName) => {
+                          cookies.remove(cookieName, {
+                            path: "/",
+                            domain: "localhost",
+                          });
+                          cookies.remove(cookieName, {
+                            path: "/auth",
+                            domain: "localhost",
+                          });
+                        });
+
+                        // Lấy tất cả cookies
+                        // const allCookies = cookies.getAll();
+                        // console.log("++++++++++++++", allCookies);
+
+                        // Xoá tất cả cookies trong localStorage
                         localStorage.clear();
                       }}
                     >
