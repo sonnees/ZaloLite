@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { memo, useState, useRef, useEffect, useContext } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Image, ScrollView,TouchableOpacity  } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { GlobalContext } from '../context/GlobalContext';
 export default function OptionGroupScreen() {
+  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext)
   let navigation = useNavigation();
+  const route = useRoute();
+  const conversationOpponent = route.params?.conversationOpponent;
+  const [chatName, setChatName] = useState(conversationOpponent?.name);
+  const [chatAvatar, setChatAvatar] = useState(conversationOpponent?.chatAvatar);
+  console.log('conversationOpponent: ', conversationOpponent);
+  useEffect(() => {
+    navigation.navigate("OptionGroupScreen", { conversationOpponent: conversationOpponent });
+  }, [myUserInfo]);
+  
+
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -18,9 +30,11 @@ export default function OptionGroupScreen() {
         <ScrollView>
         <View style={{flex:5.7, justifyContent: "center", alignItems: 'center', backgroundColor: "#FFFFFF"}}>
           <View style={{marginTop: "5%"}}></View>
-          <Image style={{width: 80, height: 80,borderRadius: 50, resizeMode: "contain"}} source={require("../assets/avata.jpg")}></Image>
+          <Image style={{width: 80, height: 80 , borderRadius: 50, resizeMode: "contain"}}  source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}></Image>
           <View style={{marginTop: "3%"}}></View>
-          <Text style={{fontSize: 20, fontWeight: "bold",  marginTop: 10}}>Lê Hữu Bằng</Text>
+          <Text style={{fontSize: 20, fontWeight: "bold",  marginTop: 10}}>
+          {conversationOpponent?.chatName }
+          </Text>
           <View style={{marginTop: "10%"}}></View>
         </View>
         <View style={{flex: 4.5, flexDirection: "row",justifyContent: "space-between", alignItems: "center", backgroundColor: "#FFFFFF"}}>
@@ -35,7 +49,9 @@ export default function OptionGroupScreen() {
           </View>
 
           <View style={{flexDirection: "column", marginBottom: "7%"}}>
-            <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "#D3D3D3", borderRadius: 70, height: 45}}>
+            <TouchableOpacity style={{justifyContent: "center", alignItems: "center", backgroundColor: "#D3D3D3", borderRadius: 70, height: 45}}
+              onPress={() => navigation.navigate("AddMemberScreen")}
+            >
               <Image style={{width: "30%", height: "50%", resizeMode: "cover"}} source={require("../assets/add-group.png")}></Image>
             </TouchableOpacity>
             <View style={{marginTop: "20%"}}></View>
