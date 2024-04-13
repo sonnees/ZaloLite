@@ -310,11 +310,15 @@ const ChatScreen = () => {
           style={{ width: 28, height: 28, resizeMode: "contain", margin: 10 }}
           source={require("../assets/video.png")}
         />
+       
         <Image
           style={{ width: 20, height: 20, resizeMode: "contain", margin: 8 }}
           source={require("../assets/list.png")}
-          onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
+          onStartShouldSetResponder={() => navigation.navigate('OpionNavigator', { screen: 'OptionGroupScreen', params: { conversationOpponent: conversationOpponent }})}
         />
+       
+        
+        
       </View>
       {conversationOpponent.topChatActivity && conversationOpponent.topChatActivity.length > 0 && (
         <FlatList
@@ -411,7 +415,7 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E0EEEE',
+    backgroundColor: '#F8F8FF',
   },
   header: {
     height: 50,

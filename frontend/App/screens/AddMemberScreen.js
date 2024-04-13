@@ -23,7 +23,7 @@ import {
 import Icon from "react-native-vector-icons/AntDesign";
 import { GlobalContext } from '../context/GlobalContext';
 
-const CreateGroupScreen = () => {
+const AddMemberScreen = () => {
   let navigation = useNavigation();
   let route = useRoute();
   const isFocused = useIsFocused();
@@ -113,17 +113,7 @@ const CreateGroupScreen = () => {
     setModalVisible(false);
   };
 
-  const handleCreateGroup = async () => {
-    if (!groupName) {
-      Alert.alert("Lỗi", "Bạn phải nhập tên nhóm để tiếp tục!");
-      return;
-    }
-
-    if (selectedIds.length < 2) {
-      Alert.alert("Lỗi", "Bạn phải chọn ít nhất hai thành viên để tạo nhóm!");
-      return;
-    }
-  
+  const handleCreateGroup = async () => { 
     const ownerId = selectedIds[0];
     const owner = {
       userID: ownerId,
@@ -136,13 +126,14 @@ const CreateGroupScreen = () => {
       userName: chatGroupdata.find((user) => user.id === id)?.userName,
       userAvatar: chatGroupdata.find((user) => user.id === id)?.userAvatar,
     }));
+  
     const generateUUID = () => {
       const randomPart = () => {
         return Math.floor((1 + Math.random()) * 0x10000)
           .toString(16)
           .substring(1);
       };
-    
+  
       return (
         randomPart() +
         randomPart() +
@@ -156,42 +147,54 @@ const CreateGroupScreen = () => {
         randomPart()
       );
     };
-    
+  
     const newGroup = {
-      id: generateUUID(), 
+      id: generateUUID(),
       tgm: "TGM01",
       chatName: groupName,
       owner,
       members,
       avatar: selectedImageUrl,
     };
-    
+  
     console.log("Thông tin newGroup: ", newGroup);
   
     try {
-      // Lưu thông tin nhóm vào AsyncStorage
-      await AsyncStorage.setItem(`group-${newGroup.id}`, JSON.stringify(newGroup));
+      let existingGroups = await AsyncStorage.getItem('groups');
+      existingGroups = existingGroups ? JSON.parse(existingGroups) : [];
+  
+      // Check if group already exists
+      const existingGroupIndex = existingGroups.findIndex(group => group.id === newGroup.id);
+      if (existingGroupIndex !== -1) {
+        // Add new members to existing group
+        existingGroups[existingGroupIndex].members.push(...newGroup.members);
+      } else {
+        existingGroups.push(newGroup);
+      }
+  
+      // Save updated groups to AsyncStorage
+      await AsyncStorage.setItem('groups', JSON.stringify(existingGroups));
   
       // Lưu thông tin nhóm vào database backend
       await saveGroupToBackend(newGroup);
       console.log("Thông tin newGroup: ", newGroup);
-
-       // Update myUserInfo with the new group
-    const updatedUserInfo = {
-      ...myUserInfo,
-      conversations: [
-        ...myUserInfo.conversations,
-        {
-          chatID: newGroup.id,
-          chatName: newGroup.chatName,
-          chatAvatar: newGroup.avatar,
-          type: "GROUP",
-        },
-      ],
-    };
-
-    // Update GlobalContext
-    setMyUserInfo(updatedUserInfo);
+  
+      // Update myUserInfo with the new group
+      const updatedUserInfo = {
+        ...myUserInfo,
+        conversations: [
+          ...myUserInfo.conversations,
+          {
+            chatID: newGroup.id,
+            chatName: newGroup.chatName,
+            chatAvatar: newGroup.avatar,
+            type: "GROUP",
+          },
+        ],
+      };
+  
+      // Update GlobalContext
+      setMyUserInfo(updatedUserInfo);
   
       navigation.navigate("OpionNavigator", {
         screen: "ChatGroupScreen",
@@ -208,6 +211,7 @@ const CreateGroupScreen = () => {
     }
   };
   
+  
   const saveGroupToBackend = async (newGroup) => {
     const newSocket = new WebSocket('ws://192.168.1.10:8082/ws/group');
   
@@ -223,6 +227,7 @@ const CreateGroupScreen = () => {
   
     newSocket.onerror = (error) => {
       console.error('Error connecting to WebSocket:', error);
+      Alert.alert("Lỗi", "Không thể kết nối đến server");
     };
   
     newSocket.onclose = () => {
@@ -270,7 +275,7 @@ const CreateGroupScreen = () => {
                 marginLeft: "2%",
               }}
             >
-              Nhóm mới
+              Thêm vào nhóm
             </Text>
             <Text
               style={{
@@ -285,48 +290,7 @@ const CreateGroupScreen = () => {
             </Text>
           </View>
         </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            paddingHorizontal: 30,
-            height: 60,
-            top: 30,
-          }}
-        >
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Image
-              style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain", top: -1 }}
-              source={selectedImageUrl ? { uri: selectedImageUrl } : require("../assets/photo.png")}
-            />
-          </TouchableOpacity>
-
-          <View style={{ paddingHorizontal: 30 }}>
-            <TextInput
-              style={{
-                marginRight: "15%",
-                borderBottomColor: "#1E90FF",
-                fontSize: 16,
-                top: "-12%",
-                padding: 10,
-                flex: 1,
-                marginLeft: "-15%",
-              }}
-              placeholder="Đặt tên nhóm"
-              value={groupName}
-              onChangeText={setGroupName}
-            />
-          </View>
-          <TouchableOpacity
-            style={{ position: "absolute", right: "6%", top: "10%" }}
-            onPress={handleCreateGroup}
-          >
-            <Image
-              style={{ width: 30, height: 30, resizeMode: "contain" }}
-              source={require("../assets/check.png")}
-            />
-          </TouchableOpacity>
-        </View>
+    
 
         <View
           style={{
@@ -363,6 +327,11 @@ const CreateGroupScreen = () => {
             />
           </View>
         </View>
+
+        <View style={{flexDirection: "row", top: 7, alignItems: "center", marginLeft: "5%", justifyContent: "flex-start"}}>
+            <Image style={{ width: 50, height: 50, resizeMode: "contain", marginTop: "5%" }} source={require("../assets/copy-linkD.png")}></Image>
+            <Text style={{ fontSize: 16, fontWeight: "bold", top: 10, left: 20 }}>Mời vào nhóm bằng link</Text>
+        </View>  
 
         <Modal
           animationType="slide"
@@ -547,7 +516,7 @@ const CreateGroupScreen = () => {
   );
 };
 
-export default CreateGroupScreen;
+export default AddMemberScreen;
 
 const styles = StyleSheet.create({
   container: {
