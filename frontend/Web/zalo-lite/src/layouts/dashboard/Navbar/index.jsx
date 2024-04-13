@@ -121,7 +121,6 @@ function Navbar({ onNavbarReady }) {
     }
   }, []);
 
-  console.log("chạy lại nha Avatar: ", avatar);
 
   // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
   useEffect(() => {
@@ -187,7 +186,6 @@ function Navbar({ onNavbarReady }) {
 
   // console.log("PhoneNumber on Cookies", phoneNumberCookies);
   // console.log("Token on Cookies", tokenFromCookies);
-  console.log("chạy lại nha:>>>>>>>>>>>>>>>");
 
   return (
     <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
@@ -325,8 +323,8 @@ function Navbar({ onNavbarReady }) {
                         });
 
                         // Lấy tất cả cookies
-                        const allCookies = cookies.getAll();
-                        console.log("++++++++++++++", allCookies);
+                        // const allCookies = cookies.getAll();
+                        // console.log("++++++++++++++", allCookies);
 
                         // Xoá tất cả cookies trong localStorage
                         localStorage.clear();

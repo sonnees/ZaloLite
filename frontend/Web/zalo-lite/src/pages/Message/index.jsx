@@ -51,6 +51,14 @@ function Message() {
       };
       newSocket.onmessage = (event) => {
         const data = event.data;
+        function isJSON(data) {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received:", jsonData);
@@ -68,14 +76,6 @@ function Message() {
           // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
         }
       };
-      function isJSON(data) {
-        try {
-          JSON.parse(data);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
 
       setSocket(newSocket);
 
@@ -110,7 +110,7 @@ function Message() {
   useEffect(() => {
     const conversations = localStorage.getItem("conversations");
     if (conversations) {
-      console.log("conversations", JSON.parse(conversations));
+      // console.log("conversations", JSON.parse(conversations));
       setConversations(JSON.parse(conversations));
     }
   }, []);
@@ -128,8 +128,8 @@ function Message() {
       setTokenFromCookies(tokenFromCookie);
     }
     setFlag(true);
-    console.log("userIDFromCookies", userID);
-    console.log("tokenFromCookies", tokenFromCookie);
+    /*     console.log("userIDFromCookies", userID);
+    console.log("tokenFromCookies", tokenFromCookie); */
   }, [flag]); // Sử dụng flag làm dependency của useEffect này
 
   useEffect(() => {
@@ -164,14 +164,9 @@ function Message() {
     if (userID && tokenFromCookies) {
       fetchConversations();
     }
-  }, [flag, userID]); // Sử dụng flag và userID làm dependency của useEffect này
+  }, [flag, userID, tokenFromCookies]); // Sử dụng flag và userID làm dependency của useEffect này
 
-  const handleConversationClick = (conversation) => {
-    navigate(`chat?id=${conversation.userID}&type=individual-chat`);
-  };
-  // console.log("chay render", conversations);
-
-  const openFullSocketForChar = (chatID ) => {
+  const openFullSocketForChar = (chatID) => {
     console.log("chatID", chatID);
     if (chatID) {
       const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${chatID}`);
@@ -182,7 +177,16 @@ function Message() {
           " OPENED",
         );
       };
+
       newSocket.onmessage = (event) => {
+        function isJSON(data) {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }
         const data = event.data;
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
@@ -196,14 +200,6 @@ function Message() {
           // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
         }
       };
-      function isJSON(data) {
-        try {
-          JSON.parse(data);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
 
       setSocket(newSocket);
 

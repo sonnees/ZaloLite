@@ -41,7 +41,6 @@ const MessageDetail = ({
       return ""; // Trả về chuỗi rỗng nếu timestamp không tồn tại
     }
   };
-
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -224,6 +223,7 @@ const MessageDetail = ({
                     handleRecall(message.messageID);
                     
                     console.log("messageID thu hồi", message.messageID);
+                    setMessageDeletedID(message.messageID);
                   }}
                 >
                   Thu hồi

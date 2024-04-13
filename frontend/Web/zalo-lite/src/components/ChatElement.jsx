@@ -12,14 +12,8 @@ function ChatElement({
   id,
   chatAvatar,
   chatName,
-  msg,
-  time,
-  unread,
-  userID,
   topChatActivity,
   lastUpdateAt,
-  conversationsIndex,
-  setConversationsIndex,
 }) {
   const [socket, setSocket] = useState(null);
   // console.log(">>>>>>>>>>>>>>", topChatActivity);
@@ -76,6 +70,14 @@ function ChatElement({
       };
       newSocket.onmessage = (event) => {
         const data = event.data;
+        function isJSON(data) {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received in CHAT ELEMENT:", jsonData);
@@ -94,20 +96,11 @@ function ChatElement({
           // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
         }
       };
-      function isJSON(data) {
-        try {
-          JSON.parse(data);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
-
       setSocket(newSocket);
 
-      // return () => {
-      //   newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
-      // };
+      return () => {
+        newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+      };
     }
   }, [id]);
 

@@ -317,7 +317,7 @@ const Conversation = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const { id } = queryString.parse(location.search);
-  console.log("Chat ID:", id);
+  // console.log("Chat ID:", id);
   const chatName = searchParams.get("chatName");
   const chatAvatar = searchParams.get("chatAvatar");
   // console.log("Chat Name:", chatName);
@@ -328,7 +328,6 @@ const Conversation = () => {
   const [endIndex, setEndIndex] = useState(50);
 
   const [message, setMessage] = useState("");
-  const messagesRef = useRef([]);
   const [contentType, setContentType] = useState("text"); // Mặc định là gửi tin nhắn text
   const [keyTypeMessage, setKeyTypeMessage] = useState("text");
   const [socket, setSocket] = useState(null);
@@ -339,13 +338,6 @@ const Conversation = () => {
   const [messageRecalledID, setMessageRecalledID] = useState(null);
   const [messageDeletedID, setMessageDeletedID] = useState(null);
   const [idA, setIdA] = useState(null);
-
-  useEffect(() => {
-    messagesRef.current = messages; // Lưu trữ giá trị mới nhất của messages vào biến tham chiếu
-
-    // Sử dụng giá trị mới nhất của messages ở đây
-    console.log("Latest messages in useEffect:", messagesRef.current);
-  }, [messages]);
 
   const handleInputChange = (e) => {
     setMessage(e.target.value);
@@ -373,7 +365,7 @@ const Conversation = () => {
   // };
 
   const fetchMessages = async (id, x, y, token) => {
-    console.table({ id, x, y, token });
+    // console.table({ id, x, y, token });
     try {
       const response = await axios.get(
         `http://localhost:8082/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
@@ -383,7 +375,7 @@ const Conversation = () => {
           },
         },
       );
-      console.log("Data:", response.data);
+      // console.log("Data:", response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -436,8 +428,8 @@ const Conversation = () => {
     // return () => {
     //   newSocket.close();
     // };
-    fetchData();
-  }, [id, tokenFromCookies, message, flag]);
+    if (id && tokenFromCookies) fetchData();
+  }, [id, tokenFromCookies, message, startIndex, endIndex]);
 
   //==============Đang chạy ổn
   // const sendMessageWithTextViaSocket = (textMessage) => {
@@ -466,9 +458,17 @@ const Conversation = () => {
   // };
 
   const sendMessageWithTextViaSocket = (messageContent, contentType) => {
+    const uuid = uuidv4();
+    // Lấy thời gian hiện tại dưới dạng timestamp
+    const currentTime = new Date().getTime();
+    // Tạo UUID có định dạng mong muốn
+    const formattedUUID = `${uuid.slice(0, 8)}-${uuid.slice(
+      9,
+      13,
+    )}-${uuid.slice(14, 18)}-${uuid.slice(19, 23)}-${currentTime}`;
     if (socket) {
       const message = {
-        id: uuidv4(),
+        id: uuidv4(formattedUUID),
         tcm: "TCM01",
         userID: userIDFromCookies,
         userAvatar: localStorage.getItem("avatar"),
@@ -477,7 +477,6 @@ const Conversation = () => {
         parentID: null,
         contents: [],
       };
-
       // Thêm nội dung tương ứng vào tin nhắn
       if (contentType === "text") {
         message.contents.push({
@@ -627,8 +626,8 @@ const Conversation = () => {
     if (socket) {
       socket.onmessage = (event) => {
         const data = event.data;
-        console.log("Received data CONSERVATION:", data);
-        console.table({messageDeletedID, messageRecalledID});
+        // console.log("Received data CONSERVATION:", data);
+        // console.table({ messageDeletedID, messageRecalledID });
         try {
           if (data && data.startsWith("{")) {
             const jsonData = JSON.parse(data);
@@ -641,6 +640,7 @@ const Conversation = () => {
               messageFromOtherUser &&
               jsonData.contents
             ) {
+              console.log("Message____________________:", messages);
               setIdA(jsonData.id);
               if (jsonData) {
                 // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
@@ -653,9 +653,13 @@ const Conversation = () => {
               }
             }
             if (jsonData.tcm === "TCM05") {
+              console.log("Runnnnnn");
               const messageIDToRecall = jsonData.messageID;
               const updatedMessages = messages.map((msg) => {
-                if (msg.messageID === messageIDToRecall) {
+                if (
+                  msg.messageID === messageIDToRecall ||
+                  msg.id === messageIDToRecall
+                ) {
                   // Thay đổi nội dung của tin nhắn thành "Tin nhắn đã được thu hồi"
                   return {
                     ...msg,
