@@ -724,6 +724,8 @@ const Conversation = () => {
     }
   }, [sentMessage]);
 
+  console.log(messages);
+
   return (
     <div className="h-screen w-full">
       <div className="h-[68px] w-full px-4">

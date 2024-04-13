@@ -23,15 +23,64 @@ function Navbar({ onNavbarReady }) {
   const [userID2, setUserID2] = useState(null);
 
   const [profileData, setProfileData] = useState(null);
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState("user-loading.jpg");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [userName, setUserName] = useState("");
   const location = useLocation();
   const token = location.state?.token;
   const phoneNumber = location.state?.phoneNumber;
   const avt = location.state?.avt;
+  // console.log(avt); 
   // console.log("Token: ", token);
   // console.log("Phone Number: ", phoneNumber);
+
+  useEffect(() => {
+    
+    if (token && phoneNumber) {
+      const fetchProfile = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8081/api/v1/account/profile/${cookies.get("phoneNumber")}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${cookies.get("token")}`,
+              },
+            },
+          );
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          // console.log(data);
+          setProfileData(data);
+          setAvatar(data.avatar);
+          localStorage.setItem("avatar", data.avatar);
+          localStorage.setItem("userID", data.userID);
+          localStorage.setItem("user", JSON.stringify(data));
+          localStorage.setItem("phone", phoneNumber);
+          onNavbarReady(data.userID);
+          setUserName(data.userName);
+          const userIDTemp = data.userID;
+          setUserID2(data.userID);
+          setUserID(data.userID);
+          // console.log(avatar);
+
+          setUserIDInCookie(userIDTemp);
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+          setProfileData(null);
+        }
+      };
+
+      fetchProfile();
+    }
+  }, [token, phoneNumber]);
+
+
+
 
   let messageImage = "/message-outline.png";
   let contactImage = "/contact-book-outline.png";
@@ -71,6 +120,7 @@ function Navbar({ onNavbarReady }) {
       // Các tùy chọn bảo mật khác nếu cần
     });
   };
+
   useEffect(() => {
     // Lấy số điện thoại từ cookies và giải mã nó
     const phoneNumberFromCookie = cookies.get("phoneNumber");
@@ -87,6 +137,8 @@ function Navbar({ onNavbarReady }) {
     }
     onNavbarReady();
   }, []);
+
+
 
   // Hàm để đặt token vào cookie
   // const setTokenInCookie = (tokenValue) => {
@@ -166,7 +218,6 @@ function Navbar({ onNavbarReady }) {
       fetchProfile();
     }
   }, [token, phoneNumber]);
-
   // console.log(profileData);
 
   // useEffect(() => {
@@ -183,17 +234,26 @@ function Navbar({ onNavbarReady }) {
   //   }
 
   // }, []); // Chỉ chạy một lần sau khi component được render
-
+  
+  
   // console.log("PhoneNumber on Cookies", phoneNumberCookies);
   // console.log("Token on Cookies", tokenFromCookies);
 
+  /* Fix lỗi hiển thị avatar khi load lại dữ liệu */
+  useEffect(() => {
+    const avatarLoad = localStorage.getItem("avatar");
+    if (avatarLoad) {
+      setAvatar(avatarLoad);
+    }
+  }, []);
+  console.log("avt:"+avatar);
   return (
     <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
       <nav className="w-full">
         <ul className="grid w-full items-center justify-center">
           <li className="pb-[14px]">
             <div className="">
-              {avatar ? (
+              {profileData ? (
                 <Button
                   id="fade-button"
                   aria-controls={open ? "fade-menu" : undefined}
@@ -204,7 +264,7 @@ function Navbar({ onNavbarReady }) {
                 >
                   <div>
                     <img
-                      src={avatar}
+                      src={localStorage.getItem("avatar")}
                       className="h-12 w-12 rounded-full border "
                       alt="avatar"
                     />
@@ -222,7 +282,7 @@ function Navbar({ onNavbarReady }) {
                 >
                   <div>
                     <img
-                      src="user-loading.jpg"
+                      src={avatar}
                       className="w-14 rounded-full border "
                       alt="avatar"
                     />
@@ -279,9 +339,9 @@ function Navbar({ onNavbarReady }) {
                     <PopupWindow
                       isOpen={isPopupOpen}
                       onClose={handleClosePopup}
-                      data={profileData}
-                      phoneNumber={phoneNumber}
-                      token={token}
+                      data={JSON.parse(localStorage.getItem("user"))}
+                      phoneNumber={localStorage.getItem("phone")}
+                      token={localStorage.getItem("token")}
                     />
                     <MenuItem
                       sx={{

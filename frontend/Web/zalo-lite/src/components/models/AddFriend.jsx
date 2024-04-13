@@ -150,7 +150,6 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber}) => {
 
               {/* <p className=" text-sm">Lorem ipsum dolor sit amet</p> */}
             </div>
-
             {type === "REQUESTED" ? (
               <div className="flex flex-1 items-center justify-center pt-[227px]">
                 <button
@@ -440,7 +439,6 @@ export default function AddFriendDialog() {
   const handleFindUserByPhoneNumber = () => {
     // Lấy token từ cookies
     const token = Cookies.get("token");
-
     // Kiểm tra xem token có tồn tại không
     if (!token) {
       console.error("Token not found in cookies.");
