@@ -18,6 +18,8 @@ function ChatElement({
   userID,
   topChatActivity,
   lastUpdateAt,
+  conversationsIndex,
+  setConversationsIndex,
 }) {
   const [socket, setSocket] = useState(null);
   // console.log(">>>>>>>>>>>>>>", topChatActivity);
@@ -67,7 +69,7 @@ function ChatElement({
       const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/user/' for chatID: ",
+          "WebSocket in CHAT ELEMENT: 'ws://localhost:8082/ws/chat/' for chatID: ",
           id,
           " OPENED",
         );
@@ -76,11 +78,17 @@ function ChatElement({
         const data = event.data;
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
-          console.log("Message received:", jsonData);
+          console.log("Message received in CHAT ELEMENT:", jsonData);
           // Xử lý dữ liệu được gửi đến ở đây
-          // if (jsonData) {
-
-          // }
+          // if (jsonData.tcm === "TCM04") {
+          //   const messageIDToDelete = jsonData.messageID;
+          //   // Lọc ra các tin nhắn mà không có messageIDToDelete
+          //   const updatedMessages = conversationsIndex.filter(
+          //     (msg) => msg.messageID !== messageIDToDelete,
+          //   );
+          //   setConversationsIndex(updatedMessages);
+          //   console.log("Updated messages after deleting:", updatedMessages);
+          // } 
         } else {
           // console.error("Received data is not valid JSON:", data);
           // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)

@@ -325,9 +325,10 @@ const Conversation = () => {
 
   const [messages, setMessages] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
-  const [endIndex, setEndIndex] = useState(15);
+  const [endIndex, setEndIndex] = useState(50);
 
   const [message, setMessage] = useState("");
+  const messagesRef = useRef([]);
   const [contentType, setContentType] = useState("text"); // Mặc định là gửi tin nhắn text
   const [keyTypeMessage, setKeyTypeMessage] = useState("text");
   const [socket, setSocket] = useState(null);
@@ -335,13 +336,21 @@ const Conversation = () => {
   const [flag, setFlag] = useState(false);
 
   const [sentMessage, setSentMessage] = useState(null);
+  const [messageRecalledID, setMessageRecalledID] = useState(null);
+  const [messageDeletedID, setMessageDeletedID] = useState(null);
+  const [idA, setIdA] = useState(null);
+
+  useEffect(() => {
+    messagesRef.current = messages; // Lưu trữ giá trị mới nhất của messages vào biến tham chiếu
+
+    // Sử dụng giá trị mới nhất của messages ở đây
+    console.log("Latest messages in useEffect:", messagesRef.current);
+  }, [messages]);
 
   const handleInputChange = (e) => {
     setMessage(e.target.value);
     setContentType("text");
   };
-  console.log("Message:", message);
-
   // Hàm gửi tin nhắn qua WebSocket với nội dung là text từ input
   // const handleSendMessage = () => {
   //   if (message.trim() !== "") {
@@ -364,6 +373,7 @@ const Conversation = () => {
   // };
 
   const fetchMessages = async (id, x, y, token) => {
+    console.table({ id, x, y, token });
     try {
       const response = await axios.get(
         `http://localhost:8082/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
@@ -420,7 +430,7 @@ const Conversation = () => {
     };
     const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
     newSocket.onopen = () => {
-      console.log("WebSocket connected >>>>>>>>HUy");
+      // console.log("WebSocket connected >>>>>>>>HUy");
     };
     setSocket(newSocket);
     // return () => {
@@ -461,9 +471,8 @@ const Conversation = () => {
         id: uuidv4(),
         tcm: "TCM01",
         userID: userIDFromCookies,
-        userAvatar:
-          "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
-        userName: "Tran Huy",
+        userAvatar: localStorage.getItem("avatar"),
+        userName: localStorage.getItem("userName"),
         timestamp: new Date().toISOString(),
         parentID: null,
         contents: [],
@@ -562,19 +571,77 @@ const Conversation = () => {
 
   const [openPicker, setOpenPicker] = useState(false);
 
+  //Socket đẻ lắng nghe tin nhắn chỉ ở phía mình
+  // useEffect(() => {
+  //   console.log("messagesRef.current:", messagesRef.current);
+  //   if (id) {
+  //     const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+  //     newSocket.onopen = () => {
+  //       console.warn(
+  //         "WebSocket in CHAT ELEMENT 'ws://localhost:8082/ws/chat/' for chatID: ",
+  //         id,
+  //         " OPENED",
+  //       );
+  //     };
+  //     newSocket.onmessage = (event) => {
+  //       const data = event.data;
+  //       if (isJSON(data)) {
+  //         const jsonData = JSON.parse(data);
+  //         console.log(
+  //           "Message received in CONSERVATION 22222222222222:",
+  //           jsonData,
+  //         );
+  //         // Xử lý dữ liệu được gửi đến ở đây
+  //         if (jsonData.tcm === "TCM04") {
+  //           const messageIDToDelete = jsonData.messageID;
+  //           // Lọc ra các tin nhắn mà không có messageIDToDelete
+  //           const updatedMessages = messages.filter(
+  //             (msg) => msg.messageID !== messageIDToDelete,
+  //           );
+  //           setMessages(updatedMessages);
+  //           console.log("Updated messages after deleting:", updatedMessages);
+  //         }
+  //       } else {
+  //         // console.error("Received data is not valid JSON:", data);
+  //         // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
+  //       }
+  //     };
+  //     function isJSON(data) {
+  //       try {
+  //         JSON.parse(data);
+  //         return true;
+  //       } catch (error) {
+  //         return false;
+  //       }
+  //     }
+
+  //     setSocket(newSocket);
+
+  //     // return () => {
+  //     //   newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+  //     // };
+  //   }
+  // }, [id, messages]);
+
   useEffect(() => {
     if (socket) {
       socket.onmessage = (event) => {
         const data = event.data;
-        console.log("Received data:", data);
+        console.log("Received data CONSERVATION:", data);
+        console.table({messageDeletedID, messageRecalledID});
         try {
           if (data && data.startsWith("{")) {
             const jsonData = JSON.parse(data);
-            console.log("Received JSON data:", jsonData);
+            console.log("Received JSON data CONSERVATION:", jsonData);
             // Kiểm tra xem tin nhắn không phải từ bạn
             const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
             // console.log("Message from other user: ==========================================", messageFromOtherUser);
-            if (messageFromOtherUser && jsonData.contents) {
+            if (
+              jsonData.tcm === "TCM01" &&
+              messageFromOtherUser &&
+              jsonData.contents
+            ) {
+              setIdA(jsonData.id);
               if (jsonData) {
                 // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
                 const messageExists = messages.some(
@@ -602,6 +669,19 @@ const Conversation = () => {
               });
               setMessages(updatedMessages);
             }
+            if (
+              jsonData.tcm === "TCM00" &&
+              jsonData.id === messageRecalledID &&
+              jsonData.typeNotify === "SUCCESS"
+            ) {
+              const messageIDToDelete = messageDeletedID;
+              // Lọc ra các tin nhắn mà không có messageIDToDelete
+              const updatedMessages = messages.filter(
+                (msg) => msg.messageID !== messageIDToDelete,
+              );
+              setMessages(updatedMessages);
+              console.log("Updated messages after deleting:", updatedMessages);
+            }
           }
           // console.log("Message ++++++++++", messages);
         } catch (error) {
@@ -614,8 +694,13 @@ const Conversation = () => {
         socket.onmessage = null;
       };
     }
-  }, [socket, messages, userIDFromCookies]);
-  
+  }, [
+    socket,
+    messages,
+    userIDFromCookies,
+    messageDeletedID,
+    messageRecalledID,
+  ]);
 
   // Hàm cuộn xuống dưới cùng của khung chat
   const scrollToBottom = () => {
@@ -707,16 +792,25 @@ const Conversation = () => {
         {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
         <Message sender="me" content="Chào bạn!" timestamp="15:32" />
         Thêm tin nhắn khác ở đây */}
-        {messages.map((message, index) => (
-          <MessageDetail
-            key={index}
-            message={message}
-            chatAvatar={chatAvatar}
-            socketFromConservation={socket}
-            setSocketFromConservation={setSocket}
-            messagesF={messages}
-          />
-        ))}
+        {/* {messages.map((message, index) => ( */}
+        {messages
+          .filter(
+            (message) =>
+              !message.hidden || !message.hidden.includes(userIDFromCookies),
+          )
+          .map((message, index) => (
+            <MessageDetail
+              key={index}
+              message={message}
+              chatAvatar={chatAvatar}
+              socketFromConservation={socket}
+              setSocketFromConservation={setSocket}
+              messagesF={messages}
+              setMessageDeletedID={setMessageDeletedID}
+              setMessageRecalledID={setMessageRecalledID}
+              idA={idA}
+            />
+          ))}
         <div ref={messagesEndRef} />
       </div>
       <div className="border-t">

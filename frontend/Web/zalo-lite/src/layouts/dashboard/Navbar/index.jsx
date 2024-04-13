@@ -308,16 +308,27 @@ function Navbar({ onNavbarReady }) {
                       }}
                       onClick={() => {
                         handleClose(); // Đóng menu sau khi nhấp vào
-                        // cookies.remove("phoneNumber"); // Xoá cookie phoneNumber
-                        // cookies.remove("token"); // Xoá cookie token
-                        // cookies.remove("userID"); // Xoá cookie userID
+
+                        // Danh sách các tên cookie cần xoá
+                        const cookieNames = ["phoneNumber", "token", "userID"];
+
+                        // Lặp qua danh sách cookieNames và gọi hàm cookies.remove cho mỗi tên cookie
+                        cookieNames.forEach((cookieName) => {
+                          cookies.remove(cookieName, {
+                            path: "/",
+                            domain: "localhost",
+                          });
+                          cookies.remove(cookieName, {
+                            path: "/auth",
+                            domain: "localhost",
+                          });
+                        });
+
                         // Lấy tất cả cookies
                         const allCookies = cookies.getAll();
+                        console.log("++++++++++++++", allCookies);
 
-                        // Lặp qua từng cookie và xóa nó
-                        for (const cookie in allCookies) {
-                          cookies.remove(cookie);
-                        }
+                        // Xoá tất cả cookies trong localStorage
                         localStorage.clear();
                       }}
                     >

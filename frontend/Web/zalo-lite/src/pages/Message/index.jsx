@@ -177,7 +177,7 @@ function Message() {
       const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${chatID}`);
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          "WebSocket 'ws://localhost:8082/ws/chat/' for UserID: ",
           chatID,
           " OPENED",
         );
