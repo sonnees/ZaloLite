@@ -12,7 +12,7 @@ import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID } from '../api/Api';
+import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/Api';
 
 // import DocumentPicker from 'react-native-document-picker';
 const ChatScreen = () => {
@@ -20,7 +20,7 @@ const ChatScreen = () => {
   const route = useRoute();
   const { myUserInfo, setMyUserInfo, chatID } = useContext(GlobalContext)
   const componentChatID = route.params?.conversationOpponent.chatID;
-  console.log("CHATID NE: ", componentChatID);
+  // console.log("CHATID NE: ", componentChatID);
   const [conversationOpponent, setconversationOpponent] = useState([])
   //Profile
   const [myProfile, setMyProfile] = useState({});
@@ -61,6 +61,7 @@ const ChatScreen = () => {
   useEffect(() => {
     if (socket) {
       console.log("WEBSOCKET WAS TURN ON");
+      console.log("SoCket", socket);
       socket.onmessage = (event) => {
         const data = event.data;
         console.log("Received data:", data);
@@ -129,7 +130,7 @@ const ChatScreen = () => {
         },
       });
       const allChatActivity = await response.data;
-      console.log("ALL CHATACTIVITY: ", allChatActivity);
+      // console.log("ALL CHATACTIVITY: ", allChatActivity);
       if (allChatActivity)
         return allChatActivity;
       else
@@ -152,7 +153,7 @@ const ChatScreen = () => {
 
   // Xử lý Emoji
   const handleEmojiSelect = (emoji) => {
-    console.log("Emoji selected:", emoji);
+    // console.log("Emoji selected:", emoji);
     setMessage(message + emoji);
   };
   const toggleEmojiPicker = () => {
@@ -202,7 +203,7 @@ const ChatScreen = () => {
       }
 
       const responseData = await response.json();
-      console.log('Upload successful:', responseData);
+      // console.log('Upload successful:', responseData);
 
       const imageUrl = responseData.secure_url;
       return imageUrl;
@@ -241,7 +242,7 @@ const ChatScreen = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("PROFILE FRIEND REQUEST:\n", response.data);
+      // console.log("PROFILE FRIEND REQUEST:\n", response.data);
       setMyProfile(response.data)
       return response.data;
     } catch (error) {
@@ -265,7 +266,7 @@ const ChatScreen = () => {
     }
   };
   useEffect(() => {
-    const newSocket = new WebSocket(`ws://192.168.1.7:8082/ws/chat/${componentChatID}`);
+    const newSocket = new WebSocket(`ws://${host}/ws/chat/${componentChatID}`);
     newSocket.onopen = () => {
       console.log("WebSocket connected >>>>>>>>");
     };
@@ -273,11 +274,11 @@ const ChatScreen = () => {
   }, [componentChatID]);
 
   const sendMessageWithTextViaSocket = (messageContent, contentType, parentID) => {
-    console.log("MY USER ID:__________", myProfile.userID);
-    console.log("MY USER AVATAR:__________", myProfile.avatar);
-    console.log("MY USER NAME:__________", myProfile.userName);
-    console.log("TIMESTAMP:__________", new Date().toISOString());
-    console.log("ID:__________", generateUUID());
+    // console.log("MY USER ID:__________", myProfile.userID);
+    // console.log("MY USER AVATAR:__________", myProfile.avatar);
+    // console.log("MY USER NAME:__________", myProfile.userName);
+    // console.log("TIMESTAMP:__________", new Date().toISOString());
+    // console.log("ID:__________", generateUUID());
     if (socket) {
       const messageSocket = {
         id: generateUUID(),
@@ -313,7 +314,7 @@ const ChatScreen = () => {
           value: messageContent,
         });
       }
-      console.log("MESSAGE:__________", messageSocket);
+      // console.log("MESSAGE:__________", messageSocket);
       socket.send(JSON.stringify(messageSocket));
       setMessage(""); // Xóa nội dung của input message sau khi gửi
     } else {
@@ -325,10 +326,10 @@ const ChatScreen = () => {
       setKeyTypeMessage("link");
       sendMessageWithTextViaSocket(message, "link", null);
     } else if (contentType === "text" && message.trim() !== "") {
-      console.log("Gửi tin nhắn:", message);
+      // console.log("Gửi tin nhắn:", message);
       sendMessageWithTextViaSocket(message, "text", null);
     } else if (contentType === "file" && imageUrl) {
-      console.log("Gửi file:", imageUrl);
+      // console.log("Gửi file:", imageUrl);
       sendMessageWithTextViaSocket(imageUrl, "file", null);
     }
   };
