@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faBell, faChevronLeft, faGear, faThumbtack, faTrashCan, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import data from "@emoji-mart/data";
@@ -68,7 +68,7 @@ const Message = ({ sender, content, timestamp }) => (
   </div>
 );
 
-const Conversation = () => {
+const ConversationGroup = () => {
   const messagesEndRef = useRef(null);
   const cookies = new Cookies();
 
@@ -333,10 +333,12 @@ const Conversation = () => {
   const [contentType, setContentType] = useState("text"); // Mặc định là gửi tin nhắn text
   const [keyTypeMessage, setKeyTypeMessage] = useState("text");
   const [socket, setSocket] = useState(null);
+  const [socketGroup, setSocketGroup] = useState(null);
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const [flag, setFlag] = useState(false);
 
   const [sentMessage, setSentMessage] = useState(null);
+  const [consGroup, setConsGroup] = useState(JSON.parse(localStorage.getItem("conversations")).find(item => item.chatID === id) );
 
   const handleInputChange = (e) => {
     setMessage(e.target.value);
@@ -424,7 +426,15 @@ const Conversation = () => {
     newSocket.onopen = () => {
       console.log("WebSocket connected >>>>>>>>HUy");
     };
+
+    const newSocketGroup = new WebSocket(`ws://localhost:8082/ws/group`);
+    newSocketGroup.onopen = async () => {
+      console.log("WebSocket connected");
+    };
+
     setSocket(newSocket);
+
+    setSocketGroup(newSocketGroup);
     // return () => {
     //   newSocket.close();
     // };
@@ -564,6 +574,11 @@ const Conversation = () => {
   // };
 
   const [openPicker, setOpenPicker] = useState(false);
+  const [click, setClick] = useState(false);
+
+  const handleClickRightBar = () => {
+    setClick(!click);
+  }
 
   function isJSON(str) {
     try {
@@ -639,241 +654,348 @@ const Conversation = () => {
     }
   }, [sentMessage]);
 
-  console.log(messages);
+  // console.log(messages);
+
+  const handleDeleteGroup = () => {
+    let user = JSON.parse(localStorage.getItem("user"));
+    let newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
+    newSocket.onopen = async () => {
+      console.log("WebSocket connected");
+    };
+
+    if (socketGroup && user) {
+      const create = {
+        id: uuidv4(),
+        tgm: "TGM02",
+        idChat: id,
+      };
+
+      socketGroup.send(JSON.stringify(create));
+      // console.log(create);
+      reloadCons();
+    } else {
+      console.error("WebSocket is not initialized.");
+    }
+  }
+
+  const reloadCons = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8082/api/v1/user/info/${localStorage.getItem("userID")}`,
+        {
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          method: "GET",
+        },
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch conversations");
+      }
+      const data = await response.json();
+      // console.log(data);
+      localStorage.setItem(
+        "conversations",
+        JSON.stringify(data.conversations),
+      );
+      setCons(JSON.parse(localStorage.getItem("conversations")))
+      console.log(cons);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+    }
+  }
 
   return (
-    <div className="h-screen w-full">
-      <div className="h-[68px] w-full px-4">
-        <div className="flex h-full w-full flex-row items-center justify-between">
-          <div className="flex flex-row items-center gap-x-2">
-            <FontAwesomeIcon icon={faChevronLeft} className="pl-1 pr-3" />
-            <div className="hidden lg:block">
-              <StyledBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                variant="dot"
-              >
-                <Avatar
-                  sx={{ width: 48, height: 48 }}
-                  alt="Name"
-                  src={chatAvatar}
-                />
-              </StyledBadge>
-            </div>
-            <div className="flex flex-col">
-              <div className="text-lg font-medium text-[#081c36]">
-                <span>{chatName}</span>
-              </div>
-              <div className="flex items-center text-sm text-[#7589a3]">
-                <span>Vừa truy cập</span>
-                <span className="text-[#D7DBE0]"> &nbsp;|&nbsp;</span>
-                <span className="flex items-center justify-center">
-                  <img
-                    className="mt-[1px] h-[10px]"
-                    src="/src/assets/tag.png"
-                    alt=""
+    <div className="flex h-screen w-full">
+      <div className="w-full">
+        <div className="h-[68px] w-full px-4">
+          <div className="flex h-full w-full flex-row items-center justify-between">
+            <div className="flex flex-row items-center gap-x-2">
+              <FontAwesomeIcon icon={faChevronLeft} className="pl-1 pr-3" />
+              <div className="hidden lg:block">
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  variant="dot"
+                >
+                  <Avatar
+                    sx={{ width: 48, height: 48 }}
+                    alt="Name"
+                    src={chatAvatar}
                   />
-                </span>
+                </StyledBadge>
+              </div>
+              <div className="flex flex-col">
+                <div className="text-lg font-medium text-[#081c36]">
+                  <span>{chatName}</span>
+                </div>
+                <div className="flex items-center text-sm text-[#7589a3]">
+                  <span>Vừa truy cập</span>
+                  <span className="text-[#D7DBE0]"> &nbsp;|&nbsp;</span>
+                  <span className="flex items-center justify-center">
+                    <img
+                      className="mt-[1px] h-[10px]"
+                      src="/src/assets/tag.png"
+                      alt=""
+                    />
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-row items-center">
+              <a href="" className="p-1">
+                <img
+                  src="/src/assets/group-user-plus.png"
+                  alt=""
+                  className="w-[22px] "
+                />
+              </a>
+              <a href="" className="p-2">
+                <img
+                  src="/src/assets/mini-search.png"
+                  alt=""
+                  className="m-1 h-4 w-4"
+                />
+              </a>
+              <a href="" className="p-2">
+                <img src="/src/assets/video.png" alt="" className="m-1 h-5 w-5" />
+              </a>
+              
+              <img onClick={handleClickRightBar} src="/src/assets/right-bar.png" alt="" className="m-1 h-4 w-4"/>
+
+            </div>
+          </div>
+        </div>
+        {/* -68 */}
+        <div
+          className="h-[calc(100vh-174px)] w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3"
+          // onScroll={handleScroll}
+        >
+          {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
+          <Message sender="me" content="Chào bạn!" timestamp="15:32" />
+          Thêm tin nhắn khác ở đây */}
+          {messages.map((message, index) => (
+            <MessageDetail
+              key={index}
+              message={message}
+              chatAvatar={message.userAvatar}
+              socketFromConservation={socket}
+              messagesF={messages}
+            />
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+        <div className="border-t">
+          <div className="flex h-[47px] flex-row justify-items-start bg-white">
+            <div className="flex flex-row justify-items-start pl-2">
+              <div className="mr-2 flex w-10 items-center justify-center">
+                <a
+                  href="#"
+                  onClick={() => {
+                    setOpenPicker(!openPicker);
+                    setContentType("emoji");
+                  }}
+                >
+                  <img
+                    src="/chatbar-sticker.png"
+                    alt=""
+                    className="h-[24px] w-[24px] opacity-65"
+                  />
+                </a>
+              </div>
+              <Box
+                style={{
+                  zIndex: 10,
+                  position: "fixed",
+                  display: openPicker ? "inline" : "none",
+                  bottom: 110,
+                  // right: isMobile ? 20 : sideBar.open ? 420 : 100,
+                }}
+              >
+                <Picker
+                  data={data}
+                  onEmojiSelect={(emoji) => {
+                    console.log(emoji.native);
+                    handleEmojiSelect(emoji.native);
+                  }}
+                />
+              </Box>
+              <div className="mr-2 flex w-10 items-center justify-center">
+                {/* Input file ẩn để chọn ảnh */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleImageSelection}
+                  id="fileInput2"
+                />
+                {/* Hình ảnh để mở cửa sổ chọn tệp ảnh */}
+                <label htmlFor="fileInput2">
+                  <img
+                    src="/chatbar-photo.png"
+                    alt=""
+                    className="h-[24px] w-[24px] cursor-pointer opacity-65"
+                  />
+                </label>
+              </div>
+              <div className="mr-2 flex w-10 items-center justify-center">
+                <label htmlFor="fileInput">
+                  <img
+                    src="/chatbar-attach.png"
+                    alt=""
+                    className="h-[24px] w-[24px] cursor-pointer opacity-65 hover:opacity-100"
+                  />
+                </label>
+                <input
+                  id="fileInput"
+                  type="file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  accept=".txt, .pdf, .doc, .csv, .zip, .rar, .xlsx, .xls, .ppt, .pptx, .docx, .json"
+                />
+              </div>
+              <div className="mr-2 flex w-10 items-center justify-center">
+                <a href="#">
+                  {/* prettier-ignore */}
+                  <img src="/chatbar-screenshotz.png"
+                    alt=""
+                    className="h-[24px] w-[24px] opacity-65"
+                  />
+                </a>
+              </div>
+              <div className="mr-2 flex w-10 items-center justify-center">
+                <a href="#">
+                  <img
+                    src="/chatbar-reminder.png"
+                    alt=""
+                    className="h-[24px] w-[24px] opacity-65"
+                  />
+                </a>
+              </div>
+              <div className="mr-2 flex w-10 items-center justify-center">
+                <a href="#">
+                  <img
+                    src="/chatbar-todo.png"
+                    alt=""
+                    className="h-[24px] w-[24px] opacity-65"
+                  />
+                </a>
               </div>
             </div>
           </div>
-          <div className="flex flex-row items-center">
-            <a href="" className="p-1">
-              <img
-                src="/src/assets/group-user-plus.png"
-                alt=""
-                className="w-[22px] "
-              />
-            </a>
-            <a href="" className="p-2">
-              <img
-                src="/src/assets/mini-search.png"
-                alt=""
-                className="m-1 h-4 w-4"
-              />
-            </a>
-            <a href="" className="p-2">
-              <img src="/src/assets/video.png" alt="" className="m-1 h-5 w-5" />
-            </a>
-            <a href="" className="p-2">
-              <img
-                src="/src/assets/right-bar.png"
-                alt=""
-                className="m-1 h-4 w-4"
-              />
-            </a>
-          </div>
-        </div>
-      </div>
-      {/* -68 */}
-      <div
-        className="h-[calc(100vh-174px)] w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3"
-        // onScroll={handleScroll}
-      >
-        {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
-        <Message sender="me" content="Chào bạn!" timestamp="15:32" />
-        Thêm tin nhắn khác ở đây */}
-        {messages.map((message, index) => (
-          <MessageDetail
-            key={index}
-            message={message}
-            chatAvatar={message.userAvatar}
-            socketFromConservation={socket}
-            messagesF={messages}
-          />
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className="border-t">
-        <div className="flex h-[47px] flex-row justify-items-start bg-white">
-          <div className="flex flex-row justify-items-start pl-2">
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <a
-                href="#"
-                onClick={() => {
-                  setOpenPicker(!openPicker);
-                  setContentType("emoji");
-                }}
-              >
-                <img
-                  src="/chatbar-sticker.png"
-                  alt=""
-                  className="h-[24px] w-[24px] opacity-65"
-                />
-              </a>
-            </div>
-            <Box
-              style={{
-                zIndex: 10,
-                position: "fixed",
-                display: openPicker ? "inline" : "none",
-                bottom: 110,
-                // right: isMobile ? 20 : sideBar.open ? 420 : 100,
-              }}
+          <div className="h-[58.5px]">
+            {/* Thêm phần nhập tin nhắn ở đây */}
+            {/* <MessageInput
+              onSendMessage={handleSendMessage}
+              onKeySendMessage={handleKeyPress}
+            /> */}
+            <div
+              className="flex w-full items-center bg-white"
+              style={{ height: "58.5px" }}
             >
-              <Picker
-                data={data}
-                onEmojiSelect={(emoji) => {
-                  console.log(emoji.native);
-                  handleEmojiSelect(emoji.native);
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Nhập tin nhắn..."
+                value={message}
+                onChange={handleInputChange}
+                onKeyPress={handleKeyPress}
+                inputProps={{ style: { fontSize: 15 } }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderTop: "1px solid",
+                    borderBottom: "none",
+                    borderLeft: "none",
+                    borderRight: "none",
+                    borderColor: "#CFD6DC",
+                    borderRadius: 2,
+                  },
+                  "& .MuiOutlinedInput-root:hover": {
+                    borderTop: "1px solid",
+                    borderBottom: "none",
+                    borderLeft: "none",
+                    borderRight: "none",
+                    borderRadius: 2,
+                    borderColor: "blue",
+                  },
+                  "& .Mui-focused": {
+                    borderTop: "1px solid",
+                    borderBottom: "none",
+                    borderLeft: "none",
+                    borderRight: "none",
+                    borderRadius: 2,
+                  },
                 }}
               />
-            </Box>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              {/* Input file ẩn để chọn ảnh */}
-              <input
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handleImageSelection}
-                id="fileInput2"
-              />
-              {/* Hình ảnh để mở cửa sổ chọn tệp ảnh */}
-              <label htmlFor="fileInput2">
-                <img
-                  src="/chatbar-photo.png"
-                  alt=""
-                  className="h-[24px] w-[24px] cursor-pointer opacity-65"
-                />
-              </label>
+              {/* <IconButton color="primary" onClick={handleSendMessage}>
+          <SendIcon />
+        </IconButton> */}
             </div>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <label htmlFor="fileInput">
-                <img
-                  src="/chatbar-attach.png"
-                  alt=""
-                  className="h-[24px] w-[24px] cursor-pointer opacity-65 hover:opacity-100"
-                />
-              </label>
-              <input
-                id="fileInput"
-                type="file"
-                onChange={handleFileChange}
-                className="hidden"
-                accept=".txt, .pdf, .doc, .csv, .zip, .rar, .xlsx, .xls, .ppt, .pptx, .docx, .json"
-              />
-            </div>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <a href="#">
-                {/* prettier-ignore */}
-                <img src="/chatbar-screenshotz.png"
-                  alt=""
-                  className="h-[24px] w-[24px] opacity-65"
-                />
-              </a>
-            </div>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <a href="#">
-                <img
-                  src="/chatbar-reminder.png"
-                  alt=""
-                  className="h-[24px] w-[24px] opacity-65"
-                />
-              </a>
-            </div>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <a href="#">
-                <img
-                  src="/chatbar-todo.png"
-                  alt=""
-                  className="h-[24px] w-[24px] opacity-65"
-                />
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="h-[58.5px]">
-          {/* Thêm phần nhập tin nhắn ở đây */}
-          {/* <MessageInput
-            onSendMessage={handleSendMessage}
-            onKeySendMessage={handleKeyPress}
-          /> */}
-          <div
-            className="flex w-full items-center bg-white"
-            style={{ height: "58.5px" }}
-          >
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Nhập tin nhắn..."
-              value={message}
-              onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-              inputProps={{ style: { fontSize: 15 } }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderTop: "1px solid",
-                  borderBottom: "none",
-                  borderLeft: "none",
-                  borderRight: "none",
-                  borderColor: "#CFD6DC",
-                  borderRadius: 2,
-                },
-                "& .MuiOutlinedInput-root:hover": {
-                  borderTop: "1px solid",
-                  borderBottom: "none",
-                  borderLeft: "none",
-                  borderRight: "none",
-                  borderRadius: 2,
-                  borderColor: "blue",
-                },
-                "& .Mui-focused": {
-                  borderTop: "1px solid",
-                  borderBottom: "none",
-                  borderLeft: "none",
-                  borderRight: "none",
-                  borderRadius: 2,
-                },
-              }}
-            />
-            {/* <IconButton color="primary" onClick={handleSendMessage}>
-        <SendIcon />
-      </IconButton> */}
           </div>
         </div>
       </div>
+
+
+
+
+      {click && <div className="w-[500px]"> 
+        <div className="flex flex-col items-center h-screen">
+          
+          <div className="h-[68px] w-full flex items-center justify-center text-center border"> 
+            <h1 className="font-semibold text-lg p-3 m-2">Thông tin nhóm</h1>
+          </div>
+
+          <div className="flex flex-col justify-end h-full bg-white ">
+            <div className="flex justify-center items-center my-4">
+              <img src={chatAvatar} alt="ZaloLite Logo" className="w-12 h-12 mr-2 rounded-full" />
+              <h1 className="text-xl font-bold">{chatName}</h1>
+            </div>
+            <div className="flex justify-between mb-4 border-b-4 border-gray-200">
+              <button className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
+                <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faBell}/> <br/>Tắt thông báo
+              </button>
+              <button className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
+                <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faThumbtack}/> <br/>Ghim hội thoại
+              </button>
+              <button className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
+                <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faUserPlus}/> <br/>Thêm thành viên
+              </button>
+              <button className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
+                <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faGear}/> <br/>Quản lý nhóm
+              </button>
+            </div>
+
+
+            <div className="mb-4 flex-auto border-b-4 border-gray-200 px-4">
+              <h2 className="text-lg font-semibold mb-2">Thành viên nhóm</h2>
+              <p className="text-gray-600">{}</p>
+            </div>
+
+
+            <div className="justify-items-end px-4">
+              <button className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
+                <FontAwesomeIcon className="mr-2" icon={faTrashCan}/> Xóa lịch sử cuộc trò chuyện
+              </button>
+
+              <button onClick={handleDeleteGroup} className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
+                <FontAwesomeIcon className="mr-2" icon={faArrowRightFromBracket}/> Giải tán nhóm
+              </button>
+
+              <button className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
+                <FontAwesomeIcon className="mr-2" icon={faArrowRightFromBracket}/> Rời nhóm
+              </button>
+            </div>
+
+
+
+
+          </div>
+        </div>
+      </div>}
     </div>
   );
 };
 
-export default Conversation;
+export default ConversationGroup;

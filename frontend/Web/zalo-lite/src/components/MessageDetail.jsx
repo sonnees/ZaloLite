@@ -11,15 +11,16 @@ import Fade from "@mui/material/Fade";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
 import queryString from "query-string";
+import { useUser } from "../context/UserContext";
 
 const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
-  console.log(message);
+  // console.log(message);
   // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const { userID, contents, timestamp, hasEmotion } = message;
   const [socket, setSocket] = useState(socketFromConservation);
-  const [flag, setFlag] = useState(false);
+  const {cons, setCons } = useUser();
 
   const [isRecalled, setIsRecalled] = useState(false);
   // const location = useLocation();
@@ -47,7 +48,7 @@ const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
   useEffect(() => {
     const userID = cookies.get("userID");
     setUserIDFromCookies(userID);
-  }, []);
+  }, [cons]);
 
   // Function to send recall message to WebSocket
   const sendRecallMessage = (messageID) => {
