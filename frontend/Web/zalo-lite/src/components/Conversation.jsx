@@ -781,9 +781,9 @@ const Conversation = () => {
                 className="m-1 h-4 w-4"
               />
             </a>
-            <a href="" className="p-2">
+            <Link to="/videocall" className="p-2">
               <img src="/src/assets/video.png" alt="" className="m-1 h-5 w-5" />
-            </a>
+            </Link>
             <a href="" className="p-2">
               <img
                 src="/src/assets/right-bar.png"
