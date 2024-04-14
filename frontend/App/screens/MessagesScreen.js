@@ -4,8 +4,8 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import { getTimeDifference } from '../function/CalTime';
-import { getDataFromConversationsAndChatData } from '../function/DisplayLastChat';
+import { getTimeDifference } from '../utils/CalTime';
+import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import { API_GET_LIST_CHATACTIVITY } from '../api/Api';
 import { GlobalContext } from '../context/GlobalContext';
 const MessagesScreen = () => {
@@ -13,9 +13,13 @@ const MessagesScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalChatVisible, setModalChatVisible] = useState(false);
   const { myUserInfo, setMyUserInfo } = useContext(GlobalContext)
+  const [allConversation, setAllConversation] = useState([]);
   useEffect(() => {
-    navigation.navigate("TabNavigator", { screen: 'Messages' });
+    loadData()
   }, [myUserInfo]);
+  const loadData = () => {
+    setAllConversation(myUserInfo.conversations)
+  }
   const handlePress = (data) => {
     if (modalVisible) {
       setModalChatVisible(false);
@@ -37,7 +41,7 @@ const MessagesScreen = () => {
         },
       });
       const allChatActivity = await response.data;
-      console.log("ALL CHATACTIVITY: ", allChatActivity);
+      // console.log("ALL CHATACTIVITY: ", allChatActivity);
       if (allChatActivity)
         return allChatActivity;
       else
@@ -49,7 +53,7 @@ const MessagesScreen = () => {
     }
   }
   const fetchConversationOpponent = async (conversationOpponent) => {
-    console.log("CONVERSATION", conversationOpponent);
+    // console.log("CONVERSATION", conversationOpponent);
     const chatID = conversationOpponent.chatID;
     const token = await AsyncStorage.getItem('token')
     const chatData = await fetchAllChatbychatID(chatID, token);
@@ -77,7 +81,7 @@ const MessagesScreen = () => {
     if (!data) {
       return null; // hoặc hiển thị một phần tử tải dữ liệu
     }
-    console.log("DATA IN CHATELEMENT:\n", data);
+    // console.log("DATA IN CHATELEMENT:\n", data);
     return (
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
@@ -236,7 +240,7 @@ const MessagesScreen = () => {
 
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
           <FlatList
-            data={myUserInfo.conversations}
+            data={allConversation}
             renderItem={({ item }) => <ChatElement item={item} />}
             keyExtractor={(item) => item.chatID}
           />
