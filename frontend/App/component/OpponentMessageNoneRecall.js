@@ -3,12 +3,57 @@ import React, { memo, useState, useRef, useEffect, useMemo } from 'react';
 import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
+import { API_PROFILE_BY_USERID } from '../api/Api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => {
     const [textHeight, setTextHeight] = useState(40);
     const touchableRef = useRef(null);
     const [videoKey, setVideoKey] = useState(0);
     const myMessage = '#B0E2FF';
     const [modalVisible, setModalVisible] = useState(false);
+    const [profile, setProfile] = useState({});
+    const fetchProfileInfo = async (userID, token) => {
+        try {
+            const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log("PROFILE FRIEND REQUEST IN HERE:\n", response.data);
+            setProfile(response.data)
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                if (error.response.status !== 404) {
+                    return {
+                        status: error.response.status,
+                        message: 'Lỗi khi lấy thông tin cá nhân'
+                    };
+                }
+                return {
+                    status: 404,
+                    message: 'Không tìm thấy thông tin cá nhân'
+                };
+            } else {
+                return {
+                    status: -1,
+                    message: 'Lỗi kết nối máy chủ'
+                };
+            }
+        }
+    };
+    useEffect(() => {
+        const fetchData = async () => {
+            const token = await AsyncStorage.getItem('token');
+            // console.log("USER ID IN HE____________________________", item.userID);
+            // console.log("ToKen____________________________", token);
+            const data = fetchProfileInfo(item.userID, token)
+            // setProfile(data);
+            console.log("DATAPROFILE:  ", data);
+        }
+        fetchData()
+    }, [item]);
     const handleTextLayout = (e) => {
         const { height } = e.nativeEvent.layout;
         setTextHeight(height);
@@ -38,7 +83,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
         <View style={{}}>
             <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                 <ChatAatar
-                    conversationOpponent={conversationOpponent}
+                    profile={profile}
                 />
                 <TouchableOpacity
                     style={{
@@ -55,7 +100,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
                     }}
                 >
                     <ChatName
-                        conversationOpponent={conversationOpponent}
+                        profile={profile}
                     />
                     <Text
                         onLayout={handleTextLayout}
@@ -93,7 +138,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
                     }}
                 >
                     <ChatName
-                        conversationOpponent={conversationOpponent}
+                        profile={profile}
                     />
                     <Image
                         source={{ uri: imageUrl }}
@@ -129,7 +174,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
                 <View style={{}}>
                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                         <ChatAatar
-                            conversationOpponent={conversationOpponent}
+                            profile={profile}
                         />
                         {linkPreview ? (
                             <TouchableOpacity
@@ -147,7 +192,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
                                 }}
                             >
                                 <ChatName
-                                    conversationOpponent={conversationOpponent}
+                                    profile={profile}
                                 />
                                 <View style={{ flex: 1 }}>
                                     <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15, marginTop: 10, marginHorizontal: 10 }}>{linkPreview.title}</Text>
@@ -172,7 +217,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
                                 }}
                             >
                                 <ChatName
-                                    conversationOpponent={conversationOpponent}
+                                    profile={profile}
                                 />
                                 <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15 }}>{linkUrl}</Text>
                             </TouchableOpacity>
@@ -188,7 +233,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
         <View style={{ flexDirection: 'column' }}>
             <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                 <ChatAatar
-                    conversationOpponent={conversationOpponent}
+                    profile={profile}
                 />
                 <TouchableOpacity
                     onPress={() => {
@@ -203,7 +248,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
                     }}
                 >
                     <ChatName
-                        conversationOpponent={conversationOpponent}
+                        profile={profile}
                     />
                     <Video
                         key={videoKey}
@@ -246,7 +291,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
 
                         <ChatAatar
-                            conversationOpponent={conversationOpponent}
+                            profile={profile}
                         />
                         <TouchableOpacity
                             onPress={() => Linking.openURL(fileUrl)}
@@ -263,7 +308,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo
                             }}
                         >
                             <ChatName
-                                conversationOpponent={conversationOpponent}
+                                profile={profile}
                             />
                             <View style={{ flexDirection: 'row', marginBottom: 5 }}>
                                 <Image source={typeFile.icon} style={{ width: 50, height: 50, marginRight: 10 }} />
@@ -330,20 +375,20 @@ function containsDoublePipe(key) {
 }
 
 
-const ChatName = ({ conversationOpponent }) => {
+const ChatName = ({ profile }) => {
     return (
         <Text
             style={{ flexWrap: 'wrap', fontSize: 12, marginTop: 5, color: '#CD853F' }}
         >
-            {conversationOpponent.chatName}
+            {profile.userName}
         </Text>
     )
 }
 
-const ChatAatar = ({ conversationOpponent }) => {
+const ChatAatar = ({ profile }) => {
     return (
         <Image
-            source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
+            source={profile.avatar ? { uri: profile.avatar } : null}
             style={{ height: 30, width: 30, borderRadius: 50, marginRight: 8, marginLeft: 8 }}
         />
     )

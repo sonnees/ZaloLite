@@ -4,11 +4,55 @@ import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, Toucha
 import Icon from 'react-native-vector-icons/';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
+import { API_PROFILE_BY_USERID } from '../api/Api';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const ChatOfReCall = ({ item, myUserInfo, conversationOpponent }) => {
     const myMessage = '#B0E2FF';
     const [textHeight, setTextHeight] = useState(40);
     const touchableRef = useRef(null);
-
+    const [profile, setProfile] = useState({});
+    const fetchProfileInfo = async (userID, token) => {
+        try {
+            const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log("PROFILE FRIEND REQUEST IN HERE:\n", response.data);
+            setProfile(response.data)
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                if (error.response.status !== 404) {
+                    return {
+                        status: error.response.status,
+                        message: 'Lỗi khi lấy thông tin cá nhân'
+                    };
+                }
+                return {
+                    status: 404,
+                    message: 'Không tìm thấy thông tin cá nhân'
+                };
+            } else {
+                return {
+                    status: -1,
+                    message: 'Lỗi kết nối máy chủ'
+                };
+            }
+        }
+    };
+    useEffect(() => {
+        const fetchData = async () => {
+            const token = await AsyncStorage.getItem('token');
+            // console.log("USER ID IN HE____________________________", item.userID);
+            // console.log("ToKen____________________________", token);
+            const data = fetchProfileInfo(item.userID, token)
+            // setProfile(data);
+            console.log("DATAPROFILE:  ", data);
+        }
+        fetchData()
+    }, [item]);
     const handleTextLayout = (e) => {
         const { height } = e.nativeEvent.layout;
         setTextHeight(height);
@@ -163,14 +207,13 @@ const ChatOfReCall = ({ item, myUserInfo, conversationOpponent }) => {
                         return (
                             <View key={contentIndex} style={{}}>
                                 <View style={containerStyle}>
-                                    <Image
-                                        source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
-                                        style={{ height: 30, width: 30, borderRadius: 50, marginRight: 8, marginLeft: 8 }}
+                                    <ChatAatar
+                                        profile={profile}
                                     />
                                     <TouchableOpacity style={messageStyle}
                                         onLongPress={() => { { setModalVisible(true); console.log(modalVisible); } }}
                                     >
-                                        <ChatName conversationOpponent={conversationOpponent} />
+                                        <ChatName profile={profile} />
                                         <Text onLayout={handleTextLayout} style={{ flexWrap: 'wrap', fontSize: 15, marginTop: 5, color: '#999999' }}>
                                             Message recalled
                                         </Text>
@@ -216,26 +259,20 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
 });
-
-function containsDoublePipe(key) {
-    return key.indexOf('|') !== key.lastIndexOf('|');
-}
-
-
-const ChatName = ({ conversationOpponent }) => {
+const ChatName = ({ profile }) => {
     return (
         <Text
             style={{ flexWrap: 'wrap', fontSize: 12, marginTop: 5, color: '#CD853F' }}
         >
-            {conversationOpponent.chatName}
+            {profile.userName}
         </Text>
     )
 }
 
-const ChatAatar = ({ conversationOpponent }) => {
+const ChatAatar = ({ profile }) => {
     return (
         <Image
-            source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
+            source={profile.avatar ? { uri: profile.avatar } : null}
             style={{ height: 30, width: 30, borderRadius: 50, marginRight: 8, marginLeft: 8 }}
         />
     )
