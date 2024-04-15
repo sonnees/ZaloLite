@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightFromBracket, faBell, faChevronLeft, faGear, faThumbtack, faTrashCan, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faBell, faChevronLeft, faGear, faThumbtack, faTrashCan, faUserMinus, faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import data from "@emoji-mart/data";
@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { set } from "date-fns";
 import { useUser } from "../context/UserContext";
+import MessageDetailGroup from "./MessageDetailGroup";
 
 // import {uploadFileToS3} from "../utils/savefiletoaws";
 
@@ -74,6 +75,8 @@ const ConversationGroup = () => {
 
   const cld = new Cloudinary({ cloud: { cloudName: "djs0jhrpz" } });
   const [imageUrl, setImageUrl] = useState("");
+
+
 
   // const handleFileUpload = async (file) => {
   //   try {
@@ -337,8 +340,23 @@ const ConversationGroup = () => {
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const [flag, setFlag] = useState(false);
 
+  const inputFileRef = useRef(null);
+  const { loadDefaultAvt, setLoadDefaultAvt } = useUser();
+  const [loadAvt, setLoadAvt] = useState(chatAvatar);
+
   const [sentMessage, setSentMessage] = useState(null);
   const [consGroup, setConsGroup] = useState(JSON.parse(localStorage.getItem("conversations")).find(item => item.chatID === id) );
+  const [group, setGroup] = useState(dataCons);
+  const storedData  = JSON.parse(localStorage.getItem("conversations"));
+  const conversations = storedData ? storedData.filter(conversation => conversation.type !== "GROUP") : null
+
+  const [messageRecalledID, setMessageRecalledID] = useState(null);
+  const [messageDeletedID, setMessageDeletedID] = useState(null);
+  const [idA, setIdA] = useState(null);
+  
+
+
+
 
   const handleInputChange = (e) => {
     setMessage(e.target.value);
@@ -589,41 +607,120 @@ const ConversationGroup = () => {
     }
   }
 
+  // useEffect(() => {
+  //   if (socket) {
+  //     socket.onmessage = (event) => {
+  //       const data = event.data;
+  //       // console.log("Received data:", data);
+  //       try {
+  //         const jsonData = JSON.parse(data);
+  //         console.log("Received JSON data:", jsonData);
+  //         // Kiểm tra xem tin nhắn không phải từ bạn
+  //         if (jsonData.tcm === "TCM01") {
+  //           const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
+  //           if (messageFromOtherUser) {
+  //             // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
+  //             const messageExists = messages.some(
+  //               (msg) => msg.id === jsonData.id,
+  //             );
+
+  //             if (!messageExists) {
+  //               setMessages((prevMessages) => [...prevMessages, jsonData]);
+  //               console.log(messages);
+  //             }
+  //           }
+  //         }
+
+  //         // const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
+  //         // if (messageFromOtherUser) {
+  //         //   // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
+  //         //   const messageExists = messages.some(
+  //         //     (msg) => msg.id === jsonData.id,
+  //         //   );
+  //           // if (!messageExists) {
+  //           //   setMessages((prevMessages) => [...prevMessages, jsonData]);
+  //           //   console.log(messages);
+  //           // }
+  //         // }
+  //       } catch (error) {
+  //         console.error("Error parsing JSON data:", error);
+  //       }
+  //     };
+
+  //     // Ensure that the socket is closed when the component unmounts
+  //     return () => {
+  //       socket.onmessage = null;
+  //     };
+  //   }
+  // }, [socket, messages, userIDFromCookies]);
+
+
   useEffect(() => {
     if (socket) {
       socket.onmessage = (event) => {
         const data = event.data;
-        // console.log("Received data:", data);
+        // console.log("Received data CONSERVATION:", data);
+        // console.table({ messageDeletedID, messageRecalledID });
         try {
-          const jsonData = JSON.parse(data);
-          console.log("Received JSON data:", jsonData);
-          // Kiểm tra xem tin nhắn không phải từ bạn
-          if (jsonData.tcm === "TCM01") {
+          if (data && data.startsWith("{")) {
+            const jsonData = JSON.parse(data);
+            console.log("Received JSON data CONSERVATION:", jsonData);
+            // Kiểm tra xem tin nhắn không phải từ bạn
             const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
-            if (messageFromOtherUser) {
-              // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
-              const messageExists = messages.some(
-                (msg) => msg.id === jsonData.id,
-              );
-
-              if (!messageExists) {
-                setMessages((prevMessages) => [...prevMessages, jsonData]);
-                console.log(messages);
+            // console.log("Message from other user: ==========================================", messageFromOtherUser);
+            if (
+              jsonData.tcm === "TCM01" &&
+              messageFromOtherUser &&
+              jsonData.contents
+            ) {
+              console.log("Message____________________:", messages);
+              setIdA(jsonData.id);
+              if (jsonData) {
+                // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
+                const messageExists = messages.some(
+                  (msg) => msg.id === jsonData.id,
+                );
+                if (!messageExists) {
+                  setMessages((prevMessages) => [...prevMessages, jsonData]);
+                }
               }
             }
+            if (jsonData.tcm === "TCM05") {
+              console.log("Runnnnnn");
+              const messageIDToRecall = jsonData.messageID;
+              const updatedMessages = messages.map((msg) => {
+                if (
+                  msg.messageID === messageIDToRecall ||
+                  msg.id === messageIDToRecall
+                ) {
+                  // Thay đổi nội dung của tin nhắn thành "Tin nhắn đã được thu hồi"
+                  return {
+                    ...msg,
+                    contents: [
+                      { key: "text", value: "Tin nhắn đã được thu hồi" },
+                    ],
+                    recall: true, // Có thể đánh dấu tin nhắn này đã được thu hồi
+                  };
+                }
+                return msg;
+              });
+              setMessages(updatedMessages);
+            }
+            if (
+              jsonData.tcm === "TCM00" &&
+              jsonData.id === messageRecalledID &&
+              jsonData.typeNotify === "SUCCESS"
+            ) {
+              const messageIDToDelete = messageDeletedID;
+              // Lọc ra các tin nhắn mà không có messageIDToDelete
+              const updatedMessages = messages.filter(
+                (msg) => msg.messageID !== messageIDToDelete,
+              );
+              setMessages(updatedMessages);
+              console.log("Updated messages after deleting:", updatedMessages);
+            }
           }
-
-          // const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
-          // if (messageFromOtherUser) {
-          //   // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
-          //   const messageExists = messages.some(
-          //     (msg) => msg.id === jsonData.id,
-          //   );
-            // if (!messageExists) {
-            //   setMessages((prevMessages) => [...prevMessages, jsonData]);
-            //   console.log(messages);
-            // }
-          // }
+          // console.log("Message ++++++++++", messages);
         } catch (error) {
           console.error("Error parsing JSON data:", error);
         }
@@ -634,7 +731,13 @@ const ConversationGroup = () => {
         socket.onmessage = null;
       };
     }
-  }, [socket, messages, userIDFromCookies]);
+  }, [
+    socket,
+    messages,
+    userIDFromCookies,
+    messageDeletedID,
+    messageRecalledID,
+  ]);
 
   // Hàm cuộn xuống dưới cùng của khung chat
   const scrollToBottom = () => {
@@ -658,11 +761,10 @@ const ConversationGroup = () => {
 
   const handleDeleteGroup = () => {
     let user = JSON.parse(localStorage.getItem("user"));
-    let newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
-    newSocket.onopen = async () => {
-      console.log("WebSocket connected");
-    };
-
+    // let newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
+    // newSocket.onopen = async () => {
+    //   console.log("WebSocket connected");
+    // };
     if (socketGroup && user) {
       const create = {
         id: uuidv4(),
@@ -671,6 +773,57 @@ const ConversationGroup = () => {
       };
 
       socketGroup.send(JSON.stringify(create));
+      // console.log(create);
+      reloadCons();
+    } else {
+      console.error("WebSocket is not initialized.");
+    }
+  }
+
+  const handleOutGroup = () => {
+    let user = JSON.parse(localStorage.getItem("user"));
+    // let newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
+    // newSocket.onopen = async () => {
+    //   console.log("WebSocket connected");
+    // };
+    if (socketGroup && user) {
+      const outGroup = {
+        id: uuidv4(),
+        tgm: "TGM06",
+        idChat: id,
+        userID: user.userID,
+        userName: user.userName,
+        userAvatar: user.avatar,
+      };
+
+      socketGroup.send(JSON.stringify(outGroup));
+      // console.log(create);
+      reloadCons();
+    } else {
+      console.error("WebSocket is not initialized.");
+    }
+  }
+
+  const addMemberToGroup = () => {
+
+  }
+
+  const deleteMember = (member) => {
+    // let newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
+    // newSocket.onopen = async () => {
+    //   console.log("WebSocket connected");
+    // };
+    if (socketGroup) {
+      const outGroup = {
+        id: uuidv4(),
+        tgm: "TGM06",
+        idChat: id,
+        userID: member.userID,
+        userName: member.userName,
+        userAvatar: member.avatar,
+      };
+
+      socketGroup.send(JSON.stringify(outGroup));
       // console.log(create);
       reloadCons();
     } else {
@@ -706,6 +859,58 @@ const ConversationGroup = () => {
       console.error("Error fetching conversations:", error);
     }
   }
+
+  const handleAvatarClick = () => {
+    inputFileRef.current.click();
+  };
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'bsqsytxl');
+    try {
+      let newAvatar = '';
+      const response = await fetch(
+        "https://api.cloudinary.com/v1_1/du73a0oen/image/upload",
+        {
+          method: "POST",
+          // headers: {
+          //   "Content-Type": "application/json",
+          // },
+          body: formData,
+        },
+      )
+      .then(response=>response.json())
+      .then(data=>newAvatar=data.secure_url);
+
+      console.log(newAvatar);
+      setLoadAvt(newAvatar)
+
+      let user = JSON.parse(localStorage.getItem("user"));
+      if (socketGroup && user) {
+        const updateImageChatGroup = {
+          id: uuidv4(),
+          tgm: "TGM09",
+          idChat: id,
+          avatar: newAvatar
+        };
+  
+        socketGroup.send(JSON.stringify(updateImageChatGroup));
+        // console.log(create);
+        reloadCons();
+      } else {
+        console.error("WebSocket is not initialized.");
+      }
+
+      
+
+      // socketGroup.send
+      
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+    }
+  };
 
   return (
     <div className="flex h-screen w-full">
@@ -777,12 +982,16 @@ const ConversationGroup = () => {
           <Message sender="me" content="Chào bạn!" timestamp="15:32" />
           Thêm tin nhắn khác ở đây */}
           {messages.map((message, index) => (
-            <MessageDetail
+            <MessageDetailGroup
               key={index}
               message={message}
               chatAvatar={message.userAvatar}
               socketFromConservation={socket}
+              setSocketFromConservation={setSocket}
               messagesF={messages}
+              setMessageDeletedID={setMessageDeletedID}
+              setMessageRecalledID={setMessageRecalledID}
+              idA={idA}
             />
           ))}
           <div ref={messagesEndRef} />
@@ -949,20 +1158,21 @@ const ConversationGroup = () => {
 
           <div className="flex flex-col justify-end h-full bg-white ">
             <div className="flex justify-center items-center my-4">
-              <img src={chatAvatar} alt="ZaloLite Logo" className="w-12 h-12 mr-2 rounded-full" />
+              <input ref={inputFileRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }}/>
+              <img onClick={handleAvatarClick} src={loadAvt} alt="ZaloLite Logo" className="w-12 h-12 mr-2 rounded-full" />
               <h1 className="text-xl font-bold">{chatName}</h1>
             </div>
             <div className="flex justify-between mb-4 border-b-4 border-gray-200">
-              <button className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
+              <button disabled="true" className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faBell}/> <br/>Tắt thông báo
               </button>
-              <button className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
+              <button disabled="true" className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faThumbtack}/> <br/>Ghim hội thoại
               </button>
-              <button className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
+              <button onClick={addMemberToGroup} className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg">
                 <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faUserPlus}/> <br/>Thêm thành viên
               </button>
-              <button className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
+              <button disabled="true" className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faGear}/> <br/>Quản lý nhóm
               </button>
             </div>
@@ -970,7 +1180,32 @@ const ConversationGroup = () => {
 
             <div className="mb-4 flex-auto border-b-4 border-gray-200 px-4">
               <h2 className="text-lg font-semibold mb-2">Thành viên nhóm</h2>
-              <p className="text-gray-600">{}</p>
+              <p className="text-gray-600"><FontAwesomeIcon icon={faUsers} /> {group.members.length+1} thành viên</p>
+
+              <div className="h-[320px] w-full overflow-auto">
+                {/* <h6 className="p-2 text-sm font-semibold">Danh sách bạn bè</h6> */}
+                <ul>
+                    <li
+                      key={group.owner.userID}
+                      className="flex items-center px-4 py-3"
+                      // onClick={() => handleOptionToggle(conversation.chatID)}
+                    >
+                      <img src={group.owner.userAvatar} alt={group.owner.userName} className="h-8 w-8 rounded-full mr-2" />
+                      <span>{group.owner.userName}   (Quản lý)</span>
+                    </li>
+                  {group.members.map((member) => (
+                    <li
+                      key={member.userID}
+                      className="flex items-center px-4 py-3"
+                      // onClick={() => handleOptionToggle(conversation.chatID)}
+                    >
+                      <img src={member.userAvatar} alt={member.userName} className="h-8 w-8 rounded-full mr-2" />
+                      <span>{member.userName}</span> {group.owner.userID==localStorage.getItem("userID") && <button onClick={()=> {deleteMember(member)}} className="ml-auto hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faUserMinus} /></button>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
             </div>
 
 
@@ -979,13 +1214,13 @@ const ConversationGroup = () => {
                 <FontAwesomeIcon className="mr-2" icon={faTrashCan}/> Xóa lịch sử cuộc trò chuyện
               </button>
 
-              <button onClick={handleDeleteGroup} className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
+              {group.owner.userID==localStorage.getItem("userID") && <button onClick={handleDeleteGroup} className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="mr-2" icon={faArrowRightFromBracket}/> Giải tán nhóm
-              </button>
+              </button>}
 
-              <button className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
+              {!(group.owner.userID==localStorage.getItem("userID")) && <button onClick={handleOutGroup} className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="mr-2" icon={faArrowRightFromBracket}/> Rời nhóm
-              </button>
+              </button>}
             </div>
 
 
@@ -999,3 +1234,65 @@ const ConversationGroup = () => {
 };
 
 export default ConversationGroup;
+
+const dataCons = {
+  "_id": "d8b5f538-9a4a-4e18-8442-62217dbaf1e5",
+  "chatName": "Nhom Ca Canh",
+  "owner": {
+    "userID": "26ce60d1-64b9-45d2-8053-7746760a8354",
+    "userName": "Tran Huy",
+    "userAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png"
+  },
+  "admin": [],
+  "members": [
+    {
+      "userID": "f1cee7b8-7712-4042-9e94-17bd21209a62",
+      "userName": "Lê Hữu Bằng",
+      "userAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711638195/yaelqfegjxfkbjdmwyef.png"
+    },
+    {
+      "userID": "0a2f80df-655f-47f7-9202-7a01b0f9ba74",
+      "userName": "Thúy An",
+      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-27.jpg"
+    },
+    {
+      "userID": "5b685d06-8fbe-4ab7-a18b-b713b2ba4daa",
+      "userName": "Ánh Tina",
+      "userAvatar": "https://upanh123.com/wp-content/uploads/2020/10/Anh-gai-xinh-lam-anh-dai-dien-facebook1.jpg"
+    },
+    {
+      "userID": "b95ad4f4-68b0-4dd8-a4db-59b5874c4bdf",
+      "userName": "Nguyễn Thị Việt Chi",
+      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-2-600x750.jpg"
+    },
+    {
+      "userID": "79feacfd-507b-4721-b7b0-92869f06cf20",
+      "userName": "Haley Neith",
+      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-4-600x750.jpg"
+    },
+    {
+      "userID": "f31a6af5-e633-44f0-895d-26f0eafd6262",
+      "userName": "Nguyễn Châu",
+      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-12.jpg"
+    },
+    {
+      "userID": "0a67357b-9a70-431f-be90-39fa9fc7e3e2",
+      "userName": "Quỳnh Trinh",
+      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-9-600x749.jpg"
+    }
+  ],
+  "createAt": {
+    "$date": "2024-04-14T19:02:47.930Z"
+  },
+  "avatar": "https://res.cloudinary.com/du73a0oen/image/upload/v1713020468/Zalo-Lite/juqqm5zgxjaamjw41lvz.png",
+  "setting": {
+    "changeChatNameAndAvatar": true,
+    "pinMessages": true,
+    "sendMessages": true,
+    "membershipApproval": true,
+    "createNewPolls": true
+  },
+  "_class": "com.zalolite.chatservice.entity.Group"
+}
+
+

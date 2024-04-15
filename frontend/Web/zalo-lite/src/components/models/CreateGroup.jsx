@@ -32,8 +32,17 @@ export default function CreateGroup() {
   const [open, setOpen] = useState(false);
   const inputFileRef = useRef(null);
   const [socket, setSocket] = useState(null);
-  const [token, setToken] = useState(null);
+  // const [token, setToken] = useState(null);
+  const [check, setCheck] = useState(false);
 
+  useEffect(()=>{
+    if(selectedOptions.length>=2) {
+      setCheck(true);
+    } 
+    if(selectedOptions.length<2) {
+      setCheck(false);
+    } 
+  })
   
 
   const storedData  = JSON.parse(localStorage.getItem("conversations"));
@@ -189,7 +198,6 @@ export default function CreateGroup() {
 
   const handleAvatarClick = () => {
     inputFileRef.current.click();
-
   };
 
   const handleImageUpload = async (event) => {
@@ -291,6 +299,7 @@ export default function CreateGroup() {
               onClick={handleCreateGroup}
               variant="contained"
               color="primary"
+              disabled={!check}
             >
               Tạo nhóm
             </Button>

@@ -5,6 +5,7 @@ import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native'
 import { API_AUTHENTICATE, API_INFOR_ACCOUNT, API_INFOR_USER } from '../api/Api';
 import axios from 'axios';
 import { GlobalContext } from '../context/GlobalContext';
+import { AddListChatID } from '../utils/AddListChatID';
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +14,7 @@ const LoginScreen = () => {
   const route = useRoute();
   const newPassword = route.params?.newPassword;
   const isFocused = useIsFocused();
-  const { logIn, myUserInfo, setMyUserInfo } = useContext(GlobalContext)
+  const { logIn, setMyUserInfo, listChatID, setListChatID } = useContext(GlobalContext)
 
   useEffect(() => {
     console.log("newPassword:", newPassword);
@@ -83,8 +84,10 @@ const LoginScreen = () => {
             });
             const dataUserInfor = await response.data;
 
-            console.log("User Infor:", dataUserInfor);
+            // console.log("User Infor:", dataUserInfor);
             setMyUserInfo(dataUserInfor);
+            const listID = AddListChatID(dataUserInfor.conversations)
+            setListChatID(listID)
             return dataUserInfor;
           } catch (error) {
             console.error('Lỗi khi lấy thông tin User:', error);

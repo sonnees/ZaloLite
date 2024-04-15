@@ -13,7 +13,7 @@ import { useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { useUser } from "../context/UserContext";
 
-const MessageDetail = ({
+const MessageDetailGroup = ({
   message,
   chatAvatar,
   socketFromConservation,
@@ -332,7 +332,7 @@ const MessageDetail = ({
   );
 };
 
-export default MessageDetail;
+export default MessageDetailGroup;
 
 // // MessageDetail.js
 // import React, { useRef, useState } from "react";

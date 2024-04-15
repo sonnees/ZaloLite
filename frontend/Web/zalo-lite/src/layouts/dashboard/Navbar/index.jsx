@@ -165,9 +165,59 @@ function Navbar({ onNavbarReady }) {
     setAnchorEl(null);
   };
 
-  // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
-  
+  /* Fix lỗi hiển thị avatar khi load lại dữ liệu */
+  useEffect(() => {
+    const avatarLoad = localStorage.getItem("avatar");
+    if (avatarLoad) {
+      setAvatar(avatarLoad);
+    }
+  }, []);
 
+
+  // Gửi yêu cầu GET khi component được mount hoặc phoneNumber thay đổi
+  useEffect(() => {
+    if (token && phoneNumber) {
+      const fetchProfile = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8081/api/v1/account/profile/${phoneNumber}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          // console.log("data+++++++++++++++", data);
+          // console.log(data);
+          setProfileData(data);
+          setAvatar(data.avatar);
+          localStorage.setItem("avatar", data.avatar);
+          localStorage.setItem("userID", data.userID);
+          localStorage.setItem("userName", data.userName);
+          onNavbarReady(data.userID);
+          setUserName(data.userName);
+          const userIDTemp = data.userID;
+          setUserID2(data.userID);
+          setUserID(data.userID);
+          // console.log(avatar);
+
+          setUserIDInCookie(userIDTemp);
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+          setProfileData(null);
+        }
+      };
+
+      fetchProfile();
+    }
+  }, [token, phoneNumber]);
   // console.log(profileData);
 
   // useEffect(() => {
@@ -271,7 +321,7 @@ function Navbar({ onNavbarReady }) {
                 <div className="px-4 text-sm ">
                   <div className="py-2">
                     <span className="text-lg font-medium text-[#081c36]">
-                      {JSON.parse(localStorage.getItem("user"))? JSON.parse(localStorage.getItem("user")).userName : ""} 
+                      {userName ? userName : localStorage.getItem("userName")}
                     </span>
                   </div>
                   <div className="w-[270px] border-y py-1 text-sm ">
@@ -316,16 +366,27 @@ function Navbar({ onNavbarReady }) {
                       }}
                       onClick={() => {
                         handleClose(); // Đóng menu sau khi nhấp vào
-                        // cookies.remove("phoneNumber"); // Xoá cookie phoneNumber
-                        // cookies.remove("token"); // Xoá cookie token
-                        // cookies.remove("userID"); // Xoá cookie userID
-                        // Lấy tất cả cookies
-                        const allCookies = cookies.getAll();
 
-                        // Lặp qua từng cookie và xóa nó
-                        for (const cookie in allCookies) {
-                          cookies.remove(cookie);
-                        }
+                        // Danh sách các tên cookie cần xoá
+                        const cookieNames = ["phoneNumber", "token", "userID"];
+
+                        // Lặp qua danh sách cookieNames và gọi hàm cookies.remove cho mỗi tên cookie
+                        cookieNames.forEach((cookieName) => {
+                          cookies.remove(cookieName, {
+                            path: "/",
+                            domain: "localhost",
+                          });
+                          cookies.remove(cookieName, {
+                            path: "/auth",
+                            domain: "localhost",
+                          });
+                        });
+
+                        // Lấy tất cả cookies
+                        // const allCookies = cookies.getAll();
+                        // console.log("++++++++++++++", allCookies);
+
+                        // Xoá tất cả cookies trong localStorage
                         localStorage.clear();
                       }}
                     >

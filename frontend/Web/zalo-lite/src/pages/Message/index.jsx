@@ -99,6 +99,14 @@ function Message() {
       
       newSocket.onmessage = (event) => {
         const data = event.data;
+        function isJSON(data) {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received:", jsonData);
@@ -160,7 +168,7 @@ function Message() {
     if (loadCons) {
       const conversations = localStorage.getItem("conversations");
       if (conversations) {
-        console.log("conversations", JSON.parse(conversations));
+        // console.log("conversations", JSON.parse(conversations));
         setConversations(JSON.parse(conversations));
       }
       setLoadCons(false);
@@ -182,10 +190,12 @@ function Message() {
       setTokenFromCookies(tokenFromCookie);
     }
     setFlag(true);
-    console.log("chayyyyy");
-    console.log("userIDFromCookies", userID);
-    console.log("tokenFromCookies", tokenFromCookie);
+    // console.log("chayyyyy");
+    // console.log("userIDFromCookies", userID);
+    // console.log("tokenFromCookies", tokenFromCookie);
     }
+    /*     console.log("userIDFromCookies", userID);
+    console.log("tokenFromCookies", tokenFromCookie); */
   }, [flag]); // Sử dụng flag làm dependency của useEffect này
 
   useEffect(() => {
@@ -221,7 +231,7 @@ function Message() {
     if (userID && tokenFromCookies) {
       fetchConversations();
     }
-  }, [flag, userID]); // Sử dụng flag và userID làm dependency của useEffect này
+  }, [flag, userID, tokenFromCookies]); // Sử dụng flag và userID làm dependency của useEffect này
 
   useEffect(()=> {
     setConversations(JSON.parse(localStorage.getItem("conversations")))
@@ -232,6 +242,50 @@ function Message() {
   };
 
   console.log("chay render", conversations);
+
+  
+  const openFullSocketForChar = (chatID) => {
+    console.log("chatID", chatID);
+    if (chatID) {
+      const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${chatID}`);
+      newSocket.onopen = () => {
+        console.warn(
+          "WebSocket 'ws://localhost:8082/ws/chat/' for UserID: ",
+          chatID,
+          " OPENED",
+        );
+      };
+
+      newSocket.onmessage = (event) => {
+        function isJSON(data) {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }
+        const data = event.data;
+        if (isJSON(data)) {
+          const jsonData = JSON.parse(data);
+          console.log("Message received:", jsonData);
+          // Xử lý dữ liệu được gửi đến ở đây
+          // if (jsonData) {
+
+          // }
+        } else {
+          // console.error("Received data is not valid JSON:", data);
+          // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
+        }
+      };
+
+      setSocket(newSocket);
+
+      return () => {
+        newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+      };
+    }
+  };
 
   return (
     <div className="h-[calc(100vh-95px)] w-full overflow-auto">
@@ -267,8 +321,7 @@ function Message() {
           variant="filled"
           sx={{ width: "100%", paddingX: 1, marginX: 0, marginLeft: 0 }}
         >
-          Bạn có lời mời kết bạn từ{" "}
-          <strong>{stateNotification.name}</strong>
+          Bạn có lời mời kết bạn từ <strong>{stateNotification.name}</strong>
         </Alert>
       </Snackbar>
     </div>
