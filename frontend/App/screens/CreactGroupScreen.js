@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { v4 as uuidv4 } from 'react-native-get-random-values';
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   KeyboardAvoidingView,
@@ -20,60 +21,37 @@ import {
   useIsFocused,
 } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
-import chatGroupdata from "../data/chatGroup"; // Thay đổi đường dẫn
+import { GlobalContext } from '../context/GlobalContext';
 
 const CreateGroupScreen = () => {
   let navigation = useNavigation();
   let route = useRoute();
-
+  const isFocused = useIsFocused();
+  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext);
   const [selectedIds, setSelectedIds] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState(null);
   const [groupName, setGroupName] = useState("");
+  const [chatGroupdata, setChatGroupdata] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
-  // WebSocket
-  const ws = new WebSocket("ws://192.168.1.10:8082/ws/group");
 
-  ws.onopen = () => {
-    console.log("Connected to the websocket");
-  };
+  useEffect(() => {
+    fetchChatGroupData();
+  }, [isFocused]);
 
-  ws.onmessage = (event) => {
+  const fetchChatGroupData = async () => {
     try {
-      const data = event.data.trim();
-      console.log("Received:", data);
-
-      if (data === "Connect success") {
-        console.log("data: Connect success", data);
-        return;
-      }
-
-      if (isJSON(data)) {
-        const jsonData = JSON.parse(data);
-
-        navigation.navigate("OpionNavigator", {
-          screen: "ChatGroupScreen",
-          params: {
-            groupId: jsonData.id,
-            groupName: jsonData.chatName,
-            groupImage: jsonData.avatar,
-            members: jsonData.members.map((member) => member.userID),
-          },
-        });
-      } else {
-        console.error("Received data is not a valid JSON.");
-      }
+      const data = myUserInfo.conversations.map((conversation) => ({
+        id: conversation.chatID,
+        userName: conversation.chatName,
+        userAvatar: conversation.chatAvatar,
+        type: conversation.type,
+      }));
+      const datafilter = data.filter((item) => item.type !== "GROUP");
+      setChatGroupdata(datafilter);
     } catch (error) {
-      console.error("Error parsing JSON:", error);
-    }
-  };
-
-  const isJSON = (str) => {
-    try {
-      JSON.parse(str);
-      return true;
-    } catch (error) {
-      return false;
+      console.error("Error fetching chat group data:", error.message);
     }
   };
 
@@ -85,7 +63,7 @@ const CreateGroupScreen = () => {
           source={{ uri: item.userAvatar }}
         />
         <View style={{ marginLeft: 20, flexDirection: "column", flex: 1 }}>
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+          <Text style={{ fontSize: 16, fontWeight: "bold", top: 10 }}>
             {item.userName}
           </Text>
           <Text style={{ fontSize: 16, color: "#808080" }}>{item.time}</Text>
@@ -132,13 +110,17 @@ const CreateGroupScreen = () => {
   };
 
   const handleTakePhoto = () => {
-    // TODO: Handle taking photo
     setModalVisible(false);
   };
 
   const handleCreateGroup = async () => {
     if (!groupName) {
       Alert.alert("Lỗi", "Bạn phải nhập tên nhóm để tiếp tục!");
+      return;
+    }
+
+    if (selectedIds.length < 2) {
+      Alert.alert("Lỗi", "Bạn phải chọn ít nhất hai thành viên để tạo nhóm!");
       return;
     }
   
@@ -148,44 +130,112 @@ const CreateGroupScreen = () => {
       userName: chatGroupdata.find((user) => user.id === ownerId)?.userName,
       userAvatar: chatGroupdata.find((user) => user.id === ownerId)?.userAvatar,
     };
-
+  
     const members = selectedIds.map((id) => ({
       userID: id,
       userName: chatGroupdata.find((user) => user.id === id)?.userName,
       userAvatar: chatGroupdata.find((user) => user.id === id)?.userAvatar,
     }));
-
+    const generateUUID = () => {
+      const randomPart = () => {
+        return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
+      };
+    
+      return (
+        randomPart() +
+        randomPart() +
+        '-' +
+        randomPart() +
+        '-0000-' +
+        randomPart() +
+        '-' +
+        randomPart() +
+        randomPart() +
+        randomPart()
+      );
+    };
+    
     const newGroup = {
-      id: Date.now().toString(),
+      id: generateUUID(), 
       tgm: "TGM01",
       chatName: groupName,
       owner,
       members,
       avatar: selectedImageUrl,
     };
-
-    // Save owner to AsyncStorage
-    try {
-      await AsyncStorage.setItem('owner', JSON.stringify(owner));
-    } catch (error) {
-      console.error("Error saving owner to AsyncStorage:", error);
-    }
-
-    // Hiển thị thông tin new group
+    
     console.log("Thông tin newGroup: ", newGroup);
+  
+    try {
+      // Lưu thông tin nhóm vào AsyncStorage
+      await AsyncStorage.setItem(`group-${newGroup.id}`, JSON.stringify(newGroup));
+  
+      // Lưu thông tin nhóm vào database backend
+      await saveGroupToBackend(newGroup);
+      console.log("Thông tin newGroup: ", newGroup);
 
-    // Chuyển đến màn hình ChatGroupScreen và truyền các tham số
-    navigation.navigate("OpionNavigator", {
-      screen: "ChatGroupScreen",
-      params: {
-        groupId: newGroup.id,
-        groupName: newGroup.chatName,
-        groupImage: newGroup.avatar,
-        owner: newGroup.owner.userID,
-        members: newGroup.members.map((member) => member.userID),
-      },
-    });
+       // Update myUserInfo with the new group
+    const updatedUserInfo = {
+      ...myUserInfo,
+      conversations: [
+        ...myUserInfo.conversations,
+        {
+          chatID: newGroup.id,
+          chatName: newGroup.chatName,
+          chatAvatar: newGroup.avatar,
+          type: "GROUP",
+        },
+      ],
+    };
+
+    // Update GlobalContext
+    setMyUserInfo(updatedUserInfo);
+  
+      navigation.navigate("OpionNavigator", {
+        screen: "ChatGroupScreen",
+        params: {
+          groupId: newGroup.id,
+          groupName: newGroup.chatName,
+          groupImage: newGroup.avatar,
+          owner: newGroup.owner.userID,
+          members: newGroup.members.map((member) => member.userID),
+        },
+      });
+    } catch (error) {
+      console.error("Error saving group:", error);
+    }
   };
+  
+  const saveGroupToBackend = async (newGroup) => {
+    const newSocket = new WebSocket('ws://192.168.1.10:8082/ws/group');
+  
+    newSocket.onopen = () => {
+      console.log("WebSocket connected");
+      newSocket.send(JSON.stringify(newGroup));
+    };
+  
+    newSocket.onmessage = (event) => {
+      console.log("Received data from backend:", event.data);
+      newSocket.close();
+    };
+  
+    newSocket.onerror = (error) => {
+      console.error('Error connecting to WebSocket:', error);
+    };
+  
+    newSocket.onclose = () => {
+      console.log("WebSocket disconnected");
+    };
+  
+    return () => {
+      newSocket.close();
+    };
+  };
+  
+  
+  
 
   return (
     <KeyboardAvoidingView
@@ -308,11 +358,12 @@ const CreateGroupScreen = () => {
             <TextInput
               style={{ flex: 1, paddingLeft: 10 }}
               placeholder="Tìm kiếm hoặc số điện thoại"
+              onChangeText={(text) => setSearchText(text)}
+              value={searchText}
             />
           </View>
         </View>
 
-        {/* Modal for choosing photo */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -435,16 +486,16 @@ const CreateGroupScreen = () => {
           </View>
         </Modal>
 
-        {/* Display list of friends */}
         <View style={{ flex: 1, top: 50 }}>
           <FlatList
-            data={chatGroupdata}
+            data={chatGroupdata.filter((user) =>
+              user.userName.toLowerCase().includes(searchText.toLowerCase())
+            )}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
           />
         </View>
 
-        {/* Display selected items if any */}
         {selectedIds.length > 0 && (
           <View
             style={{
@@ -475,7 +526,6 @@ const CreateGroupScreen = () => {
               keyExtractor={(item) => item.id.toString()}
             />
 
-            {/* Additional TouchableOpacity on the right */}
             <TouchableOpacity
               style={{
                 borderRadius: 20,

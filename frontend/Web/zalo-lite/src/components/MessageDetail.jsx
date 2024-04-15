@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Cookies from "universal-cookie";
 import { useEffect } from "react";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, set } from "date-fns";
 import LinkPreview from "./LinkPreview";
 import FileLink from "./FileLink";
 import Menu from "@mui/material/Menu";
@@ -12,7 +12,15 @@ import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
 import queryString from "query-string";
 
-const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
+const MessageDetail = ({
+  message,
+  chatAvatar,
+  socketFromConservation,
+  setSocketFromConservation,
+  setMessageDeletedID,
+  setMessageRecalledID,
+  idA
+}) => {
   // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
@@ -33,8 +41,7 @@ const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
       return ""; // Trả về chuỗi rỗng nếu timestamp không tồn tại
     }
   };
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -63,21 +70,23 @@ const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
   };
 
   const hidenMessage = (messageID) => {
+    const id = uuidv4();
+    setMessageRecalledID(id);
     const hiddenMessage = {
-      id: uuidv4(),
+      id: id,
       tcm: "TCM04",
       userID: userIDFromCookies,
-      messageID: messageID,
+      messageID: messageID || idA,
     };
 
     // Replace this line with your WebSocket send function
     console.log("Sending hidden message:", hiddenMessage);
     socket.send(JSON.stringify(hiddenMessage));
+    setSocketFromConservation(socket);
   };
 
   const handleHidenMessage = (messageID) => {
     hidenMessage(messageID);
-    setIsRecalled(true);
     handleClose();
   };
 
@@ -212,14 +221,18 @@ const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
                 <MenuItem
                   onClick={() => {
                     handleRecall(message.messageID);
+                    
                     console.log("messageID thu hồi", message.messageID);
+                    setMessageDeletedID(message.messageID);
                   }}
                 >
                   Thu hồi
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
+                    console.log("messageID thu hồi chỉ phía tôi là", message);
                     handleHidenMessage(message.messageID);
+                    setMessageDeletedID(message.messageID);
                   }}
                 >
                   Xoá chỉ ở phía tôi
@@ -302,6 +315,7 @@ const MessageDetail = ({ message, chatAvatar, socketFromConservation }) => {
                 <MenuItem
                   onClick={() => {
                     handleHidenMessage(message.messageID);
+                    setMessageDeletedID(message.messageID);
                   }}
                 >
                   Xoá chỉ ở phía tôi

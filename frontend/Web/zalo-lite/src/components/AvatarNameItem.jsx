@@ -1,11 +1,10 @@
 import React from "react";
+import Button from "@mui/material/Button";
 
 export default function AvatarNameItem({ data, type }) {
   return (
     <div
-      className={`flex h-[74px] w-full items-center pr-2 ${
-        9 <= 10 ? "pr-1" : ""
-      }`}
+      className={`group flex h-[70px] w-full items-center pr-2 transition-opacity duration-300 ease-in-out hover:cursor-pointer hover:bg-gray-100`}
     >
       <img
         src={data.avatar}
@@ -36,8 +35,8 @@ export default function AvatarNameItem({ data, type }) {
                     </span>
                   )}
                   {type == "MS" && (
-                    <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-                      Xin Chào
+                    <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap text-xs font-normal text-[#7589A3] md:w-[175px]">
+                      Từ gợi ý kết bạn
                     </span>
                   )}
                 </div>
@@ -61,14 +60,35 @@ export default function AvatarNameItem({ data, type }) {
             </>
           )}
         </div>
-        <div className="mt-[-4px] grid gap-y-1 ">
-          <div className="border">
-            {type == "AF" && (
-              <span className="truncate text-lg" style={{ cursor: "pointer" }} >
-                &times;
-              </span>
+        <div className="mt-[-4px] grid items-center justify-center gap-y-1">
+          <div className="align-center flex-1 justify-center">
+            {type === "AF" && (
+              <div className="flex h-full items-center justify-center">
+                <span
+                  className="truncate text-lg"
+                  style={{ cursor: "pointer" }}
+                >
+                  &times;
+                </span>
+              </div>
             )}
-            {type == "MS" && <span className="truncate text-xs">1</span>}
+            {type === "MS" && (
+              <Button
+                // onClick={() => handleAddSuggestedFriend(friend)}
+                variant="outlined"
+                size="small"
+                style={{
+                  textTransform: "none",
+                  color: "#0068FF",
+                  fontSize: 14,
+                  width: 84,
+                  height: 24,
+                  fontWeight: 500,
+                }}
+              >
+                Kết bạn
+              </Button>
+            )}
           </div>
           {/* {1 != 0 ? (
             <>
