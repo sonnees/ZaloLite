@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -27,15 +29,15 @@ import java.util.Arrays;
 @Configuration
 @EnableWebFluxSecurity
 @AllArgsConstructor
-@Slf4j
 public class SecurityConfig {
     private AuthenticationManager authenticationManager;
     private SecurityContextRepository securityContextRepository;
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
 
         return http.authorizeExchange(
-                        auth -> auth.pathMatchers("/api/v1/user/update-avatar-account/**", "/ws/**", "/api/v1/user/create").permitAll()
+                        auth -> auth.pathMatchers("*").permitAll()
                                 .anyExchange().authenticated()
                 )
                 .authenticationManager(authenticationManager)
@@ -70,6 +72,11 @@ public class SecurityConfig {
     @LoadBalanced
     public WebClient.Builder loadBalancedWebClientBuilder(HttpClient httpClient) {
         return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
+    }
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        return new SimpleAsyncTaskExecutor();
     }
 
 }

@@ -4,15 +4,25 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import java.lang.annotation.Annotation;
+import java.net.URI;
+
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
 @Service
 @Slf4j
@@ -35,26 +45,24 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             String openApiEndpointPattern1 = "/api/v1/auth/**";
             String openApiEndpointPattern2 = "/ws/**";
             String path = exchange.getRequest().getURI().getPath();
-
             boolean match1 = pathMatcher.match(openApiEndpointPattern1, path);
             boolean match2 = pathMatcher.match(openApiEndpointPattern2, path);
-            log.info("** Match: "+match1 +" | "+exchange.getRequest().getURI().getPath());
+            log.info("** Match: "+match1+match2+" | "+exchange.getRequest().getURI().getPath());
 
             if(!match1 && !match2){
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION))
-                    throw new RuntimeException("missing authorization header");
+                    throw new RuntimeException("Missing authorization header");
                 String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
                 if (token != null && token.startsWith("Bearer "))
                     token = token.substring(7);
 
                 log.info("** AuthenticationFilter enter | token: "+token);
-
                 return webClient.get()
                         .uri("http://ACCOUNT-SERVICE/api/v1/auth/check-token/" + token)
                         .retrieve()
                         .bodyToMono(Boolean.class)
                         .flatMap(isValidToken -> {
-                            log.info(isValidToken+"");
+                            log.info("token: :"+isValidToken);
                             if (!isValidToken) {
                                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                                 return exchange.getResponse().setComplete();
@@ -73,11 +81,10 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
     @Override
     public int value() {
-        return -1;
+        return -2;
     }
-
 
     public static class Config {
-
     }
+
 }

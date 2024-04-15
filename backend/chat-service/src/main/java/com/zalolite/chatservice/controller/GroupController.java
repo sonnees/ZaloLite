@@ -34,7 +34,7 @@ public class GroupController {
         log.info("# {} #", idGroup);
         return groupRepository.findById(idGroup)
                 .switchIfEmpty(Mono.defer(() -> Mono.just(ResponseEntity.status(500).body("Create group fail"))).then(Mono.empty()))
-                .flatMap(g -> Mono.just(ResponseEntity.status(200).body("Create group success")));
+                .flatMap(g -> Mono.just(ResponseEntity.status(200).body(jsonConverter.objToString(g))));
     }
 
 }

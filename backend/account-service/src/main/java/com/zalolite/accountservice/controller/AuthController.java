@@ -155,6 +155,7 @@ public class AuthController {
 
     @GetMapping("/check-token/{token}")
     public Mono<Boolean> checkToken(@PathVariable String token) {
+        log.info("### Enter check token {} ###", token);
         return Mono.just(jwtService.isTokenExpired(token));
     }
 
