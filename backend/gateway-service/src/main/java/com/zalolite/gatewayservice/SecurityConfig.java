@@ -1,7 +1,9 @@
 package com.zalolite.gatewayservice;
 
+import com.netflix.discovery.DiscoveryClient;
 import io.netty.resolver.DefaultAddressResolverGroup;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.gateway.discovery.DiscoveryClientRouteDefinitionLocator;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
