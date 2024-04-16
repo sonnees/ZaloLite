@@ -152,6 +152,8 @@ const MessageDetailGroup = ({
           );
         } else if (content.key === "emoji") {
           return <p key={index}>{content.value}</p>;
+        } else if (content.key === "notify") {
+          return <p className="h-auto text-blue-400" key={index}>{content.value}</p>;
         }
         // return null;
       });

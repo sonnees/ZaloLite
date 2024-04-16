@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightFromBracket, faBell, faChevronLeft, faGear, faThumbtack, faTrashCan, faUserMinus, faUserPlus, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faBell, faChevronLeft, faGear, faMagnifyingGlass, faScrewdriverWrench, faThumbtack, faTrashCan, faUserMinus, faUserPlus, faUserXmark, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import data from "@emoji-mart/data";
@@ -327,6 +327,8 @@ const ConversationGroup = () => {
   // console.log("Chat Name:", chatName);
   // console.log("Chat Avatar:", chatAvatar);
 
+  const navigate = useNavigate();
+
   const [messages, setMessages] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(15);
@@ -346,16 +348,60 @@ const ConversationGroup = () => {
 
   const [sentMessage, setSentMessage] = useState(null);
   const [consGroup, setConsGroup] = useState(JSON.parse(localStorage.getItem("conversations")).find(item => item.chatID === id) );
-  const [group, setGroup] = useState(dataCons);
+  const [group, setGroup] = useState(null);
   const storedData  = JSON.parse(localStorage.getItem("conversations"));
   const conversations = storedData ? storedData.filter(conversation => conversation.type !== "GROUP") : null
 
   const [messageRecalledID, setMessageRecalledID] = useState(null);
   const [messageDeletedID, setMessageDeletedID] = useState(null);
   const [idA, setIdA] = useState(null);
+  const [popupIsOpen, setPopupIsOpen] = useState(false);
+
+  const togglePopup = () => {
+    setPopupIsOpen(!popupIsOpen);
+  };
+
+  const [nameGroup, setNameGroup] = useState("");
+  const [tfPhoneNumber, setTFPhoneNumber] = useState("");
+  const [nameGroupClick, setNameGroupClick] = useState(false);
+  const [tfPhoneNumberClick, setTFPhoneNumberClick] = useState(false);
+  const [check, setCheck] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const handleOptionToggle = (optionId) => {
+    const isSelected = selectedOptions.includes(optionId);
+    if (isSelected) {
+      setSelectedOptions(selectedOptions.filter((id) => id !== optionId));
+    } else {
+      setSelectedOptions([...selectedOptions, optionId]);
+    }
+  };
+
+  const getSelectedItems = () => {
+    return conversations.filter((conversations) => selectedOptions.includes(conversations.chatID));
+  };
+
+  const handleFocusNameGroup = () => {
+    setNameGroupClick(true);
+  };
+
+  const handleBlurNameGroup = () => {
+    setNameGroupClick(false);
+  };
+
+  const handleFocusPhoneClick = () => {
+    setTFPhoneNumberClick(true);
+  };
+
+  const handleBlurPhoneClick = () => {
+    setTFPhoneNumberClick(false);
+  };
   
 
-
+  useEffect(()=> {
+    fetchGroup()
+    // console.log(group);
+  },[])
 
 
   const handleInputChange = (e) => {
@@ -391,6 +437,7 @@ const ConversationGroup = () => {
         `http://localhost:8082/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
         {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         },
@@ -418,6 +465,26 @@ const ConversationGroup = () => {
     return null;
   };
 
+  const fetchGroup = async() => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8082/api/v1/group/info?idGroup=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+      console.log("Data:", response.data);
+      setGroup(response.data)
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      return [];
+    }
+  }
+
   useEffect(() => {
     // Gán giá trị lấy được từ cookies vào state userIDFromCookies
     const userID = getUserIDFromCookie();
@@ -441,7 +508,7 @@ const ConversationGroup = () => {
       setMessages(fetchedMessages);
     };
     const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
-    newSocket.onopen = () => {
+    newSocket.onopen = async () => {
       console.log("WebSocket connected >>>>>>>>HUy");
     };
 
@@ -485,7 +552,7 @@ const ConversationGroup = () => {
   //   }
   // };
 
-  const sendMessageWithTextViaSocket = (messageContent, contentType) => {
+  const sendMessageWithTextViaSocket = async (messageContent, contentType) => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (socket) {
       const message = {
@@ -522,6 +589,11 @@ const ConversationGroup = () => {
           key: "link",
           value: messageContent,
         });
+      } else if (contentType === "notify") {
+        message.contents.push({
+          key: "notify",
+          value: messageContent,
+        });
       }
       socket.send(JSON.stringify(message));
       console.log(message);
@@ -550,7 +622,11 @@ const ConversationGroup = () => {
     } else if (contentType === "file" && imageUrl) {
       console.log("Gửi file:", imageUrl);
       sendMessageWithTextViaSocket(imageUrl, "file");
+    } else if (contentType === "notify") {
+      console.log("Gửi notify:");
+      sendMessageWithTextViaSocket(message, "notify");
     }
+    
   };
 
   const loadMoreMessages = async () => {
@@ -775,6 +851,8 @@ const ConversationGroup = () => {
       socketGroup.send(JSON.stringify(create));
       // console.log(create);
       reloadCons();
+      fetchGroup();
+      navigate("/App")
     } else {
       console.error("WebSocket is not initialized.");
     }
@@ -799,20 +877,97 @@ const ConversationGroup = () => {
       socketGroup.send(JSON.stringify(outGroup));
       // console.log(create);
       reloadCons();
+      fetchGroup();
+      navigate("/App")
     } else {
       console.error("WebSocket is not initialized.");
     }
   }
 
-  const addMemberToGroup = () => {
-
+  const handleAddMemberToGroup = () => {
+    let mem = getSelectedItems();
+    // console.log(mem);
+    mem.map(item=> {
+      if (socketGroup && socket) {
+        let addMem = {
+          id: uuidv4(),
+          tgm: "TGM03",
+          idChat: id,
+          userID: item.id_UserOrGroup,
+          userName: item.chatName,
+          userAvatar: item.chatAvatar,
+        };
+  
+        socketGroup.send(JSON.stringify(addMem));
+        sendMessageWithTextViaSocket(item.chatName + " đã được thêm vào nhóm", "notify");
+        // console.log(create);
+        fetchGroup();
+        // navigate("/App");
+      } else {
+        console.error("WebSocket is not initialized.");
+      }
+    })
+    
+    togglePopup();
+    fetchGroup();
+    reloadCons();
   }
 
-  const deleteMember = (member) => {
+  const setAdmin = (member) => {
     // let newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
     // newSocket.onopen = async () => {
     //   console.log("WebSocket connected");
     // };
+    sendMessageWithTextViaSocket(member.userName + " đã được bổ nhiệm thành phó nhóm", "notify");
+    if (socketGroup) {
+      const setAd = {
+        id: uuidv4(),
+        tgm: "TGM04",
+        idChat: id,
+        userID: member.userID,
+        userName: member.userName,
+        userAvatar: member.userAvatar,
+      };
+      console.log(setAd);
+      socketGroup.send(JSON.stringify(setAd));
+      fetchGroup();
+      reloadCons();
+      
+    } else {
+      console.error("WebSocket is not initialized.");
+    }
+  }
+
+  const removeAdmin = (admin) => {
+    sendMessageWithTextViaSocket(admin.userName + " đã không còn là phó nhóm", "notify");
+    if (socketGroup) {
+      const rmAdmin = {
+        id: uuidv4(),
+        tgm: "TGM05",
+        idChat: id,
+        userID: admin.userID,
+        userName: admin.userName,
+        userAvatar: admin.userAvatar,
+      };
+
+      socketGroup.send(JSON.stringify(rmAdmin));
+      // console.log(create);
+      
+      fetchGroup();
+      reloadCons();
+    } else {
+      console.error("WebSocket is not initialized.");
+    }
+  }
+
+
+  const deleteMember = async (member) => {
+    // let newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
+    // newSocket.onopen = async () => {
+    //   console.log("WebSocket connected");
+    // };
+    await sendMessageWithTextViaSocket(member.userName + " đã rời khỏi nhóm", "notify");
+
     if (socketGroup) {
       const outGroup = {
         id: uuidv4(),
@@ -820,11 +975,15 @@ const ConversationGroup = () => {
         idChat: id,
         userID: member.userID,
         userName: member.userName,
-        userAvatar: member.avatar,
+        userAvatar: member.userAvatar,
       };
+
+      
 
       socketGroup.send(JSON.stringify(outGroup));
       // console.log(create);
+      
+      fetchGroup();
       reloadCons();
     } else {
       console.error("WebSocket is not initialized.");
@@ -1169,12 +1328,85 @@ const ConversationGroup = () => {
               <button disabled="true" className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faThumbtack}/> <br/>Ghim hội thoại
               </button>
-              <button onClick={addMemberToGroup} className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg">
+              <button onClick={togglePopup} className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faUserPlus}/> <br/>Thêm thành viên
               </button>
               <button disabled="true" className="flex-col items-center text-xs px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="w-5 h-5 rounded-full" icon={faGear}/> <br/>Quản lý nhóm
               </button>
+            </div>
+
+            <div>
+              {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={togglePopup}>Mở Popup</button> */}
+              {popupIsOpen && (
+                <div className="fixed inset-0 flex items-center justify-center">
+                  <div className="w-[400px] bg-white p-6 rounded-lg shadow-xl">
+                    {/* <h2 className="text-2xl font-bold mb-4">Popup</h2>
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={togglePopup}>Đóng</button> */}
+
+                    <div className="flex items-center justify-between border-b p-2">
+                      <span className="text-base font-medium text-tblack pl-4">Thêm thành viên nhóm</span>
+                      <button onClick={togglePopup} style={{ color: "#000000" }}> X </button>
+                    </div>
+
+                    <div className="flex-col items-center border-b">
+                      {/* <div className="flex items-center">
+                        <input ref={inputFileRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }}/>
+                        <img onClick={handleAvatarClick} className="w-12 h-12 rounded-full border" src={loadAvt} alt="Avatar" />
+                        <input onFocus={handleFocusNameGroup} onBlur={handleBlurNameGroup} onChange={(event) => {setNameGroup(event.target.value);}} className={`w-full mx-3 focus:outline-none ${nameGroupClick?'border-b border-b-blue-600':'border-b'} p-2`} type="text" placeholder="Nhập tên nhóm..."/>
+                      </div> */}
+
+                      <div className={`flex items-center ${tfPhoneNumberClick?'border border-blue-600':'border'} rounded-full p-2 m-2`}>
+                        <FontAwesomeIcon className="px-2" icon={faMagnifyingGlass} />
+                        <input onFocus={handleFocusPhoneClick} onBlur={handleBlurPhoneClick} onChange={(event) => {setTFPhoneNumber(event.target.value);}}  className="w-full focus:outline-none font-normal text-sm" type="text" placeholder="Nhập tên, số điện thoại, hoặc danh sách số điện thoại"/>
+                      </div>
+                      
+                    </div>
+
+                    <div className="h-[calc(65vh-70px)] w-full overflow-auto">
+                      <h6 className="p-2 text-sm font-semibold">Danh sách bạn bè</h6>
+
+                      <ul>
+                        {conversations?conversations.map((conversation) => {
+                          // console.log("lò"+group.members);
+                          if (!((group.owner.userID === conversation.id_UserOrGroup)
+                          || (group.admin.some(item => item["userID"] === conversation.id_UserOrGroup)) || (group.members.some(item => item["userID"] === conversation.id_UserOrGroup)))) {
+                            
+                            return (
+                              <li
+                                key={conversation.chatID}
+                                className="flex items-center px-4 py-3"
+                                onClick={() => handleOptionToggle(conversation.chatID)}
+                              >
+                                <input
+                                  type="checkbox"
+                                  className="form-checkbox h-4 w-4 mr-2"
+                                  checked={selectedOptions.includes(conversation.chatID)}
+                                  onChange={() => {}}
+                                />
+                                <img src={conversation.chatAvatar} alt={conversation.chatName} className="h-8 w-8 rounded-full mr-2" />
+                                <span>{conversation.chatName}</span>
+                              </li>
+                            )
+                          }
+                        }):null}
+                      </ul>
+
+
+
+                    </div>
+                  
+                    <button
+                      onClick={handleAddMemberToGroup}
+                      variant="contained"
+                      className="ml-60 text-xs px-4 py-2 bg-gray-200 text-gray-600 rounded-lg hover:bg-blue-400"
+                    >
+                      Thêm thành viên
+                    </button>
+                  
+                  </div>
+                </div>
+              )}
             </div>
 
 
@@ -1193,6 +1425,33 @@ const ConversationGroup = () => {
                       <img src={group.owner.userAvatar} alt={group.owner.userName} className="h-8 w-8 rounded-full mr-2" />
                       <span>{group.owner.userName}   (Quản lý)</span>
                     </li>
+
+                    {/* {group.admin == null && <li
+                      key={group.admin.userID}
+                      className="flex items-center px-4 py-3"
+                      // onClick={() => handleOptionToggle(conversation.chatID)}
+                    >
+                      <img src={group.admin.userAvatar} alt={group.admin.userName} className="h-8 w-8 rounded-full mr-2" />
+                      <span>{group.admin.userName}   (Phó nhóm)</span>
+                    </li>} */}
+                  { group.admin.map((admin) => (
+                    <li
+                    key={admin.userID}
+                    className="flex items-center px-4 py-3"
+                    // onClick={() => handleOptionToggle(conversation.chatID)}
+                  >
+                      <img src={admin.userAvatar} alt={admin.userName} className="h-8 w-8 rounded-full mr-2" />
+                      <span>{admin.userName}   (Phó nhóm)</span>
+                      {group.owner.userID==localStorage.getItem("userID") && 
+                        <div className="ml-auto">
+                          {/* <button onClick={()=> {setAdmin(member)}} className=" hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faScrewdriverWrench}/></button> */}
+                          <button onClick={()=> {removeAdmin(admin)}} className=" hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faUserXmark} /></button>
+                        </div>
+                      }
+                    </li>
+                  ))}
+
+
                   {group.members.map((member) => (
                     <li
                       key={member.userID}
@@ -1200,7 +1459,12 @@ const ConversationGroup = () => {
                       // onClick={() => handleOptionToggle(conversation.chatID)}
                     >
                       <img src={member.userAvatar} alt={member.userName} className="h-8 w-8 rounded-full mr-2" />
-                      <span>{member.userName}</span> {group.owner.userID==localStorage.getItem("userID") && <button onClick={()=> {deleteMember(member)}} className="ml-auto hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faUserMinus} /></button>}
+                      <span>{member.userName}</span> {(group.owner.userID==localStorage.getItem("userID")) && 
+                        <div className="ml-auto">
+                           <button onClick={()=> {setAdmin(member)}} className=" hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faScrewdriverWrench}/></button>
+                          <button onClick={()=> {deleteMember(member)}} className=" hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faUserMinus} /></button>
+                        </div>
+                      }
                     </li>
                   ))}
                 </ul>
@@ -1214,11 +1478,11 @@ const ConversationGroup = () => {
                 <FontAwesomeIcon className="mr-2" icon={faTrashCan}/> Xóa lịch sử cuộc trò chuyện
               </button>
 
-              {group.owner.userID==localStorage.getItem("userID") && <button onClick={handleDeleteGroup} className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
+              {(group.owner.userID==localStorage.getItem("userID") || group.admin.some(item => item["userID"] === localStorage.getItem("userID"))) && <button onClick={handleDeleteGroup} className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="mr-2" icon={faArrowRightFromBracket}/> Giải tán nhóm
               </button>}
 
-              {!(group.owner.userID==localStorage.getItem("userID")) && <button onClick={handleOutGroup} className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
+              {!(group.owner.userID==localStorage.getItem("userID") || group.admin.some(item => item["userID"] === localStorage.getItem("userID"))) && <button onClick={handleOutGroup} className="flex w-full items-center p-2 text-red-600 rounded-lg hover:bg-gray-200">
                 <FontAwesomeIcon className="mr-2" icon={faArrowRightFromBracket}/> Rời nhóm
               </button>}
             </div>
@@ -1235,64 +1499,64 @@ const ConversationGroup = () => {
 
 export default ConversationGroup;
 
-const dataCons = {
-  "_id": "d8b5f538-9a4a-4e18-8442-62217dbaf1e5",
-  "chatName": "Nhom Ca Canh",
-  "owner": {
-    "userID": "26ce60d1-64b9-45d2-8053-7746760a8354",
-    "userName": "Tran Huy",
-    "userAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png"
-  },
-  "admin": [],
-  "members": [
-    {
-      "userID": "f1cee7b8-7712-4042-9e94-17bd21209a62",
-      "userName": "Lê Hữu Bằng",
-      "userAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711638195/yaelqfegjxfkbjdmwyef.png"
-    },
-    {
-      "userID": "0a2f80df-655f-47f7-9202-7a01b0f9ba74",
-      "userName": "Thúy An",
-      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-27.jpg"
-    },
-    {
-      "userID": "5b685d06-8fbe-4ab7-a18b-b713b2ba4daa",
-      "userName": "Ánh Tina",
-      "userAvatar": "https://upanh123.com/wp-content/uploads/2020/10/Anh-gai-xinh-lam-anh-dai-dien-facebook1.jpg"
-    },
-    {
-      "userID": "b95ad4f4-68b0-4dd8-a4db-59b5874c4bdf",
-      "userName": "Nguyễn Thị Việt Chi",
-      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-2-600x750.jpg"
-    },
-    {
-      "userID": "79feacfd-507b-4721-b7b0-92869f06cf20",
-      "userName": "Haley Neith",
-      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-4-600x750.jpg"
-    },
-    {
-      "userID": "f31a6af5-e633-44f0-895d-26f0eafd6262",
-      "userName": "Nguyễn Châu",
-      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-12.jpg"
-    },
-    {
-      "userID": "0a67357b-9a70-431f-be90-39fa9fc7e3e2",
-      "userName": "Quỳnh Trinh",
-      "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-9-600x749.jpg"
-    }
-  ],
-  "createAt": {
-    "$date": "2024-04-14T19:02:47.930Z"
-  },
-  "avatar": "https://res.cloudinary.com/du73a0oen/image/upload/v1713020468/Zalo-Lite/juqqm5zgxjaamjw41lvz.png",
-  "setting": {
-    "changeChatNameAndAvatar": true,
-    "pinMessages": true,
-    "sendMessages": true,
-    "membershipApproval": true,
-    "createNewPolls": true
-  },
-  "_class": "com.zalolite.chatservice.entity.Group"
-}
+// const dataCons = {
+//   "_id": "d8b5f538-9a4a-4e18-8442-62217dbaf1e5",
+//   "chatName": "Nhom Ca Canh",
+//   "owner": {
+//     "userID": "26ce60d1-64b9-45d2-8053-7746760a8354",
+//     "userName": "Tran Huy",
+//     "userAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png"
+//   },
+//   "admin": [],
+//   "members": [
+//     {
+//       "userID": "f1cee7b8-7712-4042-9e94-17bd21209a62",
+//       "userName": "Lê Hữu Bằng",
+//       "userAvatar": "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711638195/yaelqfegjxfkbjdmwyef.png"
+//     },
+//     {
+//       "userID": "0a2f80df-655f-47f7-9202-7a01b0f9ba74",
+//       "userName": "Thúy An",
+//       "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-27.jpg"
+//     },
+//     {
+//       "userID": "5b685d06-8fbe-4ab7-a18b-b713b2ba4daa",
+//       "userName": "Ánh Tina",
+//       "userAvatar": "https://upanh123.com/wp-content/uploads/2020/10/Anh-gai-xinh-lam-anh-dai-dien-facebook1.jpg"
+//     },
+//     {
+//       "userID": "b95ad4f4-68b0-4dd8-a4db-59b5874c4bdf",
+//       "userName": "Nguyễn Thị Việt Chi",
+//       "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-2-600x750.jpg"
+//     },
+//     {
+//       "userID": "79feacfd-507b-4721-b7b0-92869f06cf20",
+//       "userName": "Haley Neith",
+//       "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-4-600x750.jpg"
+//     },
+//     {
+//       "userID": "f31a6af5-e633-44f0-895d-26f0eafd6262",
+//       "userName": "Nguyễn Châu",
+//       "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-12.jpg"
+//     },
+//     {
+//       "userID": "0a67357b-9a70-431f-be90-39fa9fc7e3e2",
+//       "userName": "Quỳnh Trinh",
+//       "userAvatar": "https://dungplus.com/wp-content/uploads/2019/12/girl-xinh-9-600x749.jpg"
+//     }
+//   ],
+//   "createAt": {
+//     "$date": "2024-04-14T19:02:47.930Z"
+//   },
+//   "avatar": "https://res.cloudinary.com/du73a0oen/image/upload/v1713020468/Zalo-Lite/juqqm5zgxjaamjw41lvz.png",
+//   "setting": {
+//     "changeChatNameAndAvatar": true,
+//     "pinMessages": true,
+//     "sendMessages": true,
+//     "membershipApproval": true,
+//     "createNewPolls": true
+//   },
+//   "_class": "com.zalolite.chatservice.entity.Group"
+// }
 
 
