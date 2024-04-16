@@ -16,10 +16,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { useRef } from "react";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
 
 
 export default function CreateGroup() {
-  const [loadAvt, setLoadAvt] = useState("user-loading.jpg");
+  const navigate = useNavigate();
+  const {cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
+  const [loadAvt, setLoadAvt] = useState(loadDefaultAvt);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [nameGroup, setNameGroup] = useState("");
   const [tfPhoneNumber, setTFPhoneNumber] = useState("");
@@ -28,7 +32,18 @@ export default function CreateGroup() {
   const [open, setOpen] = useState(false);
   const inputFileRef = useRef(null);
   const [socket, setSocket] = useState(null);
-  const [token, setToken] = useState(null);
+  // const [token, setToken] = useState(null);
+  const [check, setCheck] = useState(false);
+
+  useEffect(()=>{
+    if(selectedOptions.length>=2) {
+      setCheck(true);
+    } 
+    if(selectedOptions.length<2) {
+      setCheck(false);
+    } 
+  })
+  
 
   const storedData  = JSON.parse(localStorage.getItem("conversations"));
   const conversations = storedData ? storedData.filter(conversation => conversation.type !== "GROUP") : null
@@ -78,20 +93,45 @@ export default function CreateGroup() {
         };
       } 
     }
-  }, [socket]);
-
-
-
-
-
-
+    setLoadAvt(loadDefaultAvt)
+  }, [socket, loadDefaultAvt]);
 
   const handleClickOpen = () => {
     setOpen(true);
+    // console.log("000000000000000000000000000000000000000000000");
+    // setLoadAvt("user-loading.jpg")
+    setCons(JSON.parse(localStorage.getItem("conversations")));
   };
 
-  const handleClose = () => {
+  const handleClose = async () => {
     setOpen(false);
+    socket.close();
+    try {
+      const response = await fetch(
+        `http://localhost:8082/api/v1/user/info/${localStorage.getItem("userID")}`,
+        {
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          method: "GET",
+        },
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch conversations");
+      }
+      const data = await response.json();
+      console.log(data);
+      localStorage.setItem(
+        "conversations",
+        JSON.stringify(data.conversations),
+      );
+      setCons(JSON.parse(localStorage.getItem("conversations")))
+      console.log(cons);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+    }
   };
 
   const handleCreateGroup = () => {
@@ -99,7 +139,7 @@ export default function CreateGroup() {
     const data = getSelectedItems();
     console.log(data);
     const desiredFieldsArray = data.map(item => ({
-      userID: item.chatID,
+      userID: item.id_UserOrGroup,
       userName: item.chatName,
       userAvatar: item.chatAvatar
     }));
@@ -114,7 +154,7 @@ export default function CreateGroup() {
           userName: user.userName,
           userAvatar: user.avatar
         },
-        members: JSON.stringify(desiredFieldsArray),
+        members: desiredFieldsArray,
         avatar: loadAvt
       };
 
@@ -187,8 +227,6 @@ export default function CreateGroup() {
       console.error('Error uploading avatar:', error);
     }
   };
-
-
   return (
     <div className="relative ml-1 inline-block py-1">
       <Fragment>
@@ -216,7 +254,7 @@ export default function CreateGroup() {
             <div className="flex-col items-center border-b">
               <div className="flex items-center">
                 <input ref={inputFileRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }}/>
-                <img onClick={handleAvatarClick} className="w-12 h-12 rounded-full border" src={loadAvt==""?"user-loading.jpg":loadAvt} alt="Avatar" />
+                <img onClick={handleAvatarClick} className="w-12 h-12 rounded-full border" src={loadAvt} alt="Avatar" />
                 <input onFocus={handleFocusNameGroup} onBlur={handleBlurNameGroup} onChange={(event) => {setNameGroup(event.target.value);}} className={`w-full mx-3 focus:outline-none ${nameGroupClick?'border-b border-b-blue-600':'border-b'} p-2`} type="text" placeholder="Nhập tên nhóm..."/>
               </div>
 
@@ -261,6 +299,7 @@ export default function CreateGroup() {
               onClick={handleCreateGroup}
               variant="contained"
               color="primary"
+              disabled={!check}
             >
               Tạo nhóm
             </Button>
