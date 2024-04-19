@@ -5,7 +5,7 @@ import { ChatListNoneRecall } from './ChatListNoneRecall';
 import { MyMessageNoneRecall } from './MyMessageNoneRecall';
 import { OpponentMessageNoneRecall } from './OpponentMessageNoneRecall';
 const ChatItem = memo(({ item, conversationOpponent, myUserInfo }) => {
-    console.log('ChatItem key =>>>>>>>>>>>>>>>>:', item.messageID);
+    // console.log('ChatItem key =>>>>>>>>>>>>>>>>:', item.messageID);
     const findParent = findTopChatActivity(item.parenID, conversationOpponent.topChatActivity)
     const [parentMessage, setParentMessage] = useState()
     //Hiển thị bên đối phương
