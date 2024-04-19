@@ -15,9 +15,8 @@ import java.util.UUID;
 public class NotifyUser extends UserMessageDTO {
     private TypeNotify typeNotify;
 
-    public NotifyUser(UUID id, TypeUserMessage TUM, TypeNotify typeNotify) {
-        super(id, TUM);
+    public NotifyUser(UUID id, TypeUserMessage TUM, String ws, TypeNotify typeNotify) {
+        super(id, TUM, ws);
         this.typeNotify = typeNotify;
     }
-
 }
