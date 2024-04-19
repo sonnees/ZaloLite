@@ -16,14 +16,14 @@ public class UnfriendDTO extends UserMessageDTO {
     private UUID senderID;
     private UUID receiverID;
 
-    public UnfriendDTO(UUID id, TypeUserMessage TUM, UUID senderID, UUID receiverID) {
-        super(id, TUM);
+    public UnfriendDTO(UUID id, TypeUserMessage TUM, String ws, UUID senderID, UUID receiverID) {
+        super(id, TUM, ws);
         this.senderID = senderID;
         this.receiverID = receiverID;
     }
 
     public UnfriendDTO(FriendRequestAcceptDTO f) {
-        super(f.getId(), f.getTUM());
+        super(f.getId(), f.getTUM(), f.getWs());
         this.senderID = f.getSenderID();
         this.receiverID = f.getReceiverID();
     }

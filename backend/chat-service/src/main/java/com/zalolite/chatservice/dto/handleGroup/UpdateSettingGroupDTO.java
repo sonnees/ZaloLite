@@ -13,8 +13,8 @@ public class UpdateSettingGroupDTO extends GroupDTO {
     private String idChat;
     private boolean value;
 
-    public UpdateSettingGroupDTO(UUID id, TypeGroupMessage TGM, String idChat, boolean value) {
-        super(id, TGM);
+    public UpdateSettingGroupDTO(UUID id, TypeGroupMessage TGM, String ws, String idChat, boolean value) {
+        super(id, TGM, ws);
         this.idChat = idChat;
         this.value = value;
     }

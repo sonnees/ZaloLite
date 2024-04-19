@@ -14,8 +14,8 @@ public class ChangeNameChatGroupDTO extends GroupDTO {
     private String idChat;
     private String chatName;
 
-    public ChangeNameChatGroupDTO(UUID id, TypeGroupMessage TGM, String idChat, String chatName) {
-        super(id, TGM);
+    public ChangeNameChatGroupDTO(UUID id, TypeGroupMessage TGM, String ws, String idChat, String chatName) {
+        super(id, TGM, ws);
         this.idChat = idChat;
         this.chatName = chatName;
     }
