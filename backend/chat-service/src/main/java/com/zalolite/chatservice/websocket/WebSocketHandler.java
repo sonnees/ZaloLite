@@ -41,7 +41,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
     @NonNull
     public Mono<Void> handle(WebSocketSession session) {
         String sessionId = session.getId();
-        String path = session.getHandshakeInfo().getUri().getPath();
+        String path = "ws://localhost:8082"+ session.getHandshakeInfo().getUri().getPath();
         String[] split = path.split("/");
 
         if(sessions.get(path)==null){
@@ -69,7 +69,8 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .flatMap(message -> {
                             try {
                                 GroupDTO root = objectMapper.readValue(message, GroupDTO.class);
-                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
+                                if(!root.getWs().equals(path)) return Mono.empty();
+                                log.info("** Received message from {}: message: {}  path: {}", sessionId, objectMapper.writeValueAsString(root), path);
 
                                 return switch (root.getTGM()) {
                                     case TGM01 -> {
@@ -404,8 +405,8 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .flatMap(message -> {
                             try {
                                 UserMessageDTO root = objectMapper.readValue(message, UserMessageDTO.class);
-                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
-
+                                log.info("** Received message from {}: message: {}  path: {}", sessionId, objectMapper.writeValueAsString(root), path);
+                                if(!root.getWs().equals(path)) return Mono.empty();
                                 return switch (root.getTUM()) {
                                     case TUM01 -> {
                                         FriendRequestAddDTO obj = objectMapper.readValue(message, FriendRequestAddDTO.class);
@@ -564,8 +565,8 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .flatMap(message -> {
                             try {
                                 ChatMessageDTO root = objectMapper.readValue(message, ChatMessageDTO.class);
-                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
-
+                                log.info("** Received message from {}: message: {}  path: {}", sessionId, objectMapper.writeValueAsString(root), path);
+                                if(!root.getWs().equals(path)) return Mono.empty();
                                 return switch (root.getTCM()) {
                                     case TCM01 -> { // message
                                         MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
