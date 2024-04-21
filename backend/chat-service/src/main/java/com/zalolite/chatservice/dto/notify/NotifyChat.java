@@ -17,8 +17,8 @@ import java.util.UUID;
 public class NotifyChat extends ChatMessageDTO {
     private TypeNotify typeNotify;
 
-    public NotifyChat(UUID id, TypeChatMessage TCM, TypeNotify typeNotify) {
-        super(id, TCM);
+    public NotifyChat(UUID id, TypeChatMessage TCM, String ws, TypeNotify typeNotify) {
+        super(id, TCM, ws);
         this.typeNotify = typeNotify;
     }
 }

@@ -27,8 +27,8 @@ public class MessageAppendDTO extends ChatMessageDTO {
     private UUID parentID;
     private List<Content> contents;
 
-    public MessageAppendDTO(UUID id, TypeChatMessage TCM, UUID userID, String userAvatar, String userName, Date timestamp, UUID parentID, List<Content> contents) {
-        super(id, TCM);
+    public MessageAppendDTO(UUID id, TypeChatMessage TCM, String ws, UUID userID, String userAvatar, String userName, Date timestamp, UUID parentID, List<Content> contents) {
+        super(id, TCM, ws);
         this.userID = userID;
         this.userAvatar = userAvatar;
         this.userName = userName;
