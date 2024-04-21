@@ -61,7 +61,7 @@ const ChatScreen = () => {
   useEffect(() => {
     if (socket) {
       console.log("WEBSOCKET WAS TURN ON");
-      console.log("SoCket", socket);
+      console.log("Socket", socket);
       socket.onmessage = (event) => {
         const data = event.data;
         console.log("Received data:", data);
@@ -550,12 +550,12 @@ const ChatScreen = () => {
       < View style={styles.foter} >
         <TouchableOpacity onPress={toggleEmojiPicker}>
           <Image
-            style={{ width: 22, height: 22, resizeMode: "contain", marginLeft: 8 }}
+            style={{ width: 22, height: 22, resizeMode: "contain", marginLeft: 1 }}
             source={require("../assets/face.png")}
           />
         </TouchableOpacity>
         <TextInput style={{
-          flex: 1,
+          width: 250,
           borderRadius: 5, fontSize: 20,
           marginLeft: 10, color: "#808080", justifyContent: "center",
         }}

@@ -59,7 +59,7 @@ const MessagesScreen = () => {
     const chatData = await fetchAllChatbychatID(chatID, token);
     const newChatData = getDataFromConversationsAndChatData(conversationOpponent, chatData);
     if (newChatData) {
-      console.log("CONVERSATION WITH ALL CHATACTIVITY:\n", newChatData);
+      // console.log("CONVERSATION WITH ALL CHATACTIVITY:\n", newChatData);
       return newChatData;
     }
     else {
