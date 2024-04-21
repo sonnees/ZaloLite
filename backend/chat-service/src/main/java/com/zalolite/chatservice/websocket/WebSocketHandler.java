@@ -40,9 +40,10 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
     @Override
     @NonNull
     public Mono<Void> handle(WebSocketSession session) {
+
         String sessionId = session.getId();
         String path = "ws://localhost:8082"+ session.getHandshakeInfo().getUri().getPath();
-        String[] split = path.split("/");
+        String[] split = session.getHandshakeInfo().getUri().getPath().split("/");
 
         if(sessions.get(path)==null){
             List<WebSocketSession> list = new ArrayList<>();
