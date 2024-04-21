@@ -14,8 +14,8 @@ public class ChangeAvatarGroupDTO extends GroupDTO {
     private String idChat;
     private String avatar;
 
-    public ChangeAvatarGroupDTO(UUID id, TypeGroupMessage TGM, String idChat, String avatar) {
-        super(id, TGM);
+    public ChangeAvatarGroupDTO(UUID id, TypeGroupMessage TGM, String ws, String idChat, String avatar) {
+        super(id, TGM, ws);
         this.idChat = idChat;
         this.avatar = avatar;
     }

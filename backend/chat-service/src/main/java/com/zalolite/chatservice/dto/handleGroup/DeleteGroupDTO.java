@@ -14,8 +14,8 @@ import java.util.UUID;
 public class DeleteGroupDTO extends GroupDTO {
     private String idChat;
 
-    public DeleteGroupDTO(UUID id, TypeGroupMessage TGM, String idChat) {
-        super(id, TGM);
+    public DeleteGroupDTO(UUID id, TypeGroupMessage TGM, String ws, String idChat) {
+        super(id, TGM, ws);
         this.idChat = idChat;
     }
 }
