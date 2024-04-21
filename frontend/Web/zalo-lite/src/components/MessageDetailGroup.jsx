@@ -13,7 +13,7 @@ import { useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { useUser } from "../context/UserContext";
 
-const MessageDetail = ({
+const MessageDetailGroup = ({
   message,
   chatAvatar,
   socketFromConservation,
@@ -152,6 +152,8 @@ const MessageDetail = ({
           );
         } else if (content.key === "emoji") {
           return <p key={index}>{content.value}</p>;
+        } else if (content.key === "notify") {
+          return <p className="h-auto text-blue-400" key={index}>{content.value}</p>;
         }
         // return null;
       });
@@ -332,7 +334,7 @@ const MessageDetail = ({
   );
 };
 
-export default MessageDetail;
+export default MessageDetailGroup;
 
 // // MessageDetail.js
 // import React, { useRef, useState } from "react";

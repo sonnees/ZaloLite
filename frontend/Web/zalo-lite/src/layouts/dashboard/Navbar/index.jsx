@@ -246,7 +246,7 @@ function Navbar({ onNavbarReady }) {
       setAvatar(avatarLoad);
     }
   }, []);
-  console.log("avt:"+avatar);
+  // console.log("avt:"+avatar);
   return (
     <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
       <nav className="w-full">
