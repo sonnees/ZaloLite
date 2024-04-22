@@ -14,6 +14,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/API';
 import uuid from 'react-native-uuid'
+import BackgroundInChat from '../component/BackgroundInChat';
 // import DocumentPicker from 'react-native-document-picker';
 const ChatGroupScreen = () => {
   let navigation = useNavigation();
@@ -363,79 +364,11 @@ const ChatGroupScreen = () => {
       </View>
       {conversationOpponent.topChatActivity && conversationOpponent.topChatActivity.length > 0 && (
         <View style={{ flex: 1 }}>
-          {conversationOpponent.type == 'REQUESTED' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1
-              }}
-            >
-              <Text style={{ marginLeft: 20 }}>Sent you a friend request</Text>
-              <TouchableOpacity
-                style={{
-                  height: 30, width: 80, alignSelf: 'center', justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 20,
-                  backgroundColor: '#1E90FF', marginRight: 10
-                }}
-              >
-                <Text style={{ color: 'white', fontSize: 12 }}>ACCEPT</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {conversationOpponent.type == 'REQUESTS' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1, justifyContent: 'center', alignContent: 'center'
-              }}
-            >
-              <Icon name='adduser' size={20} color={'gray'}></Icon>
-              <Text style={{ marginLeft: 10 }}>Friend request has been sent</Text>
-            </View>
-          )}
-          {conversationOpponent.type == 'STRANGER' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1, justifyContent: 'center', alignContent: 'center'
-              }}
-            >
-              <Icon name='adduser' size={20} color={'gray'}></Icon>
-              <Text style={{ marginLeft: 10 }}>Add friend</Text>
-            </View>
-          )}
           <FlatList
             ListHeaderComponent={(
-              <View
-                style={{ height: 205, width: '85%', alignSelf: 'center', margin: 30, marginTop: 10, backgroundColor: 'white', borderRadius: 10 }}
-              >
-                <Image source={{ uri: 'https://i.pinimg.com/736x/c2/e9/02/c2e902e031e1d9d932411dd0b8ab5eef.jpg' }}
-                  style={{ height: 120, width: '100%', alignSelf: 'center' }}
-                />
-                <View style={{ flexDirection: 'row' }}>
-                  <Image
-                    source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
-                    style={{ height: 70, width: 70, borderRadius: 50, margin: 10 }}
-                  />
-
-                  <View style={{ flexDirection: 'column' }}>
-                    <Text style={{ fontSize: 16, fontWeight: '700', marginTop: 12, marginLeft: 10 }}>
-                      {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}</Text>
-                    <Text style={{ fontSize: 12, marginTop: 7, marginLeft: 10 }}>
-                      No one can change my life</Text>
-                  </View>
-                </View>
-              </View>
+              <BackgroundInChat
+                conversationOpponent={conversationOpponent}
+              />
             )}
             data={conversationOpponent.topChatActivity}
             renderItem={({ item, index }) =>
@@ -455,49 +388,9 @@ const ChatGroupScreen = () => {
       )}
       {!conversationOpponent.topChatActivity || conversationOpponent.topChatActivity.length === 0 && (
         <View style={{ flex: 1 }}>
-          {conversationOpponent.type == 'REQUESTED' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1
-              }}
-            >
-              <Text style={{ marginLeft: 20 }}>Sent you a friend request</Text>
-              <TouchableOpacity
-                style={{
-                  height: 30, width: 80, alignSelf: 'center', justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 20,
-                  backgroundColor: '#1E90FF', marginRight: 10
-                }}
-              >
-                <Text style={{ color: 'white', fontSize: 12 }}>ACCEPT</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          <View
-            style={{ height: 205, width: '85%', alignSelf: 'center', margin: 30, marginTop: 10, backgroundColor: 'white', borderRadius: 10 }}
-          >
-            <Image source={{ uri: 'https://i.pinimg.com/736x/c2/e9/02/c2e902e031e1d9d932411dd0b8ab5eef.jpg' }}
-              style={{ height: 120, width: '100%', alignSelf: 'center' }}
-            />
-            <View style={{ flexDirection: 'row' }}>
-              <Image
-                source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
-                style={{ height: 70, width: 70, borderRadius: 50, margin: 10 }}
-              />
-
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={{ fontSize: 16, fontWeight: '700', marginTop: 12, marginLeft: 10 }}>
-                  {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}</Text>
-                <Text style={{ fontSize: 12, marginTop: 7, marginLeft: 10 }}>
-                  No one can change my life</Text>
-              </View>
-            </View>
-          </View>
+          <BackgroundInChat
+            conversationOpponent={conversationOpponent}
+          />
         </View>
       )}
       <View style={[styles.footer, { height: textInputHeight + 8 }]}>
@@ -583,8 +476,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     paddingHorizontal: 10,
     justifyContent: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
+    borderTopWidth: 0.3,
+    borderTopColor: '#CCCCCC',
     minHeight: 40,
   },
   textInput: {

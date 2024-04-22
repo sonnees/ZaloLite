@@ -14,6 +14,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/API';
 import uuid from 'react-native-uuid'
+import BackgroundInChat from '../component/BackgroundInChat';
+import NavBarFriendRequest from '../component/NavbarFriendRequest';
 // import DocumentPicker from 'react-native-document-picker';
 const ChatScreen = () => {
   let navigation = useNavigation();
@@ -130,26 +132,7 @@ const ChatScreen = () => {
   }, [myUserInfo, socket]
     // [myUserInfo, conversationOpponent,socket]
   );
-  // Xử lý Reload dữ liệu
-  const fetchAllChatbychatID = async (chatID, token) => {
-    try {
-      const response = await axios.get(`${API_GET_LIST_CHATACTIVITY}${chatID}&x=0&y=1000`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const allChatActivity = await response.data;
-      // console.log("ALL CHATACTIVITY: ", allChatActivity);
-      if (allChatActivity)
-        return allChatActivity;
-      else
-        return null;
 
-    } catch (error) {
-      console.error('Lỗi khi lấy thông tin tất cả đoạn chat:', error);
-      return null;
-    }
-  }
 
   // Xử lý Emoji
   const handleEmojiSelect = (emoji) => {
@@ -235,6 +218,7 @@ const ChatScreen = () => {
       }
     }
   };
+
   const fetchProfileInfo = async (userID, token) => {
     try {
       const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
@@ -265,6 +249,26 @@ const ChatScreen = () => {
       }
     }
   };
+  // Xử lý Reload dữ liệu
+  const fetchAllChatbychatID = async (chatID, token) => {
+    try {
+      const response = await axios.get(`${API_GET_LIST_CHATACTIVITY}${chatID}&x=0&y=1000`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const allChatActivity = await response.data;
+      // console.log("ALL CHATACTIVITY: ", allChatActivity);
+      if (allChatActivity)
+        return allChatActivity;
+      else
+        return null;
+
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin tất cả đoạn chat:', error);
+      return null;
+    }
+  }
   useEffect(() => {
     const newSocket = new WebSocket(`ws://${host}/ws/chat/${componentChatID}`);
     newSocket.onopen = () => {
@@ -274,11 +278,6 @@ const ChatScreen = () => {
   }, [componentChatID]);
 
   const sendMessageWithTextViaSocket = (messageContent, contentType, parentID) => {
-    // console.log("MY USER ID:__________", myProfile.userID);
-    // console.log("MY USER AVATAR:__________", myProfile.avatar);
-    // console.log("MY USER NAME:__________", myProfile.userName);
-    // console.log("TIMESTAMP:__________", new Date().toISOString());
-    // console.log("ID:__________", generateUUID());
     if (socket) {
       const messageSocket = {
         id: uuid.v4(),
@@ -314,7 +313,7 @@ const ChatScreen = () => {
           value: messageContent,
         });
       }
-      // console.log("MESSAGE:__________", messageSocket);
+      console.log("MESSAGE:__________", messageSocket);
       socket.send(JSON.stringify(messageSocket));
       setMessage(""); // Xóa nội dung của input message sau khi gửi
     } else {
@@ -353,15 +352,15 @@ const ChatScreen = () => {
         <View style={{ flex: 3 }}></View>
         <View style={{ flexDirection: 'row', }}>
           <Image
-            style={{ width: 22, height: 22, resizeMode: "contain", margin: 10 }}
+            style={{ width: 21, height: 21, resizeMode: "contain", margin: 10, marginTop: 15 }}
             source={require("../assets/telephone.png")}
           />
           <Image
-            style={{ width: 28, height: 28, resizeMode: "contain", margin: 10 }}
+            style={{ width: 28, height: 28, resizeMode: "contain", margin: 10, marginTop: 12 }}
             source={require("../assets/video.png")}
           />
           <Image
-            style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
+            style={{ width: 20, height: 20, resizeMode: "contain", margin: 10, marginTop: 15 }}
             source={require("../assets/list.png")}
             onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
           />
@@ -369,79 +368,14 @@ const ChatScreen = () => {
       </View>
       {conversationOpponent.topChatActivity && conversationOpponent.topChatActivity.length > 0 && (
         <View style={{ flex: 1 }}>
-          {conversationOpponent.type == 'REQUESTED' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1
-              }}
-            >
-              <Text style={{ marginLeft: 20 }}>Sent you a friend request</Text>
-              <TouchableOpacity
-                style={{
-                  height: 30, width: 80, alignSelf: 'center', justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 20,
-                  backgroundColor: '#1E90FF', marginRight: 10
-                }}
-              >
-                <Text style={{ color: 'white', fontSize: 12 }}>ACCEPT</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {conversationOpponent.type == 'REQUESTS' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1, justifyContent: 'center', alignContent: 'center'
-              }}
-            >
-              <Icon name='adduser' size={20} color={'gray'}></Icon>
-              <Text style={{ marginLeft: 10 }}>Friend request has been sent</Text>
-            </View>
-          )}
-          {conversationOpponent.type == 'STRANGER' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1, justifyContent: 'center', alignContent: 'center'
-              }}
-            >
-              <Icon name='adduser' size={20} color={'gray'}></Icon>
-              <Text style={{ marginLeft: 10 }}>Add friend</Text>
-            </View>
-          )}
+          <NavBarFriendRequest
+            conversationOpponent={conversationOpponent}
+          />
           <FlatList
             ListHeaderComponent={(
-              <View
-                style={{ height: 205, width: '85%', alignSelf: 'center', margin: 30, marginTop: 10, backgroundColor: 'white', borderRadius: 10 }}
-              >
-                <Image source={{ uri: 'https://i.pinimg.com/736x/c2/e9/02/c2e902e031e1d9d932411dd0b8ab5eef.jpg' }}
-                  style={{ height: 120, width: '100%', alignSelf: 'center' }}
-                />
-                <View style={{ flexDirection: 'row' }}>
-                  <Image
-                    source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
-                    style={{ height: 70, width: 70, borderRadius: 50, margin: 10 }}
-                  />
-
-                  <View style={{ flexDirection: 'column' }}>
-                    <Text style={{ fontSize: 16, fontWeight: '700', marginTop: 12, marginLeft: 10 }}>
-                      {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}</Text>
-                    <Text style={{ fontSize: 12, marginTop: 7, marginLeft: 10 }}>
-                      No one can change my life</Text>
-                  </View>
-                </View>
-              </View>
+              <BackgroundInChat
+                conversationOpponent={conversationOpponent}
+              />
             )}
             data={conversationOpponent.topChatActivity}
             renderItem={({ item, index }) =>
@@ -461,77 +395,12 @@ const ChatScreen = () => {
       )}
       {!conversationOpponent.topChatActivity || conversationOpponent.topChatActivity.length === 0 && (
         <View style={{ flex: 1 }}>
-          {conversationOpponent.type == 'REQUESTED' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1
-              }}
-            >
-              <Text style={{ marginLeft: 20 }}>Sent you a friend request</Text>
-              <TouchableOpacity
-                style={{
-                  height: 30, width: 80, alignSelf: 'center', justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 20,
-                  backgroundColor: '#1E90FF', marginRight: 10
-                }}
-              >
-                <Text style={{ color: 'white', fontSize: 12 }}>ACCEPT</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {conversationOpponent.type == 'REQUESTS' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1, justifyContent: 'center', alignContent: 'center'
-              }}
-            >
-              <Icon name='adduser' size={20} color={'gray'}></Icon>
-              <Text style={{ marginLeft: 10 }}>Friend request has been sent</Text>
-            </View>
-          )}
-          {conversationOpponent.type == 'STRANGER' && (
-            <View
-              style={{
-                backgroundColor: 'white',
-                height: 40, width: '100%',
-                position: 'absolute', top: '50', flexDirection: 'row',
-                justifyContent: 'space-between', alignItems: 'center',
-                zIndex: 1, justifyContent: 'center', alignContent: 'center'
-              }}
-            >
-              <Icon name='adduser' size={20} color={'gray'}></Icon>
-              <Text style={{ marginLeft: 10 }}>Add friend</Text>
-            </View>
-          )}
-          <View
-            style={{ height: 205, width: '85%', alignSelf: 'center', margin: 30, marginTop: 10, backgroundColor: 'white', borderRadius: 10 }}
-          >
-            <Image source={{ uri: 'https://i.pinimg.com/736x/c2/e9/02/c2e902e031e1d9d932411dd0b8ab5eef.jpg' }}
-              style={{ height: 120, width: '100%', alignSelf: 'center' }}
-            />
-            <View style={{ flexDirection: 'row' }}>
-              <Image
-                source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}
-                style={{ height: 70, width: 70, borderRadius: 50, margin: 10 }}
-              />
-
-              <View style={{ flexDirection: 'column' }}>
-                <Text style={{ fontSize: 16, fontWeight: '700', marginTop: 12, marginLeft: 10 }}>
-                  {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}</Text>
-                <Text style={{ fontSize: 12, marginTop: 7, marginLeft: 10 }}>
-                  No one can change my life</Text>
-              </View>
-            </View>
-          </View>
+          <NavBarFriendRequest
+            conversationOpponent={conversationOpponent}
+          />
+          <BackgroundInChat
+            conversationOpponent={conversationOpponent}
+          />
         </View>
       )}
       <View style={[styles.footer, { height: textInputHeight + 8 }]}>
@@ -591,7 +460,6 @@ const ChatScreen = () => {
           <EmojiSelector
             onEmojiSelected={handleEmojiSelect}
             showSearchBar={false}
-          // Điều chỉnh kích thước của thanh tabs
           />
         </View>
       }
@@ -617,8 +485,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     paddingHorizontal: 10,
     justifyContent: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
+    borderTopWidth: 0.3,
+    borderTopColor: '#CCCCCC',
     minHeight: 40,
   },
   textInput: {
