@@ -12,8 +12,8 @@ import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/Api';
-
+import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/API';
+import uuid from 'react-native-uuid'
 // import DocumentPicker from 'react-native-document-picker';
 const ChatScreen = () => {
   let navigation = useNavigation();
@@ -32,6 +32,15 @@ const ChatScreen = () => {
   //Xử lý message
   const [message, setMessage] = useState('');
   const [contentType, setContentType] = useState("text"); // Mặc định là gửi tin nhắn text
+  const [textInputHeight, setTextInputHeight] = useState(40); // Chiều cao ban đầu là 20
+
+  const handleContentSizeChange = (event) => {
+    const newHeight = Math.max(20, event.nativeEvent.contentSize.height);
+    if (newHeight <= 4 * 20) { // 4 hàng * chiều cao của mỗi hàng (20)
+      setTextInputHeight(newHeight);
+    }
+
+  };
   // Xử lý Emoji
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -141,15 +150,6 @@ const ChatScreen = () => {
       return null;
     }
   }
-  // const fetchConversationOpponent = async (conversationOpponent) => {
-  //   const chatID = conversationOpponent.chatID;
-  //   const token = await AsyncStorage.getItem('token')
-  //   const chatData = await fetchAllChatbychatID(chatID, token);
-  //   const newChatData = getDataFromConversationsAndChatData(conversationOpponent, chatData);
-  //   if (newChatData) {
-  //     return newChatData;
-  //   }
-  // }
 
   // Xử lý Emoji
   const handleEmojiSelect = (emoji) => {
@@ -281,7 +281,7 @@ const ChatScreen = () => {
     // console.log("ID:__________", generateUUID());
     if (socket) {
       const messageSocket = {
-        id: generateUUID(),
+        id: uuid.v4(),
         tcm: "TCM01",
         userID: myProfile.userID,
         userAvatar: myProfile.avatar,
@@ -351,34 +351,21 @@ const ChatScreen = () => {
         </View>
 
         <View style={{ flex: 3 }}></View>
-        {conversationOpponent.type && conversationOpponent.type !== "GROUP" && (
-          <View style={{ flexDirection: 'row', }}>
-            <Image
-              style={{ width: 22, height: 22, resizeMode: "contain", margin: 10 }}
-              source={require("../assets/telephone.png")}
-            />
-            <Image
-              style={{ width: 28, height: 28, resizeMode: "contain", margin: 10 }}
-              source={require("../assets/video.png")}
-            />
-            <Image
-              style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
-              source={require("../assets/list.png")}
-              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
-            />
-          </View>
-        )}
-        {conversationOpponent.type && conversationOpponent.type === "GROUP" && (
-          <View style={{ flexDirection: 'row', }}>
-            <Icon name='addusergroup' size={22} color={'white'} style={{ margin: 10 }} />
-            <Icon name='search1' size={22} color={'white'} style={{ margin: 10 }} />
-            <Image
-              style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
-              source={require("../assets/list.png")}
-              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
-            />
-          </View>
-        )}
+        <View style={{ flexDirection: 'row', }}>
+          <Image
+            style={{ width: 22, height: 22, resizeMode: "contain", margin: 10 }}
+            source={require("../assets/telephone.png")}
+          />
+          <Image
+            style={{ width: 28, height: 28, resizeMode: "contain", margin: 10 }}
+            source={require("../assets/video.png")}
+          />
+          <Image
+            style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
+            source={require("../assets/list.png")}
+            onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
+          />
+        </View>
       </View>
       {conversationOpponent.topChatActivity && conversationOpponent.topChatActivity.length > 0 && (
         <View style={{ flex: 1 }}>
@@ -547,28 +534,24 @@ const ChatScreen = () => {
           </View>
         </View>
       )}
-      < View style={styles.foter} >
+      <View style={[styles.footer, { height: textInputHeight + 8 }]}>
         <TouchableOpacity onPress={toggleEmojiPicker}>
           <Image
-            style={{ width: 22, height: 22, resizeMode: "contain", marginLeft: 1 }}
+            style={{ width: 22, height: 22, resizeMode: "contain", marginLeft: -10, marginBottom: 8 }}
             source={require("../assets/face.png")}
           />
         </TouchableOpacity>
-        <TextInput style={{
-          width: 250,
-          borderRadius: 5, fontSize: 20,
-          marginLeft: 10, color: "#808080", justifyContent: "center",
-        }}
+        <TextInput
+          style={[styles.textInput, { height: textInputHeight }]}
+          multiline={true}
           placeholder="Message"
           placeholderTextColor={'gray'}
           onChangeText={(text) => setMessage(text)}
           value={message}
-          onFocus={handleTextInputFocus}
-          onPressIn={handleTextInputFocus}
-        >
-        </TextInput>
+          onContentSizeChange={handleContentSizeChange}
+        />
         {message.length === 0 && (
-          <View style={{ flexDirection: 'row', flex: 0.8, justifyContent: 'space-between', marginBottom: 5, marginRight: -5 }}>
+          <View style={{ flexDirection: 'row', flex: 0.8, justifyContent: 'space-between', marginBottom: 5, width: 80, marginRight: -15 }}>
             <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'flex-start' }} onPress={handleChooseFiles}>
               <Image
                 style={{ width: 30, height: 30, resizeMode: "contain", marginLeft: 2 }}
@@ -628,34 +611,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 10,
   },
-  foter: {
-    height: 48,
+  footer: {
     backgroundColor: "#FFFFFF",
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     paddingHorizontal: 10,
     justifyContent: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+    minHeight: 40,
+  },
+  textInput: {
+    width: 180,
+    borderRadius: 5,
+    fontSize: 20,
+    marginLeft: 10,
+    color: "#808080",
+    justifyContent: "center",
+    minHeight: 20,
+    marginBottom: 5
   },
 });
-
 export default ChatScreen;
-const generateUUID = () => {
-  const randomPart = () => {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  };
-
-  return (
-    randomPart() +
-    randomPart() +
-    '-' +
-    randomPart() +
-    '-0000-' +
-    randomPart() +
-    '-' +
-    randomPart() +
-    randomPart() +
-    randomPart()
-  );
-};

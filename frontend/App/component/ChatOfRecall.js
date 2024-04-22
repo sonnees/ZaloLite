@@ -4,7 +4,7 @@ import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, Toucha
 import Icon from 'react-native-vector-icons/';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
-import { API_PROFILE_BY_USERID } from '../api/Api';
+import { API_PROFILE_BY_USERID } from '../api/API';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const ChatOfReCall = ({ item, myUserInfo, conversationOpponent }) => {

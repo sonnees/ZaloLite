@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native'; // Thêm useRoute vào
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { API_PROFILE } from '../api/Api';
+import { API_PROFILE } from '../api/API';
 export default function MeScreen() {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({ userName: '', avatar: '' });
@@ -66,10 +66,10 @@ export default function MeScreen() {
         console.error('Lỗi khi lấy giá trị newAvatar từ AsyncStorage:', error);
       }
     };
-  
+
     getNewAvatar();
   }, []);
-  
+
 
 
   return (

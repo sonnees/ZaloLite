@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { getTimeDifference } from '../utils/CalTime';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
-import { API_GET_LIST_CHATACTIVITY } from '../api/Api';
+import { API_GET_LIST_CHATACTIVITY } from '../api/API';
 import { GlobalContext } from '../context/GlobalContext';
 const MessagesScreen = () => {
   let navigation = useNavigation();
@@ -24,7 +24,12 @@ const MessagesScreen = () => {
     if (modalVisible) {
       setModalChatVisible(false);
     } else {
-      navigation.navigate("ChatScreen", { conversationOpponent: data });
+      if (data.type !== "GROUP") {
+        navigation.navigate("ChatScreen", { conversationOpponent: data });
+      } else {
+        navigation.navigate("ChatGroupScreen", { conversationOpponent: data });
+      }
+
     }
   };
 

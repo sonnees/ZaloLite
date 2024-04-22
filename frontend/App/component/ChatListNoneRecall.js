@@ -3,7 +3,7 @@ import React, { memo, useState, useRef, useEffect, useMemo } from 'react';
 import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
-import { API_PROFILE_BY_USERID } from '../api/Api';
+import { API_PROFILE_BY_USERID } from '../api/API';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => {
