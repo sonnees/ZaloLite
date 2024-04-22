@@ -22,8 +22,8 @@ public class MessageDeliveryDTO extends ChatMessageDTO {
     private String userAvatar;
     private String userName;
 
-    public MessageDeliveryDTO(UUID id, TypeChatMessage TCM, String ws, UUID userID, UUID messageID, String userAvatar, String userName) {
-        super(id, TCM, ws);
+    public MessageDeliveryDTO(UUID id, TypeChatMessage TCM, UUID userID, UUID messageID, String userAvatar, String userName) {
+        super(id, TCM);
         this.userID = userID;
         this.messageID = messageID;
         this.userAvatar = userAvatar;
@@ -38,7 +38,7 @@ public class MessageDeliveryDTO extends ChatMessageDTO {
     }
 
     public MessageDeliveryDTO(MessageAppendDTO m, UUID messageID) {
-        super(m.getId(), m.getTCM(), m.getWs());
+        super(m.getId(), m.getTCM());
         this.userID = m.getUserID();
         this.messageID = messageID;
         this.userAvatar = m.getUserAvatar();

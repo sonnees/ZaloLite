@@ -17,8 +17,8 @@ public class CreateGroupDTO extends GroupDTO {
     private List<PersonInfo> members;
     private String avatar;
 
-    public CreateGroupDTO(UUID id, TypeGroupMessage TGM, String ws, String chatName, PersonInfo owner, List<PersonInfo> members, String avatar) {
-        super(id, TGM, ws);
+    public CreateGroupDTO(UUID id, TypeGroupMessage TGM, String chatName, PersonInfo owner, List<PersonInfo> members, String avatar) {
+        super(id, TGM);
         this.chatName = chatName;
         this.owner = owner;
         this.members = members;

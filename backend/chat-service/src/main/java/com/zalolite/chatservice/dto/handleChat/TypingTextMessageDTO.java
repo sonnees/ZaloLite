@@ -16,8 +16,8 @@ public class TypingTextMessageDTO extends ChatMessageDTO {
     private String chatID;
     private String senderName;
 
-    public TypingTextMessageDTO(UUID id, TypeChatMessage TCM, String ws, String chatID, String senderName) {
-        super(id, TCM, ws);
+    public TypingTextMessageDTO(UUID id, TypeChatMessage TCM, String chatID, String senderName) {
+        super(id, TCM);
         this.chatID = chatID;
         this.senderName = senderName;
     }
