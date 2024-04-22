@@ -41,7 +41,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
     @NonNull
     public Mono<Void> handle(WebSocketSession session) {
         String sessionId = session.getId();
-        String path = "ws://localhost:8082"+ session.getHandshakeInfo().getUri().getPath();
+        String path = session.getHandshakeInfo().getUri().getPath();
         String[] split = path.split("/");
 
         if(sessions.get(path)==null){
@@ -69,8 +69,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .flatMap(message -> {
                             try {
                                 GroupDTO root = objectMapper.readValue(message, GroupDTO.class);
-                                if(!root.getWs().equals(path)) return Mono.empty();
-                                log.info("** Received message from {}: message: {}  path: {}", sessionId, objectMapper.writeValueAsString(root), path);
+                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
 
                                 return switch (root.getTGM()) {
                                     case TGM01 -> {
@@ -405,8 +404,8 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .flatMap(message -> {
                             try {
                                 UserMessageDTO root = objectMapper.readValue(message, UserMessageDTO.class);
-                                log.info("** Received message from {}: message: {}  path: {}", sessionId, objectMapper.writeValueAsString(root), path);
-                                if(!root.getWs().equals(path)) return Mono.empty();
+                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
+
                                 return switch (root.getTUM()) {
                                     case TUM01 -> {
                                         FriendRequestAddDTO obj = objectMapper.readValue(message, FriendRequestAddDTO.class);
@@ -565,8 +564,8 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .flatMap(message -> {
                             try {
                                 ChatMessageDTO root = objectMapper.readValue(message, ChatMessageDTO.class);
-                                log.info("** Received message from {}: message: {}  path: {}", sessionId, objectMapper.writeValueAsString(root), path);
-                                if(!root.getWs().equals(path)) return Mono.empty();
+                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
+
                                 return switch (root.getTCM()) {
                                     case TCM01 -> { // message
                                         MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
@@ -667,6 +666,65 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         TypingTextMessageDTO obj = objectMapper.readValue(message, TypingTextMessageDTO.class);
                                         sendMessageToAllClients(path,sessionId,obj,"user typing a text message");
                                         yield Mono.empty();
+                                    }
+
+                                    case TCM07 -> { // append voter
+                                        MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
+                                        AppendVoterDTO appendVoterDTO = new AppendVoterDTO(obj);
+                                        yield chatHandleWebSocket
+                                                .appendVoter(appendVoterDTO, chatID, obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(path,sessionId,notify, "Pass | append voter");
+                                                            sendMessageToAllClients(path,sessionId,obj,"append voter");
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | append voter");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TCM08 -> { // change voter
+                                        MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
+                                        ChangeVoterDTO appendVoterDTO = new ChangeVoterDTO(obj);
+                                        yield chatHandleWebSocket
+                                                .changeVoting(appendVoterDTO, chatID, obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(path,sessionId,notify, "Pass | change voter");
+                                                            sendMessageToAllClients(path,sessionId,obj,"change voter");
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | change voter");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TCM09 -> { // lock voting
+                                        MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
+                                        yield chatHandleWebSocket
+                                                .lockVoting(chatID, obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(path,sessionId,notify, "Pass | lock voting");
+                                                            sendMessageToAllClients(path,sessionId,obj,"lock voting");
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | lock voting");
+                                                    return Mono.empty();
+                                                });
                                     }
 
                                     default -> Flux.empty();
