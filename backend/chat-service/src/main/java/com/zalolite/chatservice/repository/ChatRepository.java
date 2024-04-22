@@ -1,5 +1,6 @@
 package com.zalolite.chatservice.repository;
 
+import com.zalolite.chatservice.dto.handleChat.SearchDTO;
 import com.zalolite.chatservice.entity.Chat;
 import com.zalolite.chatservice.entity.ChatActivity;
 import com.zalolite.chatservice.entity.Delivery;
@@ -67,7 +68,15 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
     @Query(value = "{_id:?0}", fields = "{chatActivity: {$slice: -10}}")
     Mono<Chat> getChatTop10(String chatID);
 
-    @Aggregation({"{$match: {_id: ?0}}","{ $project: { _id: 0, chatActivity: 1 } }", "{ $unwind: '$chatActivity' }","{ $replaceRoot: { newRoot: '$chatActivity' } }","{$sort:{timestamp:-1}}","{$skip:?1}","{$limit:?2}", "{$sort:{timestamp:1}}"})
+    @Aggregation({
+            "{$match: {_id: ?0}}",
+            "{ $project: { _id: 0, chatActivity: 1 } }",
+            "{ $unwind: '$chatActivity' }",
+            "{ $replaceRoot: { newRoot: '$chatActivity' } }",
+            "{$sort:{timestamp:-1}}",
+            "{$skip:?1}",
+            "{$limit:?2}",
+            "{$sort:{timestamp:1}}"})
     Flux<ChatActivity> getChatActivityFromNToM(String chatID, int x, int y);
 
     @Query(value = "{'reads.userAvatar': ?0}")
@@ -77,4 +86,28 @@ public interface ChatRepository extends ReactiveMongoRepository<Chat, UUID> {
     @Query(value = "{'deliveries.userAvatar': ?0}")
     @Update(update = "{$set:{'deliveries.$.userAvatar': ?1}}")
     Mono<Long> updateAvatarInDelivery(String oldAvatar, String newAvatar);
+
+    @Aggregation({
+            "{$match: {_id: ?0}}",
+            "{ $unwind: '$chatActivity' }",
+            "{ $replaceRoot: { newRoot: '$chatActivity' } }",
+            "{$match: {'contents.value':{$regex:?1, $options:'i'}}}",
+            "{$sort:{timestamp:-1}}"
+    })
+    Flux<ChatActivity> searchByKeyWord(UUID chatID, String key);
+
+    @Aggregation({
+            "{$match: {_id: ?0}}",
+            "{$unwind: '$chatActivity'}",
+            "{$replaceRoot: {newRoot: '$chatActivity'}}",
+            "{$sort: {timestamp: -1}}",
+            "{$group: {_id: null, chatActivity:{$push: '$$ROOT'}}}",
+            "{$project: {chatActivity:{$map: {input:'$chatActivity', as: 'activity', in:{$mergeObjects: ['$$activity', {index: {$indexOfArray:['$chatActivity.messageID', '$$activity.messageID']}}]}}}}}",
+            "{$unwind: '$chatActivity'}",
+            "{$replaceRoot: {newRoot: '$chatActivity'}}",
+            "{$match:{messageID:'?1'}}",
+            "{$project:{index:1}}"
+    })
+    Flux<SearchDTO> getIndexOfMessageID(UUID chatID, UUID messageID);
+
 }
