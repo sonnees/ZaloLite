@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -14,4 +15,9 @@ import java.util.List;
 public class Choice {
     private String name;
     private List<PersonInfo> voters;
+
+    public Choice(String name) {
+        this.name = name;
+        this.voters = new ArrayList<>();
+    }
 }
