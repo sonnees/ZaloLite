@@ -1,5 +1,6 @@
 package com.zalolite.chatservice.controller;
 
+import com.zalolite.chatservice.dto.handleChat.VotingDTO;
 import com.zalolite.chatservice.entity.Group;
 import com.zalolite.chatservice.repository.GroupRepository;
 import com.zalolite.chatservice.serialization.JsonConverter;
