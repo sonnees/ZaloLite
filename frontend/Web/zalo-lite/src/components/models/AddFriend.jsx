@@ -32,6 +32,7 @@ import AvatarNameItem from "../AvatarNameItem";
 import countries from "../../data/countries";
 import { Axios } from "axios";
 import { v4 as uuidv4 } from "uuid";
+import { useUser } from "../../context/UserContext";
 
 const theme = createTheme({
   palette: {
@@ -342,6 +343,7 @@ export default function AddFriendDialog() {
 
   const [userFound, setUserFound] = useState({});
   const [openDialog, setOpenDialog] = useState("");
+  const {cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
 
   const [selectedCountry, setSelectedCountry] = useState({
     name: "Vietnam",
@@ -416,6 +418,7 @@ export default function AddFriendDialog() {
   };
 
   const handleClose = () => {
+    setCons(JSON.parse(localStorage.getItem("conversations")));
     setUserFound({});
     setPhoneNumber("");
     setOpenDialog("");

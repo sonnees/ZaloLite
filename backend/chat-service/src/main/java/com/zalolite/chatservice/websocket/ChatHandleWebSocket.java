@@ -1,14 +1,13 @@
 package com.zalolite.chatservice.websocket;
 
-import com.zalolite.chatservice.dto.handleChat.MessageAppendDTO;
-import com.zalolite.chatservice.dto.handleChat.MessageDeliveryDTO;
-import com.zalolite.chatservice.dto.handleChat.MessageHiddenDTO;
+import com.zalolite.chatservice.dto.handleChat.*;
 import com.zalolite.chatservice.entity.Chat;
 import com.zalolite.chatservice.entity.ChatActivity;
 import com.zalolite.chatservice.entity.Delivery;
 import com.zalolite.chatservice.repository.ChatRepository;
 import com.zalolite.chatservice.repository.GroupRepository;
 import com.zalolite.chatservice.repository.UserRepository;
+import com.zalolite.chatservice.repository.VotingRepository;
 import com.zalolite.chatservice.serialization.JsonConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -30,13 +30,15 @@ public class ChatHandleWebSocket {
     private UserRepository userRepository;
     private ChatRepository chatRepository;
     private GroupRepository groupRepository;
+    private VotingRepository votingRepository;
     private JsonConverter jsonConverter;
 
     @Autowired
-    public ChatHandleWebSocket(UserRepository userRepository, ChatRepository chatRepository, GroupRepository groupRepository, JsonConverter jsonConverter) {
+    public ChatHandleWebSocket(UserRepository userRepository, ChatRepository chatRepository, GroupRepository groupRepository, VotingRepository votingRepository, JsonConverter jsonConverter) {
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.groupRepository = groupRepository;
+        this.votingRepository = votingRepository;
         this.jsonConverter = jsonConverter;
     }
 
@@ -154,4 +156,37 @@ public class ChatHandleWebSocket {
                 .flatMap(Mono::just);
     }
 
+    public Mono<Void> appendVoter(AppendVoterDTO info, String chatID, MessageAppendDTO obj){
+        log.info("*** enter append voter ***");
+        log.info("* info: {} chatID:{} obj: {} *", info, chatID, obj);
+        return votingRepository.appendVoter(info.getVotingID(), info.getName(), info.getVoter())
+                .flatMap(aLong -> {
+                    if(aLong<=0) return Mono.error(() -> new Throwable("Append voter fail"));
+                    return appendChat(chatID, obj);
+                });
+    }
+
+    public Mono<Void> changeVoting(ChangeVoterDTO info, String chatID, MessageAppendDTO obj){
+        log.info("*** enter change voting ***");
+        log.info("* info: {} chatID:{} obj: {} *", info, chatID, obj);
+        return votingRepository.removeVoter(info.getVotingID(), info.getOldName(), info.getVoter().getUserID())
+                .flatMap(aLong -> {
+                    if(aLong<=0) return Mono.error(() -> new Throwable("Remove voter fail"));
+                    return votingRepository.appendVoter(info.getVotingID(), info.getNewName(), info.getVoter())
+                            .flatMap(aLong1 -> {
+                                if(aLong1<=0) return Mono.error(() -> new Throwable("Append voter fail"));
+                                return appendChat(chatID, obj);
+                            });
+                });
+    }
+
+    public Mono<Void> lockVoting(String chatID, MessageAppendDTO obj){
+        log.info("*** enter lock voting ***");
+        log.info("* chatID:{} obj: {} *", chatID, obj);
+        return votingRepository.lockVoting(UUID.fromString(obj.getContents().get(0).getValue()),true, new Date())
+                .flatMap(aLong -> {
+                    if(aLong<=0) return Mono.error(() -> new Throwable("Lock voting fail"));
+                    return appendChat(chatID, obj);
+                });
+    }
 }

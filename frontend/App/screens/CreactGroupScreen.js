@@ -27,8 +27,7 @@ const CreateGroupScreen = () => {
   let navigation = useNavigation();
   let route = useRoute();
   const isFocused = useIsFocused();
-  const { myUserInfo } = useContext(GlobalContext);
-
+  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext);
   const [selectedIds, setSelectedIds] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState(null);
@@ -119,6 +118,11 @@ const CreateGroupScreen = () => {
       Alert.alert("Lỗi", "Bạn phải nhập tên nhóm để tiếp tục!");
       return;
     }
+
+    if (selectedIds.length < 2) {
+      Alert.alert("Lỗi", "Bạn phải chọn ít nhất hai thành viên để tạo nhóm!");
+      return;
+    }
   
     const ownerId = selectedIds[0];
     const owner = {
@@ -170,8 +174,24 @@ const CreateGroupScreen = () => {
   
       // Lưu thông tin nhóm vào database backend
       await saveGroupToBackend(newGroup);
-  
       console.log("Thông tin newGroup: ", newGroup);
+
+       // Update myUserInfo with the new group
+    const updatedUserInfo = {
+      ...myUserInfo,
+      conversations: [
+        ...myUserInfo.conversations,
+        {
+          chatID: newGroup.id,
+          chatName: newGroup.chatName,
+          chatAvatar: newGroup.avatar,
+          type: "GROUP",
+        },
+      ],
+    };
+
+    // Update GlobalContext
+    setMyUserInfo(updatedUserInfo);
   
       navigation.navigate("OpionNavigator", {
         screen: "ChatGroupScreen",
@@ -203,7 +223,6 @@ const CreateGroupScreen = () => {
   
     newSocket.onerror = (error) => {
       console.error('Error connecting to WebSocket:', error);
-      Alert.alert("Lỗi", "Không thể kết nối đến server");
     };
   
     newSocket.onclose = () => {
@@ -214,8 +233,6 @@ const CreateGroupScreen = () => {
       newSocket.close();
     };
   };
-  
-  
   
   
   

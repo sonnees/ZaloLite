@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { set } from "date-fns";
 import { Link } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 
 // import {uploadFileToS3} from "../utils/savefiletoaws";
 
@@ -503,6 +504,7 @@ const Conversation = () => {
         });
       }
       socket.send(JSON.stringify(message));
+      console.log(message);
       setMessage(""); // Xóa nội dung của input message sau khi gửi
       setSentMessage(message); // Cập nhật state của sentMessage
     } else {

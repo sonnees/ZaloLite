@@ -20,14 +20,14 @@ const MessageDetail = ({
   setSocketFromConservation,
   setMessageDeletedID,
   setMessageRecalledID,
-  idA,
+  idA
 }) => {
   // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const { userID, contents, timestamp, hasEmotion } = message;
   const [socket, setSocket] = useState(socketFromConservation);
-  const { cons, setCons } = useUser();
+  const {cons, setCons } = useUser();
 
   const [isRecalled, setIsRecalled] = useState(false);
   // const location = useLocation();
@@ -223,7 +223,7 @@ const MessageDetail = ({
                 <MenuItem
                   onClick={() => {
                     handleRecall(message.messageID);
-
+                    
                     console.log("messageID thu hồi", message.messageID);
                     setMessageDeletedID(message.messageID);
                   }}

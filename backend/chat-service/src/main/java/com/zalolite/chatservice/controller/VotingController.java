@@ -1,4 +1,4 @@
-cdpackage com.zalolite.chatservice.controller;
+package com.zalolite.chatservice.controller;
 
 import com.zalolite.chatservice.dto.handleChat.VotingDTO;
 import com.zalolite.chatservice.entity.Voting;

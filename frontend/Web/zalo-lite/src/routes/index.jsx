@@ -30,6 +30,7 @@ import ResetPasseordForm from "../pages/Login/ResetPasseordForm";
 // import VideoCall from "../pages/VideoCalll";
 
 
+import ConversationGroup from "../components/ConversationGroup";
 // import RegisterUser from "../pages/Login/RegisterUser";
 
 const Loadable = (Component) => (props) => {
@@ -82,12 +83,17 @@ export default function Router() {
           children: [
             { path: "", element: <Welcome /> },
             { path: "chat", element: <Conversation /> },
+            { path: "chatGroup", element: <ConversationGroup /> },
           ],
         },
         {
           path: "/contact",
           element: <SearchBox />,
-          children: [{ path: "", element: <DetailContact /> }],
+          children: [
+            { path: "listFriend", element: <DetailContact/> },
+            { path: "", element: <DetailContact/> },
+            { path: "listGroup", element: <DetailContact/> },
+          ],
         },
         { path: "todo", element: <Todo /> },
         // { path: "videocall", element: <VideoCall/> },
