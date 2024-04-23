@@ -49,6 +49,7 @@ const MessageDetail = ({
   };
   const handleClose = () => {
     setAnchorEl(null);
+    setIsRecalled(false);
   };
 
   useEffect(() => {
