@@ -668,6 +668,65 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield Mono.empty();
                                     }
 
+                                    case TCM07 -> { // append voter
+                                        MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
+                                        AppendVoterDTO appendVoterDTO = new AppendVoterDTO(obj);
+                                        yield chatHandleWebSocket
+                                                .appendVoter(appendVoterDTO, chatID, obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(path,sessionId,notify, "Pass | append voter");
+                                                            sendMessageToAllClients(path,sessionId,obj,"append voter");
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | append voter");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TCM08 -> { // change voter
+                                        MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
+                                        ChangeVoterDTO appendVoterDTO = new ChangeVoterDTO(obj);
+                                        yield chatHandleWebSocket
+                                                .changeVoting(appendVoterDTO, chatID, obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(path,sessionId,notify, "Pass | change voter");
+                                                            sendMessageToAllClients(path,sessionId,obj,"change voter");
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | change voter");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
+                                    case TCM09 -> { // lock voting
+                                        MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
+                                        yield chatHandleWebSocket
+                                                .lockVoting(chatID, obj)
+                                                .thenMany(Mono.fromRunnable(() -> {
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
+                                                            sendMessageToClient(path,sessionId,notify, "Pass | lock voting");
+                                                            sendMessageToAllClients(path,sessionId,obj,"lock voting");
+                                                        }
+                                                ))
+                                                .thenMany(Flux.just(message))
+                                                .onErrorResume(e -> {
+                                                    log.error("** " + e);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
+                                                    sendMessageToClient(path,sessionId,notify, "Failed | lock voting");
+                                                    return Mono.empty();
+                                                });
+                                    }
+
                                     default -> Flux.empty();
                                 };
                             } catch (JsonProcessingException e) {
