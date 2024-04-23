@@ -89,10 +89,10 @@ export default function Carousel({ slides }) {
 
       <div className="absolute left-0 top-0 flex h-full w-full items-center justify-between px-10 text-3xl text-white ">
         <button onClick={previousSlide}>
-          <img src="/public/arrow-left.svg" alt="" className="w-7" />
+          <img src="/arrow-left.svg" alt="" className="w-7" />
         </button>
         <button onClick={nextSlide}>
-          <img src="/public/arrow-right.svg" alt="" className="w-7" />
+          <img src="/arrow-right.svg" alt="" className="w-7" />
         </button>
       </div>
 

@@ -111,6 +111,7 @@ import TabList from "@mui/lab/TabList";
 import { useLocation } from 'react-router-dom';
 
 import AddFriendDialog from "../../components/models/AddFriend";
+import CreateGroup from "../../components/models/CreateGroup";
 
 const Message = lazy(() => import(".")); // Lazy load Message component
 const OtherMessage = lazy(() => import("./OtherMessage")); // Lazy load OtherMessage component
@@ -137,6 +138,7 @@ function MessageFilterBar() {
   const [item, setItem] = useState("UuTien");
   const [Component, setComponent] = useState(() => Message); // Use uppercase Component
 
+
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -154,6 +156,8 @@ function MessageFilterBar() {
       setComponent(() => OtherMessage);
     }
   };
+
+
 
   return (
     <div className="flex h-screen w-full grid-flow-col ">
@@ -176,16 +180,18 @@ function MessageFilterBar() {
                   className="h-8 w-full rounded-md border bg-[#EAEDF0] p-2 pl-[30px] text-sm focus:outline-none"
                 />
 
-                <AddFriendDialog />
+                <AddFriendDialog/>
 
-                <div className="relative inline-block p-1">
+                <CreateGroup/>
+
+                {/* <div className="relative inline-block p-1">
                   <img
                     src="/src/assets/group-user-plus.png"
                     alt=""
                     className="w-8 cursor-pointer items-center justify-center"
                   />
                   <div className="absolute inset-0 rounded-md bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10"></div>
-                </div>
+                </div> */}
               </div>
               <div className="mt-[-10px] flex flex-row gap-x-2 pb-2">
                 <NavLink

@@ -3,7 +3,7 @@ import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
 export const firebaseConfig = {
-    apiKey: "AIzaSyDoNpR_1s0ey2ON3km_scFTffMEtGOf7YI",
+  apiKey: "AIzaSyDoNpR_1s0ey2ON3km_scFTffMEtGOf7YI",
   authDomain: "bang-2e904.firebaseapp.com",
   projectId: "bang-2e904",
   storageBucket: "bang-2e904.appspot.com",
@@ -13,5 +13,5 @@ export const firebaseConfig = {
 };
 
 if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 }

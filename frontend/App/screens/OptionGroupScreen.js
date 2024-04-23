@@ -1,18 +1,63 @@
-import React, { memo, useState, useRef, useEffect, useContext } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Image, ScrollView,TouchableOpacity  } from 'react-native';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { GlobalContext } from '../context/GlobalContext';
+
 export default function OptionGroupScreen() {
-  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext)
-  let navigation = useNavigation();
+  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext);
+  const navigation = useNavigation();
   const route = useRoute();
   const conversationOpponent = route.params?.conversationOpponent;
+
   const [chatName, setChatName] = useState(conversationOpponent?.name);
   const [chatAvatar, setChatAvatar] = useState(conversationOpponent?.chatAvatar);
-  console.log('conversationOpponent: ', conversationOpponent);
+  const [groupId, setGroupId] = useState(conversationOpponent?.id);
+  const [members, setMembers] = useState(conversationOpponent?.members);
+  console.log("members: ", members);
+
   useEffect(() => {
     navigation.navigate("OptionGroupScreen", { conversationOpponent: conversationOpponent });
   }, [myUserInfo]);
+
+  //Luu thông tin group vào GlobalContext
+  useEffect(() => {
+    setMyUserInfo({
+      ...myUserInfo,
+      chatName: chatName,
+      chatAvatar: chatAvatar,
+      groupId: groupId,
+      members: members,
+    });
+  }, [members,chatName, chatAvatar, groupId]);
+
+  const handleLeaveGroup = async (id, reloadCons, fetchGroup) => {
+    const navigation = useNavigation();  // Using React Navigation hook
+    const { myUserInfo } = useContext(GlobalContext);  // Using useContext to get myUserInfo
+  
+    try {
+      if (!myUserInfo || !myUserInfo.socketGroup || !myUserInfo.user) {
+        console.log("socketGroup or user is null");
+        return;
+      }
+  
+      const outGroup = {
+        id: uuidv4(),
+        tgm: "TGM06",
+        idChat: id,
+        userID: myUserInfo.user.userID,
+        userName: myUserInfo.user.userName,
+        userAvatar: myUserInfo.user.avatar,
+      };
+  
+      myUserInfo.socketGroup.send(JSON.stringify(outGroup));
+      await fetchGroup();
+      await reloadCons();
+      navigation.goBack();
+    } catch (error) {
+      console.log("Error in handleLeaveGroup: ", error);
+    }
+  }
+  
   
 
   return (
@@ -289,7 +334,9 @@ export default function OptionGroupScreen() {
           <Image style={{width: "6%", height: "90%", resizeMode: "contain"}} source={require("../assets/logout_group.png")}></Image>
           <View style={{flex: 0.05}}></View>
           <View style={{justifyContent: "center"}}>
-            <Text style={{fontFamily: "Roboto", fontSize: 15, color: "#FF0000" }}>Rời nhóm</Text>
+            <TouchableOpacity onPress={handleLeaveGroup}>
+              <Text style={{fontFamily: "Roboto", fontSize: 15, color: "#FF0000" }}>Rời nhóm</Text>
+            </TouchableOpacity>
           </View>
           <View style={{flex: 1}}></View>
         </View>
@@ -297,7 +344,6 @@ export default function OptionGroupScreen() {
   
         </View>
         
-
       </ScrollView>
     </SafeAreaView>
   );

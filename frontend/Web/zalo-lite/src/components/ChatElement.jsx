@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
+import Avatar from "@mui/material/Avatar";
 import { useState, useEffect } from "react";
 import {
   differenceInMinutes,
@@ -8,15 +9,13 @@ import {
   differenceInYears,
 } from "date-fns";
 function ChatElement({
+  id,
   chatAvatar,
   chatName,
-  msg,
-  time,
-  unread,
-  userID,
   topChatActivity,
   lastUpdateAt,
 }) {
+  const [socket, setSocket] = useState(null);
   // console.log(">>>>>>>>>>>>>>", topChatActivity);
   // const countTopChatActivity = topChatActivity.length;
   // const a = topChatActivity.length - 1;
@@ -49,17 +48,61 @@ function ChatElement({
   //   }
   // }, [topChatActivity]);
 
-useEffect(() => {
-  // Duyệt ngược qua mảng chatActivity để tìm tin nhắn gần nhất có thuộc tính recall là true
-  for (let i = topChatActivity.length - 1; i >= 0; i--) {
-    if (topChatActivity[i].recall !== true) {
-      setMessageContent(topChatActivity[i].contents[0].value);
-      return; // Kết thúc vòng lặp ngay khi tìm thấy tin nhắn thỏa mãn
+  useEffect(() => {
+    // Duyệt ngược qua mảng chatActivity để tìm tin nhắn gần nhất có thuộc tính recall là true
+    for (let i = topChatActivity.length - 1; i >= 0; i--) {
+      if (topChatActivity[i].recall !== true) {
+        setMessageContent(topChatActivity[i].contents[0].value);
+        return; // Kết thúc vòng lặp ngay khi tìm thấy tin nhắn thỏa mãn
+      }
     }
-  }
-}, [topChatActivity]);
+  }, [topChatActivity]);
 
+  useEffect(() => {
+    if (id) {
+      const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+      newSocket.onopen = () => {
+        console.warn(
+          "WebSocket in CHAT ELEMENT: 'ws://localhost:8082/ws/chat/' for chatID: ",
+          id,
+          " OPENED",
+        );
+      };
+      newSocket.onmessage = (event) => {
+        const data = event.data;
+        function isJSON(data) {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }
+        if (isJSON(data)) {
+          const jsonData = JSON.parse(data);
+          console.log("Message received in CHAT ELEMENT:", jsonData);
+          // Xử lý dữ liệu được gửi đến ở đây
+          // if (jsonData.tcm === "TCM04") {
+          //   const messageIDToDelete = jsonData.messageID;
+          //   // Lọc ra các tin nhắn mà không có messageIDToDelete
+          //   const updatedMessages = conversationsIndex.filter(
+          //     (msg) => msg.messageID !== messageIDToDelete,
+          //   );
+          //   setConversationsIndex(updatedMessages);
+          //   console.log("Updated messages after deleting:", updatedMessages);
+          // } 
+        } else {
+          // console.error("Received data is not valid JSON:", data);
+          // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
+        }
+      };
+      setSocket(newSocket);
 
+      return () => {
+        newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+      };
+    }
+  }, [id]);
 
   //Tính số lượng tin nhắn chưa đọc
   // function countUnreadMessages(data) {
@@ -133,10 +176,15 @@ useEffect(() => {
             "pr-1"
           }`}
         >
-          <img
+          {/* <img
             src={chatAvatar}
             alt="avatar"
             className="aspect-w-1 aspect-h-1 h-12 w-12 rounded-full object-cover"
+          /> */}
+          <Avatar
+            // alt="avatar"
+            src={chatAvatar}
+            sx={{ width: 48, height: 48 }}
           />
           <div
             className="flex grow justify-between pl-3 md:w-[342px]"
