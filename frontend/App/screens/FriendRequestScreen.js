@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import { getTimeDifference } from '../utils/CalTime';
 import { findChatIDByUserID } from '../utils/DisplayLastChat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_PROFILE_BY_USERID } from '../api/Api';
+import { API_PROFILE_BY_USERID } from '../api/API';
 import axios from 'axios';
 import { GlobalContext } from '../context/GlobalContext';
 

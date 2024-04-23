@@ -8,4 +8,7 @@ public enum TypeChatMessage {
     TCM04, // message hidden
     TCM05, // message recall
     TCM06, // user typing a text message
+    TCM07, // append voter
+    TCM08, // change voter
+    TCM09, // lock voting
 }

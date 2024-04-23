@@ -12,7 +12,7 @@ import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/';
+import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/API';
 import uuid from 'react-native-uuid'
 import BackgroundInChat from '../component/BackgroundInChat';
 // import DocumentPicker from 'react-native-document-picker';

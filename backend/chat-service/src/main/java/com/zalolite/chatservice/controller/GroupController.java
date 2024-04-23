@@ -1,5 +1,6 @@
 package com.zalolite.chatservice.controller;
 
+import com.zalolite.chatservice.dto.handleChat.VotingDTO;
 import com.zalolite.chatservice.entity.Group;
 import com.zalolite.chatservice.repository.GroupRepository;
 import com.zalolite.chatservice.serialization.JsonConverter;
@@ -34,7 +35,7 @@ public class GroupController {
         log.info("# {} #", idGroup);
         return groupRepository.findById(idGroup)
                 .switchIfEmpty(Mono.defer(() -> Mono.just(ResponseEntity.status(500).body("Create group fail"))).then(Mono.empty()))
-                .flatMap(g -> Mono.just(ResponseEntity.status(200).body("Create group success")));
+                .flatMap(g -> Mono.just(ResponseEntity.status(200).body(jsonConverter.objToString(g))));
     }
 
 }
