@@ -73,7 +73,7 @@ public class ChatController {
                 .flatMap(list -> {
                     int index = list.get(0).getIndex();
                     log.info("# index: {}  #",index);
-                    return getChatActivityFromNToM(chatID.toString(), 0, index+1);
+                    return getChatActivityFromNToM(chatID.toString(), 0, index+11);
                 });
     }
 
