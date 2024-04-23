@@ -8,6 +8,7 @@ import {
   differenceInMonths,
   differenceInYears,
 } from "date-fns";
+import notificationSound from "../assets/sounds/message-notification.mp3";
 function ChatElement({
   id,
   chatAvatar,
@@ -15,6 +16,10 @@ function ChatElement({
   topChatActivity,
   lastUpdateAt,
 }) {
+  const playNotificationSound = () => {
+    const audio = new Audio(notificationSound);
+    audio.play();
+  };
   const [socket, setSocket] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   // console.log(">>>>>>>>>>>>>>", topChatActivity);
@@ -84,6 +89,9 @@ function ChatElement({
           console.log("Message received in CHAT ELEMENT:", jsonData);
           console.log("Message received in CHAT ELEMENT:", jsonData.contents[0].value);
           setNewMessage(jsonData.contents[0].value);
+          if (jsonData.tcm === "TCM01" && jsonData.userID !== localStorage.getItem("userID")){
+            playNotificationSound();
+          }
           // Xử lý dữ liệu được gửi đến ở đây
           // if (jsonData.tcm === "TCM04") {
           //   const messageIDToDelete = jsonData.messageID;
