@@ -27,7 +27,7 @@ import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import ForgotPasswordForm from "../pages/Login/ForgotPasswordForm";
 import ResetPasseordForm from "../pages/Login/ResetPasseordForm";
-import VideoCall from "../pages/VideoCalll";
+// import VideoCall from "../pages/VideoCalll";
 
 
 // import RegisterUser from "../pages/Login/RegisterUser";

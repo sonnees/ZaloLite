@@ -13,21 +13,21 @@ import { useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { useUser } from "../context/UserContext";
 
-const MessageDetail = ({
+const MessageDetailGroup = ({
   message,
   chatAvatar,
   socketFromConservation,
   setSocketFromConservation,
   setMessageDeletedID,
   setMessageRecalledID,
-  idA,
+  idA
 }) => {
   // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const { userID, contents, timestamp, hasEmotion } = message;
   const [socket, setSocket] = useState(socketFromConservation);
-  const { cons, setCons } = useUser();
+  const {cons, setCons } = useUser();
 
   const [isRecalled, setIsRecalled] = useState(false);
   // const location = useLocation();
@@ -49,7 +49,6 @@ const MessageDetail = ({
   };
   const handleClose = () => {
     setAnchorEl(null);
-    setIsRecalled(false);
   };
 
   useEffect(() => {
@@ -153,6 +152,8 @@ const MessageDetail = ({
           );
         } else if (content.key === "emoji") {
           return <p key={index}>{content.value}</p>;
+        } else if (content.key === "notify") {
+          return <p className="h-auto text-blue-400" key={index}>{content.value}</p>;
         }
         // return null;
       });
@@ -223,7 +224,7 @@ const MessageDetail = ({
                 <MenuItem
                   onClick={() => {
                     handleRecall(message.messageID);
-
+                    
                     console.log("messageID thu hồi", message.messageID);
                     setMessageDeletedID(message.messageID);
                   }}
@@ -333,7 +334,7 @@ const MessageDetail = ({
   );
 };
 
-export default MessageDetail;
+export default MessageDetailGroup;
 
 // // MessageDetail.js
 // import React, { useRef, useState } from "react";
