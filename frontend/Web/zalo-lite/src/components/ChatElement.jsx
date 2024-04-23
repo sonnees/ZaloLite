@@ -16,6 +16,7 @@ function ChatElement({
   lastUpdateAt,
 }) {
   const [socket, setSocket] = useState(null);
+  const [newMessage, setNewMessage] = useState("");
   // console.log(">>>>>>>>>>>>>>", topChatActivity);
   // const countTopChatActivity = topChatActivity.length;
   // const a = topChatActivity.length - 1;
@@ -81,6 +82,8 @@ function ChatElement({
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received in CHAT ELEMENT:", jsonData);
+          console.log("Message received in CHAT ELEMENT:", jsonData.contents[0].value);
+          setNewMessage(jsonData.contents[0].value);
           // Xử lý dữ liệu được gửi đến ở đây
           // if (jsonData.tcm === "TCM04") {
           //   const messageIDToDelete = jsonData.messageID;
@@ -201,7 +204,8 @@ function ChatElement({
                     </div>
                     <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200  md:min-w-full">
                       <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-                        {messageContent}
+                        {/* {messageContent} */}
+                        {newMessage}
                       </span>
                     </div>
                   </div>

@@ -28,6 +28,7 @@ import { Link } from "react-router-dom";
 import ForgotPasswordForm from "../pages/Login/ForgotPasswordForm";
 import ResetPasseordForm from "../pages/Login/ResetPasseordForm";
 // import VideoCall from "../pages/VideoCalll";
+import TagFriendRequest from "../pages/Contact/TagFriendRequest";
 
 
 import ConversationGroup from "../components/ConversationGroup";
@@ -90,9 +91,10 @@ export default function Router() {
           path: "/contact",
           element: <SearchBox />,
           children: [
-            { path: "listFriend", element: <DetailContact/> },
-            { path: "", element: <DetailContact/> },
-            { path: "listGroup", element: <DetailContact/> },
+            { path: "listFriend", element: <DetailContact /> },
+            { path: "", element: <DetailContact /> },
+            { path: "listGroup", element: <DetailContact /> },
+            { path: "listfriendrequest", element: <TagFriendRequest />},
           ],
         },
         { path: "todo", element: <Todo /> },
