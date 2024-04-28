@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
@@ -33,5 +34,7 @@ public class SecurityConfig {
     public WebClient.Builder loadBalancedWebClientBuilder(HttpClient httpClient) {
         return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
     }
+
+
 
 }
