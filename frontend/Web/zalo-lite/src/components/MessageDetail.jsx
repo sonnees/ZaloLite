@@ -7,6 +7,7 @@ import LinkPreview from "./LinkPreview";
 import FileLink from "./FileLink";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+
 import Fade from "@mui/material/Fade";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
@@ -20,14 +21,16 @@ const MessageDetail = ({
   setSocketFromConservation,
   setMessageDeletedID,
   setMessageRecalledID,
-  idA
+  idA,
+  setOpenDialog,
+  setShareContent,
 }) => {
   // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const { userID, contents, timestamp, hasEmotion } = message;
   const [socket, setSocket] = useState(socketFromConservation);
-  const {cons, setCons } = useUser();
+  const { cons, setCons } = useUser();
 
   const [isRecalled, setIsRecalled] = useState(false);
   // const location = useLocation();
@@ -199,9 +202,16 @@ const MessageDetail = ({
                   className="h-4 w-4"
                 />
               </a>
-              <a href="#">
+
+              <div
+                onClick={() => {
+                  setOpenDialog(true);
+                  setShareContent(message);
+                }}
+                className="cursor-pointer px-[2px]"
+              >
                 <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
-              </a>
+              </div>
               <a href="#">
                 <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
               </a>
@@ -223,7 +233,7 @@ const MessageDetail = ({
                 <MenuItem
                   onClick={() => {
                     handleRecall(message.messageID);
-                    
+
                     console.log("messageID thu hồi", message.messageID);
                     setMessageDeletedID(message.messageID);
                   }}
@@ -335,7 +345,6 @@ const MessageDetail = ({
 
 export default MessageDetail;
 
-// // MessageDetail.js
 // import React, { useRef, useState } from "react";
 // import Avatar from "@mui/material/Avatar";
 // import Cookies from "universal-cookie";

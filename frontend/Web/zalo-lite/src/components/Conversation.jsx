@@ -1,7 +1,10 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronLeft,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import data from "@emoji-mart/data";
@@ -16,14 +19,32 @@ import socketIOClient from "socket.io-client";
 import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import CloseIcon from "@mui/icons-material/Close";
+import Collapse from "@mui/material/Collapse";
 import MessageDetail from "./MessageDetail";
 import MessageInput from "./MessageInput";
 import TextField from "@mui/material/TextField";
+import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
 import { v4 as uuidv4 } from "uuid";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { set } from "date-fns";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
+import CheckboxCss from "../assets/styles/checkbox.module.css";
+import { check } from "prettier";
+import {
+  createTheme,
+  ThemeProvider,
+  alpha,
+  getContrastRatio,
+} from "@mui/material/styles";
 
 // import {uploadFileToS3} from "../utils/savefiletoaws";
 
@@ -56,6 +77,17 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
+const theme = createTheme({
+  palette: {
+    silver: {
+      main: "#eaedf0",
+      light: "#F5EBFF",
+      dark: "#eaedf0",
+      contrastText: "#081c36",
+    },
+  },
+});
+
 const Message = ({ sender, content, timestamp }) => (
   <div
     className={`flex ${sender === "me" ? "justify-end" : "justify-start"} mb-2`}
@@ -70,55 +102,12 @@ const Message = ({ sender, content, timestamp }) => (
 );
 
 const Conversation = () => {
+  const [reloadCounter, setReloadCounter] = useState(0);
   const messagesEndRef = useRef(null);
   const cookies = new Cookies();
 
   const cld = new Cloudinary({ cloud: { cloudName: "djs0jhrpz" } });
   const [imageUrl, setImageUrl] = useState("");
-
-  // const handleFileUpload = async (file) => {
-  //   try {
-  //     // URL của Cloudinary để tải lên file
-  //     const cloudinaryUrl = `https://api.cloudinary.com/v1_1/djs0jhrpz/upload`;
-
-  //     // Tạo formData để chứa file
-  //     const formData = new FormData();
-  //     formData.append("file", file);
-  //     formData.append("upload_preset", "huydev"); // Thay YOUR_UPLOAD_PRESET bằng upload preset của bạn
-
-  //     // Gửi request lên Cloudinary để tải lên file
-  //     const response = await axios.post(cloudinaryUrl, formData);
-
-  //     // Lấy đường link của file từ Cloudinary và sử dụng nó cho mục đích gửi đi hoặc lưu trữ
-  //     const imageUrl = response.data.secure_url;
-  //     setImageUrl(imageUrl);
-  //     console.log("Uploaded image URL:", imageUrl);
-  //   } catch (error) {
-  //     console.error("Error uploading file to Cloudinary:", error);
-  //   }
-  // };
-
-  // function handleFileUpload(file) {
-  //   const preset_key = "huydev09";
-  //   const cloud_name = "djs0jhrpz";
-  //   const file2 = file;
-  //   const formData = new FormData();
-  //   formData.append("file", file2);
-  //   formData.append("upload_preset", preset_key);
-  //   console.log("Uploading file to Cloudinary...")
-  //   axios
-  //     .post(
-  //       `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-  //       formData,
-  //     )
-  //     .then((response) => {
-  //       console.log("Upload Complete! | Uploaded image URL:", response.data.secure_url);
-  //       setImageUrl(response.data.secure_url);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error uploading file to Cloudinary:", error);
-  //     });
-  // }
 
   // Hàm xử lý khi chọn emoji từ picker
   const handleEmojiSelect = (emoji) => {
@@ -171,48 +160,6 @@ const Conversation = () => {
     }
   };
 
-  // const handleFileUpload = (file) => {
-  //   const preset_key = "huydev09";
-  //   const cloud_name = "djs0jhrpz";
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-  //   formData.append("upload_preset", preset_key);
-  //   console.log("Uploading file to Cloudinary...");
-
-  //   axios
-  //     .post(
-  //       `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-  //       formData,
-  //     )
-  //     .then((response) => {
-  //       console.log(
-  //         "Upload Complete! | Uploaded image URL:",
-  //         response.data.secure_url,
-  //       );
-  //       setImageUrl(response.data.secure_url);
-
-  //       // Tạo key cho file upload
-  //       const fileExtension = file.name.split(".").pop(); // Lấy phần đuôi của file
-  //       const fileSizeKB = Math.round(file.size / 1024); // Kích thước file tính bằng KB
-  //       const key = `${fileExtension}|${file.name}|${fileSizeKB}KB`;
-
-  //       // Gửi tin nhắn chứa link ảnh và key cho người nhận
-  //       const imageMessage = {
-  //         contents: [
-  //           {
-  //             key: key,
-  //             value: response.data.secure_url,
-  //           },
-  //         ],
-  //       };
-  //       console.log("Image message:", imageMessage);
-  //       sendMessageWithTextViaSocket(imageMessage, "file");
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error uploading file to Cloudinary:", error);
-  //     });
-  // };
-
   const handleFileUpload = (file) => {
     const preset_key = "huydev09";
     const cloud_name = "djs0jhrpz";
@@ -250,39 +197,6 @@ const Conversation = () => {
       });
   };
 
-  // const handleFileUpload = (file) => {
-  //   const preset_key = "huydev09";
-  //   const cloud_name = "djs0jhrpz";
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-  //   formData.append("upload_preset", preset_key);
-
-  //   axios
-  //     .post(
-  //       `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
-  //       formData,
-  //     )
-  //     .then((response) => {
-  //       console.log(
-  //         "Upload Complete! | Uploaded image URL:",
-  //         response.data.secure_url,
-  //       );
-
-  //       // Tạo tin nhắn chứa link ảnh theo định dạng mong muốn
-  //       const imageMessage = {
-  //         key: "image",
-  //         value: response.data.secure_url,
-  //       };
-
-  //       console.log("Image message:", imageMessage);
-  //       // Gửi tin nhắn qua WebSocket
-  //       sendMessageWithTextViaSocket(imageMessage, "image");
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error uploading file to Cloudinary:", error);
-  //     });
-  // };
-
   // Hàm xử lý khi người dùng chọn ảnh
   const handleImageSelection = (e) => {
     const file = e.target.files[0];
@@ -319,11 +233,8 @@ const Conversation = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const { id } = queryString.parse(location.search);
-  // console.log("Chat ID:", id);
   const chatName = searchParams.get("chatName");
   const chatAvatar = searchParams.get("chatAvatar");
-  // console.log("Chat Name:", chatName);
-  // console.log("Chat Avatar:", chatAvatar);
 
   const [messages, setMessages] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
@@ -360,17 +271,11 @@ const Conversation = () => {
     }
   };
 
-  // const handleSendMessage = (newMessage) => {
-  //   // Xử lý logic gửi tin nhắn, có thể thêm tin nhắn mới vào danh sách messages
-  //   // hoặc sử dụng một hàm callback để truyền tin nhắn lên component cha.
-  //   console.log("Gửi tin nhắn:", newMessage);
-  // };
-
-  const fetchMessages = async (id, x, y, token) => {
+  const fetchMessages = async (id, x, y, token, timestamp) => {
     // console.table({ id, x, y, token });
     try {
       const response = await axios.get(
-        `http://localhost:8082/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
+        `http://localhost:8082/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}&timestamp=${timestamp}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -412,26 +317,58 @@ const Conversation = () => {
     }
   }, []);
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const fetchedMessages = await fetchMessages(
+  //       id,
+  //       startIndex,
+  //       endIndex,
+  //       tokenFromCookies,
+  //     );
+  //     setMessages(fetchedMessages);
+  //   };
+  //   const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+  //   newSocket.onopen = () => {
+  //     // console.log("WebSocket connected >>>>>>>>HUy");
+  //   };
+  //   setSocket(newSocket);
+  //   // return () => {
+  //   //   newSocket.close();
+  //   // };
+  //   if (id && tokenFromCookies) fetchData();
+  // }, [id, tokenFromCookies, message, startIndex, endIndex]);
   useEffect(() => {
     const fetchData = async () => {
+      const timestamp = Date.now();
       const fetchedMessages = await fetchMessages(
         id,
         startIndex,
         endIndex,
         tokenFromCookies,
+        timestamp,
       );
       setMessages(fetchedMessages);
     };
+
     const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
     newSocket.onopen = () => {
       // console.log("WebSocket connected >>>>>>>>HUy");
     };
     setSocket(newSocket);
-    // return () => {
-    //   newSocket.close();
-    // };
+
     if (id && tokenFromCookies) fetchData();
-  }, [id, tokenFromCookies, message, startIndex, endIndex]);
+
+    return () => {
+      newSocket.close();
+    };
+  }, [reloadCounter, id, tokenFromCookies, message, startIndex, endIndex]);
+
+  // useEffect để chạy lại fetchData khi id hoặc tokenFromCookies thay đổi
+  useEffect(() => {
+    if (id && tokenFromCookies) {
+      setReloadCounter((prevCounter) => prevCounter + 1);
+    }
+  }, []);
 
   //==============Đang chạy ổn
   // const sendMessageWithTextViaSocket = (textMessage) => {
@@ -656,7 +593,6 @@ const Conversation = () => {
               }
             }
             if (jsonData.tcm === "TCM05") {
-              console.log("Runnnnnn");
               const messageIDToRecall = jsonData.messageID;
               const updatedMessages = messages.map((msg) => {
                 if (
@@ -727,253 +663,600 @@ const Conversation = () => {
     }
   }, [sentMessage]);
 
-  console.log(messages);
+  // console.log(messages);
 
-  return (
-    <div className="h-screen w-full">
-      <div className="h-[68px] w-full px-4">
-        <div className="flex h-full w-full flex-row items-center justify-between">
-          <div className="flex flex-row items-center gap-x-2">
-            <Link to="/app">
-              <FontAwesomeIcon icon={faChevronLeft} className="pl-1 pr-3" />
-            </Link>
+  const [openDialog, setOpenDialog] = useState(false);
 
-            <div className="hidden lg:block">
-              <StyledBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                variant="dot"
-              >
-                <Avatar
-                  sx={{ width: 48, height: 48 }}
-                  alt="Name"
-                  src={chatAvatar}
-                />
-              </StyledBadge>
-            </div>
-            <div className="flex flex-col">
-              <div className="text-lg font-medium text-[#081c36]">
-                <span>{chatName}</span>
-              </div>
-              <div className="flex items-center text-sm text-[#7589a3]">
-                <span>Vừa truy cập</span>
-                <span className="text-[#D7DBE0]"> &nbsp;|&nbsp;</span>
-                <span className="flex items-center justify-center">
-                  <img
-                    className="mt-[1px] h-[10px]"
-                    src="/src/assets/tag.png"
-                    alt=""
-                  />
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-row items-center">
-            <a href="" className="p-1">
-              <img
-                src="/src/assets/group-user-plus.png"
-                alt=""
-                className="w-[22px] "
-              />
-            </a>
-            <a href="" className="p-2">
-              <img
-                src="/src/assets/mini-search.png"
-                alt=""
-                className="m-1 h-4 w-4"
-              />
-            </a>
-            <Link to="/videocall" className="p-2">
-              <img src="/src/assets/video.png" alt="" className="m-1 h-5 w-5" />
-            </Link>
-            <a href="" className="p-2">
-              <img
-                src="/src/assets/right-bar.png"
-                alt=""
-                className="m-1 h-4 w-4"
-              />
-            </a>
-          </div>
-        </div>
-      </div>
-      {/* -68 */}
-      <div
-        className="h-[calc(100vh-174px)] w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3"
-        // onScroll={handleScroll}
-      >
-        {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
-        <Message sender="me" content="Chào bạn!" timestamp="15:32" />
-        Thêm tin nhắn khác ở đây */}
-        {/* {messages.map((message, index) => ( */}
-        {messages
-          .filter(
-            (message) =>
-              !message.hidden || !message.hidden.includes(userIDFromCookies),
-          )
-          .map((message, index) => (
-            <MessageDetail
+  const handleClickOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const [contact, setContact] = useState([]);
+
+  useEffect(() => {
+    const fetchContact = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8082/api/v1/user/info/${userIDFromCookies}`,
+          {
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + tokenFromCookies,
+            },
+            method: "GET",
+          },
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch conversations");
+        }
+        const data = await response.json();
+        setContact(data.conversations); // Cập nhật state với dữ liệu từ API
+      } catch (error) {
+        console.error("Error fetching conversations:", error);
+      }
+    };
+
+    // Chỉ fetch nếu userID và token đã được thiết lập
+    if (userIDFromCookies && tokenFromCookies) {
+      fetchContact();
+    }
+  }, [userIDFromCookies, tokenFromCookies]);
+  // console.log("Contact:", contact);
+
+  const [selectedContacts, setSelectedContacts] = useState([]);
+  const [selectedContactObjs, setSelectedContactObjs] = useState([]);
+  const [shareContent, setShareContent] = useState("");
+  const [typeShareContent, setTypeShareContent] = useState("text");
+  const [inputValueShare, setInputValueShare] = useState("");
+  const handleInputShareChange = (event) => {
+    setInputValueShare(event.target.value);
+  };
+
+  const handleCheckboxChange = (event, id, name, obj) => {
+    const isChecked = event.target.checked;
+    if (isChecked) {
+      setSelectedContacts((prevSelected) => [...prevSelected, id]);
+      setSelectedContactObjs((prevNames) => [...prevNames, obj]);
+    } else {
+      setSelectedContacts((prevSelected) =>
+        prevSelected.filter((contactId) => contactId !== id),
+      );
+      setSelectedContactObjs((prevNames) =>
+        prevNames.filter((item) => item.chatID !== obj.chatID),
+      );
+    }
+  };
+
+  const renderContent = (contents) => {
+    if (contents && contents.length > 0) {
+      return contents.map((content, index) => {
+        console.log("Content:", content);
+        if (content.key === "image") {
+          return (
+            <img
               key={index}
-              message={message}
-              chatAvatar={chatAvatar}
-              socketFromConservation={socket}
-              setSocketFromConservation={setSocket}
-              messagesF={messages}
-              setMessageDeletedID={setMessageDeletedID}
-              setMessageRecalledID={setMessageRecalledID}
-              idA={idA}
+              src={content.value}
+              alt="Image"
+              className="mb-2 mr-2 h-auto max-w-[200px]"
             />
-          ))}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className="border-t">
-        <div className="flex h-[47px] flex-row justify-items-start bg-white">
-          <div className="flex flex-row justify-items-start pl-2">
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <a
-                href="#"
-                onClick={() => {
-                  setOpenPicker(!openPicker);
-                  setContentType("emoji");
+          );
+        } else if (content.key === "text") {
+          return content.value;
+        } else if (content.key === "link") {
+          return <span key={index}>{content.value}</span>;
+        } else if (
+          content.key.startsWith("zip") ||
+          content.key.startsWith("pdf") ||
+          content.key.startsWith("xlsx")
+        ) {
+          const [fileLabel, fileName, fileSize] = content.key.split("|");
+          return <></>;
+        } else if (content.key === "mp4") {
+          return (
+            <video key={index} controls className="h-auto max-w-[200px]">
+              <source src={content.value} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          );
+        } else if (content.key === "emoji") {
+          return <p key={index}>{content.value}</p>;
+        }
+        // return null;
+      });
+    }
+  };
+  console.log("shareContent>>>>>>>>>>>>>>>", shareContent.contents);
+  return (
+    <ThemeProvider theme={theme}>
+      <>
+        <Dialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <div className="flex w-[580px] items-center justify-between border-[2px] p-2">
+            <span className="pl-2 text-base font-medium text-tblack">
+              Chia sẻ
+            </span>
+            <Button onClick={handleCloseDialog} style={{ color: "#000000" }}>
+              <CloseIcon />
+            </Button>
+          </div>
+          <div className="w-full px-4 pt-2">
+            <div className="flex-col items-center border-b-[2px] pb-3">
+              <div
+                className={`flex items-center ${
+                  true ? "border border-[#EBEDF0]" : "border"
+                } m-2 rounded-full p-2`}
+              >
+                <FontAwesomeIcon
+                  className="w-3 px-2 "
+                  icon={faMagnifyingGlass}
+                />
+                {/* <img src="../assets/icons/search-dialog.png" alt="" className="border-2"  /> */}
+                <input
+                  // onFocus={handleFocusPhoneClick}
+                  // onBlur={handleBlurPhoneClick}
+                  onChange={(event) => {
+                    // setTFPhoneNumber(event.target.value);
+                  }}
+                  className="w-full text-sm font-normal focus:outline-none"
+                  type="text"
+                  placeholder="Nhập tên, số điện thoại, hoặc danh sách số điện thoại"
+                />
+              </div>
+              <Stack direction="row" spacing={1} className="m-2 mt-3">
+                <Chip
+                  label="Tất cả"
+                  color="primary"
+                  component="a"
+                  href="#basic-chip"
+                  clickable
+                  sx={{ fontSize: "13px", height: "24px" }}
+                />
+                <Chip
+                  label="Khách hàng"
+                  component="a"
+                  href="#basic-chip"
+                  clickable
+                  sx={{ fontSize: "13px", height: "24px" }}
+                />
+                <Chip
+                  label="Gia đình"
+                  component="a"
+                  href="#basic-chip"
+                  clickable
+                  sx={{ fontSize: "13px", height: "24px" }}
+                />
+                <Chip
+                  label="Công việc"
+                  component="a"
+                  href="#basic-chip"
+                  clickable
+                  sx={{ fontSize: "13px", height: "24px" }}
+                />
+                <Chip
+                  label="Bạn bè"
+                  component="a"
+                  href="#basic-chip"
+                  clickable
+                  sx={{ fontSize: "13px", height: "24px" }}
+                />
+                <Chip
+                  label="Trả lời sau"
+                  component="a"
+                  href="#basic-chip"
+                  clickable
+                  sx={{ fontSize: "13px", height: "24px" }}
+                />
+              </Stack>
+            </div>
+            <div className={`flex overflow-hidden`}>
+              <DialogContentText
+                id="alert-dialog-description"
+                className={`max-h-[490px] w-full overflow-y-auto ${
+                  selectedContactObjs.length > 0 ? " w-7/12 " : ""
+                }`}
+              >
+                <div className={`w-full `}>
+                  {contact.map((item, index) => (
+                    <div key={index} className="flex items-center p-2">
+                      {/* Checkbox */}
+                      {/* <input
+                      type="checkbox"
+                      value={item.chatID}
+                      checked={selectedContacts.includes(item.chatID)}
+                      onChange={(event) =>
+                        handleCheckboxChange(event, item.chatID, item.chatName)
+                      }
+                      className="mr-2"
+                    /> */}
+                      <div className="mr-2">
+                        <label className={CheckboxCss.checkboxcontainer}>
+                          <input
+                            type="checkbox"
+                            value={item.chatID}
+                            checked={selectedContacts.includes(item.chatID)}
+                            onChange={(event) =>
+                              handleCheckboxChange(
+                                event,
+                                item.chatID,
+                                item.chatName,
+                                item,
+                              )
+                            }
+                            className={CheckboxCss.input}
+                          />
+                          <span className={CheckboxCss.checkmark}></span>
+                        </label>
+                      </div>
+                      {/* Avatar */}
+                      <Avatar
+                        sx={{ width: 40, height: 40 }}
+                        alt="Name"
+                        src={item.chatAvatar}
+                      />
+                      {/* Tên */}
+                      <div className="ml-2 flex flex-col">
+                        <div className="text-lg font-medium text-[#081c36]">
+                          <span className="text-sm">{item.chatName}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </DialogContentText>
+              {/* Danh sách những mục đã được chọn */}
+              {selectedContactObjs.length > 0 && (
+                <div className="my-3 ml-3 mt-4 w-5/12 rounded-md border-2 pl-3 pt-3 transition-transform duration-300 ease-in-out">
+                  <h2 className="text-sm font-semibold ">
+                    Đã chọn:&nbsp;
+                    <span className="rounded-md bg-[#E7EFFD] px-2 py-1 text-xs font-semibold text-[#406CD6]">
+                      {selectedContactObjs.length}/100
+                    </span>
+                  </h2>
+                  <div className="mt-2">
+                    {selectedContactObjs.map((item, index) => (
+                      <div
+                        key={index}
+                        className="mb-[6px] mr-3 flex h-[32px] items-center rounded-[30px] border bg-[#E7EFFD] p-1"
+                      >
+                        <Avatar
+                          sx={{ width: 24, height: 24 }}
+                          alt="Name"
+                          src={item.chatAvatar}
+                        />
+                        <div className="ml-2 flex w-[115px] flex-col">
+                          <div className="text-sm text-[#406CD6]">
+                            <span className="block w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-sm">
+                              {item.chatName}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="w-full border-t-[2px] px-4">
+            <div className="flex-col items-center  py-3">
+              <div>
+                <span className="text-sm text-tblack">Nội dung chia sẻ</span>
+              </div>
+              <div
+                className={`mt-3 flex
+                items-center border border-[#EBEDF0] bg-[#F9FAFB] p-2`}
+              >
+                {typeShareContent === "text" && (
+                  <input
+                    // value={inputValueShare}
+                    // onChange={handleInputShareChange}
+                    value={renderContent(shareContent.contents)}
+                    className="w-full bg-[#F9FAFB] text-sm font-normal focus:outline-none"
+                    type="text"
+                    placeholder=""
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+          <DialogActions className="border p-4">
+            <div className="py-1">
+              <Button
+                onClick={handleCloseDialog}
+                variant="contained"
+                color="silver"
+                style={{
+                  textTransform: "none",
+                  color: "#081c36",
+                  fontSize: 16,
+                  fontWeight: 500,
+                  marginRight: 10,
                 }}
               >
-                <img
-                  src="/chatbar-sticker.png"
-                  alt=""
-                  className="h-[24px] w-[24px] opacity-65"
-                />
-              </a>
-            </div>
-            <Box
-              style={{
-                zIndex: 10,
-                position: "fixed",
-                display: openPicker ? "inline" : "none",
-                bottom: 110,
-                // right: isMobile ? 20 : sideBar.open ? 420 : 100,
-              }}
-            >
-              <Picker
-                data={data}
-                onEmojiSelect={(emoji) => {
-                  console.log(emoji.native);
-                  handleEmojiSelect(emoji.native);
+                Huỷ
+              </Button>
+              <Button
+                onClick={() => {
+                  // handleAddFriend();
+                  // handleFindUserByPhoneNumber();
                 }}
-              />
-            </Box>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              {/* Input file ẩn để chọn ảnh */}
-              <input
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handleImageSelection}
-                id="fileInput2"
-              />
-              {/* Hình ảnh để mở cửa sổ chọn tệp ảnh */}
-              <label htmlFor="fileInput2">
-                <img
-                  src="/chatbar-photo.png"
-                  alt=""
-                  className="h-[24px] w-[24px] cursor-pointer opacity-65"
-                />
-              </label>
+                variant="contained"
+                color="primary"
+                style={{
+                  textTransform: "none",
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: 500,
+                  marginRight: 10,
+                }}
+              >
+                Chia sẻ
+              </Button>
             </div>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <label htmlFor="fileInput">
-                <img
-                  src="/chatbar-attach.png"
-                  alt=""
-                  className="h-[24px] w-[24px] cursor-pointer opacity-65 hover:opacity-100"
-                />
-              </label>
-              <input
-                id="fileInput"
-                type="file"
-                onChange={handleFileChange}
-                className="hidden"
-                accept=".txt, .pdf, .doc, .csv, .zip, .rar, .xlsx, .xls, .ppt, .pptx, .docx, .json"
-              />
-            </div>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <a href="#">
-                {/* prettier-ignore */}
-                <img src="/chatbar-screenshotz.png"
-                  alt=""
-                  className="h-[24px] w-[24px] opacity-65"
-                />
-              </a>
-            </div>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <a href="#">
-                <img
-                  src="/chatbar-reminder.png"
-                  alt=""
-                  className="h-[24px] w-[24px] opacity-65"
-                />
-              </a>
-            </div>
-            <div className="mr-2 flex w-10 items-center justify-center">
-              <a href="#">
-                <img
-                  src="/chatbar-todo.png"
-                  alt=""
-                  className="h-[24px] w-[24px] opacity-65"
-                />
-              </a>
+          </DialogActions>
+        </Dialog>
+        <div className="h-screen w-full">
+          <div className="h-[68px] w-full px-4">
+            <div className="flex h-full w-full flex-row items-center justify-between">
+              <div className="flex flex-row items-center gap-x-2">
+                <Link to="/app">
+                  <FontAwesomeIcon icon={faChevronLeft} className="pl-1 pr-3" />
+                </Link>
+
+                <div className="hidden lg:block">
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot"
+                  >
+                    <Avatar
+                      sx={{ width: 48, height: 48 }}
+                      alt="Name"
+                      src={chatAvatar}
+                    />
+                  </StyledBadge>
+                </div>
+                <div className="flex flex-col">
+                  <div className="text-lg font-medium text-[#081c36]">
+                    <span>{chatName}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-[#7589a3]">
+                    <span>Vừa truy cập</span>
+                    <span className="text-[#D7DBE0]"> &nbsp;|&nbsp;</span>
+                    <span className="flex items-center justify-center">
+                      <img
+                        className="mt-[1px] h-[10px]"
+                        src="/src/assets/tag.png"
+                        alt=""
+                      />
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-row items-center">
+                <a href="" className="p-1">
+                  <img
+                    src="/src/assets/group-user-plus.png"
+                    alt=""
+                    className="w-[22px] "
+                  />
+                </a>
+                <a href="" className="p-2">
+                  <img
+                    src="/src/assets/mini-search.png"
+                    alt=""
+                    className="m-1 h-4 w-4"
+                  />
+                </a>
+                <Link to="/videocall" className="p-2">
+                  <img
+                    src="/src/assets/video.png"
+                    alt=""
+                    className="m-1 h-5 w-5"
+                  />
+                </Link>
+                <a href="" className="p-2">
+                  <img
+                    src="/src/assets/right-bar.png"
+                    alt=""
+                    className="m-1 h-4 w-4"
+                  />
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="h-[58.5px]">
-          {/* Thêm phần nhập tin nhắn ở đây */}
-          {/* <MessageInput
-            onSendMessage={handleSendMessage}
-            onKeySendMessage={handleKeyPress}
-          /> */}
+          {/* -68 */}
           <div
-            className="flex w-full items-center bg-white"
-            style={{ height: "58.5px" }}
+            className="h-[calc(100vh-174px)] w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3"
+            // onScroll={handleScroll}
           >
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Nhập tin nhắn..."
-              value={message}
-              onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-              inputProps={{ style: { fontSize: 15 } }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderTop: "1px solid",
-                  borderBottom: "none",
-                  borderLeft: "none",
-                  borderRight: "none",
-                  borderColor: "#CFD6DC",
-                  borderRadius: 2,
-                },
-                "& .MuiOutlinedInput-root:hover": {
-                  borderTop: "1px solid",
-                  borderBottom: "none",
-                  borderLeft: "none",
-                  borderRight: "none",
-                  borderRadius: 2,
-                  borderColor: "blue",
-                },
-                "& .Mui-focused": {
-                  borderTop: "1px solid",
-                  borderBottom: "none",
-                  borderLeft: "none",
-                  borderRight: "none",
-                  borderRadius: 2,
-                },
-              }}
-            />
-            {/* <IconButton color="primary" onClick={handleSendMessage}>
-        <SendIcon />
-      </IconButton> */}
+            {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
+          <Message sender="me" content="Chào bạn!" timestamp="15:32" />
+          Thêm tin nhắn khác ở đây */}
+            {/* {messages.map((message, index) => ( */}
+            {messages
+              .filter(
+                (message) =>
+                  !message.hidden ||
+                  !message.hidden.includes(userIDFromCookies),
+              )
+              .map((message, index) => (
+                <MessageDetail
+                  key={index}
+                  message={message}
+                  chatAvatar={chatAvatar}
+                  socketFromConservation={socket}
+                  setSocketFromConservation={setSocket}
+                  messagesF={messages}
+                  setMessageDeletedID={setMessageDeletedID}
+                  setMessageRecalledID={setMessageRecalledID}
+                  idA={idA}
+                  setOpenDialog={setOpenDialog}
+                  setShareContent={setShareContent}
+                />
+              ))}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="border-t">
+            <div className="flex h-[47px] flex-row justify-items-start bg-white">
+              <div className="flex flex-row justify-items-start pl-2">
+                <div className="mr-2 flex w-10 items-center justify-center">
+                  <a
+                    href="#"
+                    onClick={() => {
+                      setOpenPicker(!openPicker);
+                      setContentType("emoji");
+                    }}
+                  >
+                    <img
+                      src="/chatbar-sticker.png"
+                      alt=""
+                      className="h-[24px] w-[24px] opacity-65"
+                    />
+                  </a>
+                </div>
+                <Box
+                  style={{
+                    zIndex: 10,
+                    position: "fixed",
+                    display: openPicker ? "inline" : "none",
+                    bottom: 110,
+                    // right: isMobile ? 20 : sideBar.open ? 420 : 100,
+                  }}
+                >
+                  <Picker
+                    data={data}
+                    onEmojiSelect={(emoji) => {
+                      console.log(emoji.native);
+                      handleEmojiSelect(emoji.native);
+                    }}
+                  />
+                </Box>
+                <div className="mr-2 flex w-10 items-center justify-center">
+                  {/* Input file ẩn để chọn ảnh */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleImageSelection}
+                    id="fileInput2"
+                  />
+                  {/* Hình ảnh để mở cửa sổ chọn tệp ảnh */}
+                  <label htmlFor="fileInput2">
+                    <img
+                      src="/chatbar-photo.png"
+                      alt=""
+                      className="h-[24px] w-[24px] cursor-pointer opacity-65"
+                    />
+                  </label>
+                </div>
+                <div className="mr-2 flex w-10 items-center justify-center">
+                  <label htmlFor="fileInput">
+                    <img
+                      src="/chatbar-attach.png"
+                      alt=""
+                      className="h-[24px] w-[24px] cursor-pointer opacity-65 hover:opacity-100"
+                    />
+                  </label>
+                  <input
+                    id="fileInput"
+                    type="file"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept=".txt, .pdf, .doc, .csv, .zip, .rar, .xlsx, .xls, .ppt, .pptx, .docx, .json"
+                  />
+                </div>
+                <div className="mr-2 flex w-10 items-center justify-center">
+                  <a href="#">
+                    {/* prettier-ignore */}
+                    <img src="/chatbar-screenshotz.png"
+                    alt=""
+                    className="h-[24px] w-[24px] opacity-65"
+                  />
+                  </a>
+                </div>
+                <div className="mr-2 flex w-10 items-center justify-center">
+                  <a href="#">
+                    <img
+                      src="/chatbar-reminder.png"
+                      alt=""
+                      className="h-[24px] w-[24px] opacity-65"
+                    />
+                  </a>
+                </div>
+                <div className="mr-2 flex w-10 items-center justify-center">
+                  <a href="#">
+                    <img
+                      src="/chatbar-todo.png"
+                      alt=""
+                      className="h-[24px] w-[24px] opacity-65"
+                    />
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="h-[58.5px]">
+              {/* Thêm phần nhập tin nhắn ở đây */}
+              {/* <MessageInput
+              onSendMessage={handleSendMessage}
+              onKeySendMessage={handleKeyPress}
+            /> */}
+              <div
+                className="flex w-full items-center bg-white"
+                style={{ height: "58.5px" }}
+              >
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  placeholder="Nhập tin nhắn..."
+                  value={message}
+                  onChange={handleInputChange}
+                  onKeyPress={handleKeyPress}
+                  inputProps={{ style: { fontSize: 15 } }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderTop: "1px solid",
+                      borderBottom: "none",
+                      borderLeft: "none",
+                      borderRight: "none",
+                      borderColor: "#CFD6DC",
+                      borderRadius: 2,
+                    },
+                    "& .MuiOutlinedInput-root:hover": {
+                      borderTop: "1px solid",
+                      borderBottom: "none",
+                      borderLeft: "none",
+                      borderRight: "none",
+                      borderRadius: 2,
+                      borderColor: "blue",
+                    },
+                    "& .Mui-focused": {
+                      borderTop: "1px solid",
+                      borderBottom: "none",
+                      borderLeft: "none",
+                      borderRight: "none",
+                      borderRadius: 2,
+                    },
+                  }}
+                />
+                {/* <IconButton color="primary" onClick={handleSendMessage}>
+          <SendIcon />
+        </IconButton> */}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </>
+    </ThemeProvider>
   );
 };
 

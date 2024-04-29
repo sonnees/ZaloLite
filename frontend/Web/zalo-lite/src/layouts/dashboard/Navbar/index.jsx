@@ -117,7 +117,7 @@ function Navbar({ onNavbarReady }) {
 
     // Đặt cookie userID với thời gian hết hạn và các tùy chọn bảo mật
     cookies.set("userID", userID, {
-      expires: expirationDate,
+      // expires: expirationDate,
       // Các tùy chọn bảo mật khác nếu cần
     });
   };
@@ -181,7 +181,7 @@ function Navbar({ onNavbarReady }) {
       const fetchProfile = async () => {
         try {
           const response = await fetch(
-            `http://localhost:8081/api/v1/account/profile/${phoneNumber}`,
+            `http://localhost:8080/api/v1/account/profile/${phoneNumber}`,
             {
               method: "GET",
               headers: {

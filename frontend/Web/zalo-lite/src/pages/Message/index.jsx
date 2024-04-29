@@ -168,7 +168,7 @@ function Message() {
   useEffect(() => {
     const conversations = localStorage.getItem("conversations");
     if (conversations) {
-      console.log("conversations", JSON.parse(conversations));
+      // console.log("conversations", JSON.parse(conversations));
       setConversations(JSON.parse(conversations));
     }
   }, []);
