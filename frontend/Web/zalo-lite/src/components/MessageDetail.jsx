@@ -24,6 +24,8 @@ const MessageDetail = ({
   idA,
   setOpenDialog,
   setShareContent,
+  setOpenCompReplyInput,
+  setParentIdMsg,
 }) => {
   // console.log("message in component message detail", message);
   const cookies = new Cookies();
@@ -195,13 +197,21 @@ const MessageDetail = ({
         <div className="flex w-[155px] items-end">
           {isHovered ? (
             <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
-              <a href="#">
+              <div
+                className="cursor-pointer "
+                onClick={() => {
+                  setOpenCompReplyInput(true);
+                  setShareContent(message);
+                  // console.log("messageID", message.messageID);
+                  setParentIdMsg(message.messageID);
+                }}
+              >
                 <img
-                  src="/src/assets/reply-arrow.png"
+                  src="/src/assets/icons/quotation-right-mark.png"
                   alt=""
-                  className="h-4 w-4"
+                  className="mt-[2px] h-[13px] w-[13px]"
                 />
-              </a>
+              </div>
 
               <div
                 onClick={() => {
@@ -296,16 +306,28 @@ const MessageDetail = ({
         <div className="flex w-[155px] items-end">
           {isHovered ? (
             <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
-              <a href="#">
+              <div
+                className="cursor-pointer "
+                onClick={() => {
+                  setOpenCompReplyInput(true);
+                  setShareContent(message);
+                }}
+              >
                 <img
-                  src="/src/assets/reply-arrow.png"
+                  src="/src/assets/icons/quotation-right-mark.png"
                   alt=""
-                  className="h-4 w-4"
+                  className="mt-[2px] h-[13px] w-[13px]"
                 />
-              </a>
-              <a href="#">
+              </div>
+              <div
+                onClick={() => {
+                  setOpenDialog(true);
+                  setShareContent(message);
+                }}
+                className="cursor-pointer px-[2px]"
+              >
                 <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
-              </a>
+              </div>
               <a href="#">
                 <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
               </a>

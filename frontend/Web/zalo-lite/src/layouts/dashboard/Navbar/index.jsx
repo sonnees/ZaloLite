@@ -60,6 +60,7 @@ function Navbar({ onNavbarReady }) {
           setAvatar(data.avatar);
           localStorage.setItem("avatar", data.avatar);
           localStorage.setItem("userID", data.userID);
+          localStorage.setItem("userName", data.userName);
           localStorage.setItem("user", JSON.stringify(data));
           localStorage.setItem("phone", phoneNumber);
           onNavbarReady(data.userID);

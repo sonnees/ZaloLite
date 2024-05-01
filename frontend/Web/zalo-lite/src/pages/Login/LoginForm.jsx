@@ -33,7 +33,7 @@ export default function LoginForm() {
       const tokenEncoded = encryptData(tokenValue);
       // Đặt cookie token với thời gian hết hạn là 1 ngày và các tùy chọn bảo mật
       cookies.set("token", tokenValue, {
-        // expires: new Date(Date.now() + 86400e3), // Thời gian hết hạn: 1 ngày
+        expires: new Date(Date.now() + 86400e3), // Thời gian hết hạn: 1 ngày
         // secure: true, // Chỉ truy cập thông qua HTTPS
         // sameSite: 'strict', // Giới hạn truy cập cookie trong cùng một trang web
         // httpOnly: true // Ngăn chặn việc truy cập cookie bằng JavaScript

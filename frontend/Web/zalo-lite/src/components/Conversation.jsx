@@ -32,6 +32,7 @@ import MessageInput from "./MessageInput";
 import TextField from "@mui/material/TextField";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
+import { Tag } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { set } from "date-fns";
@@ -395,8 +396,18 @@ const Conversation = () => {
   //     console.error("WebSocket is not initialized.");
   //   }
   // };
+  const [parentIdMsg, setParentIdMsg] = useState("");
+  console.log("parentIdMsg:", parentIdMsg);
 
-  const sendMessageWithTextViaSocket = (messageContent, contentType) => {
+  const sendMessageWithTextViaSocket = (
+    messageContent,
+    contentType,
+    socketNew,
+    messageForward,
+    parentID,
+  ) => {
+    console.log("SocketNew:", socketNew);
+    console.log("parentID:", parentID);
     const uuid = uuidv4();
     // Lấy thời gian hiện tại dưới dạng timestamp
     const currentTime = new Date().getTime();
@@ -416,34 +427,48 @@ const Conversation = () => {
         parentID: null,
         contents: [],
       };
-      // Thêm nội dung tương ứng vào tin nhắn
-      if (contentType === "text") {
-        message.contents.push({
-          key: "text",
-          value: messageContent,
-        });
-      } else if (contentType === "file") {
-        // Lấy phần tử đầu tiên trong mảng contents
-        const fileContent = messageContent.contents[0];
-        message.contents.push({
-          key: fileContent.key,
-          value: fileContent.value, // Đây là đường dẫn URL của file
-        });
-      } else if (contentType === "emoji") {
-        message.contents.push({
-          key: "emoji",
-          value: messageContent,
-        });
-      } else if (contentType === "link") {
-        message.contents.push({
-          key: "link",
-          value: messageContent,
-        });
+      if (parentID) {
+        message.parentID = parentID;
+        setOpenCompReplyInput(false);
       }
-      socket.send(JSON.stringify(message));
-      console.log(message);
-      setMessage(""); // Xóa nội dung của input message sau khi gửi
-      setSentMessage(message); // Cập nhật state của sentMessage
+      if (messageForward) {
+        message.contents = messageForward;
+      } else {
+        // Thêm nội dung tương ứng vào tin nhắn
+        if (contentType === "text") {
+          message.contents.push({
+            key: "text",
+            value: messageContent,
+          });
+        } else if (contentType === "file") {
+          // Lấy phần tử đầu tiên trong mảng contents
+          const fileContent = messageContent.contents[0];
+          message.contents.push({
+            key: fileContent.key,
+            value: fileContent.value, // Đây là đường dẫn URL của file
+          });
+        } else if (contentType === "emoji") {
+          message.contents.push({
+            key: "emoji",
+            value: messageContent,
+          });
+        } else if (contentType === "link") {
+          message.contents.push({
+            key: "link",
+            value: messageContent,
+          });
+        }
+      }
+
+      if (socketNew) {
+        console.log("WebSocketNew connected");
+        socketNew.send(JSON.stringify(message));
+      } else {
+        socket.send(JSON.stringify(message));
+        console.log(message);
+        setMessage(""); // Xóa nội dung của input message sau khi gửi
+        setSentMessage(message); // Cập nhật state của sentMessage
+      }
     } else {
       console.error("WebSocket is not initialized.");
     }
@@ -460,13 +485,13 @@ const Conversation = () => {
   const handleSendMessage = () => {
     if (message.startsWith("http://") || message.startsWith("https://")) {
       setKeyTypeMessage("link");
-      sendMessageWithTextViaSocket(message, "link");
+      sendMessageWithTextViaSocket(message, "link", null, null, parentIdMsg);
     } else if (contentType === "text" && message.trim() !== "") {
       console.log("Gửi tin nhắn:", message);
-      sendMessageWithTextViaSocket(message, "text");
+      sendMessageWithTextViaSocket(message, "text", null, null, parentIdMsg);
     } else if (contentType === "file" && imageUrl) {
       console.log("Gửi file:", imageUrl);
-      sendMessageWithTextViaSocket(imageUrl, "file");
+      sendMessageWithTextViaSocket(imageUrl, "file", null, null, parentIdMsg);
     }
   };
 
@@ -695,7 +720,10 @@ const Conversation = () => {
           throw new Error("Failed to fetch conversations");
         }
         const data = await response.json();
-        setContact(data.conversations); // Cập nhật state với dữ liệu từ API
+        const contact = data.conversations;
+        const chatID = searchParams.get("id");
+        console.log("ChatID:", chatID);
+        setContact(contact.filter((c) => c.chatID !== chatID));
       } catch (error) {
         console.error("Error fetching conversations:", error);
       }
@@ -735,7 +763,7 @@ const Conversation = () => {
   const renderContent = (contents) => {
     if (contents && contents.length > 0) {
       return contents.map((content, index) => {
-        console.log("Content:", content);
+        // console.log("Content:", content);
         if (content.key === "image") {
           return (
             <img
@@ -770,7 +798,63 @@ const Conversation = () => {
       });
     }
   };
-  console.log("shareContent>>>>>>>>>>>>>>>", shareContent.contents);
+  // console.log("shareContent++++++++++++", shareContent.contents);
+  // console.log("selectedContactObjs>>>>>>>>>>>>>>>", selectedContactObjs);
+
+  const handleShareMessage = () => {
+    if (shareContent && selectedContactObjs) {
+      for (const obj of selectedContactObjs) {
+        const newSocket = new WebSocket(
+          `ws://localhost:8082/ws/chat/${obj.chatID}`,
+        );
+        newSocket.onopen = () => {
+          console.log("newSocket:", newSocket);
+          console.log("Gửi tin nhắn:", shareContent);
+          sendMessageWithTextViaSocket(
+            "",
+            "",
+            newSocket,
+            shareContent.contents,
+          );
+          setInputValueShare("");
+          setSelectedContacts([]);
+          setSelectedContactObjs([]);
+        };
+      }
+    }
+  };
+
+  const handleInputChangeInDialog = (e) => {
+    // setShareContent(e.target.value);
+    // setTypeShareContent("text");
+  };
+
+  const [openCompReplyInput, setOpenCompReplyInput] = useState(false);
+  useEffect(() => {
+    scrollToBottom();
+  }, [openCompReplyInput]); 
+
+  const inputRef = useRef(null);
+
+  const focusInput = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+  useEffect(() => {
+    if (openCompReplyInput) {
+      focusInput();
+    }
+  }, [openCompReplyInput]);
+
+  const handleKeyPressTextArea = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      // Gửi tin nhắn hoặc thực hiện logic của bạn khi Enter được nhấn
+      handleSendMessage();
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <>
@@ -858,7 +942,7 @@ const Conversation = () => {
               </Stack>
             </div>
             <div className={`flex overflow-hidden`}>
-              <DialogContentText
+              <div
                 id="alert-dialog-description"
                 className={`max-h-[490px] w-full overflow-y-auto ${
                   selectedContactObjs.length > 0 ? " w-7/12 " : ""
@@ -911,7 +995,7 @@ const Conversation = () => {
                     </div>
                   ))}
                 </div>
-              </DialogContentText>
+              </div>
               {/* Danh sách những mục đã được chọn */}
               {selectedContactObjs.length > 0 && (
                 <div className="my-3 ml-3 mt-4 w-5/12 rounded-md border-2 pl-3 pt-3 transition-transform duration-300 ease-in-out">
@@ -958,7 +1042,7 @@ const Conversation = () => {
                 {typeShareContent === "text" && (
                   <input
                     // value={inputValueShare}
-                    // onChange={handleInputShareChange}
+                    onChange={handleInputChangeInDialog}
                     value={renderContent(shareContent.contents)}
                     className="w-full bg-[#F9FAFB] text-sm font-normal focus:outline-none"
                     type="text"
@@ -986,8 +1070,8 @@ const Conversation = () => {
               </Button>
               <Button
                 onClick={() => {
-                  // handleAddFriend();
-                  // handleFindUserByPhoneNumber();
+                  handleShareMessage();
+                  handleCloseDialog();
                 }}
                 variant="contained"
                 color="primary"
@@ -1076,7 +1160,11 @@ const Conversation = () => {
           </div>
           {/* -68 */}
           <div
-            className="h-[calc(100vh-174px)] w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3"
+            className={`${
+              openCompReplyInput
+                ? "h-[calc(100vh-246.5px)]"
+                : "h-[calc(100vh-174px)]"
+            }  w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3`}
             // onScroll={handleScroll}
           >
             {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
@@ -1102,6 +1190,8 @@ const Conversation = () => {
                   idA={idA}
                   setOpenDialog={setOpenDialog}
                   setShareContent={setShareContent}
+                  setOpenCompReplyInput={setOpenCompReplyInput}
+                  setParentIdMsg={setParentIdMsg}
                 />
               ))}
             <div ref={messagesEndRef} />
@@ -1204,7 +1294,7 @@ const Conversation = () => {
                 </div>
               </div>
             </div>
-            <div className="h-[58.5px]">
+            <div className={`h-${openCompReplyInput ? "120.5" : "58.5"}px`}>
               {/* Thêm phần nhập tin nhắn ở đây */}
               {/* <MessageInput
               onSendMessage={handleSendMessage}
@@ -1212,42 +1302,120 @@ const Conversation = () => {
             /> */}
               <div
                 className="flex w-full items-center bg-white"
-                style={{ height: "58.5px" }}
+                // style={{ height: "58.5px" }}
               >
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  placeholder="Nhập tin nhắn..."
-                  value={message}
-                  onChange={handleInputChange}
-                  onKeyPress={handleKeyPress}
-                  inputProps={{ style: { fontSize: 15 } }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderTop: "1px solid",
-                      borderBottom: "none",
-                      borderLeft: "none",
-                      borderRight: "none",
-                      borderColor: "#CFD6DC",
-                      borderRadius: 2,
-                    },
-                    "& .MuiOutlinedInput-root:hover": {
-                      borderTop: "1px solid",
-                      borderBottom: "none",
-                      borderLeft: "none",
-                      borderRight: "none",
-                      borderRadius: 2,
-                      borderColor: "blue",
-                    },
-                    "& .Mui-focused": {
-                      borderTop: "1px solid",
-                      borderBottom: "none",
-                      borderLeft: "none",
-                      borderRight: "none",
-                      borderRadius: 2,
-                    },
-                  }}
-                />
+                <div className="mb-0 w-full pb-0">
+                  {openCompReplyInput && (
+                    <div className="w-full">
+                      <Tag
+                        bordered={false}
+                        className="absolute z-10 mx-3 -mb-[62px] mt-[10px] flex h-[62px] w-[calc(100vw-438px)] items-center  justify-between bg-[#EEF0F1] p-0 py-2 pl-3 pr-2 text-lg"
+                        closable
+                        onClose={() => setOpenCompReplyInput(false)}
+                      >
+                        <div className="h-full w-full flex-1 border-l-2 border-[#4F87F7] pl-3">
+                          <div className="flex w-full items-center text-xs">
+                            <img
+                              src="/src/assets/icons/quotation.png"
+                              alt=""
+                              className="h-4 w-4"
+                            />
+                            <span className="pl-[6px] text-[13px] text-tblack">
+                              Trả lời
+                            </span>
+                            &nbsp;
+                            <span className="text-[13px] font-semibold">
+                              {chatName}
+                            </span>
+                          </div>
+                          <div className="w-full text-[13px] ">
+                            <span className="items-center text-[13px] text-[#476285]">
+                              {renderContent(shareContent.contents)}
+                            </span>
+                          </div>
+                        </div>
+                      </Tag>
+                    </div>
+                  )}
+                  {openCompReplyInput ? (
+                    <textarea
+                      ref={inputRef}
+                      // focused={openCompReplyInput ? true : false}
+                      autoFocus
+                      // fullWidth
+                      // variant="outlined"
+                      placeholder="Nhập tin nhắn..."
+                      value={message}
+                      onChange={handleInputChange}
+                      onKeyPress={handleKeyPress}
+                      className="pt-[87px] border-l-none h-full w-full justify-center border-t-2 p-2 px-[14px] py-[16.5px] text-[15px] text-tblack focus:border-t-2  focus:border-[#2B66F6] focus:outline-none"
+                      rows={1}
+                    />
+                  ) : (
+                    // <textarea
+                    //   autoFocus
+                    //   placeholder="Nhập tin nhắn..."
+                    //   value={message}
+                    //   onChange={handleInputChange}
+                    //   onKeyPress={handleKeyPress}
+                    //   className="h-full w-full p-2 text-[15px]"
+                    //   rows={2}
+                    // />
+                    // <TextField
+                    //   // ref={inputRef}
+                    //   focused={openCompReplyInput ? true : false}
+                    //   autoFocus
+                    //   fullWidth
+                    //   variant="outlined"
+                    //   placeholder="Nhập tin nhắn..."
+                    //   value={message}
+                    //   onChange={handleInputChange}
+                    //   onKeyPress={handleKeyPress}
+                    //   inputProps={{
+                    //     style: {
+                    //       fontSize: 15,
+                    //       marginTop: openCompReplyInput ? "72px" : "0",
+                    //     },
+                    //   }}
+                    //   sx={{
+                    //     // border: "1px solid grey",
+                    //     // paddingTop: "62px",
+                    //     "& .MuiOutlinedInput-root": {
+                    //       borderTop: "1px solid",
+                    //       borderBottom: "none",
+                    //       borderLeft: "none",
+                    //       borderRight: "none",
+                    //       borderColor: "#CFD6DC",
+                    //       borderRadius: 2,
+                    //     },
+                    //     "& .MuiOutlinedInput-root:hover": {
+                    //       borderTop: "1px solid",
+                    //       borderBottom: "none",
+                    //       borderLeft: "none",
+                    //       borderRight: "none",
+                    //       borderRadius: 2,
+                    //       borderColor: "blue",
+                    //     },
+                    //     "& .Mui-focused": {
+                    //       borderTop: "1px solid",
+                    //       borderBottom: "none",
+                    //       borderLeft: "none",
+                    //       borderRight: "none",
+                    //       borderRadius: 2,
+                    //     },
+                    //   }}
+                    // />
+                    <textarea
+                      autoFocus
+                      placeholder="Nhập tin nhắn..."
+                      value={message}
+                      onChange={handleInputChange}
+                      onKeyPress={handleKeyPressTextArea}
+                      className="border-l-none -mt-1 h-full w-full justify-center border-t-2 p-2 px-[14px] py-[16.5px] text-[15px] text-tblack focus:border-t-2  focus:border-[#2B66F6] focus:outline-none"
+                      rows={1}
+                    />
+                  )}
+                </div>
                 {/* <IconButton color="primary" onClick={handleSendMessage}>
           <SendIcon />
         </IconButton> */}
