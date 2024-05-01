@@ -348,7 +348,24 @@ const Conversation = () => {
         tokenFromCookies,
         timestamp,
       );
-      setMessages(fetchedMessages);
+      const messagesNoHandle = fetchedMessages;
+
+      // Tạo một bản đồ (map) giữa messageID và object message
+      const messageMap = new Map(
+        messagesNoHandle.map((message) => [message.messageID, message]),
+      );
+
+      // Lặp qua mỗi message để thay thế parentID bằng object message tương ứng
+      messagesNoHandle.forEach((message) => {
+        if (message.parentID) {
+          const parentMessage = messageMap.get(message.parentID);
+          if (parentMessage) {
+            message.parentID = parentMessage;
+          }
+        }
+      });
+      console.log("MessagesNoHandle:", messagesNoHandle);
+      setMessages(messagesNoHandle);
     };
 
     const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
@@ -760,19 +777,29 @@ const Conversation = () => {
     }
   };
 
-  const renderContent = (contents) => {
+  const renderImageInForwadMsg = (contents) => {
     if (contents && contents.length > 0) {
       return contents.map((content, index) => {
-        // console.log("Content:", content);
         if (content.key === "image") {
           return (
             <img
               key={index}
               src={content.value}
               alt="Image"
-              className="mb-2 mr-2 h-auto max-w-[200px]"
+              className="mb-2 mr-2 w-9 h-9"
             />
           );
+        }
+      });
+    }
+  };
+
+  const renderContent = (contents) => {
+    if (contents && contents.length > 0) {
+      return contents.map((content, index) => {
+        // console.log("Content:", content);
+        if (content.key === "image") {
+          return "[Hình ảnh]"
         } else if (content.key === "text") {
           return content.value;
         } else if (content.key === "link") {
@@ -1182,6 +1209,7 @@ const Conversation = () => {
                   key={index}
                   message={message}
                   chatAvatar={chatAvatar}
+                  chatName={chatName}
                   socketFromConservation={socket}
                   setSocketFromConservation={setSocket}
                   messagesF={messages}
@@ -1313,25 +1341,32 @@ const Conversation = () => {
                         closable
                         onClose={() => setOpenCompReplyInput(false)}
                       >
-                        <div className="h-full w-full flex-1 border-l-2 border-[#4F87F7] pl-3">
-                          <div className="flex w-full items-center text-xs">
-                            <img
-                              src="/src/assets/icons/quotation.png"
-                              alt=""
-                              className="h-4 w-4"
-                            />
-                            <span className="pl-[6px] text-[13px] text-tblack">
-                              Trả lời
-                            </span>
-                            &nbsp;
-                            <span className="text-[13px] font-semibold">
-                              {chatName}
-                            </span>
+                        <div className="h-full w-full flex border-l-2 border-[#4F87F7] pl-3">
+                          <div>
+                            {renderImageInForwadMsg(shareContent.contents)}
                           </div>
-                          <div className="w-full text-[13px] ">
-                            <span className="items-center text-[13px] text-[#476285]">
-                              {renderContent(shareContent.contents)}
-                            </span>
+                          <div className="h-full w-full flex-1 pl-1">
+                            <div className="flex w-full items-center text-xs">
+                              <div className="flex">
+                                <img
+                                  src="/src/assets/icons/quotation.png"
+                                  alt=""
+                                  className="h-4 w-4"
+                                />
+                                <span className="pl-[6px] text-[13px] text-tblack">
+                                  Trả lời
+                                </span>
+                                &nbsp;
+                                <span className="text-[13px] font-semibold">
+                                  {chatName}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="w-full text-[13px] ">
+                              <span className="items-center text-[13px] text-[#476285]">
+                                {renderContent(shareContent.contents)}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </Tag>
@@ -1347,8 +1382,8 @@ const Conversation = () => {
                       placeholder="Nhập tin nhắn..."
                       value={message}
                       onChange={handleInputChange}
-                      onKeyPress={handleKeyPress}
-                      className="pt-[87px] border-l-none h-full w-full justify-center border-t-2 p-2 px-[14px] py-[16.5px] text-[15px] text-tblack focus:border-t-2  focus:border-[#2B66F6] focus:outline-none"
+                      onKeyPress={handleKeyPressTextArea}
+                      className="border-l-none h-full w-full justify-center border-t-2 p-2 px-[14px] py-[16.5px] pt-[87px] text-[15px] text-tblack focus:border-t-2  focus:border-[#2B66F6] focus:outline-none"
                       rows={1}
                     />
                   ) : (

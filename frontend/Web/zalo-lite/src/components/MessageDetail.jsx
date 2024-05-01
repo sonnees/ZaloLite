@@ -17,6 +17,7 @@ import { useUser } from "../context/UserContext";
 const MessageDetail = ({
   message,
   chatAvatar,
+  chatName,
   socketFromConservation,
   setSocketFromConservation,
   setMessageDeletedID,
@@ -183,6 +184,23 @@ const MessageDetail = ({
     setIsHovered(true);
   };
 
+  const renderImageInForwadMsg = (contents) => {
+    if (contents && contents.length > 0) {
+      return contents.map((content, index) => {
+        if (content.key === "image") {
+          return (
+            <img
+              key={index}
+              src={content.value}
+              alt="Image"
+              className="mb-2 mr-2 h-9 w-9"
+            />
+          );
+        }
+      });
+    }
+  };
+
   return (
     <div
       ref={messageRef}
@@ -217,6 +235,7 @@ const MessageDetail = ({
                 onClick={() => {
                   setOpenDialog(true);
                   setShareContent(message);
+                  // setParentIdMsg(message.messageID);
                 }}
                 className="cursor-pointer px-[2px]"
               >
@@ -278,12 +297,50 @@ const MessageDetail = ({
             } relative flex flex-col items-start rounded-md p-3 transition-all duration-300`}
           >
             <div className="flex-1 items-center">
+              {message.parentID && message.parentID.contents ? (
+                <div className="mb-2 bg-[#CCDFFC] py-[10px] pl-3 pr-[9px]">
+                <div className="flex w-full border-l-2 border-[#4F87F7] pl-3">
+                  <div className="h-9">
+                    {renderImageInForwadMsg(message.parentID.contents)}
+                  </div>
+                  <div className="h-full w-full flex-1 pl-1">
+                    <div className="flex w-full items-center text-xs">
+                      <div className="flex">
+                        <img
+                          src="/src/assets/icons/quotation.png"
+                          alt=""
+                          className="h-4 w-4"
+                        />
+                        &nbsp;
+                        <span className="text-[13px] font-semibold">
+                          {message.userID === userIDFromCookies &&
+                          message.parentID.userID === userIDFromCookies
+                            ? localStorage.getItem("userName")
+                            : chatName}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-1 w-full text-[13px]">
+                      <span className="items-center text-[13px] text-[#476285]">
+                        {message.parentID.contents[0].key === "image"
+                          ? "[Hình ảnh]"
+                          : message.parentID.contents[0].value}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              ) : (
+                <></>
+              )}
               {message.recall === true ? (
                 <div className="text-[15px] text-[#98A1AC]">
                   Tin nhắn đã được thu hồi
                 </div>
               ) : (
-                renderContent()
+                <div className={message.parentID ? "mt-2" : ""}>
+                  {renderContent()}
+                </div>
               )}
             </div>
             <span className="mt-3 text-xs text-gray-500">
@@ -311,6 +368,7 @@ const MessageDetail = ({
                 onClick={() => {
                   setOpenCompReplyInput(true);
                   setShareContent(message);
+                  setParentIdMsg(message.messageID);
                 }}
               >
                 <img
