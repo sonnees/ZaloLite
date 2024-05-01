@@ -460,20 +460,13 @@ function getDataFromConversationsAndChatData(conversations, chatData) {
     }
 }
 
-const findChatIDByUserID = (data, userID, myUserID) => {
-    // Duyệt qua danh sách conversations và friendRequests để tìm userID
-    for (const conversation of data.conversations) {
-        for (const topChatActivity of conversation.topChatActivity) {
-            if (topChatActivity.userID !== myUserID && topChatActivity.userID === userID) {
-                return conversation.chatID;
-            }
-        }
-    }// Trả về null nếu không tìm thấy userID
-    return '5b685d06-8fbe-4ab7-8053-7746760a8001';
+const findConversationByUserID = (data, userID) => {
+    return data.conversations.find(conversation => conversation.id_UserOrGroup === userID) || null;
 };
+
 // const myUserID = '26ce60d1-64b9-45d2-8053-7746760a8354'
 // const userID = 'f1cee7b8-7712-4042-9e94-17bd21209a62'
 // const result = findChatIDByUserID(data, userID, myUserID);
 // console.log("result :>> ", result)
 // // 5b685d06 - 8fbe - 4ab7 - 8053 - 7746760a8001
-export { findChatIDByUserID, getDataFromConversationsAndChatData };
+export { findConversationByUserID, getDataFromConversationsAndChatData };

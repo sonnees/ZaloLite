@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { UserInfoContext } from '../App';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { GlobalContext } from '../context/GlobalContext';
 
 export default function ProfileFriendScreen() {
     const navigation = useNavigation();
     let route = useRoute();
     const profile = route.params?.profile;
-    const { userInfo, setUserInfo, chatID, setChatID } = useContext(UserInfoContext)
-    console.log("USER INFOR:\n", userInfo);
+    const { myUserInfo, setMyUserInfo, chatID, setChatID } = useContext(GlobalContext)
     console.log("Du lieu tu ADDFRIEND: \n", profile);
-    const [allfriendRequests, setAllFriendRequest] = useState(userInfo.friendRequests);
+    const [allfriendRequests, setAllFriendRequest] = useState(myUserInfo.friendRequests);
     const [friendRequests, setFriendRequests] = useState({});
     const [status, setStatus] = useState("");
     useEffect(() => {
@@ -21,7 +20,7 @@ export default function ProfileFriendScreen() {
             console.log(status);
         };
         fetchData();
-    }, [profile, userInfo]);
+    }, [profile, myUserInfo]);
 
     function checkDuplicateUser(data, userId) {
         for (let i = 0; i < data.length; i++) {
@@ -47,6 +46,9 @@ export default function ProfileFriendScreen() {
         const type = checkType(checkDuplicateUser(data, userId))
         return type;
     }
+    const handleAddFriendRequest = () => {
+        navigation.navigate("AddFriendRequestDetail", { profile: profile });
+    }
 
     return (
         <View style={{ backgroundColor: '#BBBBBB', flexDirection: 'column', height: '100%', width: '100%' }}>
@@ -57,7 +59,7 @@ export default function ProfileFriendScreen() {
             >
                 <View style={{ height: 48, flexDirection: "row", marginTop: 10 }}>
                     <Image style={{ width: 20, height: 20, resizeMode: "contain", marginLeft: "5%", marginTop: "1%" }} source={require("../assets/back1.png")}
-                        onStartShouldSetResponder={() => navigation.navigate('TabNavigator', { screen: 'Me' })}
+                        onStartShouldSetResponder={() => navigation.goBack()}
                     ></Image>
                     <View style={{ flex: 1.5 }}></View>
                     <Image style={{ width: 20, height: 20, resizeMode: "contain", marginTop: "1%", marginRight: "5%" }} source={require("../assets/more.png")}
@@ -180,7 +182,9 @@ export default function ProfileFriendScreen() {
                                 <TouchableOpacity style={{
                                     height: 40, width: 70, backgroundColor: 'white', marginLeft: 30,
                                     borderRadius: 20, alignItems: 'center', justifyContent: 'center'
-                                }}>
+                                }}
+                                    onPress={handleAddFriendRequest}
+                                >
                                     <Icon name='adduser' size={22}></Icon>
                                 </TouchableOpacity>
                             </View>

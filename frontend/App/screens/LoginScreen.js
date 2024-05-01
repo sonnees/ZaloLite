@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
-import { API_AUTHENTICATE, API_INFOR_ACCOUNT, API_INFOR_USER } from '../api/API';
+import { API_AUTHENTICATE, API_INFOR_ACCOUNT, API_INFOR_USER, API_PROFILE_BY_USERID } from '../api/API';
 import axios from 'axios';
 import { GlobalContext } from '../context/GlobalContext';
 import { AddListChatID } from '../utils/AddListChatID';
@@ -14,7 +14,7 @@ const LoginScreen = () => {
   const route = useRoute();
   const newPassword = route.params?.newPassword;
   const isFocused = useIsFocused();
-  const { logIn, setMyUserInfo, listChatID, setListChatID } = useContext(GlobalContext)
+  const { logIn, setMyUserInfo, myUserInfo, listChatID, setListChatID, setMyProfile } = useContext(GlobalContext)
 
   useEffect(() => {
     console.log("newPassword:", newPassword);
@@ -38,7 +38,6 @@ const LoginScreen = () => {
       });
 
       const data = await response.json();
-
       if (response.status === 200) {
         logIn(data.field)
         console.log('data:', data.field);
@@ -54,52 +53,12 @@ const LoginScreen = () => {
             return null;
           }
         };
-
-        const fetAccountInfor = async (token) => {
-          try {
-            const response = await axios.get(API_INFOR_ACCOUNT, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            const dataAccountInfor = await response.data;
-            return dataAccountInfor;
-          } catch (error) {
-            console.error('Lỗi khi lấy thông tin cá nhân:', error);
-            return null;
-          }
-        };
-
-        const fetchUserInfo = async (token) => {
-          try {
-            console.log("Token: ", token);
-            const accountInfor = await fetAccountInfor(token);
-            console.log("Account Infor: ", accountInfor);
-            const user = accountInfor.profile.userID;
-            // console.log("User ID: ", user);
-            const response = await axios.get(`${API_INFOR_USER}${user}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            const dataUserInfor = await response.data;
-
-            // console.log("User Infor:", dataUserInfor);
-            setMyUserInfo(dataUserInfor);
-            const listID = AddListChatID(dataUserInfor.conversations)
-            setListChatID(listID)
-            return dataUserInfor;
-          } catch (error) {
-            console.error('Lỗi khi lấy thông tin User:', error);
-            return null;
-          }
-        };
         const token = await getToken();
         const dataUserInfor = await fetchUserInfo(token);
-        console.log("DATA: \n", dataUserInfor);
+        // console.log("DATA: \n", dataUserInfor);
+        const myProfile = await fetchProfileInfo(dataUserInfor.id, token)
+        setMyProfile(myProfile)
         navigation.navigate('TabNavigator');
-
-
       } else {
         // Đăng nhập không thành công, hiển thị thông báo lỗi từ phản hồi của API
         Alert.alert('Lỗi', data.message);
@@ -107,6 +66,74 @@ const LoginScreen = () => {
     } catch (error) {
       console.error('Lỗi khi đăng nhập:', error);
       Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.');
+    }
+  };
+  const fetchUserInfo = async (token) => {
+    try {
+      // console.log("Token: ", token);
+      const accountInfor = await fetAccountInfor(token);
+      // console.log("Account Infor: ", accountInfor);
+      const user = accountInfor.profile.userID;
+      // console.log("User ID: ", user);
+      const response = await axios.get(`${API_INFOR_USER}${user}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const dataUserInfor = await response.data;
+
+      // console.log("User Infor:", dataUserInfor);
+      setMyUserInfo(dataUserInfor);
+      const listID = AddListChatID(dataUserInfor.conversations)
+      setListChatID(listID)
+      return dataUserInfor;
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin User:', error);
+      return null;
+    }
+  };
+  const fetAccountInfor = async (token) => {
+    try {
+      const response = await axios.get(API_INFOR_ACCOUNT, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const dataAccountInfor = await response.data;
+      return dataAccountInfor;
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin cá nhân:', error);
+      return null;
+    }
+  };
+  const fetchProfileInfo = async (userID, token) => {
+    try {
+      const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // console.log("PROFILE FRIEND REQUEST:\n", response.data);
+      // setMyProfile(response.data)
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status !== 404) {
+          return {
+            status: error.response.status,
+            message: 'Lỗi khi lấy thông tin cá nhân'
+          };
+        }
+        return {
+          status: 404,
+          message: 'Không tìm thấy thông tin cá nhân'
+        };
+      } else {
+        return {
+          status: -1,
+          message: 'Lỗi kết nối máy chủ'
+        };
+      }
     }
   };
 

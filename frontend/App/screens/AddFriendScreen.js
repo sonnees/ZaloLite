@@ -81,7 +81,7 @@ const AddFriendScreen = () => {
       console.log("Lỗi không tìm thấy token");
     }
 
-    console.log("MY PHONE NUMBER : ", myPhoneNumber);
+    // console.log("MY PHONE NUMBER : ", myPhoneNumber);
     if (phoneNumber === myPhoneNumber) {
       navigation.navigate('MeNavigator', { screen: 'ProfileScreen' });
       return;

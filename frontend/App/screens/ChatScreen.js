@@ -1,13 +1,13 @@
-import { View, Text, SafeAreaView, StyleSheet, Image, FlatList, TouchableOpacity, StatusBar, Keyboard } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, FlatList, TouchableOpacity, StatusBar, Keyboard, RefreshControl } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { GlobalContext } from '../context/GlobalContext';
 import { ChatItem } from '../component/ChatVIewElement';
 import * as ImagePicker from 'expo-image-picker';
-import EmojiSelector, { Categories } from "react-native-emoji-selector";
+import EmojiSelector from "react-native-emoji-selector";
 import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
@@ -20,21 +20,40 @@ import NavBarFriendRequest from '../component/NavbarFriendRequest';
 const ChatScreen = () => {
   let navigation = useNavigation();
   const route = useRoute();
-  const { myUserInfo, setMyUserInfo, chatID } = useContext(GlobalContext)
+  const { myUserInfo, setMyUserInfo, chatID, myProfile, setMyProfile } = useContext(GlobalContext)
   const componentChatID = route.params?.conversationOpponent.chatID;
   // console.log("CHATID NE: ", componentChatID);
   const [conversationOpponent, setconversationOpponent] = useState([])
-  //Profile
-  const [myProfile, setMyProfile] = useState({});
   // Xử lý ảnh và File
   const [imageUrl, setImageUrl] = useState("");
   const [selectedImage, setSelectedImage] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
-
+  // Xử lý Emoji
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  // Xử lý Socket
+  const [socket, setSocket] = useState(null);
   //Xử lý message
   const [message, setMessage] = useState('');
   const [contentType, setContentType] = useState("text"); // Mặc định là gửi tin nhắn text
   const [textInputHeight, setTextInputHeight] = useState(40); // Chiều cao ban đầu là 20
+
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData(); // Call your function to fetch data
+    setRefreshing(false);
+  };
+
+
+
+  const flatListRef = useRef();
+
+  const handleContentChange = () => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  };
 
   const handleContentSizeChange = (event) => {
     const newHeight = Math.max(20, event.nativeEvent.contentSize.height);
@@ -43,85 +62,68 @@ const ChatScreen = () => {
     }
 
   };
-  // Xử lý Emoji
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
-
-  // Xử lý Socket
-  const [socket, setSocket] = useState(null);
+  const fetchData = async () => {
+    const conversationData = findConversationByID(myUserInfo.conversations, componentChatID)
+    const fetchConversationOpponent = async (conversationOpponent) => {
+      const chatID = conversationOpponent.chatID;
+      const token = await AsyncStorage.getItem('token')
+      const chatData = await fetchAllChatbychatID(chatID, token);
+      const newChatData = getDataFromConversationsAndChatData(conversationOpponent, chatData);
+      if (newChatData) {
+        return newChatData;
+      }
+    }
+    const newData = await fetchConversationOpponent(conversationData)
+    setconversationOpponent(newData)
+    const token = await AsyncStorage.getItem('token');
+  }
   //Fectch Data
   useEffect(() => {
-    const fetchData = async () => {
-      const conversationData = findConversationByID(myUserInfo.conversations, componentChatID)
-      const fetchConversationOpponent = async (conversationOpponent) => {
-        const chatID = conversationOpponent.chatID;
-        const token = await AsyncStorage.getItem('token')
-        const chatData = await fetchAllChatbychatID(chatID, token);
-        const newChatData = getDataFromConversationsAndChatData(conversationOpponent, chatData);
-        if (newChatData) {
-          return newChatData;
-        }
-      }
-      const newData = await fetchConversationOpponent(conversationData)
-      setconversationOpponent(newData)
-      const token = await AsyncStorage.getItem('token');
-      fetchProfileInfo(myUserInfo.id, token)
-    }
     fetchData()
   }, [myUserInfo]);
   useEffect(() => {
     if (socket) {
       console.log("WEBSOCKET WAS TURN ON");
-      console.log("Socket", socket);
+      // console.log("Socket", socket);
       socket.onmessage = (event) => {
         const data = event.data;
         console.log("Received data:", data);
         try {
           const jsonData = JSON.parse(data);
           console.log("Received JSON data:", jsonData);
-          const newTopChatActivity = {
-            messageID: jsonData.id,
-            userID: jsonData.userID,
-            timestamp: jsonData.timestamp,
-            parentID: jsonData.parentID,
-            contents: jsonData.contents,
-            hiden: [],
-            recall: false,
-          }
-          console.log("NEW MESSAGE", newTopChatActivity);
-          // Kiểm tra nếu conversationOpponent.topChatActivity đã được khởi tạo và là một mảng
-          if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
-            // Thực hiện phép toán push trên mảng
-            conversationOpponent.topChatActivity.push(newTopChatActivity);
-            console.log("ADD SUCCESS", conversationOpponent);
-          } else {
-            // Nếu conversationOpponent.topChatActivity chưa được khởi tạo hoặc không phải là một mảng, thông báo lỗi
-            console.log('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
+          if (jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") {
+            const newTopChatActivity = {
+              messageID: jsonData.id,
+              userID: jsonData.userID,
+              timestamp: jsonData.timestamp,
+              parentID: jsonData.parentID,
+              contents: jsonData.contents,
+              hiden: [],
+              recall: false,
+            }
+            if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
+              conversationOpponent.topChatActivity.push(newTopChatActivity);
+            } else {
+              // console.error('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
+            }
+            const updateConversationOpponentInUserInfo = () => {
+              const updatedConversations = myUserInfo.conversations.map(conversation => {
+                if (conversation.chatID === conversationOpponent.chatID) {
+                  return conversationOpponent;
+                } else {
+                  return conversation;
+                }
+              });
+              setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
+            };
+
+            updateConversationOpponentInUserInfo();
           }
 
-          const updateConversationOpponentInUserInfo = () => {
-            const updatedConversations = myUserInfo.conversations.map(conversation => {
-              if (conversation.chatID === conversationOpponent.chatID) {
-                // Nếu tìm thấy conversationOpponent trong mảng conversations của myUserInfo
-                // Thực hiện cập nhật dữ liệu cho nó với dữ liệu mới từ conversationOpponent
-                return conversationOpponent;
-              } else {
-                // Nếu không tìm thấy, giữ nguyên dữ liệu
-                return conversation;
-              }
-            });
-            // Cập nhật lại mảng conversations trong myUserInfo với dữ liệu đã được cập nhật
-            setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
-          };
-
-          // Gọi hàm để cập nhật conversationOpponent trong myUserInfo
-          updateConversationOpponentInUserInfo();
         } catch (error) {
           console.error("Error parsing JSON data:", error);
         }
       };
-
-      // Ensure that the socket is closed when the component unmounts
       return () => {
         socket.onmessage = null;
       };
@@ -219,36 +221,6 @@ const ChatScreen = () => {
     }
   };
 
-  const fetchProfileInfo = async (userID, token) => {
-    try {
-      const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      // console.log("PROFILE FRIEND REQUEST:\n", response.data);
-      setMyProfile(response.data)
-      return response.data;
-    } catch (error) {
-      if (error.response) {
-        if (error.response.status !== 404) {
-          return {
-            status: error.response.status,
-            message: 'Lỗi khi lấy thông tin cá nhân'
-          };
-        }
-        return {
-          status: 404,
-          message: 'Không tìm thấy thông tin cá nhân'
-        };
-      } else {
-        return {
-          status: -1,
-          message: 'Lỗi kết nối máy chủ'
-        };
-      }
-    }
-  };
   // Xử lý Reload dữ liệu
   const fetchAllChatbychatID = async (chatID, token) => {
     try {
@@ -270,7 +242,7 @@ const ChatScreen = () => {
     }
   }
   useEffect(() => {
-    const newSocket = new WebSocket(`ws://${host}/ws/chat/${componentChatID}`);
+    const newSocket = new WebSocket(`ws://${host}:8082/ws/chat/${componentChatID}`);
     newSocket.onopen = () => {
       console.log("WebSocket connected >>>>>>>>");
     };
@@ -313,7 +285,7 @@ const ChatScreen = () => {
           value: messageContent,
         });
       }
-      console.log("MESSAGE:__________", messageSocket);
+      // console.log("MESSAGE:__________", messageSocket);
       socket.send(JSON.stringify(messageSocket));
       setMessage(""); // Xóa nội dung của input message sau khi gửi
     } else {
@@ -372,6 +344,8 @@ const ChatScreen = () => {
             conversationOpponent={conversationOpponent}
           />
           <FlatList
+            ref={flatListRef}
+            onContentSizeChange={handleContentChange}
             ListHeaderComponent={(
               <BackgroundInChat
                 conversationOpponent={conversationOpponent}
@@ -386,6 +360,12 @@ const ChatScreen = () => {
                 myUserInfo={myUserInfo} />}
 
             keyExtractor={(item) => item.messageID}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
             ListFooterComponent={(
               <View style={{ height: 10 }}></View>
             )}
