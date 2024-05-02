@@ -112,6 +112,7 @@ import { useLocation } from 'react-router-dom';
 
 import AddFriendDialog from "../../components/models/AddFriend";
 import CreateGroup from "../../components/models/CreateGroup";
+import { useUser } from "../../context/UserContext";
 
 const Message = lazy(() => import(".")); // Lazy load Message component
 const OtherMessage = lazy(() => import("./OtherMessage")); // Lazy load OtherMessage component
@@ -119,7 +120,7 @@ const OtherMessage = lazy(() => import("./OtherMessage")); // Lazy load OtherMes
 function MessageFilterBar() {
   const location = useLocation();
   const { state } = location;
-
+  const {cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
   // Kiểm tra xem state có tồn tại không trước khi truy cập
   if (state) {
     const { token, phoneNumber, data } = state;

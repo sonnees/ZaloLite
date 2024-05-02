@@ -15,4 +15,5 @@ import java.util.UUID;
 public class ChatMessageDTO {
     private UUID id;
     private TypeChatMessage TCM;
+    private String ws;
 }
