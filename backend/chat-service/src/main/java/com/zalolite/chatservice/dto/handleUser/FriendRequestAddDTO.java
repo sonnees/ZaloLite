@@ -18,8 +18,8 @@ public class FriendRequestAddDTO extends UserMessageDTO {
     private String receiverAvatar;
     private String description;
 
-    public FriendRequestAddDTO(UUID id, TypeUserMessage TUM, String ws, UUID senderID, String senderName, String senderAvatar, UUID receiverID, String receiverName, String receiverAvatar, String description) {
-        super(id, TUM, ws);
+    public FriendRequestAddDTO(UUID id, TypeUserMessage TUM, UUID senderID, String senderName, String senderAvatar, UUID receiverID, String receiverName, String receiverAvatar, String description) {
+        super(id, TUM);
         this.senderID = senderID;
         this.senderName = senderName;
         this.senderAvatar = senderAvatar;

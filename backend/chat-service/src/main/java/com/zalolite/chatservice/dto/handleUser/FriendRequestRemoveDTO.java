@@ -16,14 +16,14 @@ public class FriendRequestRemoveDTO extends UserMessageDTO {
     private UUID senderID;
     private UUID receiverID;
 
-    public FriendRequestRemoveDTO(UUID id, TypeUserMessage TUM, String ws, UUID senderID, UUID receiverID) {
-        super(id, TUM, ws);
+    public FriendRequestRemoveDTO(UUID id, TypeUserMessage TUM, UUID senderID, UUID receiverID) {
+        super(id, TUM);
         this.senderID = senderID;
         this.receiverID = receiverID;
     }
 
     public FriendRequestRemoveDTO(FriendRequestAcceptDTO f) {
-        super(f.getId(), f.getTUM(), f.getWs());
+        super(f.getId(), f.getTUM());
         this.senderID = f.getSenderID();
         this.receiverID = f.getReceiverID();
     }

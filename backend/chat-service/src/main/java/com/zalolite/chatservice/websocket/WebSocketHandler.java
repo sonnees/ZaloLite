@@ -41,7 +41,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
     @NonNull
     public Mono<Void> handle(WebSocketSession session) {
         String sessionId = session.getId();
-        String path = "ws://localhost:8082"+ session.getHandshakeInfo().getUri().getPath();
+        String path = session.getHandshakeInfo().getUri().getPath();
         String[] split = path.split("/");
 
         if(sessions.get(path)==null){
@@ -69,8 +69,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .flatMap(message -> {
                             try {
                                 GroupDTO root = objectMapper.readValue(message, GroupDTO.class);
-                                if(!root.getWs().equals(path)) return Mono.empty();
-                                log.info("** Received message from {}: message: {}  path: {}", sessionId, objectMapper.writeValueAsString(root), path);
+                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
 
                                 return switch (root.getTGM()) {
                                     case TGM01 -> {
@@ -82,14 +81,14 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .create(arrayID, objectMapper.readValue(message, CreateGroupDTO.class))
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | Create Group");
                                                     sendMessageToAllClients(arrayID, obj.getOwner().getUserID().toString() ,obj);
                                                 }))
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | Create Group");
                                                     return Mono.empty();
                                                 });
@@ -100,7 +99,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .delete(obj.getIdChat())
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00,obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | Delete Group");
                                                     sendMessageToAllClients(arrayID, arrayID[0] ,obj);
                                                     return Mono.empty();
@@ -108,7 +107,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | Create Group");
                                                     return Mono.empty();
                                                 });
@@ -119,7 +118,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .appendMember(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | append Member Group");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -127,7 +126,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     if(e.getMessage().equals("CONFLICT")) notify.setTypeNotify(TypeNotify.CONFLICT);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | append Member Group");
                                                     return Mono.empty();
@@ -138,7 +137,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .appendAdmin(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00,obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | append admin Group");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -146,7 +145,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     if(e.getMessage().equals("CONFLICT")) notify.setTypeNotify(TypeNotify.CONFLICT);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | append admin Group");
                                                     return Mono.empty();
@@ -158,7 +157,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .removeAdmin(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | remove admin Group");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -166,7 +165,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | remove admin Group");
                                                     return Mono.empty();
                                                 });
@@ -177,7 +176,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .removeMember(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | remove member Group");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -185,7 +184,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | remove member Group");
                                                     return Mono.empty();
                                                 });
@@ -196,7 +195,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .changeOwner(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | change owner Group");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -204,7 +203,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | change owner Group");
                                                     return Mono.empty();
                                                 });
@@ -215,7 +214,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .updateNameChat(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | change chat name Group");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -223,7 +222,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | change chat name Group");
                                                     return Mono.empty();
                                                 });
@@ -234,7 +233,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .updateAvatar(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | change avatar Group");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -242,7 +241,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | change avatar Group");
                                                     return Mono.empty();
                                                 });
@@ -253,7 +252,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .updateSetting_changeChatNameAndAvatar(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | update setting change chat name and avatar Group");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -261,7 +260,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | update setting change chat name and avatar Group");
                                                     return Mono.empty();
                                                 });
@@ -272,7 +271,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .updateSetting_pinMessages(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | update setting pin messages");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -280,7 +279,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | update setting pin messages");
                                                     return Mono.empty();
                                                 });
@@ -291,7 +290,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .updateSetting_sendMessages(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | update setting send messages");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -299,7 +298,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | update setting send messages");
                                                     return Mono.empty();
                                                 });
@@ -310,7 +309,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .updateSetting_membershipApproval(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | update setting membership approval");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -318,7 +317,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | update setting membership approval");
                                                     return Mono.empty();
                                                 });
@@ -329,7 +328,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield groupHandleWebSocket
                                                 .updateSetting_createNewPolls(obj)
                                                 .flatMapMany(arrayID -> {
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | update setting create new polls");
                                                     sendMessageToAllClients(arrayID, "" ,obj);
                                                     return Mono.empty();
@@ -337,7 +336,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyGroup notify=new NotifyGroup(obj.getId(), TypeGroupMessage.TGM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | update setting create new polls");
                                                     return Mono.empty();
                                                 });
@@ -385,11 +384,11 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
             for (String i : array){
                 List<WebSocketSession> webSocketSessions = sessions.get("/ws/user/"+i);
                 if(webSocketSessions == null) continue;
-                webSocketSessions.forEach(session ->
+                webSocketSessions.forEach(session -> {
                         session
                                 .send(Flux.just(session.textMessage(message)))
-                                .subscribe()
-                );
+                                .subscribe();
+                });
             }
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
@@ -405,15 +404,15 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .flatMap(message -> {
                             try {
                                 UserMessageDTO root = objectMapper.readValue(message, UserMessageDTO.class);
-                                log.info("** Received message from {}: message: {}  path: {}", sessionId, objectMapper.writeValueAsString(root), path);
-                                if(!root.getWs().equals(path)) return Mono.empty();
+                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
+
                                 return switch (root.getTUM()) {
                                     case TUM01 -> {
                                         FriendRequestAddDTO obj = objectMapper.readValue(message, FriendRequestAddDTO.class);
                                         yield userHandleWebSocket
                                                 .appendFriendRequests(objectMapper.readValue(message, FriendRequestAddDTO.class))
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00,obj.getWs(), TypeNotify.SUCCESS);
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(path,sessionId,notify, "Pass | append friend requests");
                                                             sendMessageToAllClients(path,sessionId,obj,"append friend requests");
                                                         }
@@ -421,7 +420,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00,obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | append friend requests");
                                                     return Mono.empty();
                                                 });
@@ -432,7 +431,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield  userHandleWebSocket
                                                 .removeFriendRequests(obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(path,sessionId,notify, "Pass | remove friend requests");
                                                             sendMessageToAllClients(path,sessionId,obj,"remove friend requests");
                                                         }
@@ -440,7 +439,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | remove friend requests");
                                                     return Mono.empty();
                                                 });
@@ -451,7 +450,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield  userHandleWebSocket
                                                 .acceptFriendRequests(obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(path,sessionId,notify, "Pass | accept friend requests");
                                                             sendMessageToAllClients(path,sessionId,obj,"accept friend requests");
                                                         }
@@ -459,7 +458,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | accept friend requests");
                                                     return Mono.empty();
                                                 });
@@ -469,7 +468,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield  userHandleWebSocket
                                                 .unfriend(obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(path,sessionId,notify, "Pass | unfriend");
                                                             sendMessageToAllClients(path,sessionId,obj,"unfriend");
                                                         }
@@ -477,7 +476,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | unfriend");
                                                     return Mono.empty();
                                                 });
@@ -488,7 +487,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield  userHandleWebSocket
                                                 .appendConversations(new AppendConversationDTO(obj), Type.STRANGER)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                            NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(path,sessionId,notify, "Pass | append conversations");
                                                             sendMessageToAllClients(path,sessionId,obj,"append conversations");
                                                         }
@@ -496,7 +495,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyUser notify=new NotifyUser(obj.getId(), TypeUserMessage.TUM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | append conversations");
                                                     return Mono.empty();
                                                 });
@@ -565,15 +564,15 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                         .flatMap(message -> {
                             try {
                                 ChatMessageDTO root = objectMapper.readValue(message, ChatMessageDTO.class);
-                                log.info("** Received message from {}: message: {}  path: {}", sessionId, objectMapper.writeValueAsString(root), path);
-                                if(!root.getWs().equals(path)) return Mono.empty();
+                                log.info("** Received message from {}: {}", sessionId, objectMapper.writeValueAsString(root));
+
                                 return switch (root.getTCM()) {
                                     case TCM01 -> { // message
                                         MessageAppendDTO obj = objectMapper.readValue(message, MessageAppendDTO.class);
                                         yield chatHandleWebSocket
                                                 .appendChat(chatID,obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
                                                     sendMessageToClient(path,sessionId,notify, "Pass | append chat");
                                                     sendMessageToAllClients(path,sessionId,obj,"append chat");
                                                 }
@@ -581,7 +580,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | append chat");
                                                     return Mono.empty();
                                                 });
@@ -592,7 +591,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield chatHandleWebSocket
                                                 .changeDeliveryChat(chatID, obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(path,sessionId,notify, "Pass | change delivery chat");
                                                             sendMessageToAllClients(path,sessionId,obj,"change delivery chat");
                                                         }
@@ -600,7 +599,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | change delivery chat");
                                                     return Mono.empty();
                                                 });
@@ -611,7 +610,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield chatHandleWebSocket
                                                 .changeReadChat(chatID, new MessageDeliveryDTO(obj.getUserID(), obj.getMessageID(), obj.getUserAvatar(), obj.getUserName()))
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(path,sessionId,notify, "Pass | change read chat");
                                                             sendMessageToAllClients(path,sessionId,obj,"change read chat");
                                                         }
@@ -619,7 +618,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | change read chat");
                                                     return Mono.empty();
                                                 });
@@ -630,7 +629,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield chatHandleWebSocket
                                                 .appendHiddenMessage(UUID.fromString(chatID), obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(path,sessionId,notify, "Pass | change hidden chat");
                                                             sendMessageToAllClients(path,sessionId,obj,"change hidden chat");
                                                         }
@@ -638,7 +637,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00 , obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | change hidden chat");
                                                     return Mono.empty();
                                                 });
@@ -649,7 +648,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                         yield chatHandleWebSocket
                                                 .recallMessage(UUID.fromString(chatID), obj)
                                                 .thenMany(Mono.fromRunnable(() -> {
-                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, obj.getWs(), TypeNotify.SUCCESS);
+                                                            NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.SUCCESS);
                                                             sendMessageToClient(path,sessionId,notify, "Pass | recall message");
                                                             sendMessageToAllClients(path,sessionId,obj,"recall message");
                                                         }
@@ -657,7 +656,7 @@ public class WebSocketHandler implements org.springframework.web.reactive.socket
                                                 .thenMany(Flux.just(message))
                                                 .onErrorResume(e -> {
                                                     log.error("** " + e);
-                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, obj.getWs(), TypeNotify.FAILED);
+                                                    NotifyChat notify=new NotifyChat(obj.getId(), TypeChatMessage.TCM00, TypeNotify.FAILED);
                                                     sendMessageToClient(path,sessionId,notify, "Failed | recall message");
                                                     return Mono.empty();
                                                 });
