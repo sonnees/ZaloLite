@@ -15,7 +15,7 @@ const MessagesScreen = () => {
   let navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalChatVisible, setModalChatVisible] = useState(false);
-  const { myUserInfo, setMyUserInfo, listChatID } = useContext(GlobalContext)
+  const { myUserInfo, myProfile } = useContext(GlobalContext)
   const [allConversation, setAllConversation] = useState([]);
   const [data, setData] = useState({});
   const [refreshing, setRefreshing] = useState(false);
@@ -86,7 +86,7 @@ const MessagesScreen = () => {
     const [data, setData] = useState(null);
     const { socket, setSocket } = useContext(SocketContext);
     const itemRef = useRef(item);
-
+    const [timeDifference, setTimeDifference] = useState('');
     useEffect(() => {
       itemRef.current = item;
     }, [item]);
@@ -95,7 +95,7 @@ const MessagesScreen = () => {
       if (itemRef.current.chatID) {
         const newSocket = new WebSocket(`ws://${host}:8082/ws/chat/${itemRef.current.chatID}`);
         newSocket.onopen = () => {
-          console.log("WebSocket for chatID: ", itemRef.current.chatID, " OPENED");
+          // console.log("WebSocket for chatID: ", itemRef.current.chatID, " OPENED");
         };
         newSocket.onmessage = (event) => {
           const data = event.data;
@@ -126,6 +126,20 @@ const MessagesScreen = () => {
     useEffect(() => {
       fetchData();
     }, []);
+
+    useEffect(() => {
+      if (data && data.topChatActivity && data.topChatActivity.length > 0) {
+        const intervalId = setInterval(() => {
+          const newTimeDifference = getTimeDifference(data.topChatActivity[data.topChatActivity.length - 1].timestamp);
+          setTimeDifference(newTimeDifference);
+        }, 1000); // Cập nhật mỗi 60 giây
+
+        return () => {
+          clearInterval(intervalId);
+        };
+      }
+    }, [data]);
+
     const fetchData = async () => {
       const newData = await fetchConversationOpponent(itemRef.current);
       setData(newData);
@@ -133,26 +147,46 @@ const MessagesScreen = () => {
     if (!data) {
       return null;
     }
-    const textColor = (data.deliveries && data.deliveries.length > 0 && data.reads && data.reads.length > 0 &&
-      !data.deliveries.includes(data.topChatActivity[0].messageID) &&
-      !data.reads.includes(data.topChatActivity[0].messageID)) ? "black" : "gray";
-    const textFontWeight = (data.deliveries && data.deliveries.length > 0 && data.reads && data.reads.length > 0 &&
-      !data.deliveries.includes(data.topChatActivity[0].messageID) &&
-      !data.reads.includes(data.topChatActivity[0].messageID)) ? "bold" : "400";
 
+    const textColor = (
+      data.topChatActivity && data.topChatActivity.length > 0 &&
+        data.topChatActivity[data.topChatActivity.length - 1].userID &&
+        data.topChatActivity[data.topChatActivity.length - 1].userID === myProfile.userID ? "gray" :
+        (
+          data.deliveries && data.deliveries.length > 0 &&
+          data.reads && data.reads.length > 0 &&
+          !data.reads.includes(data.topChatActivity[0].messageID)
+        ) ? "black" : "gray"
+    );
+    const textFontWeight = (
+      data.topChatActivity && data.topChatActivity.length > 0 &&
+        data.topChatActivity[data.topChatActivity.length - 1].userID &&
+        data.topChatActivity[data.topChatActivity.length - 1].userID === myProfile.userID ? "400" :
+        (
+          data.deliveries && data.deliveries.length > 0 &&
+          data.reads && data.reads.length > 0 &&
+          !data.reads.includes(data.topChatActivity[0].messageID)
+        ) ? "bold" : "400"
+    );
+    let contentMessage = '';
+    if (data.topChatActivity && data.topChatActivity.length > 0) {
+      const lastContent = data.topChatActivity[data.topChatActivity.length - 1].contents[data.topChatActivity[data.topChatActivity.length - 1].contents.length - 1];
+      const key = lastContent.key;
+      if (lastContent && key.includes('|') && key.split('|').length >= 2) {
+        contentMessage = '[File]';
+      } else if (lastContent && (key === "text" || key === "emoji")) {
+        contentMessage = lastContent.value;
+      } else if (lastContent && key === "image") {
+        contentMessage = "[Photo]";
+      } else if (lastContent && key === "mp4") {
+        contentMessage = "[Video]";
+      } else if (lastContent && key === "link") {
+        contentMessage = "[Link]";
+      }
+    } else {
+      contentMessage = 'Chưa có cuộc trò chuyện nào';
+    }
 
-    // useEffect(() => {
-    //   if (data.topChatActivity && data.topChatActivity.length > 0) {
-    //     const intervalId = setInterval(() => {
-    //       const newTimeDifference = getTimeDifference(data.topChatActivity[data.topChatActivity.length - 1].timestamp);
-    //       setTimeDifference(newTimeDifference);
-    //     }, 6000); // Cập nhật mỗi 60 giây
-
-    //     return () => {
-    //       clearInterval(intervalId);
-    //     };
-    //   }
-    // }, [item]);
     return (
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
@@ -166,8 +200,7 @@ const MessagesScreen = () => {
           <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>
             <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{data.chatName ? data.chatName : null}</Text>
             <Text style={{ fontSize: 14, fontWeight: textFontWeight, color: textColor, marginBottom: 10 }}>
-              {/* <Text style={{ fontSize: 14, fontWeight: "400", color: "gray", marginBottom: 10 }}> */}
-              {data.topChatActivity && data.topChatActivity.length > 0 ? data.topChatActivity[data.topChatActivity.length - 1].contents[0].value : 'Chưa có cuộc trò chuyện nào'}
+              {contentMessage}
             </Text>
 
           </View>
@@ -176,8 +209,8 @@ const MessagesScreen = () => {
             <Icon name='pushpin' size={13} color={'#d9d9d9'} style={{ marginRight: 5 }}></Icon>
             <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>
               <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>
-                {/* {timeDifference} */}
-                {data.topChatActivity && data.topChatActivity.length > 0 ? getTimeDifference(data.topChatActivity[data.topChatActivity.length - 1].timestamp) : ''}
+                {timeDifference}
+                {/* {data.topChatActivity && data.topChatActivity.length > 0 ? getTimeDifference(data.topChatActivity[data.topChatActivity.length - 1].timestamp) : ''} */}
               </Text>
 
             </Text>

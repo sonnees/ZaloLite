@@ -88,52 +88,38 @@ const ChatScreen = () => {
       socket.onmessage = (event) => {
         const data = event.data;
         console.log("Received data:", data);
-        try {
-          const jsonData = JSON.parse(data);
-          console.log("Received JSON data:", jsonData);
-          if (jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") {
-            const newTopChatActivity = {
-              messageID: jsonData.id,
-              userID: jsonData.userID,
-              timestamp: jsonData.timestamp,
-              parentID: jsonData.parentID,
-              contents: jsonData.contents,
-              hiden: [],
-              recall: false,
+        // Check if the data starts with an opening curly brace, indicating it's a JSON object
+        if (data.trim().startsWith('{')) {
+          try {
+            const jsonData = JSON.parse(data);
+            // console.log("Received JSON data:", jsonData);
+            if ((jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") || jsonData.tcm === "TCM01") {
+              const newTopChatActivity = {
+                messageID: jsonData.id,
+                userID: jsonData.userID,
+                timestamp: jsonData.timestamp,
+                parentID: jsonData.parentID,
+                contents: jsonData.contents,
+                hiden: [],
+                recall: false,
+              }
+              fetchData()
             }
-            if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
-              conversationOpponent.topChatActivity.push(newTopChatActivity);
-            } else {
-              // console.error('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
-            }
-            const updateConversationOpponentInUserInfo = () => {
-              const updatedConversations = myUserInfo.conversations.map(conversation => {
-                if (conversation.chatID === conversationOpponent.chatID) {
-                  return conversationOpponent;
-                } else {
-                  return conversation;
-                }
-              });
-              setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
-            };
-
-            updateConversationOpponentInUserInfo();
+          } catch (error) {
+            console.error("Error parsing JSON data:", error);
           }
-
-        } catch (error) {
-          console.error("Error parsing JSON data:", error);
+        } else {
+          console.log("Received data is not a JSON object, ignoring...");
         }
       };
       return () => {
         socket.onmessage = null;
       };
-    }
-    else {
+    } else {
       console.log("WEBSOCKET NOT ON");
     }
-  }, [myUserInfo, socket]
-    // [myUserInfo, conversationOpponent,socket]
-  );
+  }, [myUserInfo, socket]);
+
 
 
   // Xử lý Emoji
@@ -292,6 +278,49 @@ const ChatScreen = () => {
       console.error("WebSocket is not initialized.");
     }
   };
+  const sendMessageDelivery = (messageContent, contentType, parentID) => {
+    if (socket) {
+      const messageSocket = {
+        id: uuid.v4(),
+        tcm: "TCM02",
+        userID: myProfile.userID,
+        userAvatar: myProfile.avatar,
+        userName: myProfile.userName,
+        timestamp: new Date().toISOString(),
+        parentID: parentID,
+        contents: [],
+      };
+      // Thêm nội dung tương ứng vào tin nhắn
+      if (contentType === "text") {
+        messageSocket.contents.push({
+          key: "text",
+          value: messageContent,
+        });
+      } else if (contentType === "file") {
+        // Lấy phần tử đầu tiên trong mảng contents
+        const fileContent = messageContent.contents[0];
+        messageSocket.contents.push({
+          key: fileContent.key,
+          value: fileContent.value, // Đây là đường dẫn URL của file
+        });
+      } else if (contentType === "emoji") {
+        messageSocket.contents.push({
+          key: "emoji",
+          value: messageContent,
+        });
+      } else if (contentType === "link") {
+        messageSocket.contents.push({
+          key: "link",
+          value: messageContent,
+        });
+      }
+      // console.log("MESSAGE:__________", messageSocket);
+      socket.send(JSON.stringify(messageSocket));
+      setMessage(""); // Xóa nội dung của input message sau khi gửi
+    } else {
+      console.error("WebSocket is not initialized.");
+    }
+  };
   const handleSendMessage = () => {
     if (message.startsWith("http://") || message.startsWith("https://")) {
       setKeyTypeMessage("link");
@@ -356,6 +385,7 @@ const ChatScreen = () => {
               <ChatItem
                 index={index}
                 item={item}
+                friend={true}
                 conversationOpponent={conversationOpponent}
                 myUserInfo={myUserInfo} />}
 

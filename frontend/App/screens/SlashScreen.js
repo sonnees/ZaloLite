@@ -8,18 +8,12 @@ export default function SlashScreen() {
         <View style={styles.container}>
             <View style={{ flex: 6 }}>
                 <Image source={require('../assets/login_image.jpg')} style={{ width: '100%', height: '100%' }} />
-                <View
-                    style={{
-                        flex: 3,
-                        position: "absolute",
-                        top: "40%",
-                        left: "25%",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    <Text style={{ fontFamily: "Roboto", fontSize: 50, fontWeight: "bold", color: "#1E90FF" }}>ZaloLite</Text>
-                </View>
+                <Text style={{
+                    flex: 3, position: "absolute", justifyContent: "center",
+                    alignItems: "center", fontFamily: "Roboto", fontSize: 50,
+                    fontWeight: "bold", color: "#1E90FF", alignSelf: 'center', justifyContent: "center",
+                    top: "40%",
+                }}>Zalo Lite</Text>
             </View>
             <View style={{ flex: 3, backgroundColor: "#fff", justifyContent: "center", }}>
                 <TouchableOpacity style={{ backgroundColor: "#1E90FF", height: "18%", justifyContent: "center", marginLeft: "21%", marginRight: "21%", alignItems: 'center', borderRadius: 50 }}

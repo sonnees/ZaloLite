@@ -30,9 +30,8 @@ const FriendRequestScreen = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            // console.log("PROFILE FRIEND REQUEST:\n", response.data);
             setProfileFriendRequest(response.data)
-            // console.log("PROFILE FRIEND REQUEST HEHE:\n", profileFriendRequest);
+            // console.log("PROFILE FRIEND REQUEST:\n", profileFriendRequest);
             return response.data;
         } catch (error) {
             if (error.response) {
@@ -78,12 +77,10 @@ const FriendRequestScreen = () => {
         const token = await AsyncStorage.getItem('token');
         fetchProfileInfo(friendRequest.userID, token)
         // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
-        // console.log("DATAFR:  ", profileFriendRequest);
         setSelectedFriendRequest(friendRequest);
         setModalChatVisible(true);
     }
     const acceptFriend = async (item) => {
-        // console.log("HEHEE");
         const message = {
             id: uuid.v4(),
             tum: "TUM03",
@@ -130,19 +127,11 @@ const FriendRequestScreen = () => {
         }
     };
     const recallFriendRequest = async (item) => {
-        // console.log("HEHEE");
         const message = {
             id: uuid.v4(),
             tum: "TUM02",
-
             senderID: item.userID,
-            // senderName: item.userName,
-            // senderAvatar: item.avatar,
-
             receiverID: myProfile.userID,
-            // receiverName: myProfile.userName,
-            // receiverAvatar: myProfile.avatar,
-
         };
         const token = await AsyncStorage.getItem('token');
         fetchProfileInfo(item.userID, token)
@@ -254,8 +243,8 @@ const FriendRequestScreen = () => {
         const token = await AsyncStorage.getItem('token');
         const data = fetchProfileInfo(item.userID, token)
         // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
-        console.log("DATAFR:  ", data);
-        navigation.navigate('ProfileFriendScreen', { profile: profileFriendRequest });
+        // console.log("DATAFR:  ", data);
+        navigation.navigate('ProfileFriendScreen', { profile: data });
     }
     const ReceivedFriendRequestElement = ({ item }) => {
         // console.log("FRIENDREQUEST: \n", item);

@@ -7,7 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { GlobalContext } from '../context/GlobalContext';
 import { ChatItem } from '../component/ChatVIewElement';
 import * as ImagePicker from 'expo-image-picker';
-import EmojiSelector, { Categories } from "react-native-emoji-selector";
+import EmojiSelector from "react-native-emoji-selector";
 import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
@@ -90,54 +90,38 @@ const ChatGroupScreen = () => {
       socket.onmessage = (event) => {
         const data = event.data;
         console.log("Received data:", data);
-        try {
-          const jsonData = JSON.parse(data);
-          console.log("Received JSON data:", jsonData);
-          if (jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") {
-            const newTopChatActivity = {
-              messageID: jsonData.id,
-              userID: jsonData.userID,
-              timestamp: jsonData.timestamp,
-              parentID: jsonData.parentID,
-              contents: jsonData.contents,
-              hiden: [],
-              recall: false,
+        // Check if the data starts with an opening curly brace, indicating it's a JSON object
+        if (data.trim().startsWith('{')) {
+          try {
+            const jsonData = JSON.parse(data);
+            // console.log("Received JSON data:", jsonData);
+            if ((jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") || jsonData.tcm === "TCM01") {
+              const newTopChatActivity = {
+                messageID: jsonData.id,
+                userID: jsonData.userID,
+                timestamp: jsonData.timestamp,
+                parentID: jsonData.parentID,
+                contents: jsonData.contents,
+                hiden: [],
+                recall: false,
+              }
+              fetchData()
             }
-            if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
-              conversationOpponent.topChatActivity.push(newTopChatActivity);
-            } else {
-              // console.error('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
-            }
-            const updateConversationOpponentInUserInfo = () => {
-              const updatedConversations = myUserInfo.conversations.map(conversation => {
-                if (conversation.chatID === conversationOpponent.chatID) {
-                  return conversationOpponent;
-                } else {
-                  return conversation;
-                }
-              });
-              setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
-            };
-
-            updateConversationOpponentInUserInfo();
+          } catch (error) {
+            console.error("Error parsing JSON data:", error);
           }
-
-        } catch (error) {
-          console.error("Error parsing JSON data:", error);
+        } else {
+          console.log("Received data is not a JSON object, ignoring...");
         }
       };
-
-      // Ensure that the socket is closed when the component unmounts
       return () => {
         socket.onmessage = null;
       };
-    }
-    else {
+    } else {
       console.log("WEBSOCKET NOT ON");
     }
-  }, [myUserInfo, socket]
-    // [myUserInfo, conversationOpponent,socket]
-  );
+  }, [myUserInfo, socket]);
+
   // Xử lý Reload dữ liệu
   const fetchAllChatbychatID = async (chatID, token) => {
     try {
@@ -349,6 +333,7 @@ const ChatGroupScreen = () => {
               <ChatItem
                 index={index}
                 item={item}
+                friend={false}
                 conversationOpponent={conversationOpponent}
                 myUserInfo={myUserInfo} />}
 

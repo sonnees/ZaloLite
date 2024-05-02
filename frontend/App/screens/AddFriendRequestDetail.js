@@ -48,7 +48,7 @@ const AddFriendRequestDetail = () => {
                 // );
                 // Gửi tin nhắn khi kết nối thành công
                 newSocket.send(JSON.stringify(message));
-                console.log("Message sent:", message);
+                // console.log("Message sent:", message);
             };
             // newSocket.onmessage = (event) => {
             //     console.log("Message received:", event.data);

@@ -4,7 +4,7 @@ import { ChatOfReCall } from './ChatOfRecall';
 import { ChatListNoneRecall } from './ChatListNoneRecall';
 import { MyMessageNoneRecall } from './MyMessageNoneRecall';
 import { OpponentMessageNoneRecall } from './OpponentMessageNoneRecall';
-const ChatItem = memo(({ item, conversationOpponent, myUserInfo }) => {
+const ChatItem = memo(({ item, conversationOpponent, myUserInfo, friend }) => {
     // console.log('ChatItem key =>>>>>>>>>>>>>>>>:', item.messageID);
     const findParent = findTopChatActivity(item.parenID, conversationOpponent.topChatActivity)
     const [parentMessage, setParentMessage] = useState()
@@ -26,6 +26,7 @@ const ChatItem = memo(({ item, conversationOpponent, myUserInfo }) => {
                             item={item}
                             conversationOpponent={conversationOpponent}
                             myUserInfo={myUserInfo}
+                            friend={friend}
                         />
                     );
                 }
@@ -35,6 +36,7 @@ const ChatItem = memo(({ item, conversationOpponent, myUserInfo }) => {
                             item={item}
                             conversationOpponent={conversationOpponent}
                             myUserInfo={myUserInfo}
+                            friend={friend}
                         />
                     );
                 }
@@ -42,7 +44,7 @@ const ChatItem = memo(({ item, conversationOpponent, myUserInfo }) => {
             //Chat Recall
             else {
                 return (
-                    <ChatOfReCall item={item} myUserInfo={myUserInfo} conversationOpponent={conversationOpponent} />
+                    <ChatOfReCall item={item} myUserInfo={myUserInfo} conversationOpponent={conversationOpponent} friend={friend} />
                 )
             }
         }
@@ -58,6 +60,7 @@ const ChatItem = memo(({ item, conversationOpponent, myUserInfo }) => {
                             item={item}
                             conversationOpponent={conversationOpponent}
                             myUserInfo={myUserInfo}
+                            friend={friend}
                         />
                     );
                 }
@@ -68,6 +71,7 @@ const ChatItem = memo(({ item, conversationOpponent, myUserInfo }) => {
                             item={item}
                             conversationOpponent={conversationOpponent}
                             myUserInfo={myUserInfo}
+                            friend={friend}
                         />
                     );
                 }
@@ -75,7 +79,7 @@ const ChatItem = memo(({ item, conversationOpponent, myUserInfo }) => {
             //Chat Recall
             else {
                 return (
-                    <ChatOfReCall item={item} myUserInfo={myUserInfo} conversationOpponent={conversationOpponent} />
+                    <ChatOfReCall item={item} myUserInfo={myUserInfo} conversationOpponent={conversationOpponent} friend={friend} />
                 )
             }
         }

@@ -6,7 +6,7 @@ import { getTime } from '../utils/CalTime';
 import { API_PROFILE_BY_USERID } from '../api/API';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => {
+const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo, friend }) => {
     const [textHeight, setTextHeight] = useState(40);
     const touchableRef = useRef(null);
     const [videoKey, setVideoKey] = useState(0);
@@ -72,10 +72,20 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                         if (content.key === 'text' || content.key === 'emoji') {
                             return (
                                 <View style={{}}>
+                                    <MessageModal
+                                        modalVisible={modalVisible}
+                                        setModalVisible={setModalVisible}
+                                        item={item}
+                                        conversationOpponent={conversationOpponent}
+                                        myUserInfo={myUserInfo}
+                                        friend={friend}
+                                    />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        <ChatAatar
-                                            profile={profile}
-                                        />
+                                        {!friend && (
+                                            <ChatAatar
+                                                profile={profile}
+                                            />
+                                        )}
                                         <TouchableOpacity
                                             key={contentIndex}
                                             style={{
@@ -91,9 +101,11 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                                             }}
                                             onLongPress={() => { { setModalVisible(true); console.log(modalVisible); } }}
                                         >
-                                            <ChatName
-                                                profile={profile}
-                                            />
+                                            {!friend && (
+                                                <ChatName
+                                                    profile={profile}
+                                                />
+                                            )}
                                             <Text
                                                 onLayout={handleTextLayout}
                                                 style={{ flexWrap: 'wrap', fontSize: 15, marginTop: 5 }}
@@ -109,10 +121,20 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                         } else if (content.key === 'image') {
                             return (
                                 <View style={{ flexDirection: 'column' }}>
+                                    <MessageModal
+                                        modalVisible={modalVisible}
+                                        setModalVisible={setModalVisible}
+                                        item={item}
+                                        conversationOpponent={conversationOpponent}
+                                        myUserInfo={myUserInfo}
+                                        friend={friend}
+                                    />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        <ChatAatar
-                                            profile={profile}
-                                        />
+                                        {!friend && (
+                                            <ChatAatar
+                                                profile={profile}
+                                            />
+                                        )}
                                         <TouchableOpacity
                                             key={contentIndex}
                                             style={{
@@ -134,9 +156,11 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                                                 setImageSize({ width, height });
                                             }}
                                         >
-                                            <ChatName
-                                                profile={profile}
-                                            />
+                                            {!friend && (
+                                                <ChatName
+                                                    profile={profile}
+                                                />
+                                            )}
                                             <Image
                                                 source={{ uri: content.value }}
                                                 style={{ height: '100%', width: '100%' }}
@@ -173,10 +197,20 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                             const fileUrl = content.value;
                             return (
                                 <View style={{ flexDirection: 'column' }}>
+                                    <MessageModal
+                                        modalVisible={modalVisible}
+                                        setModalVisible={setModalVisible}
+                                        item={item}
+                                        conversationOpponent={conversationOpponent}
+                                        myUserInfo={myUserInfo}
+                                        friend={friend}
+                                    />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        <ChatAatar
-                                            profile={profile}
-                                        />
+                                        {!friend && (
+                                            <ChatAatar
+                                                profile={profile}
+                                            />
+                                        )}
                                         <TouchableOpacity
                                             key={contentIndex}
                                             onPress={() => Linking.openURL(fileUrl)} // Mở liên kết khi người dùng chạm vào
@@ -192,9 +226,11 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                                                 maxHeight: 80, height: 100
                                             }}
                                         >
-                                            <ChatName
-                                                profile={profile}
-                                            />
+                                            {!friend && (
+                                                <ChatName
+                                                    profile={profile}
+                                                />
+                                            )}
                                             <Image source={typeFile.icon} style={{ width: 50, height: 50, marginRight: 10 }} />
                                             <View style={{ flexDirection: 'row', height: 100 }}>
                                                 <Image source={typeFile.icon} style={{ width: 50, height: 50, marginRight: 10, marginLeft: 10 }} />
@@ -236,10 +272,20 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
 
                             return (
                                 <View style={{}}>
+                                    <MessageModal
+                                        modalVisible={modalVisible}
+                                        setModalVisible={setModalVisible}
+                                        item={item}
+                                        conversationOpponent={conversationOpponent}
+                                        myUserInfo={myUserInfo}
+                                        friend={friend}
+                                    />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        <ChatAatar
-                                            profile={profile}
-                                        />
+                                        {!friend && (
+                                            <ChatAatar
+                                                profile={profile}
+                                            />
+                                        )}
                                         {linkPreview ? (
                                             <TouchableOpacity
                                                 key={contentIndex}
@@ -256,9 +302,11 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                                                     marginLeft: 50
                                                 }}
                                             >
-                                                <ChatName
-                                                    profile={profile}
-                                                />
+                                                {!friend && (
+                                                    <ChatName
+                                                        profile={profile}
+                                                    />
+                                                )}
                                                 <View style={{ flex: 1 }}>
                                                     <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15, marginTop: 10, marginHorizontal: 10 }}>{linkPreview.title}</Text>
                                                     <View style={{ margin: 10, backgroundColor: 'white' }}>
@@ -283,9 +331,11 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                                                     marginLeft: 50
                                                 }}
                                             >
-                                                <ChatName
-                                                    profile={profile}
-                                                />
+                                                {!friend && (
+                                                    <ChatName
+                                                        profile={profile}
+                                                    />
+                                                )}
                                                 <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15 }}>{linkUrl}</Text>
                                             </TouchableOpacity>
                                         )}
@@ -296,10 +346,20 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                         } else if (content.key === 'mp4') {
                             return (
                                 <View style={{ flexDirection: 'column' }}>
+                                    <MessageModal
+                                        modalVisible={modalVisible}
+                                        setModalVisible={setModalVisible}
+                                        item={item}
+                                        conversationOpponent={conversationOpponent}
+                                        myUserInfo={myUserInfo}
+                                        friend={friend}
+                                    />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        <ChatAatar
-                                            profile={profile}
-                                        />
+                                        {!friend && (
+                                            <ChatAatar
+                                                profile={profile}
+                                            />
+                                        )}
                                         <TouchableOpacity
                                             key={contentIndex}
                                             onPress={() => {
@@ -313,9 +373,11 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                                                 backgroundColor: 'white'
                                             }}
                                         >
-                                            <ChatName
-                                                profile={profile}
-                                            />
+                                            {!friend && (
+                                                <ChatName
+                                                    profile={profile}
+                                                />
+                                            )}
                                             <Video
                                                 key={videoKey} // Sử dụng videoKey ở đây để kích hoạt việc rerender
                                                 source={{ uri: content.value }}
@@ -341,6 +403,14 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                     if (content.key === 'text' || content.key === 'emoji') {
                         return (
                             <View style={{ alignItems: 'center' }}>
+                                <MessageModal
+                                    modalVisible={modalVisible}
+                                    setModalVisible={setModalVisible}
+                                    item={item}
+                                    conversationOpponent={conversationOpponent}
+                                    myUserInfo={myUserInfo}
+                                    friend={friend}
+                                />
                                 <TouchableOpacity
                                     key={contentIndex}
                                     style={{
@@ -372,6 +442,14 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                     } else if (content.key === 'image') {
                         return (
                             <View style={{ alignItems: 'center' }}>
+                                <MessageModal
+                                    modalVisible={modalVisible}
+                                    setModalVisible={setModalVisible}
+                                    item={item}
+                                    conversationOpponent={conversationOpponent}
+                                    myUserInfo={myUserInfo}
+                                    friend={friend}
+                                />
                                 <TouchableOpacity
                                     key={contentIndex}
                                     style={{
@@ -427,6 +505,14 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                         const fileUrl = content.value;
                         return (
                             <View style={{ flexDirection: 'column' }}>
+                                <MessageModal
+                                    modalVisible={modalVisible}
+                                    setModalVisible={setModalVisible}
+                                    item={item}
+                                    conversationOpponent={conversationOpponent}
+                                    myUserInfo={myUserInfo}
+                                    friend={friend}
+                                />
                                 <TouchableOpacity
                                     key={contentIndex}
                                     onPress={() => Linking.openURL(fileUrl)} // Mở liên kết khi người dùng chạm vào
@@ -481,6 +567,14 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
 
                         return (
                             <View style={{ alignItems: 'center' }}>
+                                <MessageModal
+                                    modalVisible={modalVisible}
+                                    setModalVisible={setModalVisible}
+                                    item={item}
+                                    conversationOpponent={conversationOpponent}
+                                    myUserInfo={myUserInfo}
+                                    friend={friend}
+                                />
                                 {linkPreview ? (
                                     <TouchableOpacity
                                         key={contentIndex}
@@ -529,6 +623,14 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                     } else if (content.key === 'mp4') {
                         return (
                             <View style={{ flexDirection: 'column' }}>
+                                <MessageModal
+                                    modalVisible={modalVisible}
+                                    setModalVisible={setModalVisible}
+                                    item={item}
+                                    conversationOpponent={conversationOpponent}
+                                    myUserInfo={myUserInfo}
+                                    friend={friend}
+                                />
                                 <TouchableOpacity
                                     key={contentIndex}
                                     onPress={() => {

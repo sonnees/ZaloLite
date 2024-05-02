@@ -17,7 +17,7 @@ const LoginScreen = () => {
   const { logIn, setMyUserInfo, myUserInfo, listChatID, setListChatID, setMyProfile } = useContext(GlobalContext)
 
   useEffect(() => {
-    console.log("newPassword:", newPassword);
+    // console.log("newPassword:", newPassword);
     if (newPassword && isFocused) {
       setPassword(newPassword);
     }
@@ -40,13 +40,13 @@ const LoginScreen = () => {
       const data = await response.json();
       if (response.status === 200) {
         logIn(data.field)
-        console.log('data:', data.field);
+        // console.log('data:', data.field);
         await AsyncStorage.setItem('phoneNumber', phoneNumber);
 
         const getToken = async () => {
           try {
             const token = await AsyncStorage.getItem('token');
-            console.log("TOKEN: \n", token);
+            // console.log("TOKEN: \n", token);
             return token;
           } catch (error) {
             console.error('Lỗi khi lấy dữ liệu từ AsyncStorage:', error);

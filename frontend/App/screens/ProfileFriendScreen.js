@@ -10,14 +10,14 @@ export default function ProfileFriendScreen() {
     let route = useRoute();
     const profile = route.params?.profile;
     const { myUserInfo, setMyUserInfo, chatID, setChatID } = useContext(GlobalContext)
-    console.log("Du lieu tu ADDFRIEND: \n", profile);
+    // console.log("Du lieu tu ADDFRIEND: \n", profile);
     const [allfriendRequests, setAllFriendRequest] = useState(myUserInfo.friendRequests);
     const [friendRequests, setFriendRequests] = useState({});
     const [status, setStatus] = useState("");
     useEffect(() => {
         const fetchData = async () => {
             setStatus(handleFriendRequest(allfriendRequests, profile.userID))
-            console.log(status);
+            console.log("STATUS: \n", status);
         };
         fetchData();
     }, [profile, myUserInfo]);
