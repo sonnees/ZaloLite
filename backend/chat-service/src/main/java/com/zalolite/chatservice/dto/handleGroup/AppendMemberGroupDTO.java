@@ -16,8 +16,8 @@ public class AppendMemberGroupDTO extends GroupDTO {
     private String userName;
     private String userAvatar;
 
-    public AppendMemberGroupDTO(UUID id, TypeGroupMessage TGM, String ws, UUID idChat, UUID userID, String userName, String userAvatar) {
-        super(id, TGM, ws);
+    public AppendMemberGroupDTO(UUID id, TypeGroupMessage TGM, UUID idChat, UUID userID, String userName, String userAvatar) {
+        super(id, TGM);
         this.idChat = idChat;
         this.userID = userID;
         this.userName = userName;

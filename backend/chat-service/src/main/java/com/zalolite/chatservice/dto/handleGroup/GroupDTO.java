@@ -15,5 +15,4 @@ import java.util.UUID;
 public class GroupDTO {
     private UUID id;
     private TypeGroupMessage TGM;
-    private String ws;
 }

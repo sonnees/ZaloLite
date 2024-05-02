@@ -15,5 +15,4 @@ import java.util.UUID;
 public class UserMessageDTO {
     private UUID id;
     private TypeUserMessage TUM;
-    private String ws;
 }

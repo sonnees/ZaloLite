@@ -15,8 +15,8 @@ import java.util.UUID;
 public class NotifyGroup extends GroupDTO {
     private TypeNotify typeNotify;
 
-    public NotifyGroup(UUID id, TypeGroupMessage TGM, String ws, TypeNotify typeNotify) {
-        super(id, TGM, ws);
+    public NotifyGroup(UUID id, TypeGroupMessage TGM, TypeNotify typeNotify) {
+        super(id, TGM);
         this.typeNotify = typeNotify;
     }
 }

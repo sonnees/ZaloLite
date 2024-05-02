@@ -20,8 +20,8 @@ public class MessageHiddenDTO extends ChatMessageDTO {
     @Field(targetType = FieldType.STRING)
     private UUID messageID;
 
-    public MessageHiddenDTO(UUID id, TypeChatMessage TCM, String ws, UUID userID, UUID messageID) {
-        super(id, TCM, ws);
+    public MessageHiddenDTO(UUID id, TypeChatMessage TCM, UUID userID, UUID messageID) {
+        super(id, TCM);
         this.userID = userID;
         this.messageID = messageID;
     }
