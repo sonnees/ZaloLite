@@ -5,6 +5,7 @@ export const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
     const [myUserInfo, setMyUserInfo] = useState({})
+    const [myProfile, setMyProfile] = useState({})
     const [chatID, setChatID] = useState({})
     const [listChatID, setListChatID] = useState([])
 
@@ -29,6 +30,8 @@ export const GlobalProvider = ({ children }) => {
                 myUserInfo,
                 chatID,
                 listChatID,
+                myProfile,
+                setMyProfile,
                 setMyUserInfo,
                 setChatID,
                 setListChatID,

@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'react-native-get-random-values';
 import React, { useState, useEffect, useContext } from "react";
 import {
   View,
@@ -123,14 +122,14 @@ const CreateGroupScreen = () => {
       Alert.alert("Lỗi", "Bạn phải chọn ít nhất hai thành viên để tạo nhóm!");
       return;
     }
-  
+
     const ownerId = selectedIds[0];
     const owner = {
       userID: ownerId,
       userName: chatGroupdata.find((user) => user.id === ownerId)?.userName,
       userAvatar: chatGroupdata.find((user) => user.id === ownerId)?.userAvatar,
     };
-  
+
     const members = selectedIds.map((id) => ({
       userID: id,
       userName: chatGroupdata.find((user) => user.id === id)?.userName,
@@ -142,7 +141,7 @@ const CreateGroupScreen = () => {
           .toString(16)
           .substring(1);
       };
-    
+
       return (
         randomPart() +
         randomPart() +
@@ -156,43 +155,43 @@ const CreateGroupScreen = () => {
         randomPart()
       );
     };
-    
+
     const newGroup = {
-      id: generateUUID(), 
+      id: generateUUID(),
       tgm: "TGM01",
       chatName: groupName,
       owner,
       members,
       avatar: selectedImageUrl,
     };
-    
+
     console.log("Thông tin newGroup: ", newGroup);
-  
+
     try {
       // Lưu thông tin nhóm vào AsyncStorage
       await AsyncStorage.setItem(`group-${newGroup.id}`, JSON.stringify(newGroup));
-  
+
       // Lưu thông tin nhóm vào database backend
       await saveGroupToBackend(newGroup);
       console.log("Thông tin newGroup: ", newGroup);
 
-       // Update myUserInfo with the new group
-    const updatedUserInfo = {
-      ...myUserInfo,
-      conversations: [
-        ...myUserInfo.conversations,
-        {
-          chatID: newGroup.id,
-          chatName: newGroup.chatName,
-          chatAvatar: newGroup.avatar,
-          type: "GROUP",
-        },
-      ],
-    };
+      // Update myUserInfo with the new group
+      const updatedUserInfo = {
+        ...myUserInfo,
+        conversations: [
+          ...myUserInfo.conversations,
+          {
+            chatID: newGroup.id,
+            chatName: newGroup.chatName,
+            chatAvatar: newGroup.avatar,
+            type: "GROUP",
+          },
+        ],
+      };
 
-    // Update GlobalContext
-    setMyUserInfo(updatedUserInfo);
-  
+      // Update GlobalContext
+      setMyUserInfo(updatedUserInfo);
+
       navigation.navigate("OpionNavigator", {
         screen: "ChatGroupScreen",
         params: {
@@ -207,35 +206,35 @@ const CreateGroupScreen = () => {
       console.error("Error saving group:", error);
     }
   };
-  
+
   const saveGroupToBackend = async (newGroup) => {
     const newSocket = new WebSocket('ws://192.168.1.10:8082/ws/group');
-  
+
     newSocket.onopen = () => {
       console.log("WebSocket connected");
       newSocket.send(JSON.stringify(newGroup));
     };
-  
+
     newSocket.onmessage = (event) => {
       console.log("Received data from backend:", event.data);
       newSocket.close();
     };
-  
+
     newSocket.onerror = (error) => {
       console.error('Error connecting to WebSocket:', error);
     };
-  
+
     newSocket.onclose = () => {
       console.log("WebSocket disconnected");
     };
-  
+
     return () => {
       newSocket.close();
     };
   };
-  
-  
-  
+
+
+
 
   return (
     <KeyboardAvoidingView

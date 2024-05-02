@@ -4,10 +4,11 @@ import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, Toucha
 import Icon from 'react-native-vector-icons/';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
-import { API_PROFILE_BY_USERID } from '../api/Api';
+import { API_PROFILE_BY_USERID } from '../api/API';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const ChatOfReCall = ({ item, myUserInfo, conversationOpponent }) => {
+import { MessageModalRecall } from '../modal/messageModalRecall';
+const ChatOfReCall = ({ item, myUserInfo, conversationOpponent, friend }) => {
     const myMessage = '#B0E2FF';
     const [textHeight, setTextHeight] = useState(40);
     const touchableRef = useRef(null);
@@ -65,33 +66,14 @@ const ChatOfReCall = ({ item, myUserInfo, conversationOpponent }) => {
     if (item.userID === myUserInfo.id) {
         return (
             <View style={{ alignItems: 'center' }}>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        setModalVisible(false);
-                    }}>
-                    <TouchableWithoutFeedback
-                        onPress={() => setModalVisible(false)}>
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)', margin: 6, elevation: 5 }}>
-                            <View style={{ backgroundColor: 'white', height: 100, width: 200, borderRadius: 10, elevation: 5, flexDirection: 'row', alignItems: 'center' }}>
-                                <TouchableOpacity
-                                    style={styles.buttonInModal}
-                                >
-                                    <Image style={{ height: 25, width: 25 }} source={require('../assets/trash-bin.png')}></Image>
-                                    <Text style={styles.textInModal}>Delete</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.buttonInModal}
-                                    onPress={() => setModalVisible(false)}>
-                                    <Image style={{ height: 25, width: 25 }} source={require('../assets/select.png')}></Image>
-                                    <Text style={styles.textInModal}>Multiselect</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </Modal>
+                <MessageModalRecall
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    item={item}
+                    conversationOpponent={conversationOpponent}
+                    myUserInfo={myUserInfo}
+                    friend={friend}
+                />
                 {item.contents.length > 1 ? (
                     <React.Fragment>
                         {item.contents.map((contentIndex) => (
@@ -156,33 +138,14 @@ const ChatOfReCall = ({ item, myUserInfo, conversationOpponent }) => {
     } else {
         return (
             <View>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        setModalVisible(false);
-                    }}>
-                    <TouchableWithoutFeedback
-                        onPress={() => setModalVisible(false)}>
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)', margin: 6, elevation: 5 }}>
-                            <View style={{ backgroundColor: 'white', height: 100, width: 200, borderRadius: 10, elevation: 5, flexDirection: 'row', alignItems: 'center' }}>
-                                <TouchableOpacity
-                                    style={styles.buttonInModal}
-                                >
-                                    <Image style={{ height: 25, width: 25 }} source={require('../assets/trash-bin.png')}></Image>
-                                    <Text style={styles.textInModal}>Delete</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.buttonInModal}
-                                    onPress={() => setModalVisible(false)}>
-                                    <Image style={{ height: 25, width: 25 }} source={require('../assets/select.png')}></Image>
-                                    <Text style={styles.textInModal}>Multiselect</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </Modal>
+                <MessageModalRecall
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    item={item}
+                    conversationOpponent={conversationOpponent}
+                    myUserInfo={myUserInfo}
+                    friend={friend}
+                />
                 <React.Fragment>
                     {item.contents.map((content, contentIndex) => {
                         const isMultiple = item.contents.length > 1;

@@ -432,7 +432,7 @@ const conversations = [
 function findConversationByID(conversations, chatID) {
     return conversations.find(conversation => conversation.chatID === chatID);
 }
-export { findConversationByID };
+export { findConversationByID, findChatIDByUserID };
 // const desiredChatID = "5b685d06-8fbe-4ab7-8053-7746760a8001"; // ChatID bạn muốn tìm
 
 // const desiredConversation = findConversationByID(conversations, desiredChatID);
@@ -442,16 +442,11 @@ export { findConversationByID };
 // } else {
 //     console.log("Conversation not found.");
 // }
-const findChatIDByUserID = (data, userID, myUserID) => {
+const findChatIDByUserID = (data, userID) => {
     // Duyệt qua danh sách conversations và friendRequests để tìm userID
     for (const conversation of data.conversations) {
-        for (const topChatActivity of conversation.topChatActivity) {
-            if (topChatActivity.userID !== myUserID && topChatActivity.userID === userID) {
-                return conversation.chatID;
-            }
-            else if (topChatActivity.userID !== myUserID) {
-                return conversation.chatID;
-            }
+        if (conversation.ID_UserOrGroup === userID) {
+            return conversation
         }
     }
     return null; // Trả về null nếu không tìm thấy userID

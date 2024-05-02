@@ -3,7 +3,8 @@ import React, { memo, useState, useRef, useEffect, useMemo } from 'react';
 import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
-const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => {
+import { MessageModal } from '../modal/messageModal';
+const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo, friend }) => {
     const [textHeight, setTextHeight] = useState(40);
     const touchableRef = useRef(null);
     const [videoKey, setVideoKey] = useState(0);
@@ -36,6 +37,14 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) =>
     };
     const renderTextContent = (text, item, myUserInfo) => (
         <View style={{ alignItems: 'center' }}>
+            <MessageModal
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                item={item}
+                conversationOpponent={conversationOpponent}
+                myUserInfo={myUserInfo}
+                friend={friend}
+            />
             <TouchableOpacity
                 style={{
                     flexDirection: 'row',
@@ -67,6 +76,14 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) =>
 
     const renderImageContent = (imageUrl, item, myUserInfo) => (
         <View style={{}}>
+            <MessageModal
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                item={item}
+                conversationOpponent={conversationOpponent}
+                myUserInfo={myUserInfo}
+                friend={friend}
+            />
             <TouchableOpacity
                 style={{
                     flexDirection: 'column',
@@ -98,7 +115,72 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) =>
             </TouchableOpacity>
         </View>
     );
+    //Origin
+    // const renderLinkContent = (linkUrl, item, myUserInfo) => {
+    //     const [linkPreview, setLinkPreview] = useState(null);
+    //     useEffect(() => {
+    //         fetch(`https://api.linkpreview.net/?key=94bc443dd1d2ec0588af9aff4e012f6d&q=${encodeURIComponent(linkUrl)}`)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 const { title, description, image } = data;
+    //                 setLinkPreview({ title, description, image });
+    //             })
+    //             .catch(error => {
+    //                 console.error('Error fetching link preview:', error);
+    //             });
+    //     }, [linkUrl]);
 
+    //     return (
+    //         <View style={{}}>
+    //             <View style={{}}>
+    //                 <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+    //                     {linkPreview ? (
+    //                         <TouchableOpacity
+    //                             onPress={() => Linking.openURL(linkUrl)} // Mở liên kết khi người dùng chạm vào
+    //                             style={{
+    //                                 flexDirection: 'row',
+    //                                 borderRadius: 12,
+    //                                 backgroundColor: myMessage,
+    //                                 marginHorizontal: 10,
+    //                                 alignItems: 'center',
+    //                                 ...alignmentStyle,
+    //                                 paddingHorizontal: 10,
+    //                                 maxWidth: 280,
+    //                                 marginLeft: 50
+    //                             }}
+    //                         >
+    //                             <View style={{ flex: 1 }}>
+    //                                 <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15, marginTop: 10, marginHorizontal: 10 }}>{linkPreview.title}</Text>
+    //                                 <View style={{ margin: 10, backgroundColor: 'white' }}>
+    //                                     {linkPreview.image && <Image source={{ uri: linkPreview.image }} style={{ width: '100%', height: 100, resizeMode: 'contain' }} />}
+    //                                 </View>
+    //                                 <Text style={{ fontSize: 15, marginHorizontal: 10, marginVertical: '10', marginBottom: 10 }}>{linkPreview.description}</Text>
+    //                             </View>
+    //                         </TouchableOpacity>
+    //                     ) : (
+    //                         <TouchableOpacity
+    //                             style={{
+    //                                 flexDirection: 'row',
+    //                                 borderRadius: 12,
+    //                                 backgroundColor: myMessage,
+    //                                 marginHorizontal: 10,
+    //                                 alignItems: 'center',
+    //                                 ...alignmentStyle,
+    //                                 paddingHorizontal: 10,
+    //                                 maxWidth: 280,
+    //                                 marginLeft: 50
+    //                             }}
+    //                         >
+    //                             <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15 }}>{linkUrl}</Text>
+    //                         </TouchableOpacity>
+    //                     )}
+    //                     <View style={{ height: 8 }} />
+    //                 </View>
+    //                 <View style={{ height: 8 }} />
+    //             </View>
+    //         </View>
+    //     );
+    // };
     const renderLinkContent = (linkUrl, item, myUserInfo) => {
         const [linkPreview, setLinkPreview] = useState(null);
         useEffect(() => {
@@ -114,12 +196,20 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) =>
         }, [linkUrl]);
 
         return (
-            <View style={{}}>
-                <View style={{}}>
+            <View style={{ alignItems: 'center' }}>
+                <MessageModal
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    item={item}
+                    conversationOpponent={conversationOpponent}
+                    myUserInfo={myUserInfo}
+                    friend={friend}
+                />
+                <View>
                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                         {linkPreview ? (
                             <TouchableOpacity
-                                onPress={() => Linking.openURL(linkUrl)} // Mở liên kết khi người dùng chạm vào
+                                onPress={() => Linking.openURL(linkUrl)}
                                 style={{
                                     flexDirection: 'row',
                                     borderRadius: 12,
@@ -157,7 +247,6 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) =>
                                 <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15 }}>{linkUrl}</Text>
                             </TouchableOpacity>
                         )}
-                        <View style={{ height: 8 }} />
                     </View>
                     <View style={{ height: 8 }} />
                 </View>
@@ -168,6 +257,14 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) =>
     const renderVideoContent = (videoUrl, item, myUserInfo) => (
         <View>
             <View style={{ flexDirection: 'column' }}>
+                <MessageModal
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    item={item}
+                    conversationOpponent={conversationOpponent}
+                    myUserInfo={myUserInfo}
+                    friend={friend}
+                />
                 <TouchableOpacity
                     onPress={() => {
                     }}
@@ -191,7 +288,65 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) =>
             </View>
         </View>
     );
-
+    //Origin
+    // const renderFileContent = (key, value, item, myUserInfo) => {
+    //     const typeFile = useMemo(() => {
+    //         const file = {};
+    //         if (key.startsWith('docx|') || key.startsWith('doc|'))
+    //             file.icon = require('../assets/doc.png');
+    //         else if (key.startsWith('xlsx|') || key.startsWith('xls|'))
+    //             file.icon = require('../assets/xlsx.png');
+    //         else if (key.startsWith('pdf|'))
+    //             file.icon = require('../assets/pdf.png');
+    //         else if (key.startsWith('zip|'))
+    //             file.icon = require('../assets/zip-folder.png');
+    //         else if (key.startsWith('rar|'))
+    //             file.icon = require('../assets/rar.png');
+    //         else
+    //             file.icon = require('../assets/attachfile.png');
+    //         return file;
+    //     }, [key]);
+    //     const parts = key.split('|');
+    //     const fileName = parts[1];
+    //     const fileSize = parts[2];
+    //     const fileUrl = value;
+    //     return (
+    //         <View>
+    //             <View style={{ flexDirection: 'column' }}>
+    //                 <TouchableOpacity
+    //                     onPress={() => Linking.openURL(fileUrl)} // Mở liên kết khi người dùng chạm vào
+    //                     style={{
+    //                         flexDirection: 'column',
+    //                         borderRadius: 12,
+    //                         backgroundColor: myMessage,
+    //                         marginHorizontal: 10,
+    //                         alignItems: 'center',
+    //                         ...alignmentStyle,
+    //                         paddingHorizontal: 10,
+    //                         maxWidth: 280,
+    //                         maxHeight: 80, height: 100
+    //                     }}
+    //                 >
+    //                     <View style={{ flexDirection: 'row', marginTop: 8 }}>
+    //                         <Image source={typeFile.icon} style={{ width: 50, height: 50, marginRight: 10, marginLeft: 10 }} />
+    //                         <View style={{ flexDirection: 'column', }}>
+    //                             <Text
+    //                                 onLayout={handleTextLayout}
+    //                                 style={{ flexWrap: 'wrap', fontSize: 15, fontWeight: '400', maxWidth: 150 }}
+    //                             >{fileName}</Text>
+    //                             <Text
+    //                                 onLayout={handleTextLayout}
+    //                                 style={{ flexWrap: 'wrap', fontSize: 11, fontWeight: '400' }}
+    //                             >{fileSize}</Text>
+    //                         </View>
+    //                     </View>
+    //                     <Text style={{ fontSize: 8, alignSelf: 'flex-start', color: '#888888' }}>{getTime(item.timestamp)}</Text>
+    //                 </TouchableOpacity>
+    //                 <View style={{ height: 8 }} />
+    //             </View>
+    //         </View>
+    //     );
+    // };
     const renderFileContent = (key, value, item, myUserInfo) => {
         const typeFile = useMemo(() => {
             const file = {};
@@ -214,10 +369,18 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) =>
         const fileSize = parts[2];
         const fileUrl = value;
         return (
-            <View>
-                <View style={{ flexDirection: 'column' }}>
+            <View style={{ alignItems: 'center' }}>
+                <MessageModal
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    item={item}
+                    conversationOpponent={conversationOpponent}
+                    myUserInfo={myUserInfo}
+                    friend={friend}
+                />
+                <View>
                     <TouchableOpacity
-                        onPress={() => Linking.openURL(fileUrl)} // Mở liên kết khi người dùng chạm vào
+                        onPress={() => Linking.openURL(fileUrl)}
                         style={{
                             flexDirection: 'column',
                             borderRadius: 12,

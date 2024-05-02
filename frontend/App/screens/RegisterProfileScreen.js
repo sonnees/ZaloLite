@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios'; // Import thư viện Axios
 import cloudinaryConfig from '../config/cloudinaryConfig';
-import { API_REGISTER } from '../api/Api';
+import { API_REGISTER } from '../api/API';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const RegisterProfileScreen = () => {
@@ -40,7 +40,7 @@ const RegisterProfileScreen = () => {
       }
     }
   };
-  
+
   const handleUpload = async (imageUri) => {
     try {
       const data = new FormData();

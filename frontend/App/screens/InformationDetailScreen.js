@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { API_PROFILE } from '../api/Api';
+import { API_PROFILE } from '../api/API';
 
 export default function InformationDetail() {
   const [userInfo, setUserInfo] = useState(null);
@@ -66,11 +66,11 @@ export default function InformationDetail() {
         console.error('Lỗi khi lấy giá trị newAvatar từ AsyncStorage:', error);
       }
     };
-  
+
     getNewAvatar();
   }, []);
-  
-  
+
+
   return (
     <View style={styles.container}>
       {userInfo && (
