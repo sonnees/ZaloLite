@@ -47,6 +47,8 @@ export default function Router() {
 
   const location = useLocation();
 
+  const [openSearchMessage, setOpenSearchMessage] = useState(false);
+
   // useEffect(() => {
   //   if (location.pathname === "/app") {
   //     // setComp(<Conversation />);
@@ -83,7 +85,12 @@ export default function Router() {
           element: <MessageFilterBar />,
           children: [
             { path: "", element: <Welcome /> },
-            { path: "chat", element: <Conversation /> },
+            {
+              path: "chat",
+              element: (
+                <Conversation setOpenSearchMessage={setOpenSearchMessage} />
+              ),
+            },
             { path: "chatGroup", element: <ConversationGroup /> },
           ],
         },
@@ -94,7 +101,7 @@ export default function Router() {
             { path: "listFriend", element: <DetailContact /> },
             { path: "", element: <DetailContact /> },
             { path: "listGroup", element: <DetailContact /> },
-            { path: "listfriendrequest", element: <TagFriendRequest />},
+            { path: "listfriendrequest", element: <TagFriendRequest /> },
           ],
         },
         { path: "todo", element: <Todo /> },

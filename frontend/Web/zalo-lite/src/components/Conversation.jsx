@@ -29,10 +29,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import Collapse from "@mui/material/Collapse";
 import MessageDetail from "./MessageDetail";
 import MessageInput from "./MessageInput";
+import AvatarNameItemMessage from "./AvatarNameItemMessage";
 import TextField from "@mui/material/TextField";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import { Tag } from "antd";
+import { Select } from "antd";
 import { v4 as uuidv4 } from "uuid";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { set } from "date-fns";
@@ -786,7 +788,7 @@ const Conversation = () => {
               key={index}
               src={content.value}
               alt="Image"
-              className="mb-2 mr-2 w-9 h-9"
+              className="mb-2 mr-2 h-9 w-9"
             />
           );
         }
@@ -799,7 +801,7 @@ const Conversation = () => {
       return contents.map((content, index) => {
         // console.log("Content:", content);
         if (content.key === "image") {
-          return "[Hình ảnh]"
+          return "[Hình ảnh]";
         } else if (content.key === "text") {
           return content.value;
         } else if (content.key === "link") {
@@ -857,9 +859,10 @@ const Conversation = () => {
   };
 
   const [openCompReplyInput, setOpenCompReplyInput] = useState(false);
+  const [openSearchMessage, setOpenSearchMessage] = useState(false);
   useEffect(() => {
     scrollToBottom();
-  }, [openCompReplyInput]); 
+  }, [openCompReplyInput]);
 
   const inputRef = useRef(null);
 
@@ -881,6 +884,71 @@ const Conversation = () => {
       handleSendMessage();
     }
   };
+
+  const handleSearchMessage = (value) => {
+    setOpenSearchMessage(value);
+  };
+
+  const [text1, setText1] = useState("Nhập nội dung cần tìm trong hội thoại");
+  const [resultSearch, setResultSearch] = useState([]);
+
+  const handleSearchMessageInConservation = (value) => {
+    if (value.trim() === "") {
+      setText1("Nhập nội dung cần tìm trong hội thoại");
+    } else {
+      setText1("Danh sách kết quả phù hợp trong hội thoại");
+
+      const fetchSearchMsg = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:8082/api/v1/chat/search-bkw?chatID=${searchParams.get(
+              "id",
+            )}&y=20&key=${value}`,
+            {
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + tokenFromCookies,
+              },
+              method: "GET",
+            },
+          );
+          if (!response.ok) {
+            throw new Error("Failed to search message in conversations");
+          }
+          const data = await response.json();
+          console.log("SearchMsg:", data);
+          setResultSearch(data);
+        } catch (error) {
+          console.error(
+            "Error fetching search message in conversations:",
+            error,
+          );
+        }
+      };
+      if (value) fetchSearchMsg();
+      console.log("Value:", value);
+    }
+  };
+  const messageElementRef = useRef(null);
+  const [messageIDRef, setMessageIDRef] = useState();
+
+  // Sử dụng useEffect để cuộn đến phần tử tin nhắn khi danh sách được cập nhật
+  useEffect(() => {
+    // Kiểm tra xem messageID đã được xác định chưa
+    if (messageIDRef) {
+      // Tìm vị trí của tin nhắn với messageID trong danh sách
+      const messageIndex = messages.findIndex(
+        (message) => message.messageID === messageIDRef,
+      );
+      console.log("messageIDRef:", messageIDRef);
+      messageElementRef.current = document.getElementById("messageIDRef");
+      // Nếu tin nhắn được tìm thấy, cuộn đến vị trí của nó
+      // if (messageIndex !== -1) {
+        messageElementRef.current?.scrollIntoView({ behavior: "smooth" });
+      // }
+    }
+  }, [messages, messageIDRef]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -1115,11 +1183,78 @@ const Conversation = () => {
             </div>
           </DialogActions>
         </Dialog>
+        {openSearchMessage && (
+          <div className="absolute z-10 -ml-[345px] h-screen w-[345px] overflow-y-auto bg-white">
+            <div className="flex h-screen w-full grid-flow-col">
+              <div className="w-full flex-1 pb-[14px] ">
+                <div className="w-full flex-1 ">
+                  <div className="h-full w-full flex-1 flex-col ">
+                    <div className="w-full flex-1 flex-col ">
+                      {text1 === "Nhập nội dung cần tìm trong hội thoại" ? (
+                        <>
+                          <div className="w-full flex-1 px-3 pt-4 text-tblack">
+                            <div>
+                              <span className="text-base font-medium text-tblack">
+                                Kết quả tìm kiếm
+                              </span>
+                            </div>
+                            <div className="mt-1">
+                              <span className="text-sm font-light">
+                                {text1}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="px-[80px] pb-8 pt-[80px]">
+                            <img
+                              src="/search-empty.a19dba60677c95d6539d26d2dc363e4e.png"
+                              alt=""
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="fixed z-20 w-[336px] flex-1 bg-white px-3 pb-[14px] pt-[17px] text-tblack ">
+                            <div>
+                              <span className="text-base font-medium text-tblack">
+                                Kết quả tìm kiếm
+                              </span>
+                            </div>
+                            <div className="mt-1">
+                              <span className="text-sm font-light">
+                                {text1}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="border pt-[71px]">
+                            <div className="mt-[13px] pl-3">
+                              <span className="text-sm font-medium text-[#7589A3]">
+                                Tin nhắn
+                              </span>
+                            </div>
+                            {resultSearch.map((item, index) => (
+                              <AvatarNameItemMessage
+                                key={index}
+                                item={item}
+                                chatName={chatName}
+                                setConversation={setMessages}
+                                setMessageIDRef={setMessageIDRef}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="h-screen w-full">
           <div className="h-[68px] w-full px-4">
             <div className="flex h-full w-full flex-row items-center justify-between">
               <div className="flex flex-row items-center gap-x-2">
-                <Link to="/app">
+                <Link to="/app" className="md:hidden">
                   <FontAwesomeIcon icon={faChevronLeft} className="pl-1 pr-3" />
                 </Link>
 
@@ -1161,13 +1296,19 @@ const Conversation = () => {
                     className="w-[22px] "
                   />
                 </a>
-                <a href="" className="p-2">
+                <div
+                  className="cursor-pointer p-2"
+                  onClick={() => {
+                    handleSearchMessage(!openSearchMessage);
+                    // setOpenCompReplyInput(false);
+                  }}
+                >
                   <img
                     src="/src/assets/mini-search.png"
                     alt=""
                     className="m-1 h-4 w-4"
                   />
-                </a>
+                </div>
                 <Link to="/videocall" className="p-2">
                   <img
                     src="/src/assets/video.png"
@@ -1185,12 +1326,120 @@ const Conversation = () => {
               </div>
             </div>
           </div>
+
+          {openSearchMessage && (
+            <div className="absolute z-10 h-[83px] w-[calc(100vw-410px)] border-t bg-white">
+              <div className="bt-[6px] h-full w-full flex-1 px-4 pb-2 ">
+                <div className="flex w-full items-center">
+                  <div
+                    className={`flex items-center ${
+                      true ? "border border-[#EAEDF0]" : "border"
+                    } m-2 h-[25px] w-full rounded-full bg-[#EAEDF0] p-[2px]`}
+                  >
+                    <FontAwesomeIcon
+                      className="w-3 px-2"
+                      icon={faMagnifyingGlass}
+                      style={{ color: "#7988A1" }}
+                    />
+                    {/* <img src="../assets/icons/search-dialog.png" alt="" className="border-2"  /> */}
+                    <input
+                      // onFocus={handleFocusPhoneClick}
+                      // onBlur={handleBlurPhoneClick}
+                      autoFocus
+                      onChange={(event) => {
+                        handleSearchMessageInConservation(event.target.value);
+                      }}
+                      className="w-full bg-[#EAEDF0] text-[14px] font-normal text-[##7988A1] focus:outline-none"
+                      type="text"
+                      placeholder="Tìm tin nhắn"
+                    />
+                  </div>
+                  <div
+                    className="m-2 ml-2 flex h-[32px] cursor-pointer items-center justify-center rounded-full px-4 hover:bg-[#E0E2E6]"
+                    onClick={() => {
+                      setOpenSearchMessage(false);
+                      setText1("Nhập nội dung cần tìm trong hội thoại");
+                    }}
+                  >
+                    <span className="text-base font-medium">Đóng</span>
+                  </div>
+                </div>
+                <div className="flex h-6 w-full items-center">
+                  <span className="text-xs font-semibold text-tblack">
+                    Lọc theo:
+                  </span>
+                  <div className="ml-[9px] text-[10px]">
+                    <Select
+                      size="small"
+                      placeholder="Người gửi"
+                      variant="filled"
+                      style={{
+                        flex: 1,
+                        height: 24,
+                        backgroundColor: "#EAEDF0",
+                        borderRadius: 30,
+                        fontSize: 12,
+                      }}
+                      options={
+                        [
+                          // {
+                          //   value: "jack",
+                          //   label: <span style={{ color: "red" }}>Jack</span>,
+                          // },
+                          // {
+                          //   value: "lucy",
+                          //   label: "Lucy",
+                          // },
+                          // {
+                          //   value: "Yiminghe",
+                          //   label: "yiminghe",
+                          // },
+                        ]
+                      }
+                    />
+                  </div>
+                  <div className="text-xs] ml-[9px]">
+                    <Select
+                      size="small"
+                      placeholder="Ngày gửi"
+                      variant="filled"
+                      style={{
+                        flex: 1,
+                        height: 24,
+                        backgroundColor: "#EAEDF0",
+                        borderRadius: 40,
+                        fontSize: 12,
+                      }}
+                      options={
+                        [
+                          // {
+                          //   value: "jack",
+                          //   label: <span style={{ color: "red" }}>Jack</span>,
+                          // },
+                          // {
+                          //   value: "lucy",
+                          //   label: "Lucy",
+                          // },
+                          // {
+                          //   value: "Yiminghe",
+                          //   label: "yiminghe",
+                          // },
+                        ]
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {/* -68 */}
           <div
             className={`${
               openCompReplyInput
-                ? "h-[calc(100vh-246.5px)]"
-                : "h-[calc(100vh-174px)]"
+                ? "h-[calc(100vh-250px)]"
+                : openSearchMessage && messages.length < 8
+                  ? "h-[calc(100vh-176px)] pt-[90px]"
+                  : "h-[calc(100vh-176px)]"
             }  w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3`}
             // onScroll={handleScroll}
           >
@@ -1222,7 +1471,11 @@ const Conversation = () => {
                   setParentIdMsg={setParentIdMsg}
                 />
               ))}
-            <div ref={messagesEndRef} />
+            {messageIDRef ? (
+              <div ref={messageElementRef} />
+            ) : (
+              <div ref={messagesEndRef} />
+            )}
           </div>
           <div className="border-t">
             <div className="flex h-[47px] flex-row justify-items-start bg-white">
@@ -1341,7 +1594,7 @@ const Conversation = () => {
                         closable
                         onClose={() => setOpenCompReplyInput(false)}
                       >
-                        <div className="h-full w-full flex border-l-2 border-[#4F87F7] pl-3">
+                        <div className="flex h-full w-full border-l-2 border-[#4F87F7] pl-3">
                           <div>
                             {renderImageInForwadMsg(shareContent.contents)}
                           </div>

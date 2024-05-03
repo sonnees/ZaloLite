@@ -204,6 +204,7 @@ const MessageDetail = ({
   return (
     <div
       ref={messageRef}
+      id={message.messageID}
       className={`relative mb-3 flex ${isHovered ? "group" : ""} ${
         userID === userIDFromCookies ? "justify-end" : "justify-start"
       }`}
@@ -299,36 +300,36 @@ const MessageDetail = ({
             <div className="flex-1 items-center">
               {message.parentID && message.parentID.contents ? (
                 <div className="mb-2 bg-[#CCDFFC] py-[10px] pl-3 pr-[9px]">
-                <div className="flex w-full border-l-2 border-[#4F87F7] pl-3">
-                  <div className="h-9">
-                    {renderImageInForwadMsg(message.parentID.contents)}
-                  </div>
-                  <div className="h-full w-full flex-1 pl-1">
-                    <div className="flex w-full items-center text-xs">
-                      <div className="flex">
-                        <img
-                          src="/src/assets/icons/quotation.png"
-                          alt=""
-                          className="h-4 w-4"
-                        />
-                        &nbsp;
-                        <span className="text-[13px] font-semibold">
-                          {message.userID === userIDFromCookies &&
-                          message.parentID.userID === userIDFromCookies
-                            ? localStorage.getItem("userName")
-                            : chatName}
+                  <div className="flex w-full border-l-2 border-[#4F87F7] pl-3">
+                    <div className="h-9">
+                      {renderImageInForwadMsg(message.parentID.contents)}
+                    </div>
+                    <div className="h-full w-full flex-1 pl-1">
+                      <div className="flex w-full items-center text-xs">
+                        <div className="flex">
+                          <img
+                            src="/src/assets/icons/quotation.png"
+                            alt=""
+                            className="h-4 w-4"
+                          />
+                          &nbsp;
+                          <span className="text-[13px] font-semibold">
+                            {message.userID === userIDFromCookies &&
+                            message.parentID.userID === userIDFromCookies
+                              ? localStorage.getItem("userName")
+                              : chatName}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-1 w-full text-[13px]">
+                        <span className="items-center text-[13px] text-[#476285]">
+                          {message.parentID.contents[0].key === "image"
+                            ? "[Hình ảnh]"
+                            : message.parentID.contents[0].value}
                         </span>
                       </div>
                     </div>
-                    <div className="mt-1 w-full text-[13px]">
-                      <span className="items-center text-[13px] text-[#476285]">
-                        {message.parentID.contents[0].key === "image"
-                          ? "[Hình ảnh]"
-                          : message.parentID.contents[0].value}
-                      </span>
-                    </div>
                   </div>
-                </div>
                 </div>
               ) : (
                 <></>
