@@ -155,7 +155,7 @@ const MessagesScreen = () => {
         (
           data.deliveries && data.deliveries.length > 0 &&
           data.reads && data.reads.length > 0 &&
-          !data.reads.includes(data.topChatActivity[0].messageID)
+          !data.reads.includes(data.topChatActivity[data.topChatActivity.length - 1].messageID)
         ) ? "black" : "gray"
     );
     const textFontWeight = (
@@ -165,7 +165,7 @@ const MessagesScreen = () => {
         (
           data.deliveries && data.deliveries.length > 0 &&
           data.reads && data.reads.length > 0 &&
-          !data.reads.includes(data.topChatActivity[0].messageID)
+          !data.reads.includes(data.topChatActivity[data.topChatActivity.length - 1].messageID)
         ) ? "bold" : "400"
     );
     let contentMessage = '';
