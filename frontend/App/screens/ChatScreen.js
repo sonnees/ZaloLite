@@ -36,8 +36,6 @@ const ChatScreen = () => {
   const [message, setMessage] = useState('');
   const [contentType, setContentType] = useState("text"); // Mặc định là gửi tin nhắn text
   const [textInputHeight, setTextInputHeight] = useState(40); // Chiều cao ban đầu là 20
-
-
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = async () => {
     setRefreshing(true);
@@ -94,15 +92,30 @@ const ChatScreen = () => {
             const jsonData = JSON.parse(data);
             // console.log("Received JSON data:", jsonData);
             if ((jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") || jsonData.tcm === "TCM01") {
-              const newTopChatActivity = {
+              const messageDeliveriedSocket = {
+                id: uuid.v4,
+                tcm: "TCM02",
                 messageID: jsonData.id,
-                userID: jsonData.userID,
-                timestamp: jsonData.timestamp,
-                parentID: jsonData.parentID,
-                contents: jsonData.contents,
-                hiden: [],
-                recall: false,
-              }
+                userID: myProfile.userID,
+                userAvatar: myProfile.avatar,
+                userName: myProfile.userName
+              };
+              socket.send(JSON.stringify(messageDeliveriedSocket));
+              const messageReadSocket = {
+                id: uuid.v4,
+                tcm: "TCM03",
+                messageID: jsonData.id,
+                userID: myProfile.userID,
+                userAvatar: myProfile.avatar,
+                userName: myProfile.userName
+              };
+              socket.send(JSON.stringify(messageReadSocket));
+              fetchData()
+            }
+            if (jsonData.tcm === "TCM02") {
+              fetchData()
+            }
+            if (jsonData.tcm === "TCM03") {
               fetchData()
             }
           } catch (error) {
