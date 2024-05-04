@@ -182,7 +182,7 @@ function Navbar({ onNavbarReady }) {
       const fetchProfile = async () => {
         try {
           const response = await fetch(
-            `http://localhost:8080/api/v1/account/profile/${phoneNumber}`,
+            `http://localhost:8081/api/v1/account/profile/${phoneNumber}`,
             {
               method: "GET",
               headers: {

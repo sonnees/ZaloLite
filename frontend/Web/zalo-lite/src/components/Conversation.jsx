@@ -366,22 +366,23 @@ const Conversation = () => {
           }
         }
       });
-      console.log("MessagesNoHandle:", messagesNoHandle);
+      // console.log("MessagesNoHandle:", messagesNoHandle);
       setMessages(messagesNoHandle);
     };
 
     const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
     newSocket.onopen = () => {
-      // console.log("WebSocket connected >>>>>>>>HUy");
+      console.log("WebSocket connected >>>>>>>>HUy");
     };
     setSocket(newSocket);
 
     if (id && tokenFromCookies) fetchData();
 
-    return () => {
-      newSocket.close();
-    };
-  }, [reloadCounter, id, tokenFromCookies, message, startIndex, endIndex]);
+    // return () => {
+    //   // if (newSocket.readyState === 1)
+    //   newSocket.close();
+    // };
+  }, [reloadCounter, id, tokenFromCookies, startIndex, endIndex]);
 
   // useEffect để chạy lại fetchData khi id hoặc tokenFromCookies thay đổi
   useEffect(() => {
@@ -416,7 +417,7 @@ const Conversation = () => {
   //   }
   // };
   const [parentIdMsg, setParentIdMsg] = useState("");
-  console.log("parentIdMsg:", parentIdMsg);
+  // console.log("parentIdMsg:", parentIdMsg);
 
   const sendMessageWithTextViaSocket = (
     messageContent,
@@ -425,6 +426,7 @@ const Conversation = () => {
     messageForward,
     parentID,
   ) => {
+    console.log("Running")
     console.log("SocketNew:", socketNew);
     console.log("parentID:", parentID);
     const uuid = uuidv4();
@@ -483,10 +485,11 @@ const Conversation = () => {
         console.log("WebSocketNew connected");
         socketNew.send(JSON.stringify(message));
       } else {
-        socket.send(JSON.stringify(message));
-        console.log(message);
+        console.log("WebSocket connected");
         setMessage(""); // Xóa nội dung của input message sau khi gửi
         setSentMessage(message); // Cập nhật state của sentMessage
+        socket.send(JSON.stringify(message));
+        console.log(message);
       }
     } else {
       console.error("WebSocket is not initialized.");
@@ -607,6 +610,7 @@ const Conversation = () => {
   // }, [id, messages]);
 
   useEffect(() => {
+    console.log("Chạy UseEffect CONSERVATION")
     if (socket) {
       socket.onmessage = (event) => {
         const data = event.data;
@@ -615,6 +619,7 @@ const Conversation = () => {
         try {
           if (data && data.startsWith("{")) {
             const jsonData = JSON.parse(data);
+            console.log("chaychay")
             console.log("Received JSON data CONSERVATION:", jsonData);
             // Kiểm tra xem tin nhắn không phải từ bạn
             const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
@@ -882,6 +887,7 @@ const Conversation = () => {
       event.preventDefault();
       // Gửi tin nhắn hoặc thực hiện logic của bạn khi Enter được nhấn
       handleSendMessage();
+      // console.log("Enter pressed");
     }
   };
 

@@ -72,9 +72,12 @@ function ChatElement({
           "WebSocket in CHAT ELEMENT: 'ws://localhost:8082/ws/chat/' for chatID: ",
           id,
           " OPENED",
+          newSocket.readyState,
         );
+        console.log("Socket is now listening for messages.");
       };
       newSocket.onmessage = (event) => {
+        console.log("Socket", newSocket);
         const data = event.data;
         function isJSON(data) {
           try {
@@ -87,10 +90,16 @@ function ChatElement({
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received in CHAT ELEMENT:", jsonData);
-          console.log("Message received in CHAT ELEMENT:", jsonData.contents[0].value);
+          console.log(
+            "Message received in CHAT ELEMENT:",
+            jsonData.contents[0].value,
+          );
           setNewMessage(jsonData.contents[0].value);
-          if (jsonData.tcm === "TCM01" && jsonData.userID !== localStorage.getItem("userID")){
-            playNotificationSound();
+          if (
+            jsonData.tcm === "TCM01" &&
+            jsonData.userID !== localStorage.getItem("userID")
+          ) {
+            // playNotificationSound();
           }
           // Xử lý dữ liệu được gửi đến ở đây
           // if (jsonData.tcm === "TCM04") {
@@ -101,16 +110,17 @@ function ChatElement({
           //   );
           //   setConversationsIndex(updatedMessages);
           //   console.log("Updated messages after deleting:", updatedMessages);
-          // } 
+          // }
         } else {
           // console.error("Received data is not valid JSON:", data);
           // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
         }
       };
       setSocket(newSocket);
-
       return () => {
-        newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+        if (newSocket.readyState === 1) {
+          newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+        }
       };
     }
   }, [id]);

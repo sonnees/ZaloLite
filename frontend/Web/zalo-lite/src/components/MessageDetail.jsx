@@ -28,7 +28,6 @@ const MessageDetail = ({
   setOpenCompReplyInput,
   setParentIdMsg,
 }) => {
-  // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const { userID, contents, timestamp, hasEmotion } = message;
@@ -201,6 +200,35 @@ const MessageDetail = ({
     }
   };
 
+  const token = cookies.get("token");
+
+  const [ownerMessage, setOwnerMessage] = useState("");
+  const identifyOwnerOfMessage = () => {
+    if (message.userID === userIDFromCookies) {
+      setOwnerMessage(localStorage.getItem("userName"));
+    } else {
+      const fetchInfoAccount = async () => {
+        const response = await fetch(
+          `http://localhost:8081/api/v1/account/profile/userID/${message.parentID.userID}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        const data = await response.json();
+        setOwnerMessage(data.userName);
+      };
+      if (message.parentID) fetchInfoAccount();
+    }
+  };
+
+  useEffect(() => {
+    identifyOwnerOfMessage();
+  }, []);
+
   return (
     <div
       ref={messageRef}
@@ -314,10 +342,11 @@ const MessageDetail = ({
                           />
                           &nbsp;
                           <span className="text-[13px] font-semibold">
-                            {message.userID === userIDFromCookies &&
+                            {/* {message.userID === userIDFromCookies &&
                             message.parentID.userID === userIDFromCookies
                               ? localStorage.getItem("userName")
-                              : chatName}
+                              : chatName} */}
+                            {ownerMessage}
                           </span>
                         </div>
                       </div>
