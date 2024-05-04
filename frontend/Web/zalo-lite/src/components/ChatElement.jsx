@@ -74,7 +74,6 @@ function ChatElement({
           " OPENED",
           newSocket.readyState,
         );
-        console.log("Socket is now listening for messages.");
       };
       newSocket.onmessage = (event) => {
         console.log("Socket", newSocket);
@@ -99,7 +98,7 @@ function ChatElement({
             jsonData.tcm === "TCM01" &&
             jsonData.userID !== localStorage.getItem("userID")
           ) {
-            // playNotificationSound();
+            playNotificationSound();
           }
           // Xử lý dữ liệu được gửi đến ở đây
           // if (jsonData.tcm === "TCM04") {

@@ -372,7 +372,7 @@ const Conversation = () => {
 
     const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
     newSocket.onopen = () => {
-      console.log("WebSocket connected >>>>>>>>HUy");
+      // console.log("WebSocket connected >>>>>>>>HUy");
     };
     setSocket(newSocket);
 
@@ -426,9 +426,9 @@ const Conversation = () => {
     messageForward,
     parentID,
   ) => {
-    console.log("Running")
-    console.log("SocketNew:", socketNew);
-    console.log("parentID:", parentID);
+    // console.log("Running")
+    // console.log("SocketNew:", socketNew);
+    // console.log("parentID:", parentID);
     const uuid = uuidv4();
     // Lấy thời gian hiện tại dưới dạng timestamp
     const currentTime = new Date().getTime();
@@ -485,7 +485,7 @@ const Conversation = () => {
         console.log("WebSocketNew connected");
         socketNew.send(JSON.stringify(message));
       } else {
-        console.log("WebSocket connected");
+        // console.log("WebSocket connected");
         setMessage(""); // Xóa nội dung của input message sau khi gửi
         setSentMessage(message); // Cập nhật state của sentMessage
         socket.send(JSON.stringify(message));
@@ -610,7 +610,6 @@ const Conversation = () => {
   // }, [id, messages]);
 
   useEffect(() => {
-    console.log("Chạy UseEffect CONSERVATION")
     if (socket) {
       socket.onmessage = (event) => {
         const data = event.data;
@@ -619,7 +618,6 @@ const Conversation = () => {
         try {
           if (data && data.startsWith("{")) {
             const jsonData = JSON.parse(data);
-            console.log("chaychay")
             console.log("Received JSON data CONSERVATION:", jsonData);
             // Kiểm tra xem tin nhắn không phải từ bạn
             const messageFromOtherUser = jsonData.userID !== userIDFromCookies;
@@ -637,7 +635,28 @@ const Conversation = () => {
                   (msg) => msg.id === jsonData.id,
                 );
                 if (!messageExists) {
-                  setMessages((prevMessages) => [...prevMessages, jsonData]);
+                  // setMessages((prevMessages) => [...prevMessages, jsonData]);
+                  // Tạo một bản đồ (map) giữa messageID và object message
+                  const messageMap = new Map(
+                    messages.map((message) => [message.messageID, message]),
+                  );
+                  const parentMessage = messageMap.get(jsonData.parentID);
+                  setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                      messageID: jsonData.id,
+                      userID: jsonData.userID,
+                      userAvatar: jsonData.userAvatar,
+                      userName: jsonData.userName,
+                      timestamp: jsonData.timestamp,
+                      contents: jsonData.contents,
+                      parentID: parentMessage,
+                      hiddens: [],
+                      recall: false,
+                    },
+                  ]);
+                  console.log("Run");
+                  console.log("Message____________________:", messages);
                 }
               }
             }
@@ -707,7 +726,28 @@ const Conversation = () => {
   useEffect(() => {
     if (sentMessage) {
       scrollToBottom();
-      setMessages((prevMessages) => [...prevMessages, sentMessage]);
+      // setMessages((prevMessages) => [...prevMessages, sentMessage]); huyy
+      console.log("Sent message:", sentMessage);
+      // Tạo một bản đồ (map) giữa messageID và object message
+      const messageMap = new Map(
+        messages.map((message) => [message.messageID, message]),
+      );
+      const parentMessage = messageMap.get(sentMessage.parentID);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          messageID: sentMessage.id,
+          userID: sentMessage.userID,
+          userAvatar: sentMessage.userAvatar,
+          userName: sentMessage.userName,
+          timestamp: sentMessage.timestamp,
+          contents: sentMessage.contents,
+          parentID: parentMessage,
+          hiddens: [],
+          recall: false,
+        },
+      ]);
       setSentMessage(null); // Đặt lại giá trị của sentMessage về null sau khi cập nhật tin nhắn
     }
   }, [sentMessage]);
@@ -746,7 +786,7 @@ const Conversation = () => {
         const data = await response.json();
         const contact = data.conversations;
         const chatID = searchParams.get("id");
-        console.log("ChatID:", chatID);
+        // console.log("ChatID:", chatID);
         setContact(contact.filter((c) => c.chatID !== chatID));
       } catch (error) {
         console.error("Error fetching conversations:", error);
@@ -842,7 +882,7 @@ const Conversation = () => {
           `ws://localhost:8082/ws/chat/${obj.chatID}`,
         );
         newSocket.onopen = () => {
-          console.log("newSocket:", newSocket);
+          // console.log("newSocket:", newSocket);
           console.log("Gửi tin nhắn:", shareContent);
           sendMessageWithTextViaSocket(
             "",
@@ -864,6 +904,7 @@ const Conversation = () => {
   };
 
   const [openCompReplyInput, setOpenCompReplyInput] = useState(false);
+  const [userIDReplyForCompReply, setUserIDReplyForCompReply] = useState("");
   const [openSearchMessage, setOpenSearchMessage] = useState(false);
   useEffect(() => {
     scrollToBottom();
@@ -951,10 +992,12 @@ const Conversation = () => {
       messageElementRef.current = document.getElementById("messageIDRef");
       // Nếu tin nhắn được tìm thấy, cuộn đến vị trí của nó
       // if (messageIndex !== -1) {
-        messageElementRef.current?.scrollIntoView({ behavior: "smooth" });
+      messageElementRef.current?.scrollIntoView({ behavior: "smooth" });
       // }
     }
   }, [messages, messageIDRef]);
+
+  console.log("Conversation:", messages);
 
   return (
     <ThemeProvider theme={theme}>
@@ -1475,6 +1518,7 @@ const Conversation = () => {
                   setShareContent={setShareContent}
                   setOpenCompReplyInput={setOpenCompReplyInput}
                   setParentIdMsg={setParentIdMsg}
+                  setUserIDReplyForCompReply={setUserIDReplyForCompReply}
                 />
               ))}
             {messageIDRef ? (
@@ -1617,7 +1661,10 @@ const Conversation = () => {
                                 </span>
                                 &nbsp;
                                 <span className="text-[13px] font-semibold">
-                                  {chatName}
+                                  {userIDReplyForCompReply ===
+                                  localStorage.getItem("userID")
+                                    ? localStorage.getItem("userName")
+                                    : chatName}
                                 </span>
                               </div>
                             </div>

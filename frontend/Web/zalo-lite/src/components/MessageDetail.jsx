@@ -27,6 +27,7 @@ const MessageDetail = ({
   setShareContent,
   setOpenCompReplyInput,
   setParentIdMsg,
+  setUserIDReplyForCompReply,
 }) => {
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
@@ -251,6 +252,7 @@ const MessageDetail = ({
                   setShareContent(message);
                   // console.log("messageID", message.messageID);
                   setParentIdMsg(message.messageID);
+                  setUserIDReplyForCompReply(message.userID);
                 }}
               >
                 <img
@@ -399,6 +401,7 @@ const MessageDetail = ({
                   setOpenCompReplyInput(true);
                   setShareContent(message);
                   setParentIdMsg(message.messageID);
+                  setUserIDReplyForCompReply(message.userID);
                 }}
               >
                 <img
