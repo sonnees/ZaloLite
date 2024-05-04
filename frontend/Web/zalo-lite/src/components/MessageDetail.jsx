@@ -208,21 +208,24 @@ const MessageDetail = ({
     if (message.userID === userIDFromCookies) {
       setOwnerMessage(localStorage.getItem("userName"));
     } else {
-      const fetchInfoAccount = async () => {
-        const response = await fetch(
-          `http://localhost:8081/api/v1/account/profile/userID/${message.parentID.userID}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+      console.log("message.parentID", message.parentID);
+      if (message.parentID != null) {
+        const fetchInfoAccount = async () => {
+          const response = await fetch(
+            `http://localhost:8081/api/v1/account/profile/userID/${message.parentID.userID}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
             },
-          },
-        );
-        const data = await response.json();
-        setOwnerMessage(data.userName);
-      };
-      if (message.parentID) fetchInfoAccount();
+          );
+          const data = await response.json();
+          setOwnerMessage(data.userName);
+        };
+        fetchInfoAccount();
+      }
     }
   };
 

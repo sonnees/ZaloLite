@@ -258,6 +258,9 @@ const Conversation = () => {
   const handleInputChange = (e) => {
     setMessage(e.target.value);
     setContentType("text");
+    if (e.target.value === "") {
+      setDisplayComposingMessage(false);
+    }
   };
   // Hàm gửi tin nhắn qua WebSocket với nội dung là text từ input
   // const handleSendMessage = () => {
@@ -997,7 +1000,58 @@ const Conversation = () => {
     }
   }, [messages, messageIDRef]);
 
-  console.log("Conversation:", messages);
+  // console.log("Conversation:", messages)
+
+  const [displayComposingMessage, setDisplayComposingMessage] = useState(false);
+  const [socketSent, setSocketSent] = useState(false);
+
+  useEffect(() => {
+    const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+    newSocket.onopen = () => {
+      // console.log("WebSocket connected >>>>>>>>HUy");
+    };
+    newSocket.onmessage = (event) => {
+      if (event.data.startsWith("{")) {
+        const jsonData = JSON.parse(event.data);
+        // const data = event.data;
+        console.log("Received data CONSERVATION:", jsonData);
+        console.log("SenderName:", jsonData.senderName);
+        console.log("UserName:", localStorage.getItem("userName"));
+        if (
+          jsonData.tcm === "TCM06" &&
+          jsonData.senderName !== localStorage.getItem("userName") &&
+          jsonData.chatID === id
+        ) {
+          setDisplayComposingMessage(true);
+        }
+      }
+    };
+  }, [id]);
+
+  useEffect(() => {
+    if (socket) {
+      const messageSend = {
+        id: uuidv4(),
+        tcm: "TCM06",
+        chatID: id,
+        senderName: localStorage.getItem("userName"),
+      };
+      if (message !== "" && !socketSent) {
+        socket.send(JSON.stringify(messageSend));
+        setSocketSent(true);
+      } else if (message == "") {
+        setDisplayComposingMessage(false);
+        setSocketSent(false);
+      }
+    }
+  }, [message, socketSent]);
+
+  const handleKeyDown = (event) => {
+    if (event.key === " ") {
+      console.log("Space bar pressed.");
+      // Your socket sending logic here
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -1527,6 +1581,14 @@ const Conversation = () => {
               <div ref={messagesEndRef} />
             )}
           </div>
+          {/* <div className="fixed z-30 -mt-[20px] flex w-full items-end justify-end bg-[#A4BEEB] ml-[850px] border pr-[1265px]"></div> */}
+          {displayComposingMessage && (
+            <div className="fixed z-30 -mt-[20px] flex w-full items-end justify-end bg-[#A4BEEB] pr-[415px]">
+              <span className="animate-wave text-sm text-white">
+                Đang soạn tin...
+              </span>
+            </div>
+          )}
           <div className="border-t">
             <div className="flex h-[47px] flex-row justify-items-start bg-white">
               <div className="flex flex-row justify-items-start pl-2">
@@ -1689,6 +1751,7 @@ const Conversation = () => {
                       value={message}
                       onChange={handleInputChange}
                       onKeyPress={handleKeyPressTextArea}
+                      onKeyDown={handleKeyDown}
                       className="border-l-none h-full w-full justify-center border-t-2 p-2 px-[14px] py-[16.5px] pt-[87px] text-[15px] text-tblack focus:border-t-2  focus:border-[#2B66F6] focus:outline-none"
                       rows={1}
                     />
@@ -1752,6 +1815,7 @@ const Conversation = () => {
                       value={message}
                       onChange={handleInputChange}
                       onKeyPress={handleKeyPressTextArea}
+                      onKeyDown={handleKeyDown}
                       className="border-l-none -mt-1 h-full w-full justify-center border-t-2 p-2 px-[14px] py-[16.5px] text-[15px] text-tblack focus:border-t-2  focus:border-[#2B66F6] focus:outline-none"
                       rows={1}
                     />

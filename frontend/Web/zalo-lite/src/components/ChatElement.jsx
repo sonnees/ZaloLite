@@ -22,18 +22,18 @@ function ChatElement({
   };
   const [socket, setSocket] = useState(null);
   const [newMessage, setNewMessage] = useState("");
-  console.log(chatName, ">>>>>>>>>>>>>>", topChatActivity);
+  // console.log(chatName, ">>>>>>>>>>>>>>", topChatActivity);
   const countTopChatActivity = topChatActivity.length;
   const a = topChatActivity.length - 1;
   // console.log(a);
   const b = topChatActivity[a];
-  console.log("bbbbbb", b);
+  // console.log("bbbbbb", b);
   const c = b.contents.length - 1;
   const messageContentInTopChatActivity = b.contents[c].value;
-  console.log(
-    "messageContentInTopChatActivity",
-    messageContentInTopChatActivity,
-  );
+  // console.log(
+  //   "messageContentInTopChatActivity",
+  //   messageContentInTopChatActivity,
+  // );
   const [messageContent, setMessageContent] = useState("");
   const unreadCount = 1;
 
@@ -94,22 +94,24 @@ function ChatElement({
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received in CHAT ELEMENT:", jsonData);
-          console.log(
-            "Message received in CHAT ELEMENT:",
-            jsonData.contents[0].value,
-          );
-          setTimestamp(jsonData.timestamp);
+          if (jsonData.tcm === "TCM01") {
+            console.log(
+              "Message received in CHAT ELEMENT:",
+              jsonData.contents[0].value,
+            );
+            setTimestamp(jsonData.timestamp);
 
-          if (jsonData.userID === localStorage.getItem("userID")) {
-            setNewMessage("Bạn: " + jsonData.contents[0].value);
-          } else {
-            setNewMessage(jsonData.contents[0].value);
-          }
-          if (
-            jsonData.tcm === "TCM01" &&
-            jsonData.userID !== localStorage.getItem("userID")
-          ) {
-            playNotificationSound();
+            if (jsonData.userID === localStorage.getItem("userID")) {
+              setNewMessage("Bạn: " + jsonData.contents[0].value);
+            } else {
+              setNewMessage(jsonData.contents[0].value);
+            }
+            if (
+              jsonData.tcm === "TCM01" &&
+              jsonData.userID !== localStorage.getItem("userID")
+            ) {
+              playNotificationSound();
+            }
           }
           // Xử lý dữ liệu được gửi đến ở đây
           // if (jsonData.tcm === "TCM04") {
@@ -207,7 +209,7 @@ function ChatElement({
   const [timestamp, setTimestamp] = useState(lastUpdateAt);
   // const [timeOrginal, setTimeOrginal] = useState(new Date(timestamp));
   const [timeDifference, setTimeDifference] = useState("");
-  console.log("timestamp", timestamp);
+  // console.log("timestamp", timestamp);
   // const timestamp = lastUpdateAt;
   // const timestamp = topChatActivity[a].chatActivity[b].timetamp;
 
