@@ -8,6 +8,7 @@ import Alert from "@mui/material/Alert";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { useUser } from "../../context/UserContext";
+import axios from "axios";
 
 function SlideTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -22,7 +23,7 @@ function Message() {
   const [userIDFromCookies, setUserIDFromCookies] = useState(null);
   const [tokenFromCookies, setTokenFromCookies] = useState(null);
   const [flag, setFlag] = useState(false);
-  const { cons, setCons, userID } = useUser();
+  const { cons, setCons, userID, group, setGroup } = useUser();
 
   const [loadCons, setLoadCons] = useState(false);
 
@@ -112,7 +113,26 @@ function Message() {
           console.log("Message received:", jsonData);
           console.log("senderName", jsonData.senderName);
           // Xử lý dữ liệu được gửi đến ở đây
-          if (jsonData) {
+          if (
+            jsonData.tgm=="TGM01"
+            ||jsonData.tgm=="TGM02"
+            ||jsonData.tgm=="TGM03"
+            ||jsonData.tgm=="TGM04"
+            ||jsonData.tgm=="TGM05"
+            ||jsonData.tgm=="TGM06"
+            ||jsonData.tgm=="TGM07"
+            ||jsonData.tgm=="TGM08"
+            ||jsonData.tgm=="TGM09"
+            ||jsonData.tgm=="TGM010"
+            ||jsonData.tgm=="TGM011"
+            ||jsonData.tgm=="TGM012"
+            ||jsonData.tgm=="TGM013"
+            ||jsonData.tgm=="TGM014"
+        ) {
+            
+            setLoadCons(true);
+            fetchGroup(jsonData.idChat);
+          } else if (jsonData) {
             setStateNotification({
               open: true,
               SlideTransition,
@@ -133,6 +153,55 @@ function Message() {
       };
     }
   }, [userID]);
+
+  const fetchGroup = async(id) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8082/api/v1/group/info?idGroup=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+      console.log("Data:", response.data);
+      setGroup(response.data)
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      return [];
+    }
+  }
+
+  const reloadCons = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8082/api/v1/user/info/${localStorage.getItem("userID")}`,
+        {
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          method: "GET",
+        },
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch conversations");
+      }
+      const data = await response.json();
+      // console.log(data);
+      localStorage.setItem(
+        "conversations",
+        JSON.stringify(data.conversations),
+      );
+      setCons(JSON.parse(localStorage.getItem("conversations")))
+      console.log(cons);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+    }
+  }
 
   const handleClose = () => {
     setStateNotification({
@@ -166,11 +235,12 @@ function Message() {
   // Sử dụng useEffect để lưu conversations vào localStorage khi component unmount
   useEffect(() => {
     if (loadCons) {
-      const conversations = localStorage.getItem("conversations");
-      if (conversations) {
-        // console.log("conversations", JSON.parse(conversations));
-        setConversations(JSON.parse(conversations));
-      }
+      // const conversations = localStorage.getItem("conversations");
+      // if (conversations) {
+      //   // console.log("conversations", JSON.parse(conversations));
+      //   setConversations(JSON.parse(conversations));
+      // }
+      reloadCons();
       setLoadCons(false);
     }
 

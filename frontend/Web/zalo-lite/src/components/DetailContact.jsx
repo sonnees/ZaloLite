@@ -8,58 +8,22 @@ import MessageDetail from "./MessageDetail";
 import { faAddressBook } from "@fortawesome/free-regular-svg-icons";
 import { grey } from "@mui/material/colors";
 import { Avatar } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function DetailContact() {
-  const data = [
-    {
-      title: "Section 1",
-      data: [
-        {
-          name: "Item1",
-          avt: "https://www.vlance.vn/uploads/160x160/3435fd58f6937ad78ebd009ad162cd59080e3db51.jpg",
-        },
-        {
-          name: "Item2",
-          avt: "https://www.vlance.vn/uploads/160x160/3435fd58f6937ad78ebd009ad162cd59080e3db51.jpg",
-        },
-        {
-          name: "Item3",
-          avt: "https://www.vlance.vn/uploads/160x160/3435fd58f6937ad78ebd009ad162cd59080e3db51.jpg",
-        },
-      ],
-    },
-    {
-      title: "Section 2",
-      data: [
-        {
-          name: "Item1",
-          avt: "https://www.vlance.vn/uploads/160x160/3435fd58f6937ad78ebd009ad162cd59080e3db51.jpg",
-        },
-        {
-          name: "Item2",
-          avt: "https://www.vlance.vn/uploads/160x160/3435fd58f6937ad78ebd009ad162cd59080e3db51.jpg",
-        },
-        {
-          name: "Item3",
-          avt: "https://www.vlance.vn/uploads/160x160/3435fd58f6937ad78ebd009ad162cd59080e3db51.jpg",
-        },
-      ],
-    },
-    // Thêm các phần tử section và data khác nếu cần
-  ];
+export default function DetailContact({isListFriend}) {
+  const navigate = useNavigate();
+  const storedData  = JSON.parse(localStorage.getItem("conversations"));
+  const data = isListFriend ? storedData.filter(conversation => conversation.type !== "GROUP") : storedData.filter(conversation => conversation.type === "GROUP")
 
   const RenderItem = ({ data }) =>
     data.map((item, index) => (
       <div key={index} className="py-4">
-        <div>{item.title}</div>
-        <div>
-          {data[index].data.map((item, subIndex) => (
-            <div key={subIndex} className="flex flex-row items-center p-4">
-              <Avatar alt={item.avt} src={item.avt} className="m-4" />
-              <div className="w-full border-b p-4 py-5">{item.name}</div>
-            </div>
-          ))}
-        </div>
+        <Link key={item.chatID} to={{ pathname: item.type === 'GROUP' ? 'chatGroup' : 'chat', search: `?id=${item.chatID}&type=individual-chat&chatName=${item.chatName}&chatAvatar=${item.chatAvatar}`, state: { prevPath: 'contact' },}} className="block cursor-pointer hover:bg-slate-50">
+          <div className="flex flex-row items-center p-4">
+            <Avatar alt={item.chatAvatar} src={item.chatAvatar} className="m-4" />
+            <div className="w-full border-b p-4 py-5">{item.chatName}</div>
+          </div>
+        </Link>
       </div>
     ));
 
@@ -71,7 +35,7 @@ export default function DetailContact() {
             <FontAwesomeIcon icon={faAddressBook} className="pl-1 pr-3" />
             <div className="flex flex-col">
               <div className="text-lg font-medium text-[#081c36]">
-                <span>Danh sách bạn bè</span>
+                {isListFriend?(<span>Danh sách bạn bè</span>):(<span>Danh sách nhóm và cộng đồng</span>)}
               </div>
             </div>
           </div>

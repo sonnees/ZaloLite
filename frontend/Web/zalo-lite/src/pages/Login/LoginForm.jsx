@@ -68,15 +68,15 @@ export default function LoginForm() {
   }
 
 //=========================================================
-  function isJSON(str) {
-    try {
-      JSON.parse(str);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-//=========================================================
+//   function isJSON(str) {
+//     try {
+//       JSON.parse(str);
+//       return true;
+//     } catch (e) {
+//       return false;
+//     }
+//   }
+// //=========================================================
   
 
     useEffect(() => {
@@ -296,7 +296,13 @@ export default function LoginForm() {
 
             <p className="flex-1 mt-8 text-center text-xs font-light text-gray-700">
               <a
-                onClick={() => navigate('/auth/forgot-password')}
+                onClick={() => {
+                  if ( !flag ) {
+                    navigate('/auth/forgot-password')
+                  } else {
+                    navigate('/auth/forgot-password', {state: {phoneProp: phoneNumber}});
+                  }
+                }}
                 className="text-black-100 font-medium hover:underline"
               >
                 Quên mật khẩu?

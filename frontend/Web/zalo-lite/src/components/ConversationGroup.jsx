@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightFromBracket, faBell, faChevronLeft, faGear, faMagnifyingGlass, faScrewdriverWrench, faThumbtack, faTrashCan, faUserMinus, faUserPlus, faUserXmark, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faBell, faChevronLeft, faGear, faMagnifyingGlass, faScrewdriverWrench, faThumbtack, faTrashCan, faUserGear, faUserMinus, faUserPlus, faUserXmark, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import data from "@emoji-mart/data";
@@ -332,7 +332,7 @@ const ConversationGroup = () => {
   const [messages, setMessages] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(15);
-  const {cons, setCons} = useUser();
+  const {cons, setCons, group, setGroup} = useUser();
 
   const [message, setMessage] = useState("");
   const [contentType, setContentType] = useState("text"); // Mặc định là gửi tin nhắn text
@@ -348,7 +348,7 @@ const ConversationGroup = () => {
 
   const [sentMessage, setSentMessage] = useState(null);
   const [consGroup, setConsGroup] = useState(JSON.parse(localStorage.getItem("conversations")).find(item => item.chatID === id) );
-  const [group, setGroup] = useState(null);
+  // const [group, setGroup] = useState(null);
   const storedData  = JSON.parse(localStorage.getItem("conversations"));
   const conversations = storedData ? storedData.filter(conversation => conversation.type !== "GROUP") : null
 
@@ -509,7 +509,7 @@ const ConversationGroup = () => {
     };
     const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
     newSocket.onopen = async () => {
-      console.log("WebSocket connected >>>>>>>>HUy");
+      console.log("WebSocket connected >>>>>>>>Group");
     };
 
     const newSocketGroup = new WebSocket(`ws://localhost:8082/ws/group`);
@@ -524,7 +524,7 @@ const ConversationGroup = () => {
     //   newSocket.close();
     // };
     fetchData();
-  }, [id, tokenFromCookies, message, flag, cons]);
+  }, [id, tokenFromCookies, message, flag,]);
 
   //==============Đang chạy ổn
   // const sendMessageWithTextViaSocket = (textMessage) => {
@@ -875,6 +875,7 @@ const ConversationGroup = () => {
       };
 
       socketGroup.send(JSON.stringify(outGroup));
+      sendMessageWithTextViaSocket(member.userName + " đã rời khỏi nhóm", "notify");
       // console.log(create);
       reloadCons();
       fetchGroup();
@@ -960,13 +961,38 @@ const ConversationGroup = () => {
     }
   }
 
+  const changeAdmin = (member) => {
+    // let newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
+    // newSocket.onopen = async () => {
+    //   console.log("WebSocket connected");
+    // };
+    // sendMessageWithTextViaSocket(member.userName + " đã được bổ nhiệm thành phó nhóm", "notify");
+    if (socketGroup) {
+      const changeAd = {
+        id: uuidv4(),
+        tgm: "TGM07",
+        idChat: id,
+        userID: member.userID,
+        userName: member.userName,
+        userAvatar: member.userAvatar,
+      };
+      console.log(changeAd);
+      socketGroup.send(JSON.stringify(changeAd));
+      fetchGroup();
+      reloadCons();
+      
+    } else {
+      console.error("WebSocket is not initialized.");
+    }
+  }
+
 
   const deleteMember = async (member) => {
     // let newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
     // newSocket.onopen = async () => {
     //   console.log("WebSocket connected");
     // };
-    await sendMessageWithTextViaSocket(member.userName + " đã rời khỏi nhóm", "notify");
+    await sendMessageWithTextViaSocket(member.userName + " đã bị mời ra khỏi nhóm", "notify");
 
     if (socketGroup) {
       const outGroup = {
@@ -1461,7 +1487,8 @@ const ConversationGroup = () => {
                       <img src={member.userAvatar} alt={member.userName} className="h-8 w-8 rounded-full mr-2" />
                       <span>{member.userName}</span> {(group.owner.userID==localStorage.getItem("userID")) && 
                         <div className="ml-auto">
-                           <button onClick={()=> {setAdmin(member)}} className=" hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faScrewdriverWrench}/></button>
+                          <button onClick={()=> {changeAdmin(member)}} className=" hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faUserGear} /></button>
+                          <button onClick={()=> {setAdmin(member)}} className=" hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faScrewdriverWrench}/></button>
                           <button onClick={()=> {deleteMember(member)}} className=" hover:bg-gray-200 px-2"><FontAwesomeIcon icon={faUserMinus} /></button>
                         </div>
                       }

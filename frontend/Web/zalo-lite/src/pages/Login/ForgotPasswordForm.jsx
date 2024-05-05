@@ -1,12 +1,23 @@
 import { faAnglesLeft, faMobileScreen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ForgotPasswordForm() {
     const navigate = useNavigate();
     const [phoneNumber, setPhoneNumber] = useState("");
     const [flag, setFlag] = useState(false);
+    const location = useLocation();
+    const phoneProp = location.state?.phoneProp;
+
+    useEffect(() => {
+        console.log(phoneProp);
+        if (phoneProp!==undefined) {
+            
+            setPhoneNumber(phoneProp);
+        }
+    }, [])
+
 
     const handleCheckPhoneNumber = async (e) => {
         e.preventDefault();
@@ -50,6 +61,7 @@ export default function ForgotPasswordForm() {
                     id="input-phone"
                     placeholder="Số điện thoại"
                     className="px-3 focus:outline-none "
+                    value={phoneNumber}
                     onChange={(event) => {
                         setPhoneNumber(event.target.value);
                     }}

@@ -2,13 +2,27 @@ import { faAddressBook, faEnvelopeOpen } from "@fortawesome/free-regular-svg-ico
 import { faMobileScreen, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { useEffect } from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Contact() {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/contact/listFriend")
+  }, [])
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
+    if (index ==0 ) {
+      navigate("/contact/listFriend")
+    } else if (index == 1 ) {
+      navigate("/contact/listGroup")
+    } else if (index == 2 ) {
+      navigate("/contact/listFriendRequest")
+    }
   };
 
   return (
