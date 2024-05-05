@@ -108,7 +108,7 @@ public class ChatHandleWebSocket {
                                         .flatMap(chat -> { // exit Delivery
                                             return chatRepository.changeDelivery(chatID,info.getUserID().toString(),info.getMessageID().toString())
                                                     .flatMap(aLong1 -> {
-                                                        if (aLong1 <= 0) return Mono.error(() -> new Throwable("exit append delivery failed"));
+//                                                        if (aLong1 <= 0) return Mono.error(() -> new Throwable("exit append delivery failed"));
                                                         return Mono.empty();
                                                     });
                                         });
@@ -121,7 +121,7 @@ public class ChatHandleWebSocket {
                                 if(aLong<=0) return Mono.error(() -> new Throwable("change read failed"));
                                 return chatRepository.changeDelivery(chatID,info.getUserID().toString(),info.getMessageID().toString())
                                         .flatMap(aLong1 -> {
-                                            if(aLong1<=0) return Mono.error(() -> new Throwable("change read failed"));
+//                                            if(aLong1<=0) return Mono.error(() -> new Throwable("change read failed"));
                                             return Mono.empty();
                                         });
                             });

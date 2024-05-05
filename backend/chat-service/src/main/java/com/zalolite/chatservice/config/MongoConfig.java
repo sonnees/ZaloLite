@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguration;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 
-@Configuration
+//@Configuration
 public class MongoConfig extends AbstractReactiveMongoConfiguration {
     @Override
     @NonNull

@@ -27,6 +27,7 @@ import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import ForgotPasswordForm from "../pages/Login/ForgotPasswordForm";
 import ResetPasseordForm from "../pages/Login/ResetPasseordForm";
+import ConversationGroup from "../components/ConversationGroup";
 // import RegisterUser from "../pages/Login/RegisterUser";
 
 const Loadable = (Component) => (props) => {
@@ -79,12 +80,17 @@ export default function Router() {
           children: [
             { path: "", element: <Welcome /> },
             { path: "chat", element: <Conversation /> },
+            { path: "chatGroup", element: <ConversationGroup /> },
           ],
         },
         {
           path: "/contact",
           element: <SearchBox />,
-          children: [{ path: "", element: <DetailContact /> }],
+          children: [
+            { path: "listFriend", element: <DetailContact/> },
+            { path: "", element: <DetailContact/> },
+            { path: "listGroup", element: <DetailContact/> },
+          ],
         },
         { path: "todo", element: <Todo /> },
       ],

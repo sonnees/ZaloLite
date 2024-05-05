@@ -13,10 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
@@ -26,34 +30,22 @@ import java.util.List;
 import java.util.UUID;
 
 @SpringBootApplication
-@Slf4j
-@AllArgsConstructor
-public class ChatServiceApplication {
+@EnableDiscoveryClient
+@EnableReactiveMongoRepositories
+public class ChatServiceApplication implements CommandLineRunner{
+	@Autowired
 	UserRepository userRepository;
+	@Autowired
 	ChatRepository chatRepository;
+	@Autowired
 	GroupRepository groupRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ChatServiceApplication.class, args);
 	}
 
-//	@Bean
-	CommandLineRunner commandLineRunner(){
-		return new CommandLineRunner() {
-			@Override
-			public void run(String... args) throws Exception {
+	@Override
+	public void run(String... args) throws Exception {
 
-				User user = userRepository.findById(UUID.fromString("3000f6da-e5c7-43eb-9733-f772672779e1")).block();
-
-				if( user != null ) return;
-				userRepository.save(new User("3000f6da-e5c7-43eb-9733-f772672779e1"))
-								.then(Mono.defer(()->{
-									return userRepository.save(new User("0f1c6cdd-5d81-460b-8a39-02f19349e18f"))
-											.then(Mono.defer(()->{
-												return userRepository.save(new User("689d39dd-fbed-409f-9f53-626f250712f1"));
-											}));
-								})).block();
-			}
-		};
 	}
 }

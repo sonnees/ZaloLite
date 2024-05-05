@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/chat")
@@ -39,6 +41,39 @@ public class ChatController {
                         log.error("# {} #", e+"");
                         return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
                     }
+                });
+    }
+
+    @GetMapping("/search-bkw")
+    public Mono<ResponseEntity<String>> searchByKeyWord(@RequestParam UUID chatID, @RequestParam String key){
+        log.info("### enter search by key word ###");
+        log.info("# chatID: {} key: {} #", chatID, key);
+        return chatRepository.searchByKeyWord(chatID, key)
+                .collectList()
+                .flatMap(list -> {
+                    try {
+                        return Mono.just(ResponseEntity.status(200).body(objectMapper.writeValueAsString(list)));
+                    } catch (JsonProcessingException e) {
+                        log.error("# {} #", e+"");
+                        return Mono.just(ResponseEntity.status(500).body("Error processing JSON"));
+                    }
+                });
+    }
+
+    @GetMapping("/get-search")
+    public Mono<ResponseEntity<String>> getSearch(@RequestParam UUID chatID, @RequestParam UUID messageID){
+        log.info("### enter get search ###");
+        log.info("# chatID: {} messageID: {} #", chatID, messageID);
+        return chatRepository.getIndexOfMessageID(chatID, messageID)
+                .collectList()
+                .switchIfEmpty(Mono.defer(()->{
+                    log.error("# {} #", "Fail get index of message id");
+                    return Mono.empty();
+                }))
+                .flatMap(list -> {
+                    int index = list.get(0).getIndex();
+                    log.info("# index: {}  #",index);
+                    return getChatActivityFromNToM(chatID.toString(), 0, index+11);
                 });
     }
 
