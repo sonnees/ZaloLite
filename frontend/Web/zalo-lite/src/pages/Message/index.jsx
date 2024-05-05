@@ -129,7 +129,6 @@ function Message() {
             ||jsonData.tgm=="TGM013"
             ||jsonData.tgm=="TGM014"
         ) {
-            
             setLoadCons(true);
             fetchGroup(jsonData.idChat);
           } else if (jsonData) {
@@ -372,8 +371,7 @@ function Message() {
       ))}
       <div className="h-[60px]">
         <p className="mt-5 text-center text-sm">
-          Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên trình
-          duyệt này.
+          Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên trình duyệt này.
         </p>
       </div>
       <Snackbar

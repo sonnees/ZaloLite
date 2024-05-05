@@ -491,9 +491,15 @@ const ConversationGroup = () => {
     setUserIDFromCookies(userID);
     // Lấy token từ cookies và giải mã nó
     const tokenFromCookie = cookies.get("token");
+    const tokenFromLocalStore = localStorage.getItem("token");
+    
     if (tokenFromCookie) {
+      setTokenFromCookies(tokenFromCookie)
+    }
+
+    if (tokenFromLocalStore) {
       // const tokenDecrypted = decryptData(tokenFromCookie);
-      setTokenFromCookies(tokenFromCookie);
+      setTokenFromCookies(tokenFromLocalStore);
     }
   }, []);
 
@@ -503,7 +509,7 @@ const ConversationGroup = () => {
         id,
         startIndex,
         endIndex,
-        tokenFromCookies,
+        localStorage.getItem("token"),
       );
       setMessages(fetchedMessages);
     };

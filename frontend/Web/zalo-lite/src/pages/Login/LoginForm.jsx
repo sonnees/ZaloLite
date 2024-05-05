@@ -259,7 +259,7 @@ export default function LoginForm() {
               <input
                 id="input-password"
                 placeholder="Mật khẩu"
-                className="mx-3 px-3 focus:outline-none"
+                className="mx-3 px-3 w-64 focus:outline-none"
                 onChange={(event) => {
                   setPassword(event.target.value);
                 }}
