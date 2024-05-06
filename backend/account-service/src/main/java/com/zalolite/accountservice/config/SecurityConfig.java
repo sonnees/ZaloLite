@@ -29,7 +29,6 @@ import java.util.Arrays;
 public class SecurityConfig {
     private AuthenticationManager authenticationManager;
     private SecurityContextRepository securityContextRepository;
-
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) throws Exception {
 
