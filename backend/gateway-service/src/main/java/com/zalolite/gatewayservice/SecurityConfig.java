@@ -35,6 +35,4 @@ public class SecurityConfig {
         return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
     }
 
-
-
 }
