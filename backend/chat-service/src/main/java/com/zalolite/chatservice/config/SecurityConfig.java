@@ -38,6 +38,7 @@ public class SecurityConfig {
 
         return http.authorizeExchange(
                         auth -> auth.pathMatchers("/api/v1/user/update-avatar-account/**", "/ws/**", "/api/v1/user/create").permitAll()
+                                .pathMatchers("/v3/**","/swagger-ui/**", "/context-path/**","/webjars/**","/swagger-ui.html").permitAll()
                                 .anyExchange().authenticated()
                 )
                 .authenticationManager(authenticationManager)
