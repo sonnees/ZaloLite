@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
-import { API_AUTHENTICATE, API_INFOR_ACCOUNT, API_INFOR_USER } from '../api/API';
+import { API_AUTHENTICATE, API_INFOR_ACCOUNT, API_INFOR_USER } from '../api/Api';
 import axios from 'axios';
 import { GlobalContext } from '../context/GlobalContext';
 import { AddListChatID } from '../utils/AddListChatID';

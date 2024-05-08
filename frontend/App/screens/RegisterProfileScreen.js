@@ -4,8 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios'; // Import thư viện Axios
 import cloudinaryConfig from '../config/cloudinaryConfig';
-import { API_REGISTER } from '../api/API';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { API_REGISTER } from '../api/Api';
 
 const RegisterProfileScreen = () => {
   let navigation = useNavigation();
@@ -15,8 +14,6 @@ const RegisterProfileScreen = () => {
   const { userName, phoneNumber, gender, birthDate } = route.params;
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [userInfo, setUserInfo] = useState(null); // Initialize userInfo state
-  const [newAvatar, setNewAvatar] = useState(null); // Initialize newAvatar state
 
   const handleChoosePhoto = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -29,51 +26,25 @@ const RegisterProfileScreen = () => {
     console.log(result);
 
     if (!result.cancelled) {
-      try {
-        const imageUrl = await handleUpload(result.assets[0].uri);
-        setSelectedImage(imageUrl);
-        setUserInfo(prevState => ({ ...prevState, avatar: imageUrl }));
-        await AsyncStorage.setItem('newAvatar', imageUrl);
-      } catch (error) {
-        console.error('Lỗi khi xử lý ảnh:', error);
-        Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi xử lý ảnh.');
-      }
+      setSelectedImage(result.assets[0].uri); // Lưu trữ ảnh đã chọn
     }
   };
 
-  const handleUpload = async (imageUri) => {
-    try {
-      const data = new FormData();
-      data.append('file', {
-        uri: imageUri,
-        type: 'image/jpeg',
-        name: 'avatar.jpg',
-      });
-      data.append('upload_preset', 'ZaloLife');
-      data.append('cloud_name', 'dbmkvqy3b');
+  //Upload ảnh lên Cloudinary
+  const handleUpload = (image) => {
+    const data = new FormData();
+    data.append('file', image);
+    data.append('upload_preset', 'ZaloLife');
+    data.append('cloud_name', 'dbmkvqy3b');
 
-      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
-        method: 'POST',
-        body: data,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to upload image to Cloudinary');
-      }
-
-      const responseData = await response.json();
-      console.log('Upload successful:', responseData);
-
-      const imageUrl = responseData.secure_url;
-      await AsyncStorage.setItem('newAvatar', imageUrl); // Lưu URL của ảnh mới vào AsyncStorage
-      setUserInfo(prevState => ({ ...prevState, avatar: imageUrl })); // Cập nhật state userInfo với URL của ảnh mới
-      setNewAvatar(imageUrl); // Cập nhật giá trị newAvatar với URL của ảnh mới
-      return imageUrl;
-    } catch (error) {
-      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
-      throw error;
-    }
-  };
+    fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
+      method: 'post',
+      body: data
+    }).then(res => res.json())
+      .then(data => {
+        console.log(data);
+      })
+  }
 
   const handleRegister = async () => {
     // Nếu người dùng đã chọn ảnh mới, thực hiện upload ảnh lên Cloudinary trước khi đăng ký
@@ -103,7 +74,7 @@ const RegisterProfileScreen = () => {
       const response = await axios.post(API_REGISTER, body);
       console.log("Registration successful:", response.data);
       // Chuyển hướng sang màn hình TabNavigator sau khi đăng ký thành công
-      navigation.navigate('OtpScreen', { p: phoneNumber });
+      navigation.navigate('OPTLoginScreen', { phoneNumber: phoneNumber });
     } catch (error) {
       console.error("Registration failed:", error);
       Alert.alert("Đăng ký thất bại", "Vui lòng kiểm tra lại thông tin đăng ký và thử lại sau.");

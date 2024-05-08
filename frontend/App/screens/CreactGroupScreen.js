@@ -21,6 +21,7 @@ import {
 } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { GlobalContext } from '../context/GlobalContext';
+import CREATE_GROUP from '../api/Api';
 
 const CreateGroupScreen = () => {
   let navigation = useNavigation();
@@ -117,31 +118,33 @@ const CreateGroupScreen = () => {
       Alert.alert("Lỗi", "Bạn phải nhập tên nhóm để tiếp tục!");
       return;
     }
-
+  
     if (selectedIds.length < 2) {
       Alert.alert("Lỗi", "Bạn phải chọn ít nhất hai thành viên để tạo nhóm!");
       return;
     }
-
-    const ownerId = selectedIds[0];
+  
+    // Lấy thông tin của chủ nhóm
+    const ownerInfo = chatGroupdata.find((user) => user.id === selectedIds[0]);
     const owner = {
-      userID: ownerId,
-      userName: chatGroupdata.find((user) => user.id === ownerId)?.userName,
-      userAvatar: chatGroupdata.find((user) => user.id === ownerId)?.userAvatar,
+      userID: ownerInfo.id,
+      userName: ownerInfo.userName,
+      userAvatar: ownerInfo.userAvatar,
     };
-
+  
     const members = selectedIds.map((id) => ({
       userID: id,
       userName: chatGroupdata.find((user) => user.id === id)?.userName,
       userAvatar: chatGroupdata.find((user) => user.id === id)?.userAvatar,
     }));
+  
     const generateUUID = () => {
       const randomPart = () => {
         return Math.floor((1 + Math.random()) * 0x10000)
           .toString(16)
           .substring(1);
       };
-
+  
       return (
         randomPart() +
         randomPart() +
@@ -155,7 +158,7 @@ const CreateGroupScreen = () => {
         randomPart()
       );
     };
-
+  
     const newGroup = {
       id: generateUUID(),
       tgm: "TGM01",
@@ -164,17 +167,17 @@ const CreateGroupScreen = () => {
       members,
       avatar: selectedImageUrl,
     };
-
+  
     console.log("Thông tin newGroup: ", newGroup);
-
+  
     try {
       // Lưu thông tin nhóm vào AsyncStorage
       await AsyncStorage.setItem(`group-${newGroup.id}`, JSON.stringify(newGroup));
-
+  
       // Lưu thông tin nhóm vào database backend
       await saveGroupToBackend(newGroup);
       console.log("Thông tin newGroup: ", newGroup);
-
+  
       // Update myUserInfo with the new group
       const updatedUserInfo = {
         ...myUserInfo,
@@ -188,27 +191,26 @@ const CreateGroupScreen = () => {
           },
         ],
       };
-
+  
       // Update GlobalContext
       setMyUserInfo(updatedUserInfo);
-
-      navigation.navigate("OpionNavigator", {
-        screen: "ChatGroupScreen",
-        params: {
-          groupId: newGroup.id,
-          groupName: newGroup.chatName,
-          groupImage: newGroup.avatar,
-          owner: newGroup.owner.userID,
-          members: newGroup.members.map((member) => member.userID),
-        },
+  
+      navigation.navigate("TabNavigator", { 
+        groupId: newGroup.id,
+        groupName: newGroup.chatName,
+        groupImage: newGroup.avatar,
+        owner: newGroup.owner.userID,
+        members: newGroup.members.map((member) => member.userID), 
       });
+      
     } catch (error) {
       console.error("Error saving group:", error);
     }
   };
+  
 
   const saveGroupToBackend = async (newGroup) => {
-    const newSocket = new WebSocket('ws://192.168.1.10:8082/ws/group');
+    const newSocket = new WebSocket(CREATE_GROUP);
 
     newSocket.onopen = () => {
       console.log("WebSocket connected");
@@ -232,8 +234,6 @@ const CreateGroupScreen = () => {
       newSocket.close();
     };
   };
-
-
 
 
   return (

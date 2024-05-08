@@ -41,7 +41,7 @@ const OPTLoginScreen = () => {
         firebase.auth().signInWithCredential(credential)
             .then(() => {
                 setCode('');
-                navigation.navigate('LoginNavigator', { screen: 'CreatePasswordScreen', params: { phoneNumber: phoneNumber } });
+                navigation.navigate('TabNavigator', { screen: 'Messages', params: { phoneNumber: phoneNumber } });
 
             })
             .catch(error => {

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { API_PROFILE } from '../api/API';
+import { API_PROFILE } from '../api/Api';
 
 export default function InformationDetail() {
   const [userInfo, setUserInfo] = useState(null);
@@ -76,10 +76,10 @@ export default function InformationDetail() {
       {userInfo && (
         <>
           <View style={{ flex: 2 }}>
-            <Image source={require('../assets/cover_Image.jpg')} style={{ width: '100%', height: '100%' }} />
+            <Image source={require('../assets/Cover.jpg')} style={{ width: '100%', height: '100%' }} />
             <View style={{ flex: 3, position: "absolute", top: "65%", width: "50%", paddingLeft: "5%" }}>
               {/* Sử dụng avatar mới nếu có, nếu không sử dụng avatar từ userInfo */}
-              <Image style={{ width: 60, height: 60, borderRadius: 60, resizeMode: "contain" }} source={{ uri: newAvatar || userInfo.avatar }} />
+              <Image style={{ width: 60, height: 60, borderRadius: 60, }} source={{ uri: userInfo.avatar || newAvatar }} />
             </View>
             <Image style={{ position: "absolute", width: "16%", height: "8%", resizeMode: "contain", top: "10%" }}
               source={require("../assets/back1.png")}

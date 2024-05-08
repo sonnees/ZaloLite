@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { API_PROFILE } from '../api/API';
+import { API_PROFILE } from '../api/Api';
 
 export default function ConfirmQRScreen({ route }) {
   const [socket, setSocket] = useState(null);

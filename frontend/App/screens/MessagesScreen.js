@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { getTimeDifference } from '../utils/CalTime';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
-import { API_GET_LIST_CHATACTIVITY } from '../api/API';
+import { API_GET_LIST_CHATACTIVITY } from '../api/Api';
 import { GlobalContext } from '../context/GlobalContext';
 const MessagesScreen = () => {
   let navigation = useNavigation();

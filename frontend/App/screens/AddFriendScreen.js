@@ -6,7 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { API_PROFILE } from '../api/API';
+import { API_PROFILE } from '../api/Api';
 
 const AddFriendScreen = () => {
   const navigation = useNavigation();

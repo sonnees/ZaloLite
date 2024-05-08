@@ -1,76 +1,12 @@
-<<<<<<< HEAD
 import React, { useState, useEffect, useContext, useRef } from 'react';
-=======
-import React, { memo, useState, useRef, useEffect, useContext } from 'react';
->>>>>>> a90af67d95d49f03ed56322c1b14fb6cdcc95bda
 import { View, Text, SafeAreaView, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { GlobalContext } from '../context/GlobalContext';
 
 export default function OptionGroupScreen() {
-  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext);
   const navigation = useNavigation();
-  const route = useRoute();
-  const conversationOpponent = route.params?.conversationOpponent;
+  const { groupInfo } = useContext(GlobalContext);
 
-  const [chatName, setChatName] = useState(conversationOpponent?.name);
-  const [chatAvatar, setChatAvatar] = useState(conversationOpponent?.chatAvatar);
-<<<<<<< HEAD
-  const [groupId, setGroupId] = useState(conversationOpponent?.id);
-  const [members, setMembers] = useState(conversationOpponent?.members);
-  console.log("members: ", members);
-
-  useEffect(() => {
-    navigation.navigate("OptionGroupScreen", { conversationOpponent: conversationOpponent });
-  }, [myUserInfo]);
-
-  //Luu thông tin group vào GlobalContext
-  useEffect(() => {
-    setMyUserInfo({
-      ...myUserInfo,
-      chatName: chatName,
-      chatAvatar: chatAvatar,
-      groupId: groupId,
-      members: members,
-    });
-  }, [members,chatName, chatAvatar, groupId]);
-
-  const handleLeaveGroup = async (id, reloadCons, fetchGroup) => {
-    const navigation = useNavigation();  // Using React Navigation hook
-    const { myUserInfo } = useContext(GlobalContext);  // Using useContext to get myUserInfo
-  
-    try {
-      if (!myUserInfo || !myUserInfo.socketGroup || !myUserInfo.user) {
-        console.log("socketGroup or user is null");
-        return;
-      }
-  
-      const outGroup = {
-        id: uuidv4(),
-        tgm: "TGM06",
-        idChat: id,
-        userID: myUserInfo.user.userID,
-        userName: myUserInfo.user.userName,
-        userAvatar: myUserInfo.user.avatar,
-      };
-  
-      myUserInfo.socketGroup.send(JSON.stringify(outGroup));
-      await fetchGroup();
-      await reloadCons();
-      navigation.goBack();
-    } catch (error) {
-      console.log("Error in handleLeaveGroup: ", error);
-    }
-  }
-  
-  
-=======
-  console.log('conversationOpponent: ', conversationOpponent);
-  // useEffect(() => {
-  //   navigation.navigate("OptionGroupScreen", { conversationOpponent: conversationOpponent });
-  // }, [myUserInfo]);
-
->>>>>>> a90af67d95d49f03ed56322c1b14fb6cdcc95bda
 
   return (
     <SafeAreaView style={styles.container}>
@@ -87,10 +23,10 @@ export default function OptionGroupScreen() {
       <ScrollView>
         <View style={{ flex: 5.7, justifyContent: "center", alignItems: 'center', backgroundColor: "#FFFFFF" }}>
           <View style={{ marginTop: "5%" }}></View>
-          <Image style={{ width: 80, height: 80, borderRadius: 50, resizeMode: "contain" }} source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}></Image>
+          <Image style={{width: 80, height: 80,borderRadius: 50, resizeMode: "contain"}} source={require("../assets/avata.jpg")}></Image>
           <View style={{ marginTop: "3%" }}></View>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-            {conversationOpponent?.chatName}
+          Nhóm 7
           </Text>
           <View style={{ marginTop: "10%" }}></View>
         </View>
@@ -354,62 +290,6 @@ export default function OptionGroupScreen() {
 
         </View>
 
-<<<<<<< HEAD
-        <View style={{marginTop: "0.5%"}}></View>
-        <View style={{flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", justifyContent: "center", alignItems: "center", height: 60}}>
-          <View style={{paddingLeft: "4%"}}></View>
-          <Image style={{width: "6%", height: "90%", resizeMode: "contain"}} source={require("../assets/access-denied.png")}></Image>
-          <View style={{flex: 0.4}}></View>
-          <View style={{justifyContent: "center"}}>
-            <Text style={{fontFamily: "Roboto", fontSize: 15 }}>Quản lý chặn</Text>
-          </View>
-          <View style={{flex: 5.5}}></View>
-          <View style={{flex: 1}}>
-            <Image style={{width: "30%", height: "90%", resizeMode: "contain"}} source={require("../assets/next.png")}></Image>
-          </View>
-        </View>
-
-        <View style={{marginTop: "0.5%"}}></View>
-        <View style={{flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", justifyContent: "center", alignItems: "center", height: 60}}>
-          <View style={{paddingLeft: "4%"}}></View>
-          <Image style={{width: "6%", height: "90%", resizeMode: "contain"}} source={require("../assets/pie-cart.png")}></Image>
-          <View style={{flex: 0.05}}></View>
-          <View style={{justifyContent: "center"}}>
-            <Text style={{fontFamily: "Roboto", fontSize: 15 }}>Dung lượng trò chuyện</Text>
-          </View>
-          <View style={{flex: 1}}></View>
-        </View>
-
-        <View style={{marginTop: "0.5%"}}></View>
-        <View style={{flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", justifyContent: "center", alignItems: "center", height: 60}}>
-          <View style={{paddingLeft: "4%"}}></View>
-          <Image style={{width: "6%", height: "90%", resizeMode: "contain"}} source={require("../assets/trash-bin.png")}></Image>
-          <View style={{flex: 0.05}}></View>
-          <View style={{justifyContent: "center"}}>
-            <Text style={{fontFamily: "Roboto", fontSize: 15, color: "#FF0000" }}>Xóa lịch sử trò chuyện</Text>
-          </View>
-          <View style={{flex: 1}}></View>
-        </View>
-
-        <View style={{marginTop: "0.5%"}}></View>
-        <View style={{flex: 1.5, backgroundColor: "#FFFFFF", flexDirection: "row", justifyContent: "center", alignItems: "center", height: 60}}>
-          <View style={{paddingLeft: "4%"}}></View>
-          <Image style={{width: "6%", height: "90%", resizeMode: "contain"}} source={require("../assets/logout_group.png")}></Image>
-          <View style={{flex: 0.05}}></View>
-          <View style={{justifyContent: "center"}}>
-            <TouchableOpacity onPress={handleLeaveGroup}>
-              <Text style={{fontFamily: "Roboto", fontSize: 15, color: "#FF0000" }}>Rời nhóm</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{flex: 1}}></View>
-        </View>
-
-  
-        </View>
-        
-=======
-
->>>>>>> a90af67d95d49f03ed56322c1b14fb6cdcc95bda
       </ScrollView>
     </SafeAreaView>
   );

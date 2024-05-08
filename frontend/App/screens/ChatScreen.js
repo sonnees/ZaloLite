@@ -12,7 +12,7 @@ import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID } from '../api/API';
+import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID } from '../api/Api';
 
 // import DocumentPicker from 'react-native-document-picker';
 const ChatScreen = () => {
@@ -371,10 +371,11 @@ const ChatScreen = () => {
           <View style={{ flexDirection: 'row', }}>
             <Icon name='addusergroup' size={22} color={'white'} style={{ margin: 10 }} />
             <Icon name='search1' size={22} color={'white'} style={{ margin: 10 }} />
+
             <Image
               style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
               source={require("../assets/list.png")}
-              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
+              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionGroupScreen" })}
             />
           </View>
         )}

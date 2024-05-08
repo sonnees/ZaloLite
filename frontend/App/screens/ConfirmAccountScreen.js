@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import { API_CHANGE_PASS } from '../api/API';
+import { API_CHANGE_PASS } from '../api/Api';
 
 const CreatePasswordScreen = () => {
   const navigation = useNavigation();

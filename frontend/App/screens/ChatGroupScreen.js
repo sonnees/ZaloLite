@@ -12,7 +12,7 @@ import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/API';
+import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/Api';
 import uuid from 'react-native-uuid'
 import BackgroundInChat from '../component/BackgroundInChat';
 // import DocumentPicker from 'react-native-document-picker';
@@ -358,7 +358,12 @@ const ChatGroupScreen = () => {
           <Image
             style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
             source={require("../assets/list.png")}
-            onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
+            onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { 
+              screen: "OptionGroupScreen",
+              userName: myProfile.userName,
+              avatar: myProfile.avatar,
+            })}
+            
           />
         </View>
       </View>

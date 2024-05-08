@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { API_CHECKPHONE } from '../api/API';
+import { API_CHECKPHONE } from '../api/Api';
 
 const CreatePasswordWhenForgotScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
