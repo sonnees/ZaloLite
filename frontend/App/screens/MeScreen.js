@@ -66,10 +66,10 @@ export default function MeScreen() {
         console.error('Lỗi khi lấy giá trị newAvatar từ AsyncStorage:', error);
       }
     };
-  
+
     getNewAvatar();
   }, []);
-  
+
 
 
   return (
@@ -100,7 +100,7 @@ export default function MeScreen() {
           onPress={() => navigation.navigate('MeNavigator', { screen: 'ProfileScreen' })}
         >
           <View style={{ flex: 0.1 }}></View>
-          <Image style={{ width: 50, height: 50, borderRadius: 50, resizeMode: "contain", marginLeft: "5%" }} source={{ uri: newAvatar || userInfo.avatar }}></Image>
+          <Image style={{ width: 50, height: 50, borderRadius: 50, marginLeft: "5%" }} source={{ uri: userInfo.avatar || newAvatar }}></Image>
           <View style={{ marginLeft: "7%" }}></View>
           <View style={{ justifyContent: "center" }}>
             <Text style={{ fontFamily: "Roboto", fontSize: 18, fontWeight: "bold" }}>{userInfo.userName}</Text>

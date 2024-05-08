@@ -20,7 +20,7 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo }) => 
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("PROFILE FRIEND REQUEST IN HERE:\n", response.data);
+            // console.log("PROFILE FRIEND REQUEST IN HERE:\n", response.data);
             setProfile(response.data)
             return response.data;
         } catch (error) {
