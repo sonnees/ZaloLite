@@ -36,6 +36,7 @@ const ChatScreen = () => {
   const [message, setMessage] = useState('');
   const [contentType, setContentType] = useState("text"); // Mặc định là gửi tin nhắn text
   const [textInputHeight, setTextInputHeight] = useState(40); // Chiều cao ban đầu là 20
+  let messageSocket = {};
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = async () => {
     setRefreshing(true);
@@ -73,12 +74,14 @@ const ChatScreen = () => {
     }
     const newData = await fetchConversationOpponent(conversationData)
     setconversationOpponent(newData)
-    const token = await AsyncStorage.getItem('token');
   }
   //Fectch Data
+  // useEffect(() => {
+  //   fetchData()
+  // }, [myUserInfo]);
   useEffect(() => {
     fetchData()
-  }, [myUserInfo]);
+  }, []);
   useEffect(() => {
     if (socket) {
       console.log("WEBSOCKET WAS TURN ON");
@@ -90,27 +93,73 @@ const ChatScreen = () => {
         if (data.trim().startsWith('{')) {
           try {
             const jsonData = JSON.parse(data);
-            // console.log("Received JSON data:", jsonData);
-            if ((jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") || jsonData.tcm === "TCM01") {
-              const messageDeliveriedSocket = {
-                id: uuid.v4,
-                tcm: "TCM02",
-                messageID: jsonData.id,
-                userID: myProfile.userID,
-                userAvatar: myProfile.avatar,
-                userName: myProfile.userName
+            if (jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") {
+              console.log("NEW MESSAGE", messageSocket);
+              // Kiểm tra nếu conversationOpponent.topChatActivity đã được khởi tạo và là một mảng
+              if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
+                // Thực hiện phép toán push trên mảng
+                conversationOpponent.topChatActivity.push(messageSocket);
+                console.log("ADD SUCCESS");
+              } else {
+                // Nếu conversationOpponent.topChatActivity chưa được khởi tạo hoặc không phải là một mảng, thông báo lỗi
+                // console.log('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
+              }
+
+              const updateConversationOpponentInUserInfo = () => {
+                const updatedConversations = myUserInfo.conversations.map(conversation => {
+                  if (conversation.chatID === conversationOpponent.chatID) {
+                    // Nếu tìm thấy conversationOpponent trong mảng conversations của myUserInfo
+                    // Thực hiện cập nhật dữ liệu cho nó với dữ liệu mới từ conversationOpponent
+                    return conversationOpponent;
+                  } else {
+                    // Nếu không tìm thấy, giữ nguyên dữ liệu
+                    return conversation;
+                  }
+                });
+                // Cập nhật lại mảng conversations trong myUserInfo với dữ liệu đã được cập nhật
+                setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
               };
-              socket.send(JSON.stringify(messageDeliveriedSocket));
-              const messageReadSocket = {
-                id: uuid.v4,
-                tcm: "TCM03",
+              // Gọi hàm để cập nhật conversationOpponent trong myUserInfo
+              updateConversationOpponentInUserInfo();
+            }
+            if (jsonData.tcm === "TCM01") {
+              const newTopChatActivity = {
                 messageID: jsonData.id,
-                userID: myProfile.userID,
-                userAvatar: myProfile.avatar,
-                userName: myProfile.userName
+                userID: jsonData.userID,
+                timestamp: jsonData.timestamp,
+                parentID: jsonData.parentID,
+                contents: jsonData.contents,
+                hiden: [],
+                recall: false,
+              }
+              console.log("NEW MESSAGE", newTopChatActivity);
+              // Kiểm tra nếu conversationOpponent.topChatActivity đã được khởi tạo và là một mảng
+              if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
+                // Thực hiện phép toán push trên mảng
+                conversationOpponent.topChatActivity.push(newTopChatActivity);
+                console.log("ADD SUCCESS");
+              } else {
+                // Nếu conversationOpponent.topChatActivity chưa được khởi tạo hoặc không phải là một mảng, thông báo lỗi
+                // console.log('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
+              }
+
+              const updateConversationOpponentInUserInfo = () => {
+                const updatedConversations = myUserInfo.conversations.map(conversation => {
+                  if (conversation.chatID === conversationOpponent.chatID) {
+                    // Nếu tìm thấy conversationOpponent trong mảng conversations của myUserInfo
+                    // Thực hiện cập nhật dữ liệu cho nó với dữ liệu mới từ conversationOpponent
+                    return conversationOpponent;
+                  } else {
+                    // Nếu không tìm thấy, giữ nguyên dữ liệu
+                    return conversation;
+                  }
+                });
+                // Cập nhật lại mảng conversations trong myUserInfo với dữ liệu đã được cập nhật
+                setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
               };
-              socket.send(JSON.stringify(messageReadSocket));
-              fetchData()
+
+              // Gọi hàm để cập nhật conversationOpponent trong myUserInfo
+              updateConversationOpponentInUserInfo();
             }
             if (jsonData.tcm === "TCM02") {
               fetchData()
@@ -250,7 +299,7 @@ const ChatScreen = () => {
 
   const sendMessageWithTextViaSocket = (messageContent, contentType, parentID) => {
     if (socket) {
-      const messageSocket = {
+      messageSocket = {
         id: uuid.v4(),
         tcm: "TCM01",
         userID: myProfile.userID,

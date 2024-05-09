@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, useContext, useRef } from 'react';
+import React, { memo, useState, useEffect, useContext, useRef, useMemo } from 'react';
 import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Text, StatusBar, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,6 +11,7 @@ import { GlobalContext } from '../context/GlobalContext';
 import { PlusModal } from '../modal/plusModal';
 import { ChatModal } from '../modal/chatModal';
 import { SocketContext } from '../context/SocketContext';
+import { findReadUser } from '../utils/FindConservation';
 const MessagesScreen = () => {
   let navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
@@ -87,6 +88,12 @@ const MessagesScreen = () => {
     const { socket, setSocket } = useContext(SocketContext);
     const itemRef = useRef(item);
     const [timeDifference, setTimeDifference] = useState('');
+    const readUserData = useMemo(() => {
+      if (data) {
+        return findReadUser(data, myProfile.userID);
+      }
+    }, [data, myProfile.userID]);
+
     useEffect(() => {
       itemRef.current = item;
     }, [item]);
@@ -108,9 +115,34 @@ const MessagesScreen = () => {
             }
           }
           if (isJSON(data)) {
-            // const jsonData = JSON.parse(data);
+            const jsonData = JSON.parse(data);
             // console.log("Message received in CHAT ELEMENT:", jsonData);
-            fetchData();
+            if (jsonData.tcm === "TCM01") {
+              fetchData();
+            }
+            if (jsonData.tcm === "TCM02") {
+              const messageReader = {
+                userID: jsonData.userID,
+                userName: jsonData.userName,
+                userAvatar: jsonData.userAvatar,
+                messageID: jsonData.messageID
+              }
+            }
+            const previousMessageReader = data.reads.find(read => read.userID === myProfile.userID) || null;
+            if (previousMessageReader) {
+              const newDataReads = data.reads.map(read => {
+                if (read.userID === myProfile.userID) {
+                  return { ...read, messageID: jsonData.messageID }; // Thay đổi messageID thành giá trị mới
+                }
+                return read;
+              });
+
+              setData(prevData => ({
+                ...prevData,
+                reads: newDataReads
+              }));
+              console.log("NEWDAATA: ", newDataReads);
+            }
           } else {
             // Handle non-JSON data
           }
@@ -148,26 +180,55 @@ const MessagesScreen = () => {
       return null;
     }
 
-    const textColor = (
-      data.topChatActivity && data.topChatActivity.length > 0 &&
-        data.topChatActivity[data.topChatActivity.length - 1].userID &&
-        data.topChatActivity[data.topChatActivity.length - 1].userID === myProfile.userID ? "gray" :
-        (
-          data.deliveries && data.deliveries.length > 0 &&
-          data.reads && data.reads.length > 0 &&
-          !data.reads.includes(data.topChatActivity[data.topChatActivity.length - 1].messageID)
-        ) ? "black" : "gray"
-    );
-    const textFontWeight = (
-      data.topChatActivity && data.topChatActivity.length > 0 &&
-        data.topChatActivity[data.topChatActivity.length - 1].userID &&
-        data.topChatActivity[data.topChatActivity.length - 1].userID === myProfile.userID ? "400" :
-        (
-          data.deliveries && data.deliveries.length > 0 &&
-          data.reads && data.reads.length > 0 &&
-          !data.reads.includes(data.topChatActivity[data.topChatActivity.length - 1].messageID)
-        ) ? "bold" : "400"
-    );
+    let textColor = "gray";
+    if (
+      data.topChatActivity &&
+      data.topChatActivity.length > 0 &&
+      data.topChatActivity[data.topChatActivity.length - 1].userID &&
+      data.topChatActivity[data.topChatActivity.length - 1].userID === myProfile.userID
+    ) {
+      textColor = "gray";
+    } else if (
+      data.deliveries &&
+      data.deliveries.length > 0 &&
+      data.reads &&
+      (readUserData === null ||
+        (readUserData &&
+          readUserData.messageID !== data.topChatActivity[data.topChatActivity.length - 1].messageID))
+    ) {
+      textColor = "black";
+    } else {
+      textColor = "gray";
+    }
+
+    let textFontWeight = "400";
+    if (
+      data.topChatActivity &&
+      data.topChatActivity.length > 0 &&
+      data.topChatActivity[data.topChatActivity.length - 1].userID &&
+      data.topChatActivity[data.topChatActivity.length - 1].userID === myProfile.userID
+    ) {
+      textFontWeight = "400";
+    } else if (
+      data.deliveries &&
+      data.deliveries.length > 0 &&
+      data.reads &&
+      (readUserData === null ||
+        (readUserData &&
+          readUserData.messageID !== data.topChatActivity[data.topChatActivity.length - 1].messageID))
+    ) {
+      // console.log((readUserData &&
+      //   readUserData.messageID !== data.topChatActivity[data.topChatActivity.length - 1].messageID));
+      if (readUserData)
+        console.log("Value of findReadUser:", readUserData.messageID);
+      console.log("Value of topChatActivity:", data.topChatActivity[data.topChatActivity.length - 1].messageID);
+      textFontWeight = "bold";
+    } else {
+      textFontWeight = "400";
+    }
+
+
+
     let contentMessage = '';
     if (data.topChatActivity && data.topChatActivity.length > 0) {
       const lastContent = data.topChatActivity[data.topChatActivity.length - 1].contents[data.topChatActivity[data.topChatActivity.length - 1].contents.length - 1];
