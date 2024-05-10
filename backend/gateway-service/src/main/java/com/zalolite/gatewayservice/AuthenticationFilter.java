@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.lang.annotation.Annotation;
@@ -73,7 +74,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         return -2;
     }
 
-    public static class Config {
-    }
+    public static class Config { }
 
 }
