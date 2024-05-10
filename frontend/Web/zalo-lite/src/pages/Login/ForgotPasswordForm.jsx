@@ -11,7 +11,7 @@ export default function ForgotPasswordForm() {
     const handleCheckPhoneNumber = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:8081/api/v1/auth/check-uniqueness-phone-number/" + phoneNumber);
+            const response = await fetch(`http://${process.env.HOST}:8080/api/v1/auth/check-uniqueness-phone-number/` + phoneNumber);
             const data = response.status;
             console.log(data);
             if (data==409) {

@@ -434,7 +434,7 @@ const ConversationGroup = () => {
   const fetchMessages = async (id, x, y, token) => {
     try {
       const response = await axios.get(
-        `http://localhost:8082/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
+        `http://${process.env.HOST}:8080/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -468,7 +468,7 @@ const ConversationGroup = () => {
   const fetchGroup = async() => {
     try {
       const response = await axios.get(
-        `http://localhost:8082/api/v1/group/info?idGroup=${id}`,
+        `http://${process.env.HOST}:8080/api/v1/group/info?idGroup=${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -507,12 +507,12 @@ const ConversationGroup = () => {
       );
       setMessages(fetchedMessages);
     };
-    const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+    const newSocket = new WebSocket(`${process.env.SOCKET_CHAT}/ws/chat/${id}`);
     newSocket.onopen = async () => {
       console.log("WebSocket connected >>>>>>>>HUy");
     };
 
-    const newSocketGroup = new WebSocket(`ws://localhost:8082/ws/group`);
+    const newSocketGroup = new WebSocket(`${process.env.SOCKET_CHAT}/ws/group`);
     newSocketGroup.onopen = async () => {
       console.log("WebSocket connected");
     };
@@ -993,7 +993,7 @@ const ConversationGroup = () => {
   const reloadCons = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8082/api/v1/user/info/${localStorage.getItem("userID")}`,
+        `http://${process.env.HOST}:8080/api/v1/user/info/${localStorage.getItem("userID")}`,
         {
           credentials: "include",
           headers: {

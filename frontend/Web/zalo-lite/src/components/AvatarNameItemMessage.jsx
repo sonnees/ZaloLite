@@ -118,7 +118,7 @@ function AvatarNameItemMessage({
     const fetchConversation = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8082/api/v1/chat/get-search?chatID=${id}&messageID=${item.messageID}`,
+          `http://${process.env.HOST}:8080/api/v1/chat/get-search?chatID=${id}&messageID=${item.messageID}`,
           {
             credentials: "include",
             headers: {

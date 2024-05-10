@@ -212,7 +212,7 @@ const MessageDetail = ({
       if (message.parentID != null) {
         const fetchInfoAccount = async () => {
           const response = await fetch(
-            `http://localhost:8081/api/v1/account/profile/userID/${message.parentID.userID}`,
+            `http://${process.env.HOST}:8080/api/v1/account/profile/userID/${message.parentID.userID}`
             {
               method: "GET",
               headers: {
