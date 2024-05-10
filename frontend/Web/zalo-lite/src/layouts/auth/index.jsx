@@ -39,7 +39,7 @@ export default function AuthLayout() {
     const fetchQrCode = async () => {
       try {
         const response = await fetch(
-          `http://${process.env.HOST}:8080/api/v1/auth/authenticate/qr-code`,
+          `${process.env.HOST}/api/v1/auth/authenticate/qr-code`,
         );
         // Nếu sử dụng axios:
         // const response = await axios.post('your_api_url_here', { key: 'value' });
@@ -94,7 +94,7 @@ export default function AuthLayout() {
 
     try {
       const response = await fetch(
-        `http://${process.env.HOST}:8080/api/v1/auth/authenticate`,
+        `${process.env.HOST}/api/v1/auth/authenticate`,
         {
           method: "POST",
           headers: {

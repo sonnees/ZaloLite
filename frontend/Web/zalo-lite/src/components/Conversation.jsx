@@ -281,7 +281,7 @@ const Conversation = () => {
     // console.table({ id, x, y, token });
     try {
       const response = await axios.get(
-        `http://${process.env.HOST}:8080/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}&timestamp=${timestamp}`,
+        `${process.env.HOST}/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}&timestamp=${timestamp}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -772,7 +772,7 @@ const Conversation = () => {
     const fetchContact = async () => {
       try {
         const response = await fetch(
-          `http://${process.env.HOST}:8080/api/v1/user/info/${userIDFromCookies}`,
+          `${process.env.HOST}/api/v1/user/info/${userIDFromCookies}`,
           {
             credentials: "include",
             headers: {
@@ -950,7 +950,7 @@ const Conversation = () => {
       const fetchSearchMsg = async () => {
         try {
           const response = await fetch(
-            `http://${process.env.HOST}:8080/api/v1/chat/search-bkw?chatID=${searchParams.get(
+            `${process.env.HOST}/api/v1/chat/search-bkw?chatID=${searchParams.get(
               "id",
             )}&y=20&key=${value}`,
             {
