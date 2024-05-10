@@ -51,7 +51,7 @@ export default function LoginForm() {
       
       // Đặt cookie số điện thoại với thời gian hết hạn và các tùy chọn bảo mật
       cookies.set("phoneNumber", phoneNumberValue, {
-        expires: expirationDate,
+        // expires: expirationDate,
       }); 
     };
 

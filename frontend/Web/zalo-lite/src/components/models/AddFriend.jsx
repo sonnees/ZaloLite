@@ -95,6 +95,8 @@ const suggestedFriendsData = [
   // },
 ];
 
+
+
 // Function to open AddFriendDialog3
 function handleOpenDialog3(setOpenDialog) {
   setOpenDialog("dialog3");
@@ -356,6 +358,12 @@ export default function AddFriendDialog() {
       content: "This is a success message",
     });
   };
+  const warning = () => {
+    messageApi.open({
+      type: "warning",
+      content: "Số điện thoại chưa đăng ký tài khoản!",
+    });
+  };
 
   // Hàm callback để cập nhật giá trị text
   const updateDisplayText = (newText) => {
@@ -460,14 +468,22 @@ export default function AddFriendDialog() {
         // Kiểm tra nếu tìm thấy người dùng
         if (response.data) {
           setOpenDialog("dialog2"); // Mở dialog khác
+          // setOpenDialog("dialog2");
         } else {
-          // Hiển thị thông báo hoặc xử lý khác khi không tìm thấy người dùng
+          warning();
         }
       })
       .catch((error) => {
-        console.error("Error searching user by phone number:", error);
+        // Bắt lỗi 404
+        if (error.response && error.response.status === 404) {
+          warning();
+          console.error("User not found with the provided phone number.");
+        } else {
+          console.error("Error searching user by phone number:", error);
+        }
       });
   };
+
 
   const sendMessage = () => {
     const receiverID = userFound.userID;
@@ -738,7 +754,7 @@ export default function AddFriendDialog() {
                     onClick={() => {
                       // handleAddFriend();
                       handleFindUserByPhoneNumber();
-                      setOpenDialog("dialog2");
+                      
                     }}
                     variant="contained"
                     color="primary"
