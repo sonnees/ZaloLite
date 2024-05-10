@@ -231,38 +231,42 @@ export default function LoginForm() {
           </ul>
 
           <form onSubmit={handleSubmitLogin} className="mt-2  px-6">
-            <div className="mx-2 mb-2 border-b-2 py-4">
-              <FontAwesomeIcon icon={faMobileScreen} className="mx-3" />
-              <select
-                id="contryOption"
-                className="mx-3 text-center focus:outline-none"
-              >
-                <option value="">+84</option>
-                <option value="option1">+1</option>
-                <option value="option2">+2</option>
-                <option value="option3">+3</option>
-              </select>
+            <div className="-ml-2 w-full items-center">
+              <div className="mx-2 mb-2 flex w-full items-center border-b-2 py-4">
+                <FontAwesomeIcon icon={faMobileScreen} className="mx-3" />
+                <select
+                  id="contryOption"
+                  className="mx-3 text-center focus:outline-none "
+                >
+                  <option value="">+84</option>
+                  <option value="option1">+1</option>
+                  <option value="option2">+2</option>
+                  <option value="option3">+3</option>
+                </select>
 
-              <input
-                id="input-phone"
-                placeholder="Số điện thoại"
-                className="px-3 focus:outline-none "
-                onChange={(event) => {
-                  setPhoneNumber(event.target.value);
-                }}
-              ></input>
+                <input
+                  id="input-phone"
+                  placeholder="Số điện thoại"
+                  className="mr-1 w-full px-3 py-1 focus:outline-none"
+                  onChange={(event) => {
+                    setPhoneNumber(event.target.value);
+                  }}
+                ></input>
+              </div>
             </div>
 
-            <div className="mx-2 mb-2 border-b-2 py-4">
-              <FontAwesomeIcon icon={faLock} className="mx-3" />
-              <input
-                id="input-password"
-                placeholder="Mật khẩu"
-                className="mx-3 px-3 focus:outline-none"
-                onChange={(event) => {
-                  setPassword(event.target.value);
-                }}
-              ></input>
+            <div className="-ml-2 w-full items-center">
+              <div className="mx-2 mb-2 flex w-full items-center border-b-2 py-4">
+                <FontAwesomeIcon icon={faLock} className="mx-3" />
+                <input
+                  id="input-password"
+                  placeholder="Mật khẩu"
+                  className="pr-17 mx-3 mr-1 w-full px-3 py-1 focus:outline-none"
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                  }}
+                ></input>
+              </div>
             </div>
 
             {flag && (
@@ -277,7 +281,7 @@ export default function LoginForm() {
 
             <div className="mt-6">
               <button
-                className="w-full transform rounded-md bg-blue-400 py-2 tracking-wide text-white transition-colors duration-200"
+                className="w-full transform rounded-md bg-[#0D86EB] py-2 tracking-wide text-white transition-colors duration-200"
                 type="submit"
                 // onClick={() => {}}
               >
@@ -327,7 +331,7 @@ export default function LoginForm() {
               style={{ width: 200, height: 200, borderRadius: 5 }}
             />
 
-            <p className="w-60 text-center text-base font-normal text-blue-600">
+            <p className="w-60 text-center text-base font-normal text-[#0862ED]">
               Chỉ dùng để đăng nhập
             </p>
 
@@ -336,7 +340,7 @@ export default function LoginForm() {
             </p>
           </div>
 
-          <p className="mb-6 text-center text-xs font-medium text-gray-600">
+          <p className="-mt-1 mb-6 text-center text-xs font-medium text-gray-600">
             Sử dụng ứng dụng Zalo để quét mã QR
           </p>
         </>
