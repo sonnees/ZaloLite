@@ -213,7 +213,7 @@ function Message() {
     const fetchConversations = async () => {
       try {
         const response = await fetch(
-          `http://${process.env.HOST}:8080/api/v1/user/info/${userID}`,
+          `${process.env.HOST}/api/v1/user/info/${userID}`,
           {
             credentials: "include",
             headers: {
@@ -361,7 +361,7 @@ function Message() {
               />
             </Link>
           ))}
-        <div className="h-[60px] md:w-[342px] w-full">
+        <div className="h-[60px] w-full md:w-[342px]">
           <p className="mt-5 pr-5 text-center text-sm">
             Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên trình
             duyệt này.

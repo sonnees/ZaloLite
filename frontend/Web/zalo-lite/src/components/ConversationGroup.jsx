@@ -434,7 +434,7 @@ const ConversationGroup = () => {
   const fetchMessages = async (id, x, y, token) => {
     try {
       const response = await axios.get(
-        `http://${process.env.HOST}:8080/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
+        `${process.env.HOST}/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -468,7 +468,7 @@ const ConversationGroup = () => {
   const fetchGroup = async() => {
     try {
       const response = await axios.get(
-        `http://${process.env.HOST}:8080/api/v1/group/info?idGroup=${id}`,
+        `${process.env.HOST}/api/v1/group/info?idGroup=${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -993,7 +993,7 @@ const ConversationGroup = () => {
   const reloadCons = async () => {
     try {
       const response = await fetch(
-        `http://${process.env.HOST}:8080/api/v1/user/info/${localStorage.getItem("userID")}`,
+        `${process.env.HOST}/api/v1/user/info/${localStorage.getItem("userID")}`,
         {
           credentials: "include",
           headers: {

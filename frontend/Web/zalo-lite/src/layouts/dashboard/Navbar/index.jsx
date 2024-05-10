@@ -41,7 +41,7 @@ function Navbar({ onNavbarReady }) {
       const fetchProfile = async () => {
         try {
           const response = await fetch(
-            `http://${process.env.HOST}:8080/api/v1/account/profile/${cookies.get("phoneNumber")}`,
+            `${process.env.HOST}/api/v1/account/profile/${cookies.get("phoneNumber")}`,
             {
               method: "GET",
               headers: {
@@ -182,7 +182,7 @@ function Navbar({ onNavbarReady }) {
       const fetchProfile = async () => {
         try {
           const response = await fetch(
-            `http://${process.env.HOST}:8080/api/v1/account/profile/${phoneNumber}`,
+            `${process.env.HOST}/api/v1/account/profile/${phoneNumber}`,
             {
               method: "GET",
               headers: {

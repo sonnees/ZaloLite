@@ -71,7 +71,7 @@ function TagFriendRequest() {
     const fetchConversations = async () => {
       try {
         const response = await axios.get(
-          `http://${process.env.HOST}:8080/api/v1/user/info/${userID}`,
+          `${process.env.HOST}/api/v1/user/info/${userID}`,
           {
             withCredentials: true,
             headers: {
