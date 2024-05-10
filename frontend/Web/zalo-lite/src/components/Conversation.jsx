@@ -372,7 +372,6 @@ const Conversation = () => {
       // console.log("MessagesNoHandle:", messagesNoHandle);
       setMessages(messagesNoHandle);
     };
-
     const newSocket = new WebSocket(`${process.env.SOCKET_CHAT}/ws/chat/${id}`);
     newSocket.onopen = () => {
       // console.log("WebSocket connected >>>>>>>>HUy");
