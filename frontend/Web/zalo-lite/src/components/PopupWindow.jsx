@@ -45,7 +45,7 @@ export default function PopupWindow ({ isOpen, onClose, data, phoneNumber, token
       const jsonAvt = {field: newAvatar}
 
       const res = await fetch(
-        "http://localhost:8081/api/v1/account/change-avatar",
+        `http://${process.env.HOST}:8080/api/v1/account/change-avatar`,
         {
           method: "POST",
           headers: {

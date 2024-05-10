@@ -82,7 +82,7 @@
             
             try {
             const response = await fetch(
-                "http://localhost:8081/api/v1/auth/reset-password",
+                `http://${process.env.HOST}:8080/api/v1/auth/reset-password`,
                 {
                 method: "POST",
                 headers: {

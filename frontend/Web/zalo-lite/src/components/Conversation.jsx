@@ -281,7 +281,7 @@ const Conversation = () => {
     // console.table({ id, x, y, token });
     try {
       const response = await axios.get(
-        `http://localhost:8082/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}&timestamp=${timestamp}`,
+        `http://${process.env.HOST}:8080/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}&timestamp=${timestamp}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -373,7 +373,7 @@ const Conversation = () => {
       setMessages(messagesNoHandle);
     };
 
-    const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+    const newSocket = new WebSocket(`${process.env.SOCKET_CHAT}/ws/chat/${id}`);
     newSocket.onopen = () => {
       // console.log("WebSocket connected >>>>>>>>HUy");
     };
@@ -773,7 +773,7 @@ const Conversation = () => {
     const fetchContact = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8082/api/v1/user/info/${userIDFromCookies}`,
+          `http://${process.env.HOST}:8080/api/v1/user/info/${userIDFromCookies}`,
           {
             credentials: "include",
             headers: {
@@ -882,7 +882,7 @@ const Conversation = () => {
     if (shareContent && selectedContactObjs) {
       for (const obj of selectedContactObjs) {
         const newSocket = new WebSocket(
-          `ws://localhost:8082/ws/chat/${obj.chatID}`,
+          `${process.env.SOCKET_CHAT}/ws/chat/${obj.chatID}`,
         );
         newSocket.onopen = () => {
           // console.log("newSocket:", newSocket);
@@ -951,7 +951,7 @@ const Conversation = () => {
       const fetchSearchMsg = async () => {
         try {
           const response = await fetch(
-            `http://localhost:8082/api/v1/chat/search-bkw?chatID=${searchParams.get(
+            `http://${process.env.HOST}:8080/api/v1/chat/search-bkw?chatID=${searchParams.get(
               "id",
             )}&y=20&key=${value}`,
             {
@@ -1006,7 +1006,7 @@ const Conversation = () => {
   const [socketSent, setSocketSent] = useState(false);
 
   useEffect(() => {
-    const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+    const newSocket = new WebSocket(`${process.env.SOCKET_CHAT}/ws/chat/${id}`);
     newSocket.onopen = () => {
       // console.log("WebSocket connected >>>>>>>>HUy");
     };

@@ -11,10 +11,12 @@ function TagFriendRequest() {
   const [friendRequested, setFriendRequested] = useState([]);
   useEffect(() => {
     if (userID) {
-      const newSocket = new WebSocket(`ws://localhost:8082/ws/user/${userID}`);
+      const newSocket = new WebSocket(
+        `${process.env.SOCKET_CHAT}/ws/user/${userID}`,
+      );
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
           userID,
           " OPENED",
         );
@@ -69,7 +71,7 @@ function TagFriendRequest() {
     const fetchConversations = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8082/api/v1/user/info/${userID}`,
+          `http://${process.env.HOST}:8080/api/v1/user/info/${userID}`,
           {
             withCredentials: true,
             headers: {
@@ -133,12 +135,12 @@ function TagFriendRequest() {
     };
 
     const newSocket = new WebSocket(
-      `ws://localhost:8082/ws/user/${receiverID}`,
+      `${process.env.SOCKET_CHAT}/ws/user/${receiverID}`,
     );
 
     newSocket.onopen = () => {
       console.warn(
-        "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+        `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
         receiverID,
         " OPENED",
       );
@@ -154,7 +156,7 @@ function TagFriendRequest() {
 
     newSocket.onclose = () => {
       console.warn(
-        "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+        `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
         receiverID,
         " CLOSED",
       );
@@ -171,12 +173,12 @@ function TagFriendRequest() {
     };
 
     const newSocket = new WebSocket(
-      `ws://localhost:8082/ws/user/${receiverID}`,
+      `${process.env.SOCKET_CHAT}/ws/user/${receiverID}`,
     );
 
     newSocket.onopen = () => {
       console.warn(
-        "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+        `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
         receiverID,
         " OPENED",
       );
@@ -192,7 +194,7 @@ function TagFriendRequest() {
 
     newSocket.onclose = () => {
       console.warn(
-        "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+        `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
         receiverID,
         " CLOSED",
       );

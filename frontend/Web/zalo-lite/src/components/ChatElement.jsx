@@ -26,10 +26,19 @@ function ChatElement({
   const countTopChatActivity = topChatActivity.length;
   const a = topChatActivity.length - 1;
   // console.log(a);
+  // const b = topChatActivity[a];
+  // // console.log("bbbbbb", b);
   const b = topChatActivity[a];
-  // console.log("bbbbbb", b);
-  const c = b.contents.length - 1;
-  const messageContentInTopChatActivity = b.contents[c].value;
+
+  // const c = b.contents.length - 1;
+  // const messageContentInTopChatActivity = b.contents[c].value;
+  // const messageContentInTopChatActivity = b ? b.contents[c]?.value : "";
+  const messageContentInTopChatActivity = b
+    ? b.contents && b.contents.length > 0
+      ? b.contents[b.contents.length - 1]?.value
+      : ""
+    : "";
+
   // console.log(
   //   "messageContentInTopChatActivity",
   //   messageContentInTopChatActivity,
@@ -71,10 +80,12 @@ function ChatElement({
 
   useEffect(() => {
     if (id) {
-      const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+      const newSocket = new WebSocket(
+        `${process.env.SOCKET_CHAT}/ws/chat/${id}`,
+      );
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket in CHAT ELEMENT: 'ws://localhost:8082/ws/chat/' for chatID: ",
+          `WebSocket in CHAT ELEMENT: '${process.env.SOCKET_CHAT}/ws/chat/' for chatID: `,
           id,
           " OPENED",
           newSocket.readyState,
@@ -265,22 +276,6 @@ function ChatElement({
                     </span>
                   </div>
                 </div>
-              ) : b.userID !== localStorage.getItem("userID") ? (
-                <>
-                  <div className="grid gap-y-1">
-                    <div>
-                      <span className="text-base font-semibold text-[#081C36]">
-                        {chatName}
-                      </span>
-                    </div>
-                    <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200  md:min-w-full">
-                      <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-                        {/* {messageContent} */}
-                        {messageContentInTopChatActivity}
-                      </span>
-                    </div>
-                  </div>
-                </>
               ) : (
                 <>
                   <div className="grid gap-y-1">

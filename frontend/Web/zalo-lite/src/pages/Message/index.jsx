@@ -63,10 +63,10 @@ function Message() {
 
   useEffect(() => {
     if (userID) {
-      const newSocket = new WebSocket(`ws://localhost:8082/ws/group`);
+      const newSocket = new WebSocket(`${process.env.SOCKET_CHAT}/ws/group`);
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/group' for UserID: ",
+          `WebSocket '${process.env.SOCKET_CHAT}/ws/group' for UserID: `,
           userID,
           " OPENED",
         );
@@ -97,10 +97,12 @@ function Message() {
 
   useEffect(() => {
     if (userID) {
-      const newSocket = new WebSocket(`ws://localhost:8082/ws/user/${userID}`);
+      const newSocket = new WebSocket(
+        `${process.env.SOCKET_CHAT}/ws/user/${userID}`,
+      );
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
           userID,
           " OPENED",
         );
@@ -125,7 +127,7 @@ function Message() {
           if (jsonData && jsonData.tum === "TUM03") {
             const content = `${jsonData.senderName} đã chấp nhận lời mời kết bạn!`;
             console.log("content", content);
-            showMessage('success', content);
+            showMessage("success", content);
             console.log("Runnn");
           } else if (jsonData) {
             setStateNotification({
@@ -211,7 +213,7 @@ function Message() {
     const fetchConversations = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8082/api/v1/user/info/${userID}`,
+          `http://${process.env.HOST}:8080/api/v1/user/info/${userID}`,
           {
             credentials: "include",
             headers: {
@@ -294,10 +296,12 @@ function Message() {
   const openFullSocketForChar = (chatID) => {
     console.log("chatID", chatID);
     if (chatID) {
-      const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${chatID}`);
+      const newSocket = new WebSocket(
+        `${process.env.SOCKET_CHAT}/ws/chat/${chatID}`,
+      );
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/chat/' for UserID: ",
+          `WebSocket '${process.env.SOCKET_CHAT}/ws/chat/' for UserID: `,
           chatID,
           " OPENED",
         );
@@ -357,8 +361,8 @@ function Message() {
               />
             </Link>
           ))}
-        <div className="h-[60px]">
-          <p className="mt-5 text-center text-sm">
+        <div className="h-[60px] md:w-[342px] w-full">
+          <p className="mt-5 pr-5 text-center text-sm">
             Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên trình
             duyệt này.
           </p>
