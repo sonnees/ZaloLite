@@ -208,7 +208,7 @@ const MessageDetail = ({
     if (message.userID === userIDFromCookies) {
       setOwnerMessage(localStorage.getItem("userName"));
     } else {
-      console.log("message.parentID", message.parentID);
+      // console.log("message.parentID", message.parentID);
       if (message.parentID != null) {
         const fetchInfoAccount = async () => {
           const response = await fetch(

@@ -114,7 +114,7 @@ function MessageFilterBar() {
                 </NavLink>
               </div>
             </div>
-            <div className="flex-1 pl-4 ">
+            <div className="flex-1  ">
               <Suspense fallback={<div>Loading...</div>}>
                 <Component /> {/* Use uppercase Component here */}
               </Suspense>

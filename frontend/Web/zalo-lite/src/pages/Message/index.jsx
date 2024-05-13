@@ -361,9 +361,9 @@ function Message() {
               />
             </Link>
           ))}
-        <div className="h-[60px] w-full md:w-[342px]">
+        <div className="h-[60px] w-full ">
+          {/* md:w-[342px] */}
           <p className="mt-5 pr-5 text-center text-sm">
-
             Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên trình
             duyệt này.
           </p>
