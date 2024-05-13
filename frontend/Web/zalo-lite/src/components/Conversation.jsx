@@ -967,7 +967,7 @@ const Conversation = () => {
           jsonData.chatID === id
         ) {
           setDisplayComposingMessage(true);
-        } else if (jsonData.tcm === "TCM06" && jsonData.chatID === "off") {
+        } else if (jsonData.tcm === "TCM06" && jsonData.chatID === "off" ) {
           setDisplayComposingMessage(false);
         }
       }
@@ -1629,7 +1629,7 @@ const Conversation = () => {
             {displayComposingMessage && (
               <div className="fixed z-30 -mt-[20px] flex w-full items-end justify-end bg-[#A4BEEB] pr-[415px]">
                 <span className="animate-wave text-sm text-white">
-                  Đang soạn tin...
+                  {chatName}&nbsp;đang soạn tin...
                 </span>
               </div>
             )}
