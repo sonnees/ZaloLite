@@ -230,6 +230,16 @@ const Conversation = () => {
     }
   };
 
+  const handleVideoChange = (event) => {
+    const selectedVideo = event.target.files[0];
+    if (selectedVideo) {
+      // handleFileUpload(selectedFile);
+      uploadFileToS3(selectedVideo);
+      // Đặt loại nội dung là file
+      setContentType("mp4");
+    }
+  };
+
   const [tokenFromCookies, setTokenFromCookies] = useState("");
   // const params = useParams();
   // console.log("Params:", params);
@@ -967,7 +977,7 @@ const Conversation = () => {
           jsonData.chatID === id
         ) {
           setDisplayComposingMessage(true);
-        } else if (jsonData.tcm === "TCM06" && jsonData.chatID === "off" ) {
+        } else if (jsonData.tcm === "TCM06" && jsonData.chatID === "off") {
           setDisplayComposingMessage(false);
         }
       }
@@ -1647,7 +1657,7 @@ const Conversation = () => {
                       <img
                         src="/chatbar-sticker.png"
                         alt=""
-                        className="h-[24px] w-[24px] opacity-65"
+                        className="h-[24px] w-[24px] opacity-65  hover:opacity-100"
                       />
                     </a>
                   </div>
@@ -1682,7 +1692,7 @@ const Conversation = () => {
                       <img
                         src="/chatbar-photo.png"
                         alt=""
-                        className="h-[24px] w-[24px] cursor-pointer opacity-65"
+                        className="h-[24px] w-[24px] cursor-pointer opacity-65  hover:opacity-100"
                       />
                     </label>
                   </div>
@@ -1700,6 +1710,22 @@ const Conversation = () => {
                       onChange={handleFileChange}
                       className="hidden"
                       accept=".txt, .pdf, .doc, .csv, .zip, .rar, .xlsx, .xls, .ppt, .pptx, .docx, .json"
+                    />
+                  </div>
+                  <div className="mr-2 mt-1 flex w-10 items-center justify-center">
+                    <label htmlFor="videoInput">
+                      <img
+                        src="/src/assets/icons/film.png"
+                        alt=""
+                        className="h-[26px] w-[24px] cursor-pointer opacity-80 hover:opacity-100"
+                      />
+                    </label>
+                    <input
+                      id="videoInput"
+                      type="file"
+                      onChange={handleVideoChange}
+                      className="hidden"
+                      accept=".mp4, .mov, .avi"
                     />
                   </div>
                   <div className="mr-2 flex w-10 items-center justify-center">
@@ -1820,7 +1846,7 @@ const Conversation = () => {
             </div>
           </div>
           {openRightBar && (
-            <div className="w-[440px] bg-[#FFFFFF]">
+            <div className="w-[440px] bg-[#FFFFFF] overflow-y-auto">
               <div className=" w-full flex-col items-center ">
                 <div className="flex h-[68px] w-full items-center justify-center border text-center">
                   <h1 className="m-2 p-3 text-[18px] font-[500] text-tblack">

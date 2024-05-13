@@ -47,10 +47,17 @@ const LinkPreview = ({ url, onPreviewError }) => {
   }
 
   return (
-    <div onClick={handleLinkClick} style={{ cursor: "pointer" }}>
-      <p>{previewData.title}</p>
-      <img src={previewData.image} alt="Link preview" />
-      <p>{previewData.description}</p>
+    <div
+      onClick={handleLinkClick}
+      style={{ cursor: "pointer" }}
+      className="mx-1"
+    >
+      <p className="text-[#005AE0]">{url}</p>
+      <img src={previewData.image} alt={url} className="mt-1" />
+      <p className="my-2 mb-1 text-base font-semibold text-tblack">
+        {previewData.title}
+      </p>
+      <p className="text-justify text-[#7589A3]">{previewData.description}</p>
     </div>
   );
 };

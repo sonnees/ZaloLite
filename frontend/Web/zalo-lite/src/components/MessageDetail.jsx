@@ -119,7 +119,7 @@ const MessageDetail = ({
               key={index}
               src={content.value}
               alt="Image"
-              className="mb-2 mr-2 h-auto max-w-[200px]"
+              className="-m-3 mb-3 mr-2 h-auto max-w-[500px] rounded-md"
             />
           );
         } else if (content.key === "text") {
@@ -138,7 +138,10 @@ const MessageDetail = ({
         } else if (
           content.key.startsWith("zip") ||
           content.key.startsWith("pdf") ||
-          content.key.startsWith("xlsx")
+          content.key.startsWith("xlsx") ||
+          content.key.startsWith("doc") ||
+          content.key.startsWith("docx") ||
+          content.key.startsWith("rar")
         ) {
           const [fileLabel, fileName, fileSize] = content.key.split("|");
           return (
@@ -150,9 +153,12 @@ const MessageDetail = ({
               fileKey={content.key}
             />
           );
-        } else if (content.key === "mp4") {
+        } else if (
+          content.key.startsWith("mp4") ||
+          content.key.startsWith("MP4")
+        ) {
           return (
-            <video key={index} controls className="h-auto max-w-[200px]">
+            <video key={index} controls className="h-auto max-w-[500px]">
               <source src={content.value} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
@@ -328,7 +334,11 @@ const MessageDetail = ({
           <div
             className={`${
               userID === userIDFromCookies ? "bg-[#E5EFFF]" : "bg-[#FFFFFF]"
-            } relative flex flex-col items-start rounded-md p-3 transition-all duration-300`}
+            } ${
+              message.contents[0].key === "image"
+                ? "max-w-[500px] bg-[rgb(164,190,235)]"
+                : ""
+            } relative flex max-w-screen-sm flex-col items-start rounded-md p-3 transition-all duration-300`}
           >
             <div className="flex-1 items-center">
               {message.parentID && message.parentID.contents ? (
@@ -373,12 +383,19 @@ const MessageDetail = ({
                   Tin nhắn đã được thu hồi
                 </div>
               ) : (
-                <div className={message.parentID ? "mt-2" : ""}>
+                <div className={`${message.parentID ? "mt-2" : ""}`}>
                   {renderContent()}
                 </div>
               )}
             </div>
-            <span className="mt-3 text-xs text-gray-500">
+
+            <span
+              className={`mt-3 text-xs text-gray-500 ${
+                message.contents[0].key === "image"
+                  ? "-mt-[6px] ml-auto rounded-lg bg-slate-400 px-2 py-1 text-white"
+                  : ""
+              }`}
+            >
               {formattedTime(timestamp)}
             </span>
             {hasEmotion && isHovered && isMyMessage && (

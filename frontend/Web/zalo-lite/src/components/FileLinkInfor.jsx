@@ -7,12 +7,16 @@ const FileLinkInfor = ({ fileName, fileSize, fileURL, fileKey, fileTime }) => {
     const fileExtension = fileKey.split("|")[0].split(".").pop().toLowerCase();
     if (fileExtension === "zip") {
       return "zip";
+    } else if (fileExtension === "rar") {
+      return "rar";
     } else if (fileExtension === "doc" || fileExtension === "docx") {
       return "doc";
     } else if (fileExtension === "pdf") {
       return "pdf";
     } else if (fileExtension === "xlsx") {
       return "xlsx";
+    } else if (fileExtension === "mp4") {
+      return "mp4";
     } else {
       return "default";
     }
@@ -23,16 +27,36 @@ const FileLinkInfor = ({ fileName, fileSize, fileURL, fileKey, fileTime }) => {
     switch (fileType) {
       case "zip":
         return <img src="/zip.png" alt="Zip Icon" className="h-10 w-10" />;
+      case "rar":
+        return <img src="/src/assets/icons/rar-file-format.png" alt="rar Icon" className="h-10 w-10" />;
       case "doc":
-        return <img src="/doc.png" alt="Doc Icon" className="h-10 w-10" />;
+        return (
+          <img
+            src="/src/assets/icons/doc.png"
+            alt="Doc Icon"
+            className="h-10 w-10"
+          />
+        );
       case "pdf":
         return <img src="/file-pdf.png" alt="PDF Icon" className="h-10 w-10" />;
       case "xlsx":
         return <img src="/xlsx.png" alt="PDF Icon" className="h-10 w-10" />;
+      case "mp4":
+        return (
+          <img
+            src="/src/assets/icons/video.png"
+            alt="PDF Icon"
+            className="h-10 w-10"
+          />
+        );
       // xlsx.png
       default:
         return (
-          <img src="/default.png" alt="Default Icon" className="h-10 w-10" />
+          <img
+            src="/src/assets/icons/attach-file.png"
+            alt="Default Icon"
+            className="h-10 w-10"
+          />
         );
     }
   };
