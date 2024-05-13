@@ -129,6 +129,11 @@ function Message() {
             console.log("content", content);
             showMessage("success", content);
             console.log("Runnn");
+          } else if (jsonData && jsonData.tum === "TUM04") {
+            // const content = `${jsonData.senderName} đã chấp nhận lời mời kết bạn!`;
+            console.log("content", jsonData);
+            // showMessage("success", content);
+            // console.log("Runnn");
           } else if (jsonData) {
             setStateNotification({
               open: true,
@@ -338,8 +343,6 @@ function Message() {
     }
   };
 
-
-
   return (
     <>
       {contextHolder}
@@ -350,7 +353,7 @@ function Message() {
               key={conversation.chatID}
               to={{
                 pathname: conversation.type === "GROUP" ? "chatGroup" : "chat",
-                search: `?id=${conversation.chatID}&type=individual-chat&chatName=${conversation.chatName}&chatAvatar=${conversation.chatAvatar}`,
+                search: `?id=${conversation.chatID}&type=${conversation.type}&chatName=${conversation.chatName}&chatAvatar=${conversation.chatAvatar}`,
               }}
               className="block cursor-pointer hover:bg-slate-50"
             >

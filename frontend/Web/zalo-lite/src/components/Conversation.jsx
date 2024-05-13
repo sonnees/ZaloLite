@@ -242,6 +242,22 @@ const Conversation = () => {
   const chatName = searchParams.get("chatName");
   const chatAvatar = searchParams.get("chatAvatar");
 
+  const [chatType, setChatType] = useState("");
+
+  // const [conservation, setConservation] = useState(localStorage.getItem("conservations"));
+
+  useEffect(() => {
+    const conservation = JSON.parse(localStorage.getItem("conversations"));
+    const filteredConversations = conservation.filter(
+      (chat) => chat.chatName === chatName,
+    );
+    console.log("filteredConversations", filteredConversations);
+    // setConservationFriend(filteredConversations);
+    if (filteredConversations.length > 0) {
+      setChatType(filteredConversations[0].type);
+    }
+  }, [JSON.parse(localStorage.getItem("conversations"))]);
+
   const [messages, setMessages] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [endIndex, setEndIndex] = useState(50);
@@ -1051,11 +1067,17 @@ const Conversation = () => {
   };
 
   const [userIDGeust, setUserIDGuest] = useState("");
-  const handleSearchUserIDGuest = () =>{
-    const otherUserID = messages.find(message => message.userID !== userIDFromCookies && message.userID)?.userID;
+  const [forceRender, setForceRender] = useState(false);
+  const handleSearchUserIDGuest = () => {
+    const otherUserID = messages.find(
+      (message) => message.userID !== userIDFromCookies && message.userID,
+    )?.userID;
     setUserIDGuest(otherUserID);
+    setForceRender((prevState) => !prevState);
     console.log("OtherUserID:", otherUserID);
-  }
+  };
+
+  const [statusF, setStatusF] = useState("");
 
   return (
     <ThemeProvider theme={theme}>
@@ -1388,7 +1410,15 @@ const Conversation = () => {
                       <span>{chatName}</span>
                     </div>
                     <div className="flex items-center text-sm text-[#7589a3]">
-                      <span>Vừa truy cập</span>
+                      {chatType === "FRIEND" ? (
+                        <span>Vừa truy cập</span>
+                      ) : statusF === "Vừa đồng ý kết bạn với bạn" ? (
+                        <span>Vừa truy cập</span>
+                      ) : (
+                        <div className="flex h-[18px] w-16 items-center justify-center rounded-xl bg-[#B1B5B9] text-[10px]">
+                          <span className="text-white">NGƯỜI LẠ</span>
+                        </div>
+                      )}
                       <span className="text-[#D7DBE0]"> &nbsp;|&nbsp;</span>
                       <span className="flex items-center justify-center">
                         <img
@@ -1801,11 +1831,16 @@ const Conversation = () => {
                 <div className="flex h-full flex-col justify-end bg-white ">
                   <div className="my-4 flex w-full flex-wrap justify-center">
                     <div className="flex w-full  flex-col items-center justify-center">
-                      <div onClick={handleSearchUserIDGuest} className="mt-3 mb-2">
+                      <div
+                        onClick={handleSearchUserIDGuest}
+                        className="mb-2 mt-3"
+                      >
                         <InforAccountdDialog
                           userIDGuest={userIDGeust}
                           chatIDToFind={searchParams.get("id")}
                           image={chatAvatar}
+                          forceRender={forceRender}
+                          setStatusF={setStatusF}
                         />
                       </div>
                       <h1 className="ttext-[18px] font-[600]">{chatName}</h1>

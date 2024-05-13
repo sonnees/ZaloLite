@@ -21,6 +21,7 @@ import {
 } from "@mui/material/styles";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import Fade from "@mui/material/Fade";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Switch from "@mui/material/Switch";
@@ -33,6 +34,11 @@ import countries from "../../data/countries";
 import { Axios } from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "../../context/UserContext";
+import { Slide } from "@mui/material";
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="up" />;
+}
 
 const theme = createTheme({
   palette: {
@@ -56,10 +62,13 @@ const AddFriendDialog2 = ({
   phoneNumber,
   chatName,
   chatAvatar,
+  setOpen,
+  setStatusF,
 }) => {
   console.log("data", data);
   const dateTime = new Date(data.birthday);
   const conservation = JSON.parse(localStorage.getItem("conversations"));
+  console.log("conservation", conservation);
   const [type, setType] = useState("");
   const [conservationFriend, setConservationFriend] = useState([]);
 
@@ -80,6 +89,68 @@ const AddFriendDialog2 = ({
   const handleClose = () => {
     console.log("Close");
   };
+
+  const sendMessage = () => {
+    const receiverID = data.userID;
+    const message = {
+      id: uuidv4(),
+      tum: "TUM04",
+      senderID: Cookies.get("userID"),
+      receiverID: receiverID,
+    };
+
+    if (data) {
+      const newSocket = new WebSocket(
+        `${process.env.SOCKET_CHAT}/ws/user/${receiverID}`,
+      );
+
+      newSocket.onopen = () => {
+        console.warn(
+          `WebSocket ${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
+          receiverID,
+          " OPENED",
+        );
+
+        // Gửi tin nhắn khi kết nối thành công
+        newSocket.send(JSON.stringify(message));
+        console.log("Message sent:", message);
+      };
+
+      newSocket.onmessage = (event) => {
+        console.log("Message received:", event.data);
+        // Xử lý dữ liệu được gửi đến ở đây
+      };
+
+      newSocket.onclose = () => {
+        console.warn(
+          `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
+          receiverID,
+          " CLOSED",
+        );
+      };
+    }
+  };
+
+  const handleUnfriend = () => {
+    console.log("Unfriend");
+    sendMessage();
+    setOpen(false);
+    // setType("UN");
+
+    // Tìm và cập nhật phần tử trong mảng
+    const updatedConversations = conservation.map((conversation) => {
+      if (conversation.chatName === data.userName) {
+        // Cập nhật lại thuộc tính type thành 'friend'
+        return { ...conversation, type: "STRANGER" };
+      }
+      return conversation;
+    });
+
+    // Lưu trở lại localStorage nếu cần
+    localStorage.setItem("conversations", JSON.stringify(updatedConversations));
+    setStatusF("STRANGER");
+  };
+
   return (
     <motion.div
       className="h-[551.5px] w-[400px]"
@@ -127,8 +198,16 @@ const AddFriendDialog2 = ({
               </div>
             ) : type === "FRIEND" ? (
               <div className="flex flex-1 items-center justify-center pt-[227px]">
+                <button
+                  className="mr-4 h-8 w-1/2 rounded border bg-[#EAEDF0] text-base font-medium text-tblack"
+                  onClick={() => {
+                    handleUnfriend();
+                  }}
+                >
+                  Huỷ kết bạn
+                </button>
                 <a
-                  className="block w-full"
+                  className="block w-1/2"
                   href={`${
                     process.env.SEFL_HOST
                   }/app/chat?id=${sessionStorage.getItem(
@@ -297,6 +376,8 @@ export default function InforAccountdDialog({
   userIDGuest,
   chatIDToFind,
   image,
+  forceRender,
+  setStatusF,
 }) {
   const defaultText = `Xin chào! Mình tìm thấy bạn bằng số điện thoại. Kết bạn với mình nhé!`;
   const [text, setText] = useState(defaultText);
@@ -308,7 +389,7 @@ export default function InforAccountdDialog({
   const [friendsList, setFriendsList] = useState([]);
 
   const [userFound, setUserFound] = useState({});
-  const [openDialog, setOpenDialog] = useState("dialog2");
+  const [openDialog, setOpenDialog] = useState("");
   const { cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
 
   const [selectedCountry, setSelectedCountry] = useState({
@@ -321,7 +402,7 @@ export default function InforAccountdDialog({
   const success = () => {
     messageApi.open({
       type: "success",
-      content: "This is a success message",
+      content: "Thông báo thành công",
     });
   };
 
@@ -344,6 +425,20 @@ export default function InforAccountdDialog({
     return null;
   };
 
+  const [stateNotification, setStateNotification] = React.useState({
+    open: false,
+    Transition: Fade,
+    name: "",
+  });
+
+  const showMessage = (type, content) => {
+    messageApi.open({
+      type: type,
+      content: content,
+      duration: 10,
+    });
+  };
+
   useEffect(() => {
     if (userID) {
       const newSocket = new WebSocket(
@@ -358,7 +453,56 @@ export default function InforAccountdDialog({
       };
       newSocket.onmessage = (event) => {
         console.log("Message received:", event.data);
-        // Xử lý dữ liệu được gửi đến ở đây
+        const data = event.data;
+        function isJSON(data) {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }
+        if (isJSON(data)) {
+          const jsonData = JSON.parse(data);
+          console.log("Message received:", jsonData);
+          console.log("senderName", jsonData.senderName);
+          console.log("tum>>>>>>>>>", jsonData.tum);
+          // Xử lý dữ liệu được gửi đến ở đây
+          if (jsonData && jsonData.tum === "TUM03") {
+            const content = `${jsonData.senderName} đã chấp nhận lời mời kết bạn!`;
+            console.log("content", content);
+            showMessage("success", content);
+            console.log("Runnn");
+            const conversations = JSON.parse(
+              localStorage.getItem("conversations"),
+            );
+
+            // Tìm và cập nhật phần tử trong mảng
+            const updatedConversations = conversations.map((conversation) => {
+              if (conversation.id_UserOrGroup === jsonData.senderID) {
+                // Cập nhật lại thuộc tính type thành 'friend'
+                return { ...conversation, type: "FRIEND" };
+              }
+              return conversation;
+            });
+
+            // Lưu trở lại localStorage nếu cần
+            localStorage.setItem(
+              "conversations",
+              JSON.stringify(updatedConversations),
+            );
+            setStatusF("Vừa đồng ý kết bạn với bạn");
+          } else if (jsonData) {
+            // setStateNotification({
+            //   open: true,
+            //   SlideTransition,
+            //   name: jsonData.senderName,
+            // });
+          }
+        } else {
+          // console.error("Received data is not valid JSON:", data);
+          // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
+        }
       };
       setSocket(newSocket);
 
@@ -379,6 +523,7 @@ export default function InforAccountdDialog({
     setCons(JSON.parse(localStorage.getItem("conversations")));
     setUserFound({});
     setOpen(false);
+    setOpenDialog("dialog2");
   };
 
   const handleAddFriend = () => {
@@ -428,7 +573,8 @@ export default function InforAccountdDialog({
         setUserFound(response.data);
         // Kiểm tra nếu tìm thấy người dùng
         if (response.data) {
-          setOpenDialog("dialog2"); // Mở dialog khác
+          console.log("=====================");
+          //   setOpenDialog("dialog2"); // Mở dialog khác
           // setOpenDialog("dialog2");
         }
       })
@@ -443,6 +589,10 @@ export default function InforAccountdDialog({
   };
 
   useEffect(() => {
+    setOpenDialog("dialog2");
+  }, []);
+
+  useEffect(() => {
     const conservations = JSON.parse(localStorage.getItem("conversations"));
     const conversation = conservations.find(
       (item) => item.chatID === chatIDToFind,
@@ -455,7 +605,22 @@ export default function InforAccountdDialog({
       console.log("Không tìm thấy conversation với chatID:", chatIDToFind);
     }
     handleFindUserByPhoneNumber(id_UserOrGroup);
-  }, [chatIDToFind]);
+  }, [chatIDToFind, forceRender]);
+
+  //   useEffect(() => {
+  //     const conservations = JSON.parse(localStorage.getItem("conversations"));
+  //     const conversation = conservations.find(
+  //       (item) => item.chatID === chatIDToFind,
+  //     );
+  //     var id_UserOrGroup = null;
+  //     if (conversation) {
+  //       id_UserOrGroup = conversation.id_UserOrGroup;
+  //       console.log("id_UserOrGroup:", id_UserOrGroup);
+  //     } else {
+  //       console.log("Không tìm thấy conversation với chatID:", chatIDToFind);
+  //     }
+  //     handleFindUserByPhoneNumber(id_UserOrGroup);
+  //   }, [userID]); // Chỉ sử dụng userID làm dependency
 
   const sendMessage = () => {
     const receiverID = userFound.userID;
@@ -513,7 +678,7 @@ export default function InforAccountdDialog({
   // const handleSendFriendRequest = () => {
   //   console.log("Send friend request to: ", text);
   // };
-
+  console.log(">>>>>>>>>>>>>>>>>>>>>>", openDialog);
   return (
     <ThemeProvider theme={theme}>
       {contextHolder}
@@ -536,11 +701,7 @@ export default function InforAccountdDialog({
                 <span className="pl-2 text-base font-medium text-tblack">
                   Thông tin tài khoản
                 </span>
-              ) : (
-                <span className="pl-2 text-base font-medium text-tblack">
-                  Thêm bạn
-                </span>
-              )}
+              ) : null}
               <Button onClick={handleClose} style={{ color: "#000000" }}>
                 <CloseIcon />
               </Button>
@@ -554,6 +715,8 @@ export default function InforAccountdDialog({
                   phoneNumber={phoneNumber}
                   chatName={userFound.userName}
                   chatAvatar={userFound.avatar}
+                  setOpen={setOpen}
+                  setStatusF={setStatusF}
                 ></AddFriendDialog2>
               ) : openDialog === "dialog3" ? (
                 <AddFriendDialog3
@@ -561,13 +724,9 @@ export default function InforAccountdDialog({
                   updateText={updateDisplayText}
                   text={text}
                 ></AddFriendDialog3>
-              ) : (
-                <></>
-              )}
+              ) : null}
             </DialogContent>
-            {openDialog === "dialog2" ? (
-              <></>
-            ) : openDialog === "dialog3" ? (
+            {openDialog === "dialog2" ? null : openDialog === "dialog3" ? (
               <DialogActions className="border p-4">
                 <div className="py-1">
                   <Button
@@ -618,9 +777,7 @@ export default function InforAccountdDialog({
                   </Button>
                 </div>
               </DialogActions>
-            ) : (
-              <></>
-            )}
+            ) : null}
           </Dialog>
         </Fragment>
         <div
