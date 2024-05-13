@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, set } from "date-fns";
 import Avatar from "@mui/material/Avatar";
 import { useState, useEffect } from "react";
 import {
@@ -8,6 +8,7 @@ import {
   differenceInMonths,
   differenceInYears,
 } from "date-fns";
+import notificationSound from "../assets/sounds/message-notification.mp3";
 function ChatElement({
   id,
   chatAvatar,
@@ -15,17 +16,36 @@ function ChatElement({
   topChatActivity,
   lastUpdateAt,
 }) {
+  const playNotificationSound = () => {
+    const audio = new Audio(notificationSound);
+    audio.play();
+  };
   const [socket, setSocket] = useState(null);
-  // console.log(">>>>>>>>>>>>>>", topChatActivity);
-  // const countTopChatActivity = topChatActivity.length;
-  // const a = topChatActivity.length - 1;
+  const [newMessage, setNewMessage] = useState("");
+  // console.log(chatName, ">>>>>>>>>>>>>>", topChatActivity);
+  const countTopChatActivity = topChatActivity.length;
+  const a = topChatActivity.length - 1;
   // console.log(a);
-  // const b = topChatActivity[a].chatActivity.length - 1;
-  // console.log(b);
-  // const c = topChatActivity[a].chatActivity[b].content.length - 1;
-  // const messageContent = topChatActivity[a].chatActivity[b].content[c].value;
+  // const b = topChatActivity[a];
+  // // console.log("bbbbbb", b);
+  const b = topChatActivity[a];
+
+  // const c = b.contents.length - 1;
+  // const messageContentInTopChatActivity = b.contents[c].value;
+  // const messageContentInTopChatActivity = b ? b.contents[c]?.value : "";
+  const messageContentInTopChatActivity = b
+    ? b.contents && b.contents.length > 0
+      ? b.contents[b.contents.length - 1]?.value
+      : ""
+    : "";
+
+  // console.log(
+  //   "messageContentInTopChatActivity",
+  //   messageContentInTopChatActivity,
+  // );
   const [messageContent, setMessageContent] = useState("");
   const unreadCount = 1;
+
   // if (topChatActivity.length > 0) {
   //   // console.log(">>>>>>HUYHUY>>>>>>>>>", topChatActivity[-1].contents);
   //   setMessageContent(
@@ -60,15 +80,19 @@ function ChatElement({
 
   useEffect(() => {
     if (id) {
-      const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
+      const newSocket = new WebSocket(
+        `${process.env.SOCKET_CHAT}/ws/chat/${id}`,
+      );
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket in CHAT ELEMENT: 'ws://localhost:8082/ws/chat/' for chatID: ",
+          `WebSocket in CHAT ELEMENT: '${process.env.SOCKET_CHAT}/ws/chat/' for chatID: `,
           id,
           " OPENED",
+          newSocket.readyState,
         );
       };
       newSocket.onmessage = (event) => {
+        console.log("Socket", newSocket);
         const data = event.data;
         function isJSON(data) {
           try {
@@ -81,6 +105,25 @@ function ChatElement({
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received in CHAT ELEMENT:", jsonData);
+          if (jsonData.tcm === "TCM01") {
+            console.log(
+              "Message received in CHAT ELEMENT:",
+              jsonData.contents[0].value,
+            );
+            setTimestamp(jsonData.timestamp);
+
+            if (jsonData.userID === localStorage.getItem("userID")) {
+              setNewMessage("Bạn: " + jsonData.contents[0].value);
+            } else {
+              setNewMessage(jsonData.contents[0].value);
+            }
+            if (
+              jsonData.tcm === "TCM01" &&
+              jsonData.userID !== localStorage.getItem("userID")
+            ) {
+              playNotificationSound();
+            }
+          }
           // Xử lý dữ liệu được gửi đến ở đây
           // if (jsonData.tcm === "TCM04") {
           //   const messageIDToDelete = jsonData.messageID;
@@ -90,19 +133,34 @@ function ChatElement({
           //   );
           //   setConversationsIndex(updatedMessages);
           //   console.log("Updated messages after deleting:", updatedMessages);
-          // } 
+          // }
         } else {
           // console.error("Received data is not valid JSON:", data);
           // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
         }
       };
       setSocket(newSocket);
-
       return () => {
-        newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+        if (newSocket.readyState === 1) {
+          newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
+        }
       };
     }
   }, [id]);
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     // Tăng thời gian timestamp lên 1 giây
+  //     setTimeOrginal((prevTimestamp) => {
+  //       const newTimestamp = new Date(prevTimestamp);
+  //       newTimestamp.setSeconds(newTimestamp.getSeconds() + 1);
+  //       return newTimestamp;
+  //     });
+  //   }, 1000);
+
+  //   // Xóa interval khi component unmount
+  //   return () => clearInterval(interval);
+  // }, []);
 
   //Tính số lượng tin nhắn chưa đọc
   // function countUnreadMessages(data) {
@@ -159,12 +217,25 @@ function ChatElement({
     return `${Math.floor(monthsDifference)} tháng`;
   }
 
-  const timestamp = lastUpdateAt;
+  const [timestamp, setTimestamp] = useState(lastUpdateAt);
+  // const [timeOrginal, setTimeOrginal] = useState(new Date(timestamp));
+  const [timeDifference, setTimeDifference] = useState("");
+  // console.log("timestamp", timestamp);
+  // const timestamp = lastUpdateAt;
   // const timestamp = topChatActivity[a].chatActivity[b].timetamp;
+
   const originalDate = new Date(timestamp);
-  // Trừ 7 giờ
-  const adjustedDate = new Date(originalDate.getTime() - 7 * 60 * 60 * 1000);
-  const timeDifference = formatTimeDifference(adjustedDate);
+  const adjustedDate = new Date(originalDate.getTime());
+  useEffect(() => {
+    setTimeDifference(formatTimeDifference(adjustedDate));
+  }, [timestamp]);
+  // console.log(timeDifference);
+
+  // useEffect(() => {
+  //   const originalDate = new Date(timestamp);
+  //   const adjustedDate = new Date(timeOrginal.getTime());
+  //   setTimeDifference(formatTimeDifference(adjustedDate));
+  // }, [timeOrginal]);
   // console.log(timeDifference);
 
   return (
@@ -191,7 +262,21 @@ function ChatElement({
             id="content"
           >
             <div className="">
-              {unreadCount != 0 ? (
+              {newMessage ? (
+                <div className="grid gap-y-1">
+                  <div>
+                    <span className="text-base font-semibold text-[#081C36]">
+                      {chatName}
+                    </span>
+                  </div>
+                  <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200  md:min-w-full">
+                    <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
+                      {/* {messageContent} */}
+                      {newMessage}
+                    </span>
+                  </div>
+                </div>
+              ) : (
                 <>
                   <div className="grid gap-y-1">
                     <div>
@@ -199,25 +284,11 @@ function ChatElement({
                         {chatName}
                       </span>
                     </div>
-                    <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200  md:min-w-full">
-                      <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-                        {messageContent}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="grid gap-y-1">
-                    <div>
-                      <span className="text-base font-semibold text-[#081C36]">
-                        {userName}
-                      </span>
-                    </div>
                     <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#7589A3] duration-200 md:w-[175px] md:min-w-full">
                       <span>Bạn:&nbsp;</span>
                       <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-                        {messageContent}
+                        {/* {messageContent} */}
+                        {messageContentInTopChatActivity}
                       </span>
                     </div>
                   </div>

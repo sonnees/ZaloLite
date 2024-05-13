@@ -371,10 +371,11 @@ const ChatScreen = () => {
           <View style={{ flexDirection: 'row', }}>
             <Icon name='addusergroup' size={22} color={'white'} style={{ margin: 10 }} />
             <Icon name='search1' size={22} color={'white'} style={{ margin: 10 }} />
+
             <Image
               style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
               source={require("../assets/list.png")}
-              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
+              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionGroupScreen" })}
             />
           </View>
         )}

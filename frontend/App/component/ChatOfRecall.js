@@ -19,7 +19,7 @@ const ChatOfReCall = ({ item, myUserInfo, conversationOpponent }) => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("PROFILE FRIEND REQUEST IN HERE:\n", response.data);
+            // console.log("PROFILE FRIEND REQUEST IN HERE:\n", response.data);
             setProfile(response.data)
             return response.data;
         } catch (error) {
@@ -49,7 +49,7 @@ const ChatOfReCall = ({ item, myUserInfo, conversationOpponent }) => {
             // console.log("ToKen____________________________", token);
             const data = fetchProfileInfo(item.userID, token)
             // setProfile(data);
-            console.log("DATAPROFILE:  ", data);
+            // console.log("DATAPROFILE:  ", data);
         }
         fetchData()
     }, [item]);

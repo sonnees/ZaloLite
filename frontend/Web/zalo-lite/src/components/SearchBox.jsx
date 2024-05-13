@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { NavLink, Outlet } from "react-router-dom";
 import TabList from "@mui/lab/TabList";
+import CreateGroup from "./models/CreateGroup";
 
 import AddFriendDialog from "../components/models/AddFriend";
 import Contact from "../pages/Contact";
@@ -41,15 +42,15 @@ function SearchBox() {
                 />
 
                 <AddFriendDialog />
-
-                <div className="relative inline-block p-1">
+                <CreateGroup />
+                {/* <div className="relative inline-block p-1">
                   <img
                     src="/src/assets/group-user-plus.png"
                     alt=""
                     className="w-8 cursor-pointer items-center justify-center"
                   />
                   <div className="absolute inset-0 rounded-md bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10"></div>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="flex-1 pl-4 ">

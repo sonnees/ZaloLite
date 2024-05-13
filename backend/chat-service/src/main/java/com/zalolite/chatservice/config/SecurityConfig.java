@@ -38,6 +38,7 @@ public class SecurityConfig {
 
         return http.authorizeExchange(
                         auth -> auth.pathMatchers("/api/v1/user/update-avatar-account/**", "/ws/**", "/api/v1/user/create").permitAll()
+                                .pathMatchers("/v3/**","/swagger-ui/**", "/context-path/**","/webjars/**","/swagger-ui.html").permitAll()
                                 .anyExchange().authenticated()
                 )
                 .authenticationManager(authenticationManager)
@@ -45,14 +46,7 @@ public class SecurityConfig {
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .anonymous(Customizer.withDefaults())
-                .cors(customizer -> {
-                    CorsConfiguration corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.setAllowCredentials(true);
-                    corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3005", "http://localhost:5173"));
-                    corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST"));
-                    corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
-                    customizer.configurationSource(request -> corsConfiguration);
-                })
+                .cors(ServerHttpSecurity.CorsSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .build();
     }
