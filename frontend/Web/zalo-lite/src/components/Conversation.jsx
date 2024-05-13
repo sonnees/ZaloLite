@@ -950,7 +950,9 @@ const Conversation = () => {
       const fetchSearchMsg = async () => {
         try {
           const response = await fetch(
-            `${process.env.HOST}/api/v1/chat/search-bkw?chatID=${searchParams.get(
+            `${
+              process.env.HOST
+            }/api/v1/chat/search-bkw?chatID=${searchParams.get(
               "id",
             )}&y=20&key=${value}`,
             {
@@ -1012,16 +1014,19 @@ const Conversation = () => {
     newSocket.onmessage = (event) => {
       if (event.data.startsWith("{")) {
         const jsonData = JSON.parse(event.data);
+        // console.log("Received data CONSERVATION line 1015:", jsonData);
         // const data = event.data;
-        console.log("Received data CONSERVATION:", jsonData);
-        console.log("SenderName:", jsonData.senderName);
-        console.log("UserName:", localStorage.getItem("userName"));
+        // console.log("Received data CONSERVATION:", jsonData);
+        // console.log("SenderName:", jsonData.senderName);
+        // console.log("UserName:", localStorage.getItem("userName"));
         if (
           jsonData.tcm === "TCM06" &&
-          jsonData.senderName !== localStorage.getItem("userName") &&
+          jsonData.senderName !== localStorage.getItem("userName") && //Huy1
           jsonData.chatID === id
         ) {
           setDisplayComposingMessage(true);
+        } else if (jsonData.tcm === "TCM06" && jsonData.chatID === "off") {
+          setDisplayComposingMessage(false);
         }
       }
     };
@@ -1041,6 +1046,14 @@ const Conversation = () => {
       } else if (message == "") {
         setDisplayComposingMessage(false);
         setSocketSent(false);
+        socket.send(
+          JSON.stringify({
+            id: uuidv4(),
+            tcm: "TCM06",
+            chatID: "off",
+            senderName: localStorage.getItem("userName"),
+          }),
+        );
       }
     }
   }, [message, socketSent]);
@@ -1812,7 +1825,7 @@ const Conversation = () => {
                       autoFocus
                       placeholder="Nhập tin nhắn..."
                       value={message}
-                      onChange={handleInputChange}
+                      onChange={handleInputChange} //huy2
                       onKeyPress={handleKeyPressTextArea}
                       onKeyDown={handleKeyDown}
                       className="border-l-none -mt-1 h-full w-full justify-center border-t-2 p-2 px-[14px] py-[16.5px] text-[15px] text-tblack focus:border-t-2  focus:border-[#2B66F6] focus:outline-none"
