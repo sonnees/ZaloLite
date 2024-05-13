@@ -366,7 +366,7 @@ function Message() {
               />
             </Link>
           ))}
-        {conversations.length === 0 && (
+        {conversations && conversations.length === 0 && (
           <div className="mt-10 flex w-[344px] flex-col items-center justify-center">
             <div className="flex w-full items-center justify-center">
               <img
@@ -389,7 +389,7 @@ function Message() {
         )}
         <div className="h-[60px] w-full ">
           {/* md:w-[342px] */}
-          {conversations.length !== 0 && (
+          {conversations && conversations.length !== 0 && (
             <p className="ml-4 mt-5 pr-5 text-center text-sm">
               Zalo chỉ hiển thị tin nhắn từ sau lần đăng nhập đầu tiên trên
               trình duyệt này.
