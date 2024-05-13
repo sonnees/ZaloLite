@@ -184,7 +184,8 @@ function ChatElement({
           return "Tin nhắn mới";
         }
       };
-      setTopChatToShow(topChatToShow());
+      if(topChat2)
+        setTopChatToShow(topChatToShow());
     };
     if (id && tokenFromCookies) fetchData();
   }, [id, tokenFromCookies]);
@@ -377,7 +378,7 @@ function ChatElement({
                     </div>
                   </div>
                 )
-              ) : topChat.userID === userIDFromCookies ? (
+              ) : topChat && topChat.userID === userIDFromCookies ? (
                 <>
                   <div className="grid gap-y-1">
                     <div>

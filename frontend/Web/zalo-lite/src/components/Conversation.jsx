@@ -41,6 +41,8 @@ import { set } from "date-fns";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import FileLinkInfor from "./FileLinkInfor";
+import CreateGroup from "./models/CreateGroup";
+import InforAccountdDialog from "./models/InfoAccountNew";
 import CheckboxCss from "../assets/styles/checkbox.module.css";
 import { check } from "prettier";
 import {
@@ -394,31 +396,6 @@ const Conversation = () => {
     }
   }, []);
 
-  //==============Đang chạy ổn
-  // const sendMessageWithTextViaSocket = (textMessage) => {
-  //   if (socket) {
-  //     const message = {
-  //       id: uuidv4(),
-  //       tcm: "TCM01",
-  //       userID: userIDFromCookies || "26ce60d1-64b9-45d2-8053-7746760a8354",
-  //       userAvatar:
-  //         "https://res.cloudinary.com/dj9ulywm8/image/upload/v1711636843/exftni5o9msptdxgukhk.png",
-  //       userName: "Tran Huy",
-  //       timestamp: new Date().toISOString(),
-  //       parentID: null,
-  //       contents: [
-  //         {
-  //           key: keyTypeMessage,
-  //           value: textMessage,
-  //         },
-  //       ],
-  //     };
-  //     socket.send(JSON.stringify(message));
-  //     setMessage(""); // Xóa nội dung của input message sau khi gửi
-  //   } else {
-  //     console.error("WebSocket is not initialized.");
-  //   }
-  // };
   const [parentIdMsg, setParentIdMsg] = useState("");
   // console.log("parentIdMsg:", parentIdMsg);
 
@@ -559,58 +536,6 @@ const Conversation = () => {
   // };
 
   const [openPicker, setOpenPicker] = useState(false);
-
-  //Socket đẻ lắng nghe tin nhắn chỉ ở phía mình
-  // useEffect(() => {
-  //   console.log("messagesRef.current:", messagesRef.current);
-  //   if (id) {
-  //     const newSocket = new WebSocket(`ws://localhost:8082/ws/chat/${id}`);
-  //     newSocket.onopen = () => {
-  //       console.warn(
-  //         "WebSocket in CHAT ELEMENT 'ws://localhost:8082/ws/chat/' for chatID: ",
-  //         id,
-  //         " OPENED",
-  //       );
-  //     };
-  //     newSocket.onmessage = (event) => {
-  //       const data = event.data;
-  //       if (isJSON(data)) {
-  //         const jsonData = JSON.parse(data);
-  //         console.log(
-  //           "Message received in CONSERVATION 22222222222222:",
-  //           jsonData,
-  //         );
-  //         // Xử lý dữ liệu được gửi đến ở đây
-  //         if (jsonData.tcm === "TCM04") {
-  //           const messageIDToDelete = jsonData.messageID;
-  //           // Lọc ra các tin nhắn mà không có messageIDToDelete
-  //           const updatedMessages = messages.filter(
-  //             (msg) => msg.messageID !== messageIDToDelete,
-  //           );
-  //           setMessages(updatedMessages);
-  //           console.log("Updated messages after deleting:", updatedMessages);
-  //         }
-  //       } else {
-  //         // console.error("Received data is not valid JSON:", data);
-  //         // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
-  //       }
-  //     };
-  //     function isJSON(data) {
-  //       try {
-  //         JSON.parse(data);
-  //         return true;
-  //       } catch (error) {
-  //         return false;
-  //       }
-  //     }
-
-  //     setSocket(newSocket);
-
-  //     // return () => {
-  //     //   newSocket.close(); // Đóng kết nối khi component unmount hoặc userID thay đổi
-  //     // };
-  //   }
-  // }, [id, messages]);
 
   useEffect(() => {
     if (socket) {
@@ -1069,26 +994,68 @@ const Conversation = () => {
   const [openRightBar, setOpenRightBar] = useState(false);
   const [listImage, setListImage] = useState([]);
   const [listFile, setListFile] = useState([]);
+  const [listLink, setListLink] = useState([]);
 
   const handleClickRightBar = () => {
     console.log("Click");
     setOpenRightBar(!openRightBar);
-    const imageMessages = messages.filter((message) =>
-      message.contents.some((content) => content.key === "image"),
+    const imageMessages = messages.filter(
+      (message) =>
+        message.contents.some((content) => content.key === "image") &&
+        message.hidden.length === 0 &&
+        message.recall === false,
     );
     setListImage(imageMessages);
+
+    const linkMessages = messages.filter((message) => {
+      return message.contents.some((content) => content.key === "link");
+    });
+    // Lọc ra các tin nhắn thỏa mãn các điều kiện
+    // const filteredMessages = messages.filter((message) => {
+    //   return (
+    //     message.contents.some((content) => content.key === "link") && // có key là 'link'
+    //     message.hidden.length === 0 && // hidden.length = 0
+    //     message.recall === false // recall là false
+    //   );
+    // });
+
+    setListLink(linkMessages);
+
     const fileMessages = messages.filter((message) => {
       return message.contents.some((content) => {
         // Kiểm tra xem khóa của nội dung có chứa ít nhất hai dấu "|" không
         return (content.key.match(/\|/g) || []).length >= 2;
       });
     });
-
     setListFile(fileMessages);
-    console.log("listFile:", listFile);
+    console.log("linkMessages:", linkMessages);
     // console.log("ListImage:", imageMessages);
     console.log("ListImage:", messages);
   };
+
+  console.log("listLink:", listLink);
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day < 10 ? "0" : ""}${day}/${
+      month < 10 ? "0" : ""
+    }${month}/${year}`;
+  }
+
+  const [openNotification, setOpenNotification] = useState(false);
+  const handleClickNotification = () => {
+    setOpenNotification(!openNotification);
+  };
+
+  const [userIDGeust, setUserIDGuest] = useState("");
+  const handleSearchUserIDGuest = () =>{
+    const otherUserID = messages.find(message => message.userID !== userIDFromCookies && message.userID)?.userID;
+    setUserIDGuest(otherUserID);
+    console.log("OtherUserID:", otherUserID);
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -1390,7 +1357,7 @@ const Conversation = () => {
             </div>
           </div>
         )}
-        <div className="flex h-screen w-full border-2 border-red-700">
+        <div className="flex h-screen w-full ">
           <div className="border-1 h-screen w-full border-blue-700">
             {/* huy1 */}
             <div className="h-[68px] w-full px-4">
@@ -1803,59 +1770,6 @@ const Conversation = () => {
                         rows={1}
                       />
                     ) : (
-                      // <textarea
-                      //   autoFocus
-                      //   placeholder="Nhập tin nhắn..."
-                      //   value={message}
-                      //   onChange={handleInputChange}
-                      //   onKeyPress={handleKeyPress}
-                      //   className="h-full w-full p-2 text-[15px]"
-                      //   rows={2}
-                      // />
-                      // <TextField
-                      //   // ref={inputRef}
-                      //   focused={openCompReplyInput ? true : false}
-                      //   autoFocus
-                      //   fullWidth
-                      //   variant="outlined"
-                      //   placeholder="Nhập tin nhắn..."
-                      //   value={message}
-                      //   onChange={handleInputChange}
-                      //   onKeyPress={handleKeyPress}
-                      //   inputProps={{
-                      //     style: {
-                      //       fontSize: 15,
-                      //       marginTop: openCompReplyInput ? "72px" : "0",
-                      //     },
-                      //   }}
-                      //   sx={{
-                      //     // border: "1px solid grey",
-                      //     // paddingTop: "62px",
-                      //     "& .MuiOutlinedInput-root": {
-                      //       borderTop: "1px solid",
-                      //       borderBottom: "none",
-                      //       borderLeft: "none",
-                      //       borderRight: "none",
-                      //       borderColor: "#CFD6DC",
-                      //       borderRadius: 2,
-                      //     },
-                      //     "& .MuiOutlinedInput-root:hover": {
-                      //       borderTop: "1px solid",
-                      //       borderBottom: "none",
-                      //       borderLeft: "none",
-                      //       borderRight: "none",
-                      //       borderRadius: 2,
-                      //       borderColor: "blue",
-                      //     },
-                      //     "& .Mui-focused": {
-                      //       borderTop: "1px solid",
-                      //       borderBottom: "none",
-                      //       borderLeft: "none",
-                      //       borderRight: "none",
-                      //       borderRadius: 2,
-                      //     },
-                      //   }}
-                      // />
                       <textarea
                         autoFocus
                         placeholder="Nhập tin nhắn..."
@@ -1875,7 +1789,7 @@ const Conversation = () => {
               </div>
             </div>
           </div>
-          {true && (
+          {openRightBar && (
             <div className="w-[440px] bg-[#FFFFFF]">
               <div className=" w-full flex-col items-center ">
                 <div className="flex h-[68px] w-full items-center justify-center border text-center">
@@ -1887,11 +1801,13 @@ const Conversation = () => {
                 <div className="flex h-full flex-col justify-end bg-white ">
                   <div className="my-4 flex w-full flex-wrap justify-center">
                     <div className="flex w-full  flex-col items-center justify-center">
-                      <img
-                        src={chatAvatar}
-                        alt="ZaloLite Logo"
-                        className="my-3 mr-2 h-[56px] w-[56px] rounded-full"
-                      />
+                      <div onClick={handleSearchUserIDGuest} className="mt-3 mb-2">
+                        <InforAccountdDialog
+                          userIDGuest={userIDGeust}
+                          chatIDToFind={searchParams.get("id")}
+                          image={chatAvatar}
+                        />
+                      </div>
                       <h1 className="ttext-[18px] font-[600]">{chatName}</h1>
                     </div>
                   </div>
@@ -1899,9 +1815,9 @@ const Conversation = () => {
                   <div className="mb-4 flex justify-between border-b-8 border-[#EBEEEF] px-[34px]">
                     <button
                       className={`flex-col items-center justify-center rounded-lg text-xs ${
-                        true ? "text-gray-600" : "text-gray-400"
+                        openNotification ? "text-gray-600" : "text-gray-800"
                       } p-2 `}
-                      // onClick={toggleNotification}
+                      onClick={handleClickNotification}
                     >
                       <div className="flex w-full items-center justify-center">
                         <div className="flex h-8 w-8 items-center justify-center rounded-[50%] border bg-[#E7EAED] hover:bg-gray-300">
@@ -1915,7 +1831,9 @@ const Conversation = () => {
                       <div className="mt-2 flex w-full items-center justify-center">
                         <div className="h-[34px] w-[70px]">
                           <span className="w-full text-xs">
-                            {true ? "Tắt thông báo" : "Bật thông báo"}
+                            {openNotification
+                              ? "Tắt thông báo"
+                              : "Bật thông báo"}
                           </span>
                         </div>
                       </div>
@@ -1949,11 +1867,12 @@ const Conversation = () => {
                     >
                       <div className="flex w-full items-center justify-center">
                         <div className="flex h-8 w-8 items-center justify-center rounded-[50%] border bg-[#E7EAED] hover:bg-gray-300">
-                          <img
-                            src="/src/assets/icons/people.png"
-                            alt=""
-                            className="mt-1 w-5"
-                          />
+                          {/* <img src="" alt="" className="mt-1 w-5" /> */}
+                          <div className="-ml-1 mt-2 rounded-[50%]">
+                            <CreateGroup
+                              image={"/src/assets/icons/people.png"}
+                            />
+                          </div>
                         </div>
                       </div>
                       <div className="mt-2 flex w-full items-center justify-center">
@@ -1985,6 +1904,16 @@ const Conversation = () => {
                           </div>
                         </div>
                       ))}
+                      {listImage.length === 0 && (
+                        <div className="mb-5 flex w-full items-center justify-center">
+                          <span
+                            data-translate-inner="Chưa có Ảnh/Video  được chia sẻ trong hội thoại này"
+                            className="w-[193px] text-center text-[13px] text-[#7589A3]"
+                          >
+                            Chưa có Ảnh/Video được chia sẻ trong hội thoại này
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1992,7 +1921,7 @@ const Conversation = () => {
                     <h2 className="mb-2 text-base font-[600] text-tblack">
                       File
                     </h2>
-                    <div className="-mx-1 flex flex-wrap pr-1 pb-3">
+                    <div className="-mx-1 flex flex-wrap pb-3 pr-1">
                       {listFile.map((item, index) => {
                         const content = item.contents[0];
                         const keyParts = content.key.split("|");
@@ -2009,36 +1938,69 @@ const Conversation = () => {
                             />
                           );
                         } else {
-                          return null; // Loại bỏ các tin nhắn không hợp lệ
+                          return null;
                         }
                       })}
+                      {listFile.length === 0 && (
+                        <div className="mb-3 flex w-full items-center justify-center">
+                          <span
+                            data-translate-inner="Chưa có Ảnh/Video  được chia sẻ trong hội thoại này"
+                            className="w-[193px] text-center text-[13px] text-[#7589A3]"
+                          >
+                            Chưa có File được chia sẻ trong hội thoại này
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
-
-                  <div className="justify-items-end px-4">
-                    <button className="flex w-full items-center rounded-lg p-2 text-red-600 hover:bg-gray-200">
-                      {/* <FontAwesomeIcon className="mr-2" icon={faTrashCan} /> Xóa */}
-                      lịch sử cuộc trò chuyện
-                    </button>
-
-                    {/* {!(
-                      group.owner.userID == localStorage.getItem("userID") ||
-                      group.admin.some(
-                        (item) =>
-                          item["userID"] === localStorage.getItem("userID"),
-                      )
-                    ) && (
-                      <button
-                        // onClick={handleOutGroup}
-                        className="flex w-full items-center rounded-lg p-2 text-red-600 hover:bg-gray-200"
-                      >
-                        <FontAwesomeIcon
-                          className="mr-2"
-                          icon={faArrowRightFromBracket}
-                        />{" "}
-                        Rời nhóm
-                      </button>
-                    )} */}
+                  <div className="mb-4 flex-auto border-b-8 border-[#EBEEEF] px-4">
+                    <h2 className="mb-2 text-base font-[600] text-tblack">
+                      Link
+                    </h2>
+                    <div className="-mx-1 flex flex-wrap pb-3 pr-1">
+                      {listLink.map((item, index) => (
+                        <div
+                          className="flex w-full items-center  py-[10px] hover:bg-[#F1F3F4] "
+                          key={index}
+                        >
+                          <a
+                            href={item.contents[0].value}
+                            target="_blank"
+                            className="flex w-full items-center  hover:bg-[#F1F3F4]"
+                          >
+                            <div className="flex h-[42px] w-[42px] items-center justify-center rounded border">
+                              <img
+                                src="/src/assets/icons/link.png"
+                                alt=""
+                                className="h-4 w-4"
+                              />
+                            </div>
+                            <div className="-mt-5 ml-2 w-[185px]">
+                              <p className="w-[265px] truncate text-sm font-semibold text-tblack">
+                                {item.contents[0].value}
+                              </p>
+                            </div>
+                            <div className="ml-auto flex h-full flex-col">
+                              <div className="mt-4 self-end">
+                                <span className="text-[13px] text-[#7589A3]">
+                                  {formatDate(item.timestamp)}
+                                </span>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                      ))}
+                      {listLink.length === 0 && (
+                        <div className="mb-3 flex w-full items-center justify-center">
+                          <span
+                            data-translate-inner="Chưa có Ảnh/Video  được chia sẻ trong hội thoại này"
+                            className="w-[193px] text-center text-[13px] text-[#7589A3]"
+                          >
+                            Chưa có Link được chia sẻ trong hội thoại này
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
