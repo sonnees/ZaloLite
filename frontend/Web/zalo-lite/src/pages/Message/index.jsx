@@ -365,6 +365,8 @@ function Message() {
             key={conversation.chatID}
             chatName={conversation.chatName}
             chatAvatar={conversation.chatAvatar}
+            topChatActivity={conversation.topChatActivity}
+            convers = {conversation}
             {...conversation}
           />
         </Link>

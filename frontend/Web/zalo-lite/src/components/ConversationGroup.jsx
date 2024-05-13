@@ -528,6 +528,7 @@ const ConversationGroup = () => {
     setSocketGroup(newSocketGroup);
     // return () => {
     //   newSocket.close();
+    //   newSocketGroup.close();
     // };
     fetchData();
   }, [id, tokenFromCookies, message, flag,]);

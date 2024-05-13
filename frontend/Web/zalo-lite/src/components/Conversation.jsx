@@ -369,7 +369,7 @@ const Conversation = () => {
     // console.table({ id, x, y, token });
     try {
       const response = await axios.get(
-        `http://localhost:8082/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
+        `http://localhost:8080/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
