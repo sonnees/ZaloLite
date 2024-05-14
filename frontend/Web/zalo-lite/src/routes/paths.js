@@ -10,3 +10,5 @@ export const PATH_DASHBOARD = {
     app: path(ROOTS_DASHBOARD, "auth/login"),
   },
 };
+
+
