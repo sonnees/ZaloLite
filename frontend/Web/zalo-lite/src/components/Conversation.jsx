@@ -633,7 +633,7 @@ const Conversation = () => {
               messageFromOtherUser &&
               jsonData.contents
             ) {
-              console.log("Message____________________:", messages);
+              // console.log("Message____________________:", messages);
               setIdA(jsonData.id);
               if (jsonData) {
                 // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
@@ -761,7 +761,7 @@ const Conversation = () => {
     messageRecalledID,
   ]);
 
-  console.log("Messages:", messages);
+  // console.log("Messages:", messages);
 
   // Hàm cuộn xuống dưới cùng của khung chat
   const scrollToBottom = () => {
