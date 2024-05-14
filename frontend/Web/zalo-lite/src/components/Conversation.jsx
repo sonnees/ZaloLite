@@ -1923,13 +1923,11 @@ const Conversation = () => {
           {openRightBar && (
             <div className="w-[440px] overflow-y-auto bg-[#FFFFFF]">
               <div className=" w-full flex-col items-center ">
-                <div className="flex h-[68px] w-full items-center justify-center border text-center">
-                  <h1 className="m-2 p-3 text-[18px] font-[500] text-tblack">
-                    Thông tin hội thoại
-                  </h1>
-                </div>
-
-                <div className="flex h-full flex-col justify-end bg-white ">
+                <div className="fixed z-50 flex w-full items-center justify-center border bg-white text-center"></div>
+                <h1 className="border-5 absolute z-50 h-[68px] w-[340px] justify-center border-b bg-white p-3 pt-5 text-center text-[18px] font-[500] text-tblack">
+                  Thông tin hội thoại
+                </h1>
+                <div className="flex h-full flex-col justify-end bg-white pt-[68px] ">
                   <div className="my-4 flex w-full flex-wrap justify-center">
                     <div className="flex w-full  flex-col items-center justify-center">
                       <div
@@ -2031,12 +2029,18 @@ const Conversation = () => {
                             className="flex items-center justify-center"
                             style={{ width: "72px", height: "72px" }}
                           >
-                            <img
-                              src={item.contents[0].value}
-                              alt=""
-                              className="h-[72px] w-[72px] object-cover"
-                              style={{ maxWidth: "100%", maxHeight: "100%" }}
-                            />
+                            <a
+                              href={item.contents[0].value}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <img
+                                src={item.contents[0].value}
+                                alt=""
+                                className="h-[72px] w-[72px] object-cover"
+                                style={{ maxWidth: "100%", maxHeight: "100%" }}
+                              />
+                            </a>
                           </div>
                         </div>
                       ))}
@@ -2057,7 +2061,7 @@ const Conversation = () => {
                     <h2 className="mb-2 text-base font-[600] text-tblack">
                       File
                     </h2>
-                    <div className="-mx-1 flex flex-wrap pb-3 pr-1">
+                    <div className="-mx-1 flex flex-wrap pb-3">
                       {listFile.map((item, index) => {
                         const content = item.contents[0];
                         const keyParts = content.key.split("|");

@@ -14,6 +14,18 @@ import { useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { useUser } from "../context/UserContext";
 
+// Hàm để sao chép nội dung vào clipboard
+const copyToClipboard = (text) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      console.log("Copied to clipboard:", text);
+    })
+    .catch((err) => {
+      console.error("Failed to copy:", err);
+    });
+};
+
 const MessageDetail = ({
   message,
   chatAvatar,
@@ -287,11 +299,18 @@ const MessageDetail = ({
     identifyOwnerOfMessage();
   }, []);
 
+  const handleCopyMessage = () => {
+    if (message.contents[0].key) {
+      copyToClipboard(message.contents[0].value);
+    }
+    handleClose();
+  };
+
   return (
     <div
       ref={messageRef}
       id={message.messageID}
-      className={`relative mb-3 flex ${isHovered ? "group" : ""} ${
+      className={`relative mb-3 flex border ${isHovered ? "group" : ""} ${
         userID === userIDFromCookies ? "justify-end" : "justify-start"
       }`}
       onMouseEnter={handleMouseEnter}
@@ -306,7 +325,7 @@ const MessageDetail = ({
                 className={`mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2 `}
               >
                 <div
-                  className="cursor-pointer "
+                  className="cursor-pointer  opacity-80 hover:opacity-100"
                   onClick={() => {
                     setOpenCompReplyInput(true);
                     setShareContent(message);
@@ -328,14 +347,17 @@ const MessageDetail = ({
                     setShareContent(message);
                     // setParentIdMsg(message.messageID);
                   }}
-                  className="cursor-pointer px-[2px]"
+                  className="cursor-pointer px-[2px] opacity-80 hover:opacity-100"
                 >
                   <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
                 </div>
-                <a href="#">
+                <a href="#" className=" opacity-80 hover:opacity-100">
                   <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
                 </a>
-                <div onClick={handleClick} className="cursor-pointer px-[2px]">
+                <div
+                  onClick={handleClick}
+                  className="cursor-pointer px-[2px]  opacity-70 hover:opacity-100"
+                >
                   <img
                     src="/src/assets/option.png"
                     alt=""
@@ -351,6 +373,7 @@ const MessageDetail = ({
                   open={open}
                   onClose={handleClose}
                   TransitionComponent={Fade}
+                  className="rounded-lg"
                 >
                   <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
                   <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
@@ -382,13 +405,13 @@ const MessageDetail = ({
                   <div className="h-[40px]"></div>
                 )}
             </div>
-          ) : (
-            // <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
-            <></>
-          )}
+          ) : // <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
+          null}
         </div>
       )}
-      {message && message.hidden && message.hidden.includes(userID) ? null : (
+      {message && message.hidden && message.hidden.includes(userID) ? (
+        <span className="hidden">huy</span>
+      ) : (
         <>
           {userID !== userIDFromCookies && (
             <Avatar src={chatAvatar} alt="Avatar" className="mr-3" />
@@ -437,9 +460,7 @@ const MessageDetail = ({
                     </div>
                   </div>
                 </div>
-              ) : (
-                <></>
-              )}
+              ) : null}
               {message.recall === true ? (
                 <div className="text-[15px] text-[#98A1AC]">
                   Tin nhắn đã được thu hồi
@@ -448,7 +469,9 @@ const MessageDetail = ({
                 message.contents.length == 2 ? (
                 <>
                   <div
-                    className={`${message.parentID ? "mt-2" : ""} -mr-3 flex`}
+                    className={`${message.parentID ? "mt-2" : ""} ${
+                      userID !== userIDFromCookies ? "-mr-3" : ""
+                    } ${userID === userIDFromCookies ? "-ml-2" : ""} flex`}
                   >
                     {renderContent()}
                   </div>
@@ -472,16 +495,27 @@ const MessageDetail = ({
                 </>
               )}
             </div>
-
-            <span
-              className={`mt-3 text-xs text-gray-500 ${
-                message.contents[0].key === "image"
-                  ? "-mr-3 ml-auto mt-[4px] rounded-lg bg-slate-400 px-2 py-1 text-white"
-                  : ""
-              }`}
-            >
-              {formattedTime(timestamp)}
-            </span>
+            {userID !== userIDFromCookies ? (
+              <span
+                className={`mt-3 text-xs text-gray-500 ${
+                  message.contents[0].key === "image"
+                    ? "-mr-3 mt-[4px] rounded-lg bg-slate-400 px-2 py-1 text-white"
+                    : ""
+                }`}
+              >
+                {formattedTime(timestamp)}
+              </span>
+            ) : (
+              <span
+                className={`mt-3 text-xs text-gray-500 ${
+                  message.contents[0].key === "image"
+                    ? "-mr-3 ml-auto mt-[4px] rounded-lg bg-slate-400 px-2 py-1 text-white"
+                    : ""
+                }`}
+              >
+                {formattedTime(timestamp)}
+              </span>
+            )}
             {hasEmotion && isHovered && isMyMessage && (
               <div className="absolute bottom-0 right-0 mb-1 mr-1">
                 <img
@@ -489,7 +523,7 @@ const MessageDetail = ({
                   alt="Emotion Icon"
                   className="h-4 w-4"
                 />
-              </div>
+              </div> //huy2
             )}
           </div>
         </>
@@ -497,60 +531,102 @@ const MessageDetail = ({
 
       {userID !== userIDFromCookies && (
         <div className="flex w-[155px] items-end">
-          {isHovered ? (
-            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
-              <div
-                className="cursor-pointer "
-                onClick={() => {
-                  setOpenCompReplyInput(true);
-                  setShareContent(message);
-                  setParentIdMsg(message.messageID);
-                  setUserIDReplyForCompReply(message.userID);
-                }}
-              >
-                <img
-                  src="/src/assets/icons/quotation-right-mark.png"
-                  alt=""
-                  className="mt-[2px] h-[13px] w-[13px]"
-                />
-              </div>
-              <div
-                onClick={() => {
-                  setOpenDialog(true);
-                  setShareContent(message);
-                }}
-                className="cursor-pointer px-[2px]"
-              >
-                <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
-              </div>
-              <a href="#">
-                <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
-              </a>
-              <div onClick={handleClick} className="cursor-pointer px-[2px]">
-                <img src="/src/assets/option.png" alt="" className="h-4 w-4" />
-              </div>
-
-              <Menu
-                id="fade-menu"
-                MenuListProps={{
-                  "aria-labelledby": "fade-button",
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                TransitionComponent={Fade}
-              >
-                <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
-                <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
-                <MenuItem
+          {isHovered &&
+          !(message && message.hidden && message.hidden.includes(userID)) ? (
+            <div>
+              <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
+                <div
+                  className="cursor-pointer  opacity-80 hover:opacity-100"
                   onClick={() => {
-                    handleHidenMessage(message.messageID);
-                    setMessageDeletedID(message.messageID);
+                    setOpenCompReplyInput(true);
+                    setShareContent(message);
+                    setParentIdMsg(message.messageID);
+                    setUserIDReplyForCompReply(message.userID);
                   }}
                 >
-                  Xoá chỉ ở phía tôi
-                </MenuItem>
-              </Menu>
+                  <img
+                    src="/src/assets/icons/quotation-right-mark.png"
+                    alt=""
+                    className="mt-[2px] h-[13px] w-[13px]"
+                  />
+                </div>
+                <div
+                  onClick={() => {
+                    setOpenDialog(true);
+                    setShareContent(message);
+                  }}
+                  className="cursor-pointer px-[2px]  opacity-80 hover:opacity-100"
+                >
+                  <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
+                </div>
+                <a href="#" className=" opacity-80 hover:opacity-100">
+                  <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
+                </a>
+                <div
+                  onClick={handleClick}
+                  className="cursor-pointer px-[2px]  opacity-80 hover:opacity-100"
+                >
+                  <img
+                    src="/src/assets/option.png"
+                    alt=""
+                    className="h-4 w-4"
+                  />
+                </div>
+
+                <Menu
+                  id="fade-menu"
+                  MenuListProps={{
+                    "aria-labelledby": "fade-button",
+                  }}
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  TransitionComponent={Fade}
+                  className="rounded-lg"
+                >
+                  <MenuItem
+                    onClick={() => {
+                      handleCopyMessage();
+                      handleClose();
+                    }}
+                  >
+                    <img
+                      src="/src/assets/icons/copy.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className="text-tblack">Copy tin nhắn</span>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <img
+                      src="/src/assets/icons/push-pin.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className="text-tblack">Ghim tin nhắn</span>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleHidenMessage(message.messageID);
+                      setMessageDeletedID(message.messageID);
+                    }}
+                  >
+                    <img
+                      src="/src/assets/icons/delete.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className=" text-red-600">Xoá chỉ ở phía tôi</span>
+                  </MenuItem>
+                </Menu>
+              </div>
+              {/* //huy5 */}
+              {message.contents[0].key === "image" &&
+                message.contents.length > 1 && <div className="h-[40px]"></div>}
+              {message.contents[0].key === "image" &&
+                message.contents.length == 1 && (
+                  <div className="h-[40px]"></div>
+                )}
             </div>
           ) : (
             <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
