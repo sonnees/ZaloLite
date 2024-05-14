@@ -80,7 +80,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                         setModalVisible={setModalVisible}
                                         item={item}
                                         conversationOpponent={conversationOpponent}
-                                        myUserInfo={myUserInfo}
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
@@ -129,7 +128,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                         setModalVisible={setModalVisible}
                                         item={item}
                                         conversationOpponent={conversationOpponent}
-                                        myUserInfo={myUserInfo}
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
@@ -205,7 +203,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                         setModalVisible={setModalVisible}
                                         item={item}
                                         conversationOpponent={conversationOpponent}
-                                        myUserInfo={myUserInfo}
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
@@ -280,7 +277,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                         setModalVisible={setModalVisible}
                                         item={item}
                                         conversationOpponent={conversationOpponent}
-                                        myUserInfo={myUserInfo}
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
@@ -354,7 +350,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                         setModalVisible={setModalVisible}
                                         item={item}
                                         conversationOpponent={conversationOpponent}
-                                        myUserInfo={myUserInfo}
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
@@ -411,7 +406,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                     setModalVisible={setModalVisible}
                                     item={item}
                                     conversationOpponent={conversationOpponent}
-                                    myUserInfo={myUserInfo}
                                     friend={friend}
                                 />
                                 <TouchableOpacity
@@ -450,7 +444,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                     setModalVisible={setModalVisible}
                                     item={item}
                                     conversationOpponent={conversationOpponent}
-                                    myUserInfo={myUserInfo}
                                     friend={friend}
                                 />
                                 <TouchableOpacity
@@ -513,7 +506,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                     setModalVisible={setModalVisible}
                                     item={item}
                                     conversationOpponent={conversationOpponent}
-                                    myUserInfo={myUserInfo}
                                     friend={friend}
                                 />
                                 <TouchableOpacity
@@ -575,7 +567,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                     setModalVisible={setModalVisible}
                                     item={item}
                                     conversationOpponent={conversationOpponent}
-                                    myUserInfo={myUserInfo}
                                     friend={friend}
                                 />
                                 {linkPreview ? (
@@ -631,7 +622,6 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                     setModalVisible={setModalVisible}
                                     item={item}
                                     conversationOpponent={conversationOpponent}
-                                    myUserInfo={myUserInfo}
                                     friend={friend}
                                 />
                                 <TouchableOpacity

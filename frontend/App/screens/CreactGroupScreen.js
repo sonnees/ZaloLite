@@ -21,7 +21,7 @@ import {
 } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { GlobalContext } from '../context/GlobalContext';
-import CREATE_GROUP from '../api/Api';
+import CREATE_GROUP from '../api/API';
 
 const CreateGroupScreen = () => {
   let navigation = useNavigation();

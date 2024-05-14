@@ -92,7 +92,6 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                     setModalVisible={setModalVisible}
                     item={item}
                     conversationOpponent={conversationOpponent}
-                    myUserInfo={myUserInfo}
                     friend={friend}
                 />
                 <View style={{ alignItems: 'center', flexDirection: 'row' }}>
@@ -360,7 +359,6 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                     setModalVisible={setModalVisible}
                     item={item}
                     conversationOpponent={conversationOpponent}
-                    myUserInfo={myUserInfo}
                     friend={friend}
                 />
                 <View style={{}}>
@@ -428,7 +426,6 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                         setModalVisible={setModalVisible}
                         item={item}
                         conversationOpponent={conversationOpponent}
-                        myUserInfo={myUserInfo}
                         friend={friend}
                     />
                     <View style={{}}>
@@ -505,7 +502,6 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                     setModalVisible={setModalVisible}
                     item={item}
                     conversationOpponent={conversationOpponent}
-                    myUserInfo={myUserInfo}
                     friend={friend}
                 />
                 <View style={{ flexDirection: 'column' }}>
@@ -576,7 +572,6 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                         setModalVisible={setModalVisible}
                         item={item}
                         conversationOpponent={conversationOpponent}
-                        myUserInfo={myUserInfo}
                         friend={friend}
                     />
                     <View>
