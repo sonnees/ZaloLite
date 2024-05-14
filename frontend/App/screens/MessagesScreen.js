@@ -1,30 +1,44 @@
-import React, { memo, useState, useEffect, useContext } from 'react';
-import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Text, StatusBar, TouchableWithoutFeedback } from 'react-native';
+import React, { memo, useState, useEffect, useContext, useRef, useMemo } from 'react';
+import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, FlatList, Text, StatusBar, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { getTimeDifference } from '../utils/CalTime';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
-import { API_GET_LIST_CHATACTIVITY } from '../api/Api';
+import { API_GET_LIST_CHATACTIVITY, host } from '../api/API';
 import { GlobalContext } from '../context/GlobalContext';
+import { PlusModal } from '../modal/plusModal';
+import { ChatModal } from '../modal/chatModal';
+import { SocketContext } from '../context/SocketContext';
+import { findReadUser } from '../utils/FindConservation';
 const MessagesScreen = () => {
   let navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalChatVisible, setModalChatVisible] = useState(false);
-  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext)
+  const { myUserInfo, myProfile } = useContext(GlobalContext)
   const [allConversation, setAllConversation] = useState([]);
+  const [data, setData] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadData(); // Call your function to fetch data
+    setRefreshing(false);
+  };
   useEffect(() => {
     loadData()
   }, [myUserInfo]);
+
   const loadData = () => {
     setAllConversation(myUserInfo.conversations)
   }
   const handlePress = (data) => {
-    if (modalVisible) {
+    if (modalChatVisible) {
       setModalChatVisible(false);
     } else {
       if (data.type !== "GROUP") {
+        // setSocket
         navigation.navigate("ChatScreen", { conversationOpponent: data });
       } else {
         navigation.navigate("ChatGroupScreen", { conversationOpponent: data });
@@ -33,10 +47,9 @@ const MessagesScreen = () => {
     }
   };
 
-  const handleLongPress = () => {
-    setTimeout(() => {
-      setModalChatVisible(true);
-    }, 500);
+  const handleLongPress = (data) => {
+    setData(data);
+    setModalChatVisible(true);
   };
   const fetchAllChatbychatID = async (chatID, token) => {
     try {
@@ -71,27 +84,184 @@ const MessagesScreen = () => {
       console.log("ERROR WHEN GET CONVERSATION WITH ALL CHATACTIVITY\n");
     }
   }
-  const ChatElement = memo(({ item }) => {
+  const ChatElement = memo(({ item, onLongPress }) => {
     const [data, setData] = useState(null);
+    const { socket, setSocket } = useContext(SocketContext);
+    const itemRef = useRef(item);
+    const [timeDifference, setTimeDifference] = useState('');
+    const readUserData = useMemo(() => {
+      if (data) {
+        return findReadUser(data, myProfile.userID);
+      }
+    }, [data, myProfile.userID]);
 
     useEffect(() => {
-      const fetchData = async () => {
-        const newData = await fetchConversationOpponent(item);
-        setData(newData);
-      };
-
-      fetchData();
+      itemRef.current = item;
     }, [item]);
 
+    useEffect(() => {
+      if (itemRef.current.chatID) {
+        const newSocket = new WebSocket(`ws://${host}:8082/ws/chat/${itemRef.current.chatID}`);
+        newSocket.onopen = () => {
+          // console.log("WebSocket for chatID: ", itemRef.current.chatID, " OPENED");
+        };
+        newSocket.onmessage = (event) => {
+          const data = event.data;
+          function isJSON(data) {
+            try {
+              JSON.parse(data);
+              return true;
+            } catch (error) {
+              return false;
+            }
+          }
+          if (isJSON(data)) {
+            const jsonData = JSON.parse(data);
+            // console.log("Message received in CHAT ELEMENT:", jsonData);
+            if (jsonData.tcm === "TCM01") {
+              fetchData();
+            }
+            if (jsonData.tcm === "TCM02") {
+              const messageReader = {
+                userID: jsonData.userID,
+                userName: jsonData.userName,
+                userAvatar: jsonData.userAvatar,
+                messageID: jsonData.messageID
+              }
+              const previousMessageReader = data.reads.find(read => read.userID === myProfile.userID) || null;
+            if (previousMessageReader) {
+              const newDataReads = data.reads.map(read => {
+                if (read.userID === myProfile.userID) {
+                  return { ...read, messageID: jsonData.messageID }; // Thay đổi messageID thành giá trị mới
+                }
+                return read;
+              });
+
+              setData(prevData => ({
+                ...prevData,
+                reads: newDataReads
+              }));
+              // console.log("NEWDAATA: ", newDataReads);
+            }
+            }
+            
+          } 
+          else {
+            // Handle non-JSON data
+          }
+        };
+        setSocket(newSocket);
+
+        return () => {
+          newSocket.close();
+        };
+      }
+    }, []);
+
+    useEffect(() => {
+      fetchData();
+    }, []);
+
+    useEffect(() => {
+      if (data && data.topChatActivity && data.topChatActivity.length > 0) {
+        const intervalId = setInterval(() => {
+          const newTimeDifference = getTimeDifference(data.topChatActivity[data.topChatActivity.length - 1].timestamp);
+          setTimeDifference(newTimeDifference);
+        }, 1000); // Cập nhật mỗi 60 giây
+
+        return () => {
+          clearInterval(intervalId);
+        };
+      }
+    }, [data]);
+
+    const fetchData = async () => {
+      const newData = await fetchConversationOpponent(itemRef.current);
+      setData(newData);
+    };
     if (!data) {
-      return null; // hoặc hiển thị một phần tử tải dữ liệu
+      return null;
     }
-    // console.log("DATA IN CHATELEMENT:\n", data);
+
+    let textColor = "gray";
+    if (
+      data.topChatActivity &&
+      data.topChatActivity.length > 0 &&
+      data.topChatActivity[data.topChatActivity.length - 1].userID &&
+      data.topChatActivity[data.topChatActivity.length - 1].userID === myProfile.userID
+    ) {
+      textColor = "gray";
+    } else if (
+      data.deliveries &&
+      data.deliveries.length > 0 &&
+      data.reads &&
+      (readUserData === null ||
+        (readUserData &&
+          readUserData.messageID !== data.topChatActivity[data.topChatActivity.length - 1].messageID))
+    ) {
+      textColor = "black";
+    } else {
+      textColor = "gray";
+    }
+
+    let textFontWeight = "400";
+    if (
+      data.topChatActivity &&
+      data.topChatActivity.length > 0 &&
+      data.topChatActivity[data.topChatActivity.length - 1].userID &&
+      data.topChatActivity[data.topChatActivity.length - 1].userID === myProfile.userID
+    ) {
+      textFontWeight = "400";
+    } else if (
+      data.deliveries &&
+      data.deliveries.length > 0 &&
+      data.reads &&
+      (readUserData === null ||
+        (readUserData &&
+          readUserData.messageID !== data.topChatActivity[data.topChatActivity.length - 1].messageID))
+    ) {
+      // console.log((readUserData &&
+      //   readUserData.messageID !== data.topChatActivity[data.topChatActivity.length - 1].messageID));
+      if (readUserData)
+        console.log("Value of findReadUser:", readUserData.messageID);
+      console.log("Value of topChatActivity:", data.topChatActivity[data.topChatActivity.length - 1].messageID);
+      textFontWeight = "bold";
+    } else {
+      textFontWeight = "400";
+    }
+
+
+
+    let contentMessage = '';
+    if (data.topChatActivity && data.topChatActivity.length > 0) {
+      const lastContent = data.topChatActivity[data.topChatActivity.length - 1].contents[data.topChatActivity[data.topChatActivity.length - 1].contents.length - 1];
+      const recallMess = data.topChatActivity[data.topChatActivity.length - 1].recall;
+      const hidenMess = data.topChatActivity[data.topChatActivity.length - 1].hidden.includes(myProfile.userID);
+      const key = lastContent.key;
+      console.log("Hidden",hidenMess);
+      if (recallMess) {
+        contentMessage = "Message recalled";
+      }
+      else if (lastContent && key.includes('|') && key.split('|').length >= 2 && !hidenMess) {
+        contentMessage = '[File]';
+      } else if (lastContent && (key === "text" || key === "emoji") && !hidenMess) {
+        contentMessage = lastContent.value;
+      } else if (lastContent && key === "image" && !hidenMess) {
+        contentMessage = "[Photo]";
+      } else if (lastContent && key === "mp4" && !hidenMess) {
+        contentMessage = "[Video]";
+      } else if (lastContent && key === "link" && !hidenMess) {
+        contentMessage = "[Link]";
+      }
+    } else {
+      contentMessage = 'Chưa có cuộc trò chuyện nào';
+    }
+
     return (
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity
           onPress={() => handlePress(data)}
-          onLongPress={handleLongPress}
+          onLongPress={() => onLongPress(data)}
           style={{ height: 75, flexDirection: 'row', width: '100%' }}
         >
           <Image style={{ width: 55, height: 55, resizeMode: "contain", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
@@ -99,8 +269,8 @@ const MessagesScreen = () => {
 
           <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>
             <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{data.chatName ? data.chatName : null}</Text>
-            <Text style={{ fontSize: 14, fontWeight: '400', color: 'gray', marginBottom: 10 }}>
-              {data.topChatActivity && data.topChatActivity.length > 0 ? data.topChatActivity[data.topChatActivity.length - 1].contents[0].value : 'Chưa có cuộc trò chuyện nào'}
+            <Text style={{ fontSize: 14, fontWeight: textFontWeight, color: textColor, marginBottom: 10 }}>
+              {contentMessage}
             </Text>
 
           </View>
@@ -109,8 +279,8 @@ const MessagesScreen = () => {
             <Icon name='pushpin' size={13} color={'#d9d9d9'} style={{ marginRight: 5 }}></Icon>
             <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>
               <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>
-                {/* hello */}
-                {data.topChatActivity && data.topChatActivity.length > 0 ? getTimeDifference(data.topChatActivity[data.topChatActivity.length - 1].timestamp) : ''}
+                {timeDifference}
+                {/* {data.topChatActivity && data.topChatActivity.length > 0 ? getTimeDifference(data.topChatActivity[data.topChatActivity.length - 1].timestamp) : ''} */}
               </Text>
 
             </Text>
@@ -127,6 +297,7 @@ const MessagesScreen = () => {
   }, (prevProps, nextProps) => {
     return prevProps.item.chatID === nextProps.item.chatID;
   });
+
 
 
   return (
@@ -246,237 +417,23 @@ const MessagesScreen = () => {
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
           <FlatList
             data={allConversation}
-            renderItem={({ item }) => <ChatElement item={item} />}
+            renderItem={({ item }) => <ChatElement item={item} onLongPress={handleLongPress} />} // Truyền handleLongPress vào ChatElement
             keyExtractor={(item) => item.chatID}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
           />
         </View>
 
       </View>
-
-      {/* MODAL */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
-      >
-        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "flex-start",
-              alignItems: "flex-end",
-              backgroundColor: "transparent",
-              margin: 6,
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "white",
-                height: 285,
-                width: 200,
-                borderRadius: 2,
-                elevation: 5,
-              }}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "flex-start",
-                  alignItems: "flex-end",
-                  backgroundColor: "transparent",
-                  margin: 6,
-                }}
-              >
-                <View
-                  style={{
-                    backgroundColor: "white",
-                    height: 285,
-                    width: 200,
-                    borderRadius: 2,
-                    elevation: 5,
-                  }}
-                >
-                  <TouchableOpacity
-                    style={styles.buttonInModal}
-                    onPress={() => {
-                      navigation.navigate("AddFriendScreen", {
-                        typeScreen: "MessagesScreen",
-                      });
-                      setModalVisible(false);
-                    }}
-                  >
-                    <Icon
-                      name="adduser"
-                      size={22}
-                      color={"gray"}
-                      style={{ marginRight: 5 }}
-                    ></Icon>
-                    <Text style={styles.textInModal}>Add friend</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.buttonInModal}
-                    onPress={() => {
-                      setModalVisible(false);
-                      navigation.navigate("CreactGroupScreen", {
-                        typeScreen: "MessagesScreen",
-                      });
-                    }}
-                  >
-                    <Icon
-                      name="addusergroup"
-                      size={22}
-                      color={"gray"}
-                      style={{ marginRight: 5 }}
-                    ></Icon>
-                    <Text style={styles.textInModal}>Create group</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.buttonInModal}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <Icon
-                      name="cloudo"
-                      size={22}
-                      color={"gray"}
-                      style={{ marginRight: 5 }}
-                    ></Icon>
-                    <Text style={styles.textInModal}>My Cloud</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.buttonInModal}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <Icon
-                      name="calendar"
-                      size={22}
-                      color={"gray"}
-                      style={{ marginRight: 5 }}
-                    ></Icon>
-                    <Text style={styles.textInModal}>Zalo Calendar</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.buttonInModal}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <Icon
-                      name="videocamera"
-                      size={22}
-                      color={"gray"}
-                      style={{ marginRight: 5 }}
-                    ></Icon>
-                    <Text style={styles.textInModal}>Create group call</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.buttonInModal}
-                    onPress={() => setModalVisible(false)}
-                  >
-                    <Icon
-                      name="iconfontdesktop"
-                      size={22}
-                      color={"gray"}
-                      style={{ marginRight: 5 }}
-                    ></Icon>
-                    <Text style={styles.textInModal}>Logged-in devices</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+      {/* MODAL PLUS */}
+      <PlusModal modalVisible={modalVisible} setModalVisible={setModalVisible} />
       {/* MODAL CHAT */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalChatVisible}
-        onRequestClose={() => {
-          setModalChatVisible(false);
-        }}
-      >
-        <TouchableWithoutFeedback onPress={() => setModalChatVisible(false)}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "white",
-                height: 420,
-                width: 300,
-                borderRadius: 2,
-                elevation: 5,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  height: 70,
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{ fontSize: 20, fontWeight: "bold", marginLeft: 20 }}
-                >
-                  Thiện Đạt
-                </Text>
-                <TouchableOpacity
-                  style={{
-                    borderWidth: 0.2,
-                    borderRadius: 50,
-                    width: 24,
-                    height: 24,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: 10,
-                    marginRight: 20,
-                  }}
-                >
-                  <Image
-                    style={{ width: 13, height: 13, resizeMode: "contain" }}
-                    source={require("../assets/draw.png")}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  borderBottomColor: "gray",
-                  borderBottomWidth: 0.2,
-                  width: "100%",
-                }}
-              />
-              <TouchableOpacity style={styles.buttonInChatModal}>
-                <Text style={styles.textInModal}>Move to Other</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonInChatModal}>
-                <Text style={styles.textInModal}>Hide conversation</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonInChatModal}>
-                <Text style={styles.textInModal}>Manage blocking</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonInChatModal}>
-                <Text style={styles.textInModal}>Delete</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonInChatModal}>
-                <Text style={styles.textInModal}>Mark as read</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonInChatModal}>
-                <Text style={styles.textInModal}>Enable Bubble Chat mode</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.buttonInChatModal}>
-                <Text style={styles.textInModal}>Mute</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+      <ChatModal modalChatVisible={modalChatVisible} setModalChatVisible={setModalChatVisible} data={data} />
+
     </KeyboardAvoidingView>
   );
 };

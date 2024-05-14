@@ -8,6 +8,9 @@ import {
   differenceInMonths,
   differenceInYears,
 } from "date-fns";
+import axios from "axios";
+import Cookies from "universal-cookie";
+
 import notificationSound from "../assets/sounds/message-notification.mp3";
 function ChatElement({
   id,
@@ -16,67 +19,38 @@ function ChatElement({
   topChatActivity,
   lastUpdateAt,
 }) {
+  const cookies = new Cookies();
+  const [tokenFromCookies, setTokenFromCookies] = useState("");
+  const [userIDFromCookies, setUserIDFromCookies] = useState("");
+  useEffect(() => {
+    // Gán giá trị lấy được từ cookies vào state userIDFromCookies
+    // const userID = getUserIDFromCookie();
+    // setUserIDFromCookies(userID);
+    // Lấy token từ cookies và giải mã nó
+
+    const userIDFromCookie = cookies.get("userID");
+    if (userIDFromCookie) {
+      // const tokenDecrypted = decryptData(tokenFromCookie);
+      setUserIDFromCookies(userIDFromCookie);
+    }
+
+    const tokenFromCookie = cookies.get("token");
+    if (tokenFromCookie) {
+      // const tokenDecrypted = decryptData(tokenFromCookie);
+      setTokenFromCookies(tokenFromCookie);
+    }
+  }, []);
   const playNotificationSound = () => {
     const audio = new Audio(notificationSound);
     audio.play();
   };
   const [socket, setSocket] = useState(null);
   const [newMessage, setNewMessage] = useState("");
-  // console.log(chatName, ">>>>>>>>>>>>>>", topChatActivity);
-  const countTopChatActivity = topChatActivity.length;
-  const a = topChatActivity.length - 1;
-  // console.log(a);
-  // const b = topChatActivity[a];
-  // // console.log("bbbbbb", b);
-  const b = topChatActivity[a];
+  const [topChat, setTopChat] = useState([]);
+  const [topChatToShow, setTopChatToShow] = useState("");
 
-  // const c = b.contents.length - 1;
-  // const messageContentInTopChatActivity = b.contents[c].value;
-  // const messageContentInTopChatActivity = b ? b.contents[c]?.value : "";
-  const messageContentInTopChatActivity = b
-    ? b.contents && b.contents.length > 0
-      ? b.contents[b.contents.length - 1]?.value
-      : ""
-    : "";
-
-  // console.log(
-  //   "messageContentInTopChatActivity",
-  //   messageContentInTopChatActivity,
-  // );
   const [messageContent, setMessageContent] = useState("");
-  const unreadCount = 1;
-
-  // if (topChatActivity.length > 0) {
-  //   // console.log(">>>>>>HUYHUY>>>>>>>>>", topChatActivity[-1].contents);
-  //   setMessageContent(
-  //     topChatActivity[topChatActivity.length - 1].contents[0].value,
-  //   );
-  //   console.log(
-  //     ">>>>>>topChatActivitytopChatActivitytopChatActivity>>>>>>>>",
-  //     topChatActivity[topChatActivity.length - 1].contents[0].value,
-  //   );
-  //   console.log(">>>>>MEss>>>>>>>>>", messageContent);
-  // } else {
-  //   console.log("topChatActivity is empty");
-  // }
-
-  // useEffect(() => {
-  //   if (topChatActivity.length > 0 ) {
-  //     setMessageContent(
-  //       topChatActivity[topChatActivity.length - 1].contents[0].value,
-  //     );
-  //   }
-  // }, [topChatActivity]);
-
-  useEffect(() => {
-    // Duyệt ngược qua mảng chatActivity để tìm tin nhắn gần nhất có thuộc tính recall là true
-    for (let i = topChatActivity.length - 1; i >= 0; i--) {
-      if (topChatActivity[i].recall !== true) {
-        setMessageContent(topChatActivity[i].contents[0].value);
-        return; // Kết thúc vòng lặp ngay khi tìm thấy tin nhắn thỏa mãn
-      }
-    }
-  }, [topChatActivity]);
+  const unreadCount = 0;
 
   useEffect(() => {
     if (id) {
@@ -92,7 +66,7 @@ function ChatElement({
         );
       };
       newSocket.onmessage = (event) => {
-        console.log("Socket", newSocket);
+        // console.log("Socket", newSocket);
         const data = event.data;
         function isJSON(data) {
           try {
@@ -106,14 +80,36 @@ function ChatElement({
           const jsonData = JSON.parse(data);
           console.log("Message received in CHAT ELEMENT:", jsonData);
           if (jsonData.tcm === "TCM01") {
-            console.log(
-              "Message received in CHAT ELEMENT:",
-              jsonData.contents[0].value,
-            );
+            // console.log(
+            //   "Message received in CHAT ELEMENT:",
+            //   jsonData.contents[0].value,
+            // );
             setTimestamp(jsonData.timestamp);
 
             if (jsonData.userID === localStorage.getItem("userID")) {
-              setNewMessage("Bạn: " + jsonData.contents[0].value);
+              const topChatToShow = (topChat2) => {
+                const contents = topChat2.contents;
+                const lastContent = contents[contents.length - 1];
+                if (lastContent.key === "text") {
+                  return lastContent.value;
+                } else if (lastContent.key === "image") {
+                  return "Hình ảnh";
+                } else if (
+                  lastContent.key.startsWith("zip") ||
+                  lastContent.key.startsWith("pdf") ||
+                  lastContent.key.startsWith("xlsx") ||
+                  lastContent.key.startsWith("doc") ||
+                  lastContent.key.startsWith("docx") ||
+                  lastContent.key.startsWith("rar")
+                ) {
+                  return "File";
+                } else if (lastContent.key === "emoji") {
+                  return lastContent.value;
+                } else {
+                  return "Tin nhắn mới";
+                }
+              };
+              setNewMessage("Bạn: " + topChatToShow(jsonData) + "t!@#%&*()_+");
             } else {
               setNewMessage(jsonData.contents[0].value);
             }
@@ -122,6 +118,7 @@ function ChatElement({
               jsonData.userID !== localStorage.getItem("userID")
             ) {
               playNotificationSound();
+              console.log(">>>>>playNotificationSound>>>>>>>>>");
             }
           }
           // Xử lý dữ liệu được gửi đến ở đây
@@ -147,6 +144,67 @@ function ChatElement({
       };
     }
   }, [id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const timestamp = Date.now();
+      const fetchedMessages = await fetchMessages(
+        id,
+        0,
+        2,
+        tokenFromCookies,
+        timestamp,
+      );
+      // console.log(`>>>>>${chatName}>>>>>>>>`, fetchedMessages);
+      setTopChat(fetchedMessages[fetchedMessages.length - 1]);
+      const topChat2 = fetchedMessages[fetchedMessages.length - 1];
+      const topChatToShow = () => {
+        const contents = topChat2.contents;
+        const lastContent = contents[contents.length - 1];
+        if (lastContent.key === "text") {
+          return lastContent.value;
+        } else if (lastContent.key === "image") {
+          return (
+            <span className="flex items-center">
+              <img
+                src="/src/assets/icons/image.png"
+                alt=""
+                className="h-[14px] w-[14px]"
+              />
+              &nbsp;Hình ảnh
+            </span>
+          );
+        } else if (
+          lastContent.key.startsWith("zip") ||
+          lastContent.key.startsWith("pdf") ||
+          lastContent.key.startsWith("xlsx") ||
+          lastContent.key.startsWith("doc") ||
+          lastContent.key.startsWith("docx") ||
+          lastContent.key.startsWith("rar")
+        ) {
+          return (
+            <span className="flex items-center">
+              <img
+                src="/src/assets/icons/file-default.png"
+                alt=""
+                className="h-[14px] w-[14px]"
+              />
+              &nbsp;File
+            </span>
+          );
+        } else if (lastContent.key === "emoji") {
+          return lastContent.value;
+        } else {
+          return "Tin nhắn mới";
+        }
+      };
+      if (topChat2) setTopChatToShow(topChatToShow());
+    };
+    if (id && tokenFromCookies) fetchData();
+  }, [id, tokenFromCookies]);
+  // console.log(">>>>>TOPCHAT>>>>>>>>>", topChat);
+
+  // console.log(">>>>>TOPCHATTOHOW>>>>>>>>>", topChatToShow());
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
@@ -238,8 +296,47 @@ function ChatElement({
   // }, [timeOrginal]);
   // console.log(timeDifference);
 
+  const fetchMessages = async (id, x, y, token, timestamp) => {
+    // console.table({ id, x, y, token });
+    try {
+      const response = await axios.get(
+        `${process.env.HOST}/api/v1/chat/x-to-y?id=${id}&x=${x}&y=${y}&timestamp=${timestamp}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      // console.log("Data:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      return [];
+    }
+  };
+
+  const [readByOnClick, setReadByOnClick] = useState(false);
+  const handOnClick = () => {
+    setReadByOnClick(true);
+    // console.log(">>>>>CHATNAME>>>>>>>>>", chatName);
+    // console.log(">>>>>CHATID>>>>>>>>>", id);
+    sessionStorage.setItem("chatID", id);
+  };
+
+  useEffect(() => {
+    setReadByOnClick(false);
+  }, [id]);
   return (
-    <>
+    <div
+      onClick={() => {
+        handOnClick();
+      }}
+      className={`${
+        readByOnClick && id === sessionStorage.getItem("chatID")
+          ? "bg-[#E1EDFE]"
+          : ""
+      }  z-50 pl-4 pr-1`}
+    >
       {topChatActivity.length >= 0 ? (
         <div
           className={`flex h-[74px] w-full items-center pr-2 ${
@@ -263,20 +360,65 @@ function ChatElement({
           >
             <div className="">
               {newMessage ? (
-                <div className="grid gap-y-1">
-                  <div>
-                    <span className="text-base font-semibold text-[#081C36]">
-                      {chatName}
-                    </span>
+                newMessage.includes("t!@#%&*()_+") ? (
+                  <div className="grid gap-y-1">
+                    <div>
+                      <span className="text-base font-semibold text-[#081C36]">
+                        {chatName}
+                      </span>
+                    </div>
+                    <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#7589A3] duration-200  md:min-w-full">
+                      <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
+                        {/* {messageContent}
+                        {newMessage} */}
+                        {newMessage.includes("Hình ảnh") && (
+                          <>
+                            <span className="flex items-center">
+                              Bạn:&nbsp;
+                              <img
+                                src="/src/assets/icons/image.png"
+                                alt=""
+                                className="h-[14px] w-[14px]"
+                              />
+                              &nbsp;Hình ảnh
+                            </span>
+                          </>
+                        )}
+                        {newMessage.includes("File") && (
+                          <>
+                            <span className="flex items-center">
+                              Bạn:&nbsp;
+                              <img
+                                src="/src/assets/icons/file-default.png"
+                                alt=""
+                                className="h-[14px] w-[14px]"
+                              />
+                              &nbsp;File
+                            </span>
+                          </>
+                        )}
+                        {!newMessage.includes("Hình ảnh") &&
+                          !newMessage.includes("File") &&
+                          newMessage.replace("t!@#%&*()_+", "")}
+                      </span>
+                    </div>
                   </div>
-                  <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200  md:min-w-full">
-                    <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-                      {/* {messageContent} */}
-                      {newMessage}
-                    </span>
+                ) : (
+                  <div className="grid gap-y-1">
+                    <div>
+                      <span className="text-base font-semibold text-[#081C36]">
+                        {chatName}
+                      </span>
+                    </div>
+                    <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#081C36] duration-200  md:min-w-full">
+                      <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
+                        {/* {messageContent} */}
+                        {newMessage}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ) : (
+                )
+              ) : topChat && topChat.userID === userIDFromCookies ? (
                 <>
                   <div className="grid gap-y-1">
                     <div>
@@ -287,8 +429,30 @@ function ChatElement({
                     <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#7589A3] duration-200 md:w-[175px] md:min-w-full">
                       <span>Bạn:&nbsp;</span>
                       <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-                        {/* {messageContent} */}
-                        {messageContentInTopChatActivity}
+                        {topChatToShow}
+                        {/* {messageContentInTopChatActivity} */}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="grid gap-y-1">
+                    <div>
+                      <span className="text-base font-semibold text-[#081C36]">
+                        {chatName}
+                      </span>
+                    </div>
+                    <div
+                      className={`transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm ${
+                        readByOnClick
+                          ? "font-medium text-[#7589A3]"
+                          : "font-bold text-[#081C36] "
+                      }  duration-200  md:min-w-full`}
+                    >
+                      <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
+                        {topChatToShow}
+                        {/* {messageContentInTopChatActivity} */}
                       </span>
                     </div>
                   </div>
@@ -301,9 +465,9 @@ function ChatElement({
               </div>
               {unreadCount != 0 ? (
                 <>
-                  {/* <div className="flex h-4 w-4 flex-grow items-center justify-center place-self-end rounded-full bg-[#C81A1F] text-white">
+                  <div className="flex h-4 w-4 flex-grow items-center justify-center place-self-end rounded-full bg-[#C81A1F] text-white">
                   <span className="text-xs">{unreadCount}</span>
-                </div> */}
+                </div>
                 </>
               ) : (
                 <></>
@@ -314,22 +478,8 @@ function ChatElement({
       ) : (
         <></>
       )}
-    </>
+    </div>
   );
 }
 
 export default ChatElement;
-
-{
-  /* <div className="grid gap-y-1">
-  <div>
-    <span className="text-base text-[#081C36]">{userName}</span>
-  </div>
-  <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm text-[#7589A3] duration-200">
-    <span>Bạn:&nbsp;</span>
-    <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-      {messageContent}
-    </span>
-  </div>
-</div>; */
-}
