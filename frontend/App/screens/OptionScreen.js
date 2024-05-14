@@ -8,7 +8,7 @@ export default function OptionScreen({ navigation }) {
           <Image
             style={{ width: "15%", height: "40%", resizeMode: "contain" }}
             source={require("../assets/back1.png")}
-            onStartShouldSetResponder={() => navigation.navigate("ChatScreen")}
+            onStartShouldSetResponder={() => navigation.goBack()}
           />
           <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>
             Tùy chọn

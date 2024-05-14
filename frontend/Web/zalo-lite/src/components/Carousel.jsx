@@ -35,7 +35,7 @@ export default function Carousel({ slides }) {
         // Kiểm tra autoSlide và không đang trong quá trình chuyển slide mới gọi nextSlide
         nextSlide();
       }
-    }, 1000);
+    }, 2000);
 
     const transitionEnd = () => {
       setIsSliding(false);

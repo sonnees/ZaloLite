@@ -6,7 +6,7 @@ import { API_RESET_PASS } from '../api/API';
 const CreatePasswordScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const phoneNumber = route.params.phoneNumber;
+  const phoneNumber = route.params.phoneNumber.startsWith('+84') ? '0' + route.params.phoneNumber.slice(3) : route.params.phoneNumber; // Xử lý phoneNumber từ màn hình trước
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -29,7 +29,7 @@ const CreatePasswordScreen = () => {
       .then(response => {
         if (response.ok) {
           // Nếu yêu cầu thành công, điều hướng đến màn hình đăng nhập và chuyển thông tin mật khẩu mới.
-          navigation.navigate('LoginScreen', { newPassword: password });
+          navigation.navigate("LoginNavigator", { screen: "OtpScreen", params: { phoneNumber: phoneNumber, password: password } });
         } else {
           Alert.alert('Lỗi', 'Có lỗi xảy ra khi cập nhật mật khẩu.');
         }

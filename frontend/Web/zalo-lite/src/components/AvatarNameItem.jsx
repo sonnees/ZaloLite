@@ -47,7 +47,7 @@ export default function AvatarNameItem({ data, type }) {
               <div className="grid gap-y-1">
                 <div>
                   <span className="text-base font-semibold text-[#081C36]">
-                    Trần Quàng Huy
+                    Trần Quang Huy
                   </span>
                 </div>
                 <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm font-medium text-[#7589A3] duration-200 md:w-[175px] md:min-w-full">

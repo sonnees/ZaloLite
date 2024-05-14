@@ -27,6 +27,10 @@ import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import ForgotPasswordForm from "../pages/Login/ForgotPasswordForm";
 import ResetPasseordForm from "../pages/Login/ResetPasseordForm";
+// import VideoCall from "../pages/VideoCalll";
+import TagFriendRequest from "../pages/Contact/TagFriendRequest";
+
+
 import ConversationGroup from "../components/ConversationGroup";
 // import RegisterUser from "../pages/Login/RegisterUser";
 
@@ -42,6 +46,8 @@ export default function Router() {
   const [comp, setComp] = useState(<Conversation />);
 
   const location = useLocation();
+
+  const [openSearchMessage, setOpenSearchMessage] = useState(false);
 
   // useEffect(() => {
   //   if (location.pathname === "/app") {
@@ -79,7 +85,12 @@ export default function Router() {
           element: <MessageFilterBar />,
           children: [
             { path: "", element: <Welcome /> },
-            { path: "chat", element: <Conversation /> },
+            {
+              path: "chat",
+              element: (
+                <Conversation setOpenSearchMessage={setOpenSearchMessage} />
+              ),
+            },
             { path: "chatGroup", element: <ConversationGroup /> },
           ],
         },
@@ -87,12 +98,15 @@ export default function Router() {
           path: "/contact",
           element: <SearchBox />,
           children: [
-            { path: "listFriend", element: <DetailContact/> },
-            { path: "", element: <DetailContact/> },
-            { path: "listGroup", element: <DetailContact/> },
+            { path: "listFriend", element: <DetailContact isListFriend={true}/> },
+            { path: "listGroup", element: <DetailContact isListFriend={false}/> },
+            { path: "listFriend/chat", element: <Conversation /> },
+            { path: "listGroup/chatGroup", element: <ConversationGroup /> },
+            { path: "listfriendrequest", element: <TagFriendRequest /> },
           ],
         },
         { path: "todo", element: <Todo /> },
+        // { path: "videocall", element: <VideoCall/> },
       ],
     },
   ]);

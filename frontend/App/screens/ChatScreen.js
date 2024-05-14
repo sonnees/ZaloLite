@@ -411,21 +411,35 @@ const ChatScreen = () => {
         </View>
 
         <View style={{ flex: 3 }}></View>
-        <View style={{ flexDirection: 'row', }}>
-          <Image
-            style={{ width: 21, height: 21, resizeMode: "contain", margin: 10, marginTop: 15 }}
-            source={require("../assets/telephone.png")}
-          />
-          <Image
-            style={{ width: 28, height: 28, resizeMode: "contain", margin: 10, marginTop: 12 }}
-            source={require("../assets/video.png")}
-          />
-          <Image
-            style={{ width: 20, height: 20, resizeMode: "contain", margin: 10, marginTop: 15 }}
-            source={require("../assets/list.png")}
-            onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
-          />
-        </View>
+        {conversationOpponent.type && conversationOpponent.type !== "GROUP" && (
+          <View style={{ flexDirection: 'row', }}>
+            <Image
+              style={{ width: 22, height: 22, resizeMode: "contain", margin: 10 }}
+              source={require("../assets/telephone.png")}
+            />
+            <Image
+              style={{ width: 28, height: 28, resizeMode: "contain", margin: 10 }}
+              source={require("../assets/video.png")}
+            />
+            <Image
+              style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
+              source={require("../assets/list.png")}
+              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
+            />
+          </View>
+        )}
+        {conversationOpponent.type && conversationOpponent.type === "GROUP" && (
+          <View style={{ flexDirection: 'row', }}>
+            <Icon name='addusergroup' size={22} color={'white'} style={{ margin: 10 }} />
+            <Icon name='search1' size={22} color={'white'} style={{ margin: 10 }} />
+
+            <Image
+              style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
+              source={require("../assets/list.png")}
+              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionGroupScreen" })}
+            />
+          </View>
+        )}
       </View>
       {conversationOpponent.topChatActivity && conversationOpponent.topChatActivity.length > 0 && (
         <View style={{ flex: 1 }}>
