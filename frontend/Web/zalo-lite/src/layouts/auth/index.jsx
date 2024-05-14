@@ -8,7 +8,7 @@ import QR_Test from "./../../assets/QR_Test.png";
 export default function AuthLayout() {
   const [isSelectQR, setIsSelectQR] = useState(true);
   const navigate = useNavigate();
-  const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [socket, setSocket] = useState(null);
@@ -23,7 +23,7 @@ export default function AuthLayout() {
     }
   }
 
-//=========================================================
+  //=========================================================
   function isJSON(str) {
     try {
       JSON.parse(str);
@@ -32,15 +32,14 @@ export default function AuthLayout() {
       return false;
     }
   }
-//=========================================================
-  
+  //=========================================================
 
   useEffect(() => {
     // Gọi API ở đây
     const fetchQrCode = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8081/api/v1/auth/authenticate/qr-code",
+          `${process.env.HOST}/api/v1/auth/authenticate/qr-code`,
         );
         // Nếu sử dụng axios:
         // const response = await axios.post('your_api_url_here', { key: 'value' });
@@ -55,7 +54,9 @@ export default function AuthLayout() {
         // console.log(qrCodeUrl);
         //=========SOCKET=========
         const socketLink = data.field1;
-        const newSocket = new WebSocket('ws://localhost:8081/ws/auth/' + data.field1);
+        const newSocket = new WebSocket(
+          `${process.env.SOCKET_ACCOUNT}/ws/auth/` + data.field1,
+        );
         console.log(data.field1);
         newSocket.onopen = () => {
           console.log("WebSocket connected");
@@ -79,7 +80,7 @@ export default function AuthLayout() {
       handleReceiveToken();
     }
   });
-//=========================================================
+  //=========================================================
 
   async function fetchData(link) {
     let response = await fetch(link);
@@ -93,7 +94,7 @@ export default function AuthLayout() {
 
     try {
       const response = await fetch(
-        "http://localhost:8081/api/v1/auth/authenticate",
+        `${process.env.HOST}/api/v1/auth/authenticate`,
         {
           method: "POST",
           headers: {
@@ -142,7 +143,8 @@ export default function AuthLayout() {
         } else if (data.connect == "ACCEPT") {
           let device = navigator.userAgent.match("Windows") ? "Windows" : "MAC";
           let day = new Date();
-          let time = day.getHours() + ":" + day.getMinutes() + ":" + day.getSeconds();
+          let time =
+            day.getHours() + ":" + day.getMinutes() + ":" + day.getSeconds();
           let location = "TP.HCM";
           socket.send(
             JSON.stringify({ device: device, time: time, location: location }),
@@ -155,11 +157,13 @@ export default function AuthLayout() {
 
   return (
     <div className="w-full">
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 overflow-hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1280 654"
           preserveAspectRatio="xMinYMin slice"
+          className="absolute inset-0 h-full w-full"
+          style={{ zIndex: -1 }}
         >
           <rect x="1" y="1" width="1280" height="654" fill="#e8f3ff" />
           <path
@@ -182,30 +186,28 @@ export default function AuthLayout() {
       </div>
       <div className="relative flex flex-col overflow-hidden">
         <div className="">
-          <h1 className="mt-10 p-3 text-center text-6xl font-semibold text-blue-600">
+          <h1 className="mt-10 p-3 text-center text-6xl font-semibold text-[#0860F8]">
             Zalo
           </h1>
-          <h2 className="text-center font-normal">Đăng nhập tài khoản Zalo</h2>
-          <h2 className="text-center font-normal">
+          <h2 className="text-center text-base font-normal text-[#333333]">
+            Đăng nhập tài khoản Zalo
+          </h2>
+          <h2 className="text-center  text-base font-normal text-[#333333]">
             để kết nối với ứng dụng Zalo Web
           </h2>
         </div>
 
         <div className="mx-auto my-5 w-full bg-white pb-6 shadow-md lg:max-w-[388px]">
           {/* =================================================================================== */}
-          <Outlet/>
+          <Outlet />
           {/* =================================================================================== */}
         </div>
 
         <div className="m-3 mt-10">
           <p className=" text-center text-xs text-blue-600">
-            <a className="font-semibold" href="#">
-              Tiếng Việt
-            </a>{" "}
-            <span> </span>
-            <a className="font-thin" href="#">
-              English{" "}
-            </a>
+            <a className="font-semibold">Tiếng Việt</a> <span> </span>
+            &nbsp;&nbsp;
+            <a className="">English </a>
           </p>
         </div>
       </div>

@@ -7,6 +7,7 @@ import LinkPreview from "./LinkPreview";
 import FileLink from "./FileLink";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+
 import Fade from "@mui/material/Fade";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
@@ -16,18 +17,23 @@ import { useUser } from "../context/UserContext";
 const MessageDetail = ({
   message,
   chatAvatar,
+  chatName,
   socketFromConservation,
   setSocketFromConservation,
   setMessageDeletedID,
   setMessageRecalledID,
-  idA
+  idA,
+  setOpenDialog,
+  setShareContent,
+  setOpenCompReplyInput,
+  setParentIdMsg,
+  setUserIDReplyForCompReply,
 }) => {
-  // console.log("message in component message detail", message);
   const cookies = new Cookies();
   const [userIDFromCookies, setUserIDFromCookies] = useState("");
   const { userID, contents, timestamp, hasEmotion } = message;
   const [socket, setSocket] = useState(socketFromConservation);
-  const {cons, setCons } = useUser();
+  const { cons, setCons } = useUser();
 
   const [isRecalled, setIsRecalled] = useState(false);
   // const location = useLocation();
@@ -178,9 +184,59 @@ const MessageDetail = ({
     setIsHovered(true);
   };
 
+  const renderImageInForwadMsg = (contents) => {
+    if (contents && contents.length > 0) {
+      return contents.map((content, index) => {
+        if (content.key === "image") {
+          return (
+            <img
+              key={index}
+              src={content.value}
+              alt="Image"
+              className="mb-2 mr-2 h-9 w-9"
+            />
+          );
+        }
+      });
+    }
+  };
+
+  const token = cookies.get("token");
+
+  const [ownerMessage, setOwnerMessage] = useState("");
+  const identifyOwnerOfMessage = () => {
+    if (message.userID === userIDFromCookies) {
+      setOwnerMessage(localStorage.getItem("userName"));
+    } else {
+      console.log("message.parentID", message.parentID);
+      if (message.parentID != null) {
+        const fetchInfoAccount = async () => {
+          const response = await fetch(
+            `${process.env.HOST}/api/v1/account/profile/userID/${message.parentID.userID}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+          const data = await response.json();
+          setOwnerMessage(data.userName);
+        };
+        fetchInfoAccount();
+      }
+    }
+  };
+
+  useEffect(() => {
+    identifyOwnerOfMessage();
+  }, []);
+
   return (
     <div
       ref={messageRef}
+      id={message.messageID}
       className={`relative mb-3 flex ${isHovered ? "group" : ""} ${
         userID === userIDFromCookies ? "justify-end" : "justify-start"
       }`}
@@ -192,16 +248,33 @@ const MessageDetail = ({
         <div className="flex w-[155px] items-end">
           {isHovered ? (
             <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
-              <a href="#">
+              <div
+                className="cursor-pointer "
+                onClick={() => {
+                  setOpenCompReplyInput(true);
+                  setShareContent(message);
+                  // console.log("messageID", message.messageID);
+                  setParentIdMsg(message.messageID);
+                  setUserIDReplyForCompReply(message.userID);
+                }}
+              >
                 <img
-                  src="/src/assets/reply-arrow.png"
+                  src="/src/assets/icons/quotation-right-mark.png"
                   alt=""
-                  className="h-4 w-4"
+                  className="mt-[2px] h-[13px] w-[13px]"
                 />
-              </a>
-              <a href="#">
+              </div>
+
+              <div
+                onClick={() => {
+                  setOpenDialog(true);
+                  setShareContent(message);
+                  // setParentIdMsg(message.messageID);
+                }}
+                className="cursor-pointer px-[2px]"
+              >
                 <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
-              </a>
+              </div>
               <a href="#">
                 <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
               </a>
@@ -223,7 +296,7 @@ const MessageDetail = ({
                 <MenuItem
                   onClick={() => {
                     handleRecall(message.messageID);
-                    
+
                     console.log("messageID thu hồi", message.messageID);
                     setMessageDeletedID(message.messageID);
                   }}
@@ -258,12 +331,51 @@ const MessageDetail = ({
             } relative flex flex-col items-start rounded-md p-3 transition-all duration-300`}
           >
             <div className="flex-1 items-center">
+              {message.parentID && message.parentID.contents ? (
+                <div className="mb-2 bg-[#CCDFFC] py-[10px] pl-3 pr-[9px]">
+                  <div className="flex w-full border-l-2 border-[#4F87F7] pl-3">
+                    <div className="h-9">
+                      {renderImageInForwadMsg(message.parentID.contents)}
+                    </div>
+                    <div className="h-full w-full flex-1 pl-1">
+                      <div className="flex w-full items-center text-xs">
+                        <div className="flex">
+                          <img
+                            src="/src/assets/icons/quotation.png"
+                            alt=""
+                            className="h-4 w-4"
+                          />
+                          &nbsp;
+                          <span className="text-[13px] font-semibold">
+                            {/* {message.userID === userIDFromCookies &&
+                            message.parentID.userID === userIDFromCookies
+                              ? localStorage.getItem("userName")
+                              : chatName} */}
+                            {ownerMessage}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-1 w-full text-[13px]">
+                        <span className="items-center text-[13px] text-[#476285]">
+                          {message.parentID.contents[0].key === "image"
+                            ? "[Hình ảnh]"
+                            : message.parentID.contents[0].value}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <></>
+              )}
               {message.recall === true ? (
                 <div className="text-[15px] text-[#98A1AC]">
                   Tin nhắn đã được thu hồi
                 </div>
               ) : (
-                renderContent()
+                <div className={message.parentID ? "mt-2" : ""}>
+                  {renderContent()}
+                </div>
               )}
             </div>
             <span className="mt-3 text-xs text-gray-500">
@@ -286,16 +398,30 @@ const MessageDetail = ({
         <div className="flex w-[155px] items-end">
           {isHovered ? (
             <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
-              <a href="#">
+              <div
+                className="cursor-pointer "
+                onClick={() => {
+                  setOpenCompReplyInput(true);
+                  setShareContent(message);
+                  setParentIdMsg(message.messageID);
+                  setUserIDReplyForCompReply(message.userID);
+                }}
+              >
                 <img
-                  src="/src/assets/reply-arrow.png"
+                  src="/src/assets/icons/quotation-right-mark.png"
                   alt=""
-                  className="h-4 w-4"
+                  className="mt-[2px] h-[13px] w-[13px]"
                 />
-              </a>
-              <a href="#">
+              </div>
+              <div
+                onClick={() => {
+                  setOpenDialog(true);
+                  setShareContent(message);
+                }}
+                className="cursor-pointer px-[2px]"
+              >
                 <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
-              </a>
+              </div>
               <a href="#">
                 <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
               </a>
@@ -335,7 +461,6 @@ const MessageDetail = ({
 
 export default MessageDetail;
 
-// // MessageDetail.js
 // import React, { useRef, useState } from "react";
 // import Avatar from "@mui/material/Avatar";
 // import Cookies from "universal-cookie";

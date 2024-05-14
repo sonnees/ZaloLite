@@ -1,0 +1,25 @@
+.checkboxcontainer {
+  display: inline-block;
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+.checkboxcontainer input {
+  display: none;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Đảm bảo rằng hình ảnh sẽ bao phủ toàn bộ kích thước của phần tử chứa nó */
+  height: 100%; /* Đảm bảo rằng hình ảnh sẽ bao phủ toàn bộ kích thước của phần tử chứa nó */
+  background-image: url("../icons/circle-shape.png");
+  background-size: cover; /* Đảm bảo rằng hình ảnh sẽ bao phủ toàn bộ kích thước của phần tử */
+  
+}
+
+.checkboxcontainer input:checked ~ .checkmark {
+  background-image: url("../icons/check-box-icon.png");
+}

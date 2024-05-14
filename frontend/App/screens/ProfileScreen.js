@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
-import { API_PROFILE, API_UpdateProfile } from '../api/API';
+import { API_PROFILE, API_UpdateProfile } from '../api/Api';
 
 
 export default function ProfileScreen() {
@@ -46,70 +46,70 @@ export default function ProfileScreen() {
   }, []);
 
   const handleChoosePhoto = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  console.log(result);
+
+  if (!result.cancelled) {
+    try {
+      const imageUrl = await handleUpload(result.assets[0].uri);
+      setSelectedImage(imageUrl);
+      setUserInfo(prevState => ({ ...prevState, avatar: imageUrl }));
+      await AsyncStorage.setItem('newAvatar', imageUrl);
+    } catch (error) {
+      console.error('Lỗi khi xử lý ảnh:', error);
+      Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi xử lý ảnh.');
+    }
+  }
+};
+
+const handleUpload = async (imageUri) => {
+  try {
+    const data = new FormData();
+    data.append('file', {
+      uri: imageUri,
+      type: 'image/jpeg',
+      name: 'avatar.jpg',
+    });
+    data.append('upload_preset', 'ZaloLife');
+    data.append('cloud_name', 'dbmkvqy3b');
+
+    const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
+      method: 'POST',
+      body: data,
     });
 
-    console.log(result);
-
-    if (!result.cancelled) {
-      try {
-        const imageUrl = await handleUpload(result.assets[0].uri);
-        setSelectedImage(imageUrl);
-        setUserInfo(prevState => ({ ...prevState, avatar: imageUrl }));
-        await AsyncStorage.setItem('newAvatar', imageUrl);
-      } catch (error) {
-        console.error('Lỗi khi xử lý ảnh:', error);
-        Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi xử lý ảnh.');
-      }
+    if (!response.ok) {
+      throw new Error('Failed to upload image to Cloudinary');
     }
-  };
 
-  const handleUpload = async (imageUri) => {
-    try {
-      const data = new FormData();
-      data.append('file', {
-        uri: imageUri,
-        type: 'image/jpeg',
-        name: 'avatar.jpg',
-      });
-      data.append('upload_preset', 'ZaloLife');
-      data.append('cloud_name', 'dbmkvqy3b');
+    const responseData = await response.json();
+    console.log('Upload successful:', responseData);
 
-      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
-        method: 'POST',
-        body: data,
-      });
+    const imageUrl = responseData.secure_url;
+    await AsyncStorage.setItem('newAvatar', imageUrl); // Lưu URL của ảnh mới vào AsyncStorage
+    setUserInfo(prevState => ({ ...prevState, avatar: imageUrl })); // Cập nhật state userInfo với URL của ảnh mới
+    setNewAvatar(imageUrl); // Cập nhật giá trị newAvatar với URL của ảnh mới
+    return imageUrl;
+  } catch (error) {
+    console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
+    throw error;
+  }
+};
 
-      if (!response.ok) {
-        throw new Error('Failed to upload image to Cloudinary');
-      }
-
-      const responseData = await response.json();
-      console.log('Upload successful:', responseData);
-
-      const imageUrl = responseData.secure_url;
-      await AsyncStorage.setItem('newAvatar', imageUrl); // Lưu URL của ảnh mới vào AsyncStorage
-      setUserInfo(prevState => ({ ...prevState, avatar: imageUrl })); // Cập nhật state userInfo với URL của ảnh mới
-      setNewAvatar(imageUrl); // Cập nhật giá trị newAvatar với URL của ảnh mới
-      return imageUrl;
-    } catch (error) {
-      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
-      throw error;
-    }
-  };
-
-
-
+  
+  
   const changeAvatar = async (imageUrl, token) => {
     try {
       const requestBody = {
         field: imageUrl,
       };
-
+  
       const response = await axios.post(API_UpdateProfile, requestBody, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -117,7 +117,7 @@ export default function ProfileScreen() {
         },
       });
       console.log('Response from API_UpdateProfile:', response.data);
-
+  
       if (response.status === 200) {
         console.log('Thay đổi avatar thành công');
         // Xử lý logic khi thay đổi avatar thành công
@@ -145,15 +145,15 @@ export default function ProfileScreen() {
 
     getNewAvatar();
   }, []);
-
-
-
+  
+  
+  
 
   return (
     <ImageBackground
       blurRadius={0}
       style={{ flex: 1 }}
-      source={require("../assets/cover_Image.jpg")}
+      source={require("../assets/Cover.jpg")}
     >
       <View style={{ flex: 1, flexDirection: "row" }}>
         <Image style={{ width: "7%", height: "30%", resizeMode: "contain", marginLeft: "5%", marginTop: "1%" }} source={require("../assets/back1.png")}
@@ -204,7 +204,7 @@ export default function ProfileScreen() {
       >
         <Image
           style={{ width: 100, height: 100, borderRadius: 50 }}
-          source={{ uri: selectedImage || newAvatar || userInfo.avatar }}
+          source={{ uri: userInfo.avatar || newAvatar|| selectedImage }}
         />
       </TouchableOpacity>
     </ImageBackground>

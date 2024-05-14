@@ -17,7 +17,10 @@
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
     "@react-native-async-storage/async-storage": "^1.21.0",
+<<<<<<< HEAD
     "@react-native-community/slider": "^4.5.2",
+=======
+>>>>>>> 800f53dc82002d8b5e803c59603ae1cb496d0e15
     "@react-native-picker/picker": "^2.6.1",
     "@react-navigation/bottom-tabs": "^6.5.14",
     "@react-navigation/drawer": "^6.6.9",

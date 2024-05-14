@@ -1,18 +1,11 @@
-import React, { memo, useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { GlobalContext } from '../context/GlobalContext';
+
 export default function OptionGroupScreen() {
-  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext)
-  let navigation = useNavigation();
-  const route = useRoute();
-  const conversationOpponent = route.params?.conversationOpponent;
-  const [chatName, setChatName] = useState(conversationOpponent?.name);
-  const [chatAvatar, setChatAvatar] = useState(conversationOpponent?.chatAvatar);
-  console.log('conversationOpponent: ', conversationOpponent);
-  // useEffect(() => {
-  //   navigation.navigate("OptionGroupScreen", { conversationOpponent: conversationOpponent });
-  // }, [myUserInfo]);
+  const navigation = useNavigation();
+  const { groupInfo } = useContext(GlobalContext);
 
 
   return (
@@ -30,10 +23,10 @@ export default function OptionGroupScreen() {
       <ScrollView>
         <View style={{ flex: 5.7, justifyContent: "center", alignItems: 'center', backgroundColor: "#FFFFFF" }}>
           <View style={{ marginTop: "5%" }}></View>
-          <Image style={{ width: 80, height: 80, borderRadius: 50, resizeMode: "contain" }} source={conversationOpponent.chatAvatar ? { uri: conversationOpponent.chatAvatar } : null}></Image>
+          <Image style={{width: 80, height: 80,borderRadius: 50, resizeMode: "contain"}} source={require("../assets/avata.jpg")}></Image>
           <View style={{ marginTop: "3%" }}></View>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 10 }}>
-            {conversationOpponent?.chatName}
+          Nhóm 7
           </Text>
           <View style={{ marginTop: "10%" }}></View>
         </View>
@@ -296,7 +289,6 @@ export default function OptionGroupScreen() {
 
 
         </View>
-
 
       </ScrollView>
     </SafeAreaView>

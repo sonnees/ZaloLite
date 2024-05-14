@@ -38,7 +38,10 @@ function App() {
             <Stack.Screen name='FriendRequestScreen' component={FriendRequestScreen} options={{ headerShown: false }} />
             <Stack.Screen name='ChatGroupScreen' component={ChatGroupScreen} options={{ headerShown: false }} />
             <Stack.Screen name='AddMemberScreen' component={AddMemberScreen} options={{ headerShown: false }} />
+<<<<<<< HEAD
             <Stack.Screen name='AddFriendRequestDetail' component={AddFriendRequestDetail} options={{ headerShown: false }} />
+=======
+>>>>>>> 800f53dc82002d8b5e803c59603ae1cb496d0e15
           </Stack.Navigator>
         </NavigationContainer>
       </SocketProvider>

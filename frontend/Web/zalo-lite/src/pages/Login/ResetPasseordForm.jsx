@@ -5,8 +5,11 @@
     import { auth } from "../../configs/firebaseConfig";
     import { RecaptchaVerifier, signInWithCredential, signInWithPhoneNumber } from "@firebase/auth";
     import { PhoneAuthProvider } from "firebase/auth";
+    import Cookies from "universal-cookie";
+    import { encryptData } from "../../utils/cookies";
 
     export default function ResetPasseordForm() {
+        const cookies = new Cookies();
         const navigate = useNavigate();
         const [password, setPassword] = useState("");
         const [newPassword, setNewPassword] = useState("");
@@ -82,7 +85,7 @@
             
             try {
             const response = await fetch(
-                "http://localhost:8081/api/v1/auth/reset-password",
+                `${process.env.HOST}/api/v1/auth/reset-password`,
                 {
                 method: "POST",
                 headers: {
@@ -100,9 +103,60 @@
             );
         
             if (response.ok) {
+
+                try {
+                    const res = await fetch(
+                      `${process.env.HOST}/api/v1/auth/authenticate`,
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          phoneNumber: phone,
+                          password: newPassword,
+                        }),
+                        // body: JSON.stringify({
+                        //   "phoneNumber": "0123456789",
+                        //   "password": "123"
+                        // }),
+                      },
+                    );
+              
+                    if (res.status==401) {
+                        console.error("Failed login");
+                        return ;
+                    }
+              
+                    if (res.ok) {
+                      // Xử lý khi API trả về thành công
+                      
+                      const token = await res.json();
+                      localStorage.setItem("token", token.field);
+                      // navigate('/app', {token: token.field});
+                      navigate("/app", {
+                        state: { token: token.field, phoneNumber: phone },
+                      });
+              
+                      //Lưu userID, token vào cookie
+                      setTokenInCookie(token.field);
+                      // console.log(token.field);
+                      setPhoneNumberInCookie(phone);
+              
+                      console.log("API call successful");
+                    } else {
+                      // Xử lý khi API trả về lỗi
+                      navigate("/auth/login");
+                      console.error("API call failed");
+                    }
+                  } catch (error) {
+                    // Xử lý lỗi khi gọi API
+                    navigate("/");
+                    console.error("Error calling API:", error);
+                  }
                 
-                navigate("/auth/login");
-                console.log("API call successful");
+                // navigate("/auth/login");
+                // console.log("API call successful");
             } else {
                 // Xử lý khi API trả về lỗi
                 navigate("/auth/login");
@@ -113,6 +167,34 @@
             navigate("/auth/login");
             console.error("Error calling API:", error);
             }
+        };
+
+
+    
+        const setTokenInCookie = (tokenValue) => {
+            const tokenEncoded = encryptData(tokenValue);
+            // Đặt cookie token với thời gian hết hạn là 1 ngày và các tùy chọn bảo mật
+            cookies.set("token", tokenValue, {
+                expires: new Date(Date.now() + 86400e3), // Thời gian hết hạn: 1 ngày
+                // secure: true, // Chỉ truy cập thông qua HTTPS
+                // sameSite: 'strict', // Giới hạn truy cập cookie trong cùng một trang web
+                // httpOnly: true // Ngăn chặn việc truy cập cookie bằng JavaScript
+            }); 
+        };
+      
+            // Hàm để mã hóa số điện thoại và đặt vào cookie
+        const setPhoneNumberInCookie = (phoneNumberValue) => {
+            // Mã hóa số điện thoại trước khi lưu vào cookie
+            const phoneNumberEncoded = encryptData(phoneNumberValue);
+            
+            // Tính toán thời gian hết hạn bằng cách thêm số lượng millisecond tương ứng với một ngày vào thời điểm hiện tại
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 1); // Thêm một ngày
+            
+            // Đặt cookie số điện thoại với thời gian hết hạn và các tùy chọn bảo mật
+            cookies.set("phoneNumber", phoneNumberValue, {
+                expires: expirationDate,
+            }); 
         };
 
     return (

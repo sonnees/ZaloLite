@@ -11,6 +11,7 @@ import { set } from "date-fns";
 import Cookies from "universal-cookie";
 import { decryptData, encryptData } from "../../../utils/cookies";
 import { useUser } from "../../../context/UserContext";
+import { message, Space } from "antd";
 
 // import fetch from "node-fetch";
 
@@ -40,7 +41,7 @@ function Navbar({ onNavbarReady }) {
       const fetchProfile = async () => {
         try {
           const response = await fetch(
-            `http://localhost:8081/api/v1/account/profile/${cookies.get("phoneNumber")}`,
+            `${process.env.HOST}/api/v1/account/profile/${cookies.get("phoneNumber")}`,
             {
               method: "GET",
               headers: {
@@ -59,6 +60,7 @@ function Navbar({ onNavbarReady }) {
           setAvatar(data.avatar);
           localStorage.setItem("avatar", data.avatar);
           localStorage.setItem("userID", data.userID);
+          localStorage.setItem("userName", data.userName);
           localStorage.setItem("user", JSON.stringify(data));
           localStorage.setItem("phone", phoneNumber);
           onNavbarReady(data.userID);
@@ -116,7 +118,7 @@ function Navbar({ onNavbarReady }) {
 
     // Đặt cookie userID với thời gian hết hạn và các tùy chọn bảo mật
     cookies.set("userID", userID, {
-      expires: expirationDate,
+      // expires: expirationDate,
       // Các tùy chọn bảo mật khác nếu cần
     });
   };
@@ -180,7 +182,7 @@ function Navbar({ onNavbarReady }) {
       const fetchProfile = async () => {
         try {
           const response = await fetch(
-            `http://localhost:8081/api/v1/account/profile/${phoneNumber}`,
+            `${process.env.HOST}/api/v1/account/profile/${phoneNumber}`,
             {
               method: "GET",
               headers: {
@@ -247,14 +249,104 @@ function Navbar({ onNavbarReady }) {
     }
   }, []);
   // console.log("avt:"+avatar);
+
+  const [socket, setSocket] = useState(null);
+  const [messageApi, contextHolder] = message.useMessage();
+  const showMessage = (type, content) => {
+    messageApi.open({
+      type: type,
+      content: content,
+      duration: 10,
+    });
+  };
+  // useEffect(() => {
+  //   if (userID2) {
+  //     const newSocket = new WebSocket(`ws://localhost:8082/ws/user/${userID2}`);
+  //     newSocket.onopen = () => {
+  //       console.warn(
+  //         "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+  //         userID2,
+  //         " OPENED IN navber",
+  //       );
+  //     };
+
+  //     newSocket.onmessage = (event) => {
+  //       const data = event.data;
+  //       function isJSON(data) {
+  //         try {
+  //           JSON.parse(data);
+  //           return true;
+  //         } catch (error) {
+  //           return false;
+  //         }
+  //       }
+  //       if (isJSON(data)) {
+  //         const jsonData = JSON.parse(data);
+  //         console.log("Message received +++++++++++++++++++++:", jsonData);
+  //         console.log("senderName", jsonData.senderName);
+  //         console.log("tum>>>>>>>>>", jsonData.tum);
+  //         // Xử lý dữ liệu được gửi đến ở đây
+  //         if (jsonData) {
+  //           const content = `Bạn có lời mới kết bạn mới từ ${jsonData.senderName}.`;
+  //           console.log("content", content);
+  //           showMessage("success", content);
+  //           console.log("Runnn");
+  //         }
+  //       } else {
+  //         // console.error("Received data is not valid JSON:", data);
+  //         // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
+  //       }
+  //     };
+
+  //     setSocket(newSocket);
+  //   }
+  // }, [userID2]);
+
   return (
-    <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
-      <nav className="w-full">
-        <ul className="grid w-full items-center justify-center">
-          <li className="pb-[14px]">
-            <div className="">
-              {profileData ? (
-                <Button
+    <>
+      {contextHolder}
+      <div className="fixed h-full w-16 bg-[#0091ff]  pt-[26px]">
+        <nav className="w-full">
+          <ul className="grid w-full items-center justify-center">
+            <li className="pb-[14px]">
+              <div className="">
+                {profileData ? (
+                  <Button
+                    id="fade-button"
+                    aria-controls={open ? "fade-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                    onClick={handleClick}
+                    disableTouchRipple
+                  >
+                    <div>
+                      <img
+                        src={localStorage.getItem("avatar")}
+                        className="h-12 w-12 rounded-full border "
+                        alt="avatar"
+                      />
+                    </div>
+                  </Button>
+                ) : (
+                  // Hiển thị một phần tử loading hoặc hình ảnh mặc định
+                  <Button
+                    id="fade-button"
+                    aria-controls={open ? "fade-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                    onClick={handleClick}
+                    disableTouchRipple
+                  >
+                    <div>
+                      <img
+                        src={avatar}
+                        className="w-14 rounded-full border "
+                        alt="avatar"
+                      />
+                    </div>
+                  </Button>
+                )}
+                {/* <Button
                   id="fade-button"
                   aria-controls={open ? "fade-menu" : undefined}
                   aria-haspopup="true"
@@ -264,181 +356,147 @@ function Navbar({ onNavbarReady }) {
                 >
                   <div>
                     <img
-                      src={localStorage.getItem("avatar")}
-                      className="h-12 w-12 rounded-full border "
-                      alt="avatar"
-                    />
-                  </div>
-                </Button>
-              ) : (
-                // Hiển thị một phần tử loading hoặc hình ảnh mặc định
-                <Button
-                  id="fade-button"
-                  aria-controls={open ? "fade-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
-                  onClick={handleClick}
-                  disableTouchRipple
-                >
-                  <div>
-                    <img
+                      // src="https://s120-ava-talk.zadn.vn/2/5/a/5/6/120/5ded83a5856f6d2af9fce6eac4b8d6d2.jpg"
                       src={avatar}
-                      className="w-14 rounded-full border "
+                      className="rounded-full border w-12 h-12"
                       alt="avatar"
                     />
                   </div>
-                </Button>
-              )}
-              {/* <Button
-                id="fade-button"
-                aria-controls={open ? "fade-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                onClick={handleClick}
-                disableTouchRipple
-              >
-                <div>
-                  <img
-                    // src="https://s120-ava-talk.zadn.vn/2/5/a/5/6/120/5ded83a5856f6d2af9fce6eac4b8d6d2.jpg"
-                    src={avatar}
-                    className="rounded-full border w-12 h-12"
-                    alt="avatar"
-                  />
-                </div>
-              </Button> */}
-              <Menu
-                id="fade-menu"
-                MenuListProps={{
-                  "aria-labelledby": "fade-button",
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                TransitionComponent={Fade}
-                anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "left" }}
-              >
-                <div className="px-4 text-sm ">
-                  <div className="py-2">
-                    <span className="text-lg font-medium text-[#081c36]">
-                      {userName ? userName : localStorage.getItem("userName")}
-                    </span>
-                  </div>
-                  <div className="w-[270px] border-y py-1 text-sm ">
-                    <MenuItem
-                      sx={{
-                        fontSize: 14,
-                        paddingLeft: 0,
-                        height: 36,
-                        color: "#081c36",
-                      }}
-                      onClick={handleOpenPopup}
-                    >
-                      Hồ sơ của bạn
-                    </MenuItem>
-                    <PopupWindow
-                      isOpen={isPopupOpen}
-                      onClose={handleClosePopup}
-                      data={JSON.parse(localStorage.getItem("user"))}
-                      phoneNumber={localStorage.getItem("phone")}
-                      token={localStorage.getItem("token")}
-                    />
-                    <MenuItem
-                      sx={{
-                        fontSize: 14,
-                        paddingLeft: 0,
-                        height: 36,
-                        color: "#081c36",
-                      }}
-                      onClick={handleClose}
-                    >
-                      Cài đặt
-                    </MenuItem>
-                  </div>
-                  <Link to="/auth/login">
-                    <MenuItem
-                      sx={{
-                        fontSize: 14,
-                        paddingLeft: 0,
-                        paddingTop: 1,
-                        height: 36,
-                        color: "#081c36",
-                      }}
-                      onClick={() => {
-                        handleClose(); // Đóng menu sau khi nhấp vào
-
-                        // Danh sách các tên cookie cần xoá
-                        const cookieNames = ["phoneNumber", "token", "userID"];
-
-                        // Lặp qua danh sách cookieNames và gọi hàm cookies.remove cho mỗi tên cookie
-                        cookieNames.forEach((cookieName) => {
-                          cookies.remove(cookieName, {
-                            path: "/",
-                            domain: "localhost",
+                </Button> */}
+                <Menu
+                  id="fade-menu"
+                  MenuListProps={{
+                    "aria-labelledby": "fade-button",
+                  }}
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  TransitionComponent={Fade}
+                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                  transformOrigin={{ vertical: "top", horizontal: "left" }}
+                >
+                  <div className="px-4 text-sm ">
+                    <div className="py-2">
+                      <span className="text-lg font-medium text-[#081c36]">
+                        {userName ? userName : localStorage.getItem("userName")}
+                      </span>
+                    </div>
+                    <div className="w-[270px] border-y py-1 text-sm ">
+                      <MenuItem
+                        sx={{
+                          fontSize: 14,
+                          paddingLeft: 0,
+                          height: 36,
+                          color: "#081c36",
+                        }}
+                        onClick={handleOpenPopup}
+                      >
+                        Hồ sơ của bạn
+                      </MenuItem>
+                      <PopupWindow
+                        isOpen={isPopupOpen}
+                        onClose={handleClosePopup}
+                        data={JSON.parse(localStorage.getItem("user"))}
+                        phoneNumber={localStorage.getItem("phone")}
+                        token={localStorage.getItem("token")}
+                      />
+                      <MenuItem
+                        sx={{
+                          fontSize: 14,
+                          paddingLeft: 0,
+                          height: 36,
+                          color: "#081c36",
+                        }}
+                        onClick={handleClose}
+                      >
+                        Cài đặt
+                      </MenuItem>
+                    </div>
+                    <Link to="/auth/login">
+                      <MenuItem
+                        sx={{
+                          fontSize: 14,
+                          paddingLeft: 0,
+                          paddingTop: 1,
+                          height: 36,
+                          color: "#081c36",
+                        }}
+                        onClick={() => {
+                          handleClose(); // Đóng menu sau khi nhấp vào
+  
+                          // Danh sách các tên cookie cần xoá
+                          const cookieNames = ["phoneNumber", "token", "userID"];
+  
+                          // Lặp qua danh sách cookieNames và gọi hàm cookies.remove cho mỗi tên cookie
+                          cookieNames.forEach((cookieName) => {
+                            cookies.remove(cookieName, {
+                              path: "/",
+                              domain: "localhost",
+                            });
+                            cookies.remove(cookieName, {
+                              path: "/auth",
+                              domain: "localhost",
+                            });
                           });
-                          cookies.remove(cookieName, {
-                            path: "/auth",
-                            domain: "localhost",
-                          });
-                        });
-
-                        // Lấy tất cả cookies
-                        // const allCookies = cookies.getAll();
-                        // console.log("++++++++++++++", allCookies);
-
-                        // Xoá tất cả cookies trong localStorage
-                        localStorage.clear();
-                      }}
-                    >
-                      Đăng xuất
-                    </MenuItem>
-                  </Link>
-                </div>
-              </Menu>
-            </div>
-          </li>
-
-          <li>
-            <Link
-              to="/app"
-              className={`flex justify-center p-4 py-5 ${
-                location.pathname.startsWith("/app") ? "bg-[#006edc]" : ""
-              }`}
-            >
-              <img
-                src={messageImage}
-                className="h-[24px] w-[24px] items-center justify-center"
-                alt="avatar"
-              />
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/contact"
-              className={`flex justify-center p-4 py-5 ${
-                location.pathname === "/contact" ? "bg-[#006edc]" : ""
-              }`}
-            >
-              <img
-                src={contactImage}
-                className="h-[24px] w-[24px]"
-                alt="avatar"
-              />
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/todo"
-              className={`flex justify-center p-4 py-5 ${
-                location.pathname === "/todo" ? "bg-[#006edc]" : ""
-              }`}
-            >
-              <img src={todoImage} className="h-[22px] w-[22px]" alt="avatar" />
-            </Link>
-          </li>
-        </ul>
-      </nav>
-    </div>
+  
+                          // Lấy tất cả cookies
+                          // const allCookies = cookies.getAll();
+                          // console.log("++++++++++++++", allCookies);
+  
+                          // Xoá tất cả cookies trong localStorage
+                          localStorage.clear();
+                        }}
+                      >
+                        Đăng xuất
+                      </MenuItem>
+                    </Link>
+                  </div>
+                </Menu>
+              </div>
+            </li>
+  
+            <li>
+              <Link
+                to="/app"
+                className={`flex justify-center p-4 py-5 ${
+                  location.pathname.startsWith("/app") ? "bg-[#006edc]" : ""
+                }`}
+              >
+                <img
+                  src={messageImage}
+                  className="h-[24px] w-[24px] items-center justify-center"
+                  alt="avatar"
+                />
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/contact"
+                className={`flex justify-center p-4 py-5 ${
+                  location.pathname === "/contact" ? "bg-[#006edc]" : ""
+                }`}
+              >
+                <img
+                  src={contactImage}
+                  className="h-[24px] w-[24px]"
+                  alt="avatar"
+                />
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/todo"
+                className={`flex justify-center p-4 py-5 ${
+                  location.pathname === "/todo" ? "bg-[#006edc]" : ""
+                }`}
+              >
+                <img src={todoImage} className="h-[22px] w-[22px]" alt="avatar" />
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </>
   );
 }
 
