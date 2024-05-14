@@ -14,6 +14,18 @@ import { useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { useUser } from "../context/UserContext";
 
+// Hàm để sao chép nội dung vào clipboard
+const copyToClipboard = (text) => {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      console.log("Copied to clipboard:", text);
+    })
+    .catch((err) => {
+      console.error("Failed to copy:", err);
+    });
+};
+
 const MessageDetail = ({
   message,
   chatAvatar,
@@ -111,16 +123,22 @@ const MessageDetail = ({
           Tin nhắn đã được thu hồi
         </div>
       );
-    } else if (contents && contents.length > 0) {
+    } else if (contents && contents.length == 1) {
       return contents.map((content, index) => {
         if (content.key === "image") {
           return (
-            <img
-              key={index}
-              src={content.value}
-              alt="Image"
-              className="mb-2 mr-2 h-auto max-w-[200px]"
-            />
+            <div key={index}>
+              <div className="absolute ml-3 mt-1 flex items-center justify-center rounded bg-[#787B7C] p-[1px] px-[2px]">
+                <span className="text-[10px] text-white">FHD</span>
+              </div>
+              <a href={content.value} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={content.value}
+                  alt="Image"
+                  className="-mr-3 h-auto max-w-[500px] rounded-md"
+                />
+              </a>
+            </div>
           );
         } else if (content.key === "text") {
           return (
@@ -138,7 +156,10 @@ const MessageDetail = ({
         } else if (
           content.key.startsWith("zip") ||
           content.key.startsWith("pdf") ||
-          content.key.startsWith("xlsx")
+          content.key.startsWith("xlsx") ||
+          content.key.startsWith("doc") ||
+          content.key.startsWith("docx") ||
+          content.key.startsWith("rar")
         ) {
           const [fileLabel, fileName, fileSize] = content.key.split("|");
           return (
@@ -150,9 +171,12 @@ const MessageDetail = ({
               fileKey={content.key}
             />
           );
-        } else if (content.key === "mp4") {
+        } else if (
+          content.key.startsWith("mp4") ||
+          content.key.startsWith("MP4")
+        ) {
           return (
-            <video key={index} controls className="h-auto max-w-[200px]">
+            <video key={index} controls className="h-auto max-w-[300px]">
               <source src={content.value} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
@@ -161,6 +185,48 @@ const MessageDetail = ({
           return <p key={index}>{content.value}</p>;
         }
         // return null;
+      });
+    } else if (contents && contents.length == 2) {
+      return contents.map((content, index) => {
+        if (content.key === "image") {
+          return (
+            <div key={index}>
+              <div className="absolute ml-3 mt-1 flex items-center justify-center rounded bg-[#787B7C] p-[1px] px-[2px]">
+                <span className="text-[10px] text-white">FHD</span>
+              </div>
+              <a href={content.value} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={content.value}
+                  alt="Image"
+                  // className="-mr-3 h-auto max-w-[200px] rounded-md"
+                  className="ml-2 h-[305px] w-[305px] rounded-md object-cover"
+                  style={{ maxWidth: "100%", maxHeight: "100%" }}
+                />
+              </a>
+            </div>
+          );
+        }
+      });
+    } else if (contents && contents.length > 1) {
+      return contents.map((content, index) => {
+        if (content.key === "image") {
+          return (
+            <div key={index}>
+              <div className="absolute ml-3 mt-1 flex items-center justify-center rounded bg-[#787B7C] p-[1px] px-[2px]">
+                <span className="text-[10px] text-white">FHD</span>
+              </div>
+              <a href={content.value} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={content.value}
+                  alt="Image"
+                  // className="-mr-3 h-auto max-w-[200px] rounded-md"
+                  className="mb-2 ml-2 h-[200px] w-[200px] rounded-md object-cover"
+                  style={{ maxWidth: "100%", maxHeight: "100%" }}
+                />
+              </a>
+            </div>
+          );
+        }
       });
     }
   };
@@ -208,7 +274,7 @@ const MessageDetail = ({
     if (message.userID === userIDFromCookies) {
       setOwnerMessage(localStorage.getItem("userName"));
     } else {
-      console.log("message.parentID", message.parentID);
+      // console.log("message.parentID", message.parentID);
       if (message.parentID != null) {
         const fetchInfoAccount = async () => {
           const response = await fetch(
@@ -233,11 +299,18 @@ const MessageDetail = ({
     identifyOwnerOfMessage();
   }, []);
 
+  const handleCopyMessage = () => {
+    if (message.contents[0].key) {
+      copyToClipboard(message.contents[0].value);
+    }
+    handleClose();
+  };
+
   return (
     <div
       ref={messageRef}
       id={message.messageID}
-      className={`relative mb-3 flex ${isHovered ? "group" : ""} ${
+      className={`relative mb-3 flex border ${isHovered ? "group" : ""} ${
         userID === userIDFromCookies ? "justify-end" : "justify-start"
       }`}
       onMouseEnter={handleMouseEnter}
@@ -247,80 +320,98 @@ const MessageDetail = ({
       {userID === userIDFromCookies && (
         <div className="flex w-[155px] items-end">
           {isHovered ? (
-            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
+            <div className="">
               <div
-                className="cursor-pointer "
-                onClick={() => {
-                  setOpenCompReplyInput(true);
-                  setShareContent(message);
-                  // console.log("messageID", message.messageID);
-                  setParentIdMsg(message.messageID);
-                  setUserIDReplyForCompReply(message.userID);
-                }}
+                className={`mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2 `}
               >
-                <img
-                  src="/src/assets/icons/quotation-right-mark.png"
-                  alt=""
-                  className="mt-[2px] h-[13px] w-[13px]"
-                />
-              </div>
-
-              <div
-                onClick={() => {
-                  setOpenDialog(true);
-                  setShareContent(message);
-                  // setParentIdMsg(message.messageID);
-                }}
-                className="cursor-pointer px-[2px]"
-              >
-                <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
-              </div>
-              <a href="#">
-                <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
-              </a>
-              <div onClick={handleClick} className="cursor-pointer px-[2px]">
-                <img src="/src/assets/option.png" alt="" className="h-4 w-4" />
-              </div>
-              <Menu
-                id="fade-menu"
-                MenuListProps={{
-                  "aria-labelledby": "fade-button",
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                TransitionComponent={Fade}
-              >
-                <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
-                <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
-                <MenuItem
+                <div
+                  className="cursor-pointer  opacity-80 hover:opacity-100"
                   onClick={() => {
-                    handleRecall(message.messageID);
-
-                    console.log("messageID thu hồi", message.messageID);
-                    setMessageDeletedID(message.messageID);
+                    setOpenCompReplyInput(true);
+                    setShareContent(message);
+                    // console.log("messageID", message.messageID);
+                    setParentIdMsg(message.messageID);
+                    setUserIDReplyForCompReply(message.userID);
                   }}
                 >
-                  Thu hồi
-                </MenuItem>
-                <MenuItem
+                  <img
+                    src="/src/assets/icons/quotation-right-mark.png"
+                    alt=""
+                    className="mt-[2px] h-[13px] w-[13px]"
+                  />
+                </div>
+
+                <div
                   onClick={() => {
-                    console.log("messageID thu hồi chỉ phía tôi là", message);
-                    handleHidenMessage(message.messageID);
-                    setMessageDeletedID(message.messageID);
+                    setOpenDialog(true);
+                    setShareContent(message);
+                    // setParentIdMsg(message.messageID);
                   }}
+                  className="cursor-pointer px-[2px] opacity-80 hover:opacity-100"
                 >
-                  Xoá chỉ ở phía tôi
-                </MenuItem>
-              </Menu>
+                  <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
+                </div>
+                <a href="#" className=" opacity-80 hover:opacity-100">
+                  <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
+                </a>
+                <div
+                  onClick={handleClick}
+                  className="cursor-pointer px-[2px]  opacity-70 hover:opacity-100"
+                >
+                  <img
+                    src="/src/assets/option.png"
+                    alt=""
+                    className="h-4 w-4"
+                  />
+                </div>
+                <Menu
+                  id="fade-menu"
+                  MenuListProps={{
+                    "aria-labelledby": "fade-button",
+                  }}
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  TransitionComponent={Fade}
+                  className="rounded-lg"
+                >
+                  <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
+                  <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleRecall(message.messageID);
+
+                      console.log("messageID thu hồi", message.messageID);
+                      setMessageDeletedID(message.messageID);
+                    }}
+                  >
+                    Thu hồi
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      console.log("messageID thu hồi chỉ phía tôi là", message);
+                      handleHidenMessage(message.messageID);
+                      setMessageDeletedID(message.messageID);
+                    }}
+                  >
+                    Xoá chỉ ở phía tôi
+                  </MenuItem>
+                </Menu>
+              </div>
+              {message.contents[0].key === "image" &&
+                message.contents.length > 1 && <div className="h-[40px]"></div>}
+              {message.contents[0].key === "image" &&
+                message.contents.length == 1 && (
+                  <div className="h-[40px]"></div>
+                )}
             </div>
-          ) : (
-            // <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
-            <></>
-          )}
+          ) : // <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
+          null}
         </div>
       )}
-      {message && message.hidden && message.hidden.includes(userID) ? null : (
+      {message && message.hidden && message.hidden.includes(userID) ? (
+        <span className="hidden">huy</span>
+      ) : (
         <>
           {userID !== userIDFromCookies && (
             <Avatar src={chatAvatar} alt="Avatar" className="mr-3" />
@@ -328,7 +419,11 @@ const MessageDetail = ({
           <div
             className={`${
               userID === userIDFromCookies ? "bg-[#E5EFFF]" : "bg-[#FFFFFF]"
-            } relative flex flex-col items-start rounded-md p-3 transition-all duration-300`}
+            } ${
+              message.contents[0].key === "image"
+                ? "max-w-[500px] bg-[rgb(164,190,235)]"
+                : ""
+            } relative flex max-w-screen-sm flex-col items-start rounded-md p-3 transition-all duration-300`}
           >
             <div className="flex-1 items-center">
               {message.parentID && message.parentID.contents ? (
@@ -365,22 +460,62 @@ const MessageDetail = ({
                     </div>
                   </div>
                 </div>
-              ) : (
-                <></>
-              )}
+              ) : null}
               {message.recall === true ? (
                 <div className="text-[15px] text-[#98A1AC]">
                   Tin nhắn đã được thu hồi
                 </div>
+              ) : message.contents[0].key === "image" &&
+                message.contents.length == 2 ? (
+                <>
+                  <div
+                    className={`${message.parentID ? "mt-2" : ""} ${
+                      userID !== userIDFromCookies ? "-mr-3" : ""
+                    } ${userID === userIDFromCookies ? "-ml-2" : ""} flex`}
+                  >
+                    {renderContent()}
+                  </div>
+                </>
+              ) : message.contents[0].key === "image" &&
+                message.contents.length > 1 ? (
+                <>
+                  <div
+                    className={`${
+                      message.parentID ? "mt-2" : ""
+                    } -mr-3 flex flex-wrap`}
+                  >
+                    {renderContent()}
+                  </div>
+                </>
               ) : (
-                <div className={message.parentID ? "mt-2" : ""}>
-                  {renderContent()}
-                </div>
+                <>
+                  <div className={`${message.parentID ? "mt-2" : ""}`}>
+                    {renderContent()}
+                  </div>
+                </>
               )}
             </div>
-            <span className="mt-3 text-xs text-gray-500">
-              {formattedTime(timestamp)}
-            </span>
+            {userID !== userIDFromCookies ? (
+              <span
+                className={`mt-3 text-xs text-gray-500 ${
+                  message.contents[0].key === "image"
+                    ? "-mr-3 mt-[4px] rounded-lg bg-slate-400 px-2 py-1 text-white"
+                    : ""
+                }`}
+              >
+                {formattedTime(timestamp)}
+              </span>
+            ) : (
+              <span
+                className={`mt-3 text-xs text-gray-500 ${
+                  message.contents[0].key === "image"
+                    ? "-mr-3 ml-auto mt-[4px] rounded-lg bg-slate-400 px-2 py-1 text-white"
+                    : ""
+                }`}
+              >
+                {formattedTime(timestamp)}
+              </span>
+            )}
             {hasEmotion && isHovered && isMyMessage && (
               <div className="absolute bottom-0 right-0 mb-1 mr-1">
                 <img
@@ -388,7 +523,7 @@ const MessageDetail = ({
                   alt="Emotion Icon"
                   className="h-4 w-4"
                 />
-              </div>
+              </div> //huy2
             )}
           </div>
         </>
@@ -396,59 +531,102 @@ const MessageDetail = ({
 
       {userID !== userIDFromCookies && (
         <div className="flex w-[155px] items-end">
-          {isHovered ? (
-            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
-              <div
-                className="cursor-pointer "
-                onClick={() => {
-                  setOpenCompReplyInput(true);
-                  setShareContent(message);
-                  setParentIdMsg(message.messageID);
-                  setUserIDReplyForCompReply(message.userID);
-                }}
-              >
-                <img
-                  src="/src/assets/icons/quotation-right-mark.png"
-                  alt=""
-                  className="mt-[2px] h-[13px] w-[13px]"
-                />
-              </div>
-              <div
-                onClick={() => {
-                  setOpenDialog(true);
-                  setShareContent(message);
-                }}
-                className="cursor-pointer px-[2px]"
-              >
-                <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
-              </div>
-              <a href="#">
-                <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
-              </a>
-              <div onClick={handleClick} className="cursor-pointer px-[2px]">
-                <img src="/src/assets/option.png" alt="" className="h-4 w-4" />
-              </div>
-              <Menu
-                id="fade-menu"
-                MenuListProps={{
-                  "aria-labelledby": "fade-button",
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                TransitionComponent={Fade}
-              >
-                <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
-                <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
-                <MenuItem
+          {isHovered &&
+          !(message && message.hidden && message.hidden.includes(userID)) ? (
+            <div>
+              <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
+                <div
+                  className="cursor-pointer  opacity-80 hover:opacity-100"
                   onClick={() => {
-                    handleHidenMessage(message.messageID);
-                    setMessageDeletedID(message.messageID);
+                    setOpenCompReplyInput(true);
+                    setShareContent(message);
+                    setParentIdMsg(message.messageID);
+                    setUserIDReplyForCompReply(message.userID);
                   }}
                 >
-                  Xoá chỉ ở phía tôi
-                </MenuItem>
-              </Menu>
+                  <img
+                    src="/src/assets/icons/quotation-right-mark.png"
+                    alt=""
+                    className="mt-[2px] h-[13px] w-[13px]"
+                  />
+                </div>
+                <div
+                  onClick={() => {
+                    setOpenDialog(true);
+                    setShareContent(message);
+                  }}
+                  className="cursor-pointer px-[2px]  opacity-80 hover:opacity-100"
+                >
+                  <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
+                </div>
+                <a href="#" className=" opacity-80 hover:opacity-100">
+                  <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
+                </a>
+                <div
+                  onClick={handleClick}
+                  className="cursor-pointer px-[2px]  opacity-80 hover:opacity-100"
+                >
+                  <img
+                    src="/src/assets/option.png"
+                    alt=""
+                    className="h-4 w-4"
+                  />
+                </div>
+
+                <Menu
+                  id="fade-menu"
+                  MenuListProps={{
+                    "aria-labelledby": "fade-button",
+                  }}
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  TransitionComponent={Fade}
+                  className="rounded-lg"
+                >
+                  <MenuItem
+                    onClick={() => {
+                      handleCopyMessage();
+                      handleClose();
+                    }}
+                  >
+                    <img
+                      src="/src/assets/icons/copy.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className="text-tblack">Copy tin nhắn</span>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <img
+                      src="/src/assets/icons/push-pin.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className="text-tblack">Ghim tin nhắn</span>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleHidenMessage(message.messageID);
+                      setMessageDeletedID(message.messageID);
+                    }}
+                  >
+                    <img
+                      src="/src/assets/icons/delete.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className=" text-red-600">Xoá chỉ ở phía tôi</span>
+                  </MenuItem>
+                </Menu>
+              </div>
+              {/* //huy5 */}
+              {message.contents[0].key === "image" &&
+                message.contents.length > 1 && <div className="h-[40px]"></div>}
+              {message.contents[0].key === "image" &&
+                message.contents.length == 1 && (
+                  <div className="h-[40px]"></div>
+                )}
             </div>
           ) : (
             <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>

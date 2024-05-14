@@ -21,6 +21,7 @@ import {
 } from "@mui/material/styles";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import Fade from "@mui/material/Fade";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Switch from "@mui/material/Switch";
@@ -33,6 +34,11 @@ import countries from "../../data/countries";
 import { Axios } from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "../../context/UserContext";
+import { Slide } from "@mui/material";
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="up" />;
+}
 
 const theme = createTheme({
   palette: {
@@ -45,64 +51,24 @@ const theme = createTheme({
   },
 });
 
-const recentSearchesData = [
-  {
-    id: 1,
-    name: "John Doe",
-    avatar:
-      "https://eliteprschool.edu.vn/wp-content/uploads/2017/08/xay-dung-hinh-anh-doanh-nha-1.jpg",
-    phoneNumber: "(+84) 0987665148", // Số điện thoại bắt đầu bằng (+84)
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    avatar:
-      "https://cdn-i.vtcnews.vn/resize/th/upload/2023/10/13/anh-bao-chi--2-11095058.jpg",
-    phoneNumber: "(+84) 0987654321", // Số điện thoại bắt đầu bằng (+84)
-  },
-  // {
-  //   id: 3,
-  //   name: "Bob Johnson",
-  //   avatar: "https://i-ngoisao.vnecdn.net/2019/02/03/2-8472-1549155527.jpg",
-  //   phoneNumber: "(+84) 0876543210", // Số điện thoại bắt đầu bằng (+84)
-  // },
-];
-
-const suggestedFriendsData = [
-  {
-    id: 4,
-    name: "Alice Brown",
-    avatar:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_DjKMi_7kzPt42YrBCbvzm49EF6XXiXcBcpMmbb5LDQ&s",
-  },
-  {
-    id: 5,
-    name: "Charlie Green",
-    avatar:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGs2PdOdWFS33PmZco92XsZspbwRYRwrJRGup4QRq7cg&s",
-  },
-  {
-    id: 6,
-    name: "David White",
-    avatar:
-      "https://gcs.tripi.vn/public-tripi/tripi-feed/img/474014Zdb/anh-gai-xinh-cute-de-thuong-hot-girl-3.jpg",
-  },
-  // {
-  //   id: 7,
-  //   name: "Eva Black",
-  //   avatar:
-  //     "https://img.pikbest.com/png-images/qiantu/anime-character-avatar-cute-beautiful-girl-second-element-free-button_2652661.png!w700wp",
-  // },
-];
-
 // Function to open AddFriendDialog3
 function handleOpenDialog3(setOpenDialog) {
   setOpenDialog("dialog3");
 }
 
-const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
+const AddFriendDialog2 = ({
+  data,
+  setOpenDialog,
+  phoneNumber,
+  chatName,
+  chatAvatar,
+  setOpen,
+  setStatusF,
+}) => {
+  console.log("data", data);
   const dateTime = new Date(data.birthday);
   const conservation = JSON.parse(localStorage.getItem("conversations"));
+  console.log("conservation", conservation);
   const [type, setType] = useState("");
   const [conservationFriend, setConservationFriend] = useState([]);
 
@@ -118,8 +84,73 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
   }, [data]);
 
   console.log("type", type);
+  console.log("data", data);
 
-  const handleClose = () => {};
+  const handleClose = () => {
+    console.log("Close");
+  };
+
+  const sendMessage = () => {
+    const receiverID = data.userID;
+    const message = {
+      id: uuidv4(),
+      tum: "TUM04",
+      senderID: Cookies.get("userID"),
+      receiverID: receiverID,
+    };
+
+    if (data) {
+      const newSocket = new WebSocket(
+        `${process.env.SOCKET_CHAT}/ws/user/${receiverID}`,
+      );
+
+      newSocket.onopen = () => {
+        console.warn(
+          `WebSocket ${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
+          receiverID,
+          " OPENED",
+        );
+
+        // Gửi tin nhắn khi kết nối thành công
+        newSocket.send(JSON.stringify(message));
+        console.log("Message sent:", message);
+      };
+
+      newSocket.onmessage = (event) => {
+        console.log("Message received:", event.data);
+        // Xử lý dữ liệu được gửi đến ở đây
+      };
+
+      newSocket.onclose = () => {
+        console.warn(
+          `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
+          receiverID,
+          " CLOSED",
+        );
+      };
+    }
+  };
+
+  const handleUnfriend = () => {
+    console.log("Unfriend");
+    sendMessage();
+    setOpen(false);
+    // setType("UN");
+
+    // Tìm và cập nhật phần tử trong mảng
+    const updatedConversations = conservation.map((conversation) => {
+      if (conversation.chatName === data.userName) {
+        // Cập nhật lại thuộc tính type thành 'friend'
+        return { ...conversation, type: "STRANGER" };
+      }
+      return conversation;
+    });
+
+    // Lưu trở lại localStorage nếu cần
+    localStorage.setItem("conversations", JSON.stringify(updatedConversations));
+    setStatusF("STRANGER");
+  };
+
   return (
     <motion.div
       className="h-[551.5px] w-[400px]"
@@ -167,9 +198,21 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
               </div>
             ) : type === "FRIEND" ? (
               <div className="flex flex-1 items-center justify-center pt-[227px]">
+                <button
+                  className="mr-4 h-8 w-1/2 rounded border bg-[#EAEDF0] text-base font-medium text-tblack"
+                  onClick={() => {
+                    handleUnfriend();
+                  }}
+                >
+                  Huỷ kết bạn
+                </button>
                 <a
-                  href={`${process.env.SEFL_HOST}/app/chat?id=${conservationFriend[0].chatID}&type=individual-chat&chatName=${conservationFriend[0].chatName}&chatAvatar=${conservationFriend[0].chatAvatar}`}
-                  className="block w-full"
+                  className="block w-1/2"
+                  href={`${
+                    process.env.SEFL_HOST
+                  }/app/chat?id=${sessionStorage.getItem(
+                    "chatID",
+                  )}&type=individual-chat&chatName=${chatName}&chatAvatar=${chatAvatar}`}
                 >
                   <button className="h-8 w-full rounded border bg-[#E5EFFF] text-base font-medium text-[#005ae0]">
                     Nhắn tin
@@ -221,7 +264,7 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
                   {dateTime.getFullYear()}
                 </p>
               </div>
-              {type === "FRIEND" ? (
+              {/* {type === "FRIEND" ? (
                 <div className="flex pb-1 pt-3">
                   <p className="w-[100px] flex-grow text-sm text-gray-700">
                     Số điện thoại
@@ -232,7 +275,7 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
                 </div>
               ) : (
                 <></>
-              )}
+              )} */}
             </div>
           </div>
           <hr className="h-1.5 bg-slate-200" />
@@ -329,7 +372,13 @@ const AddFriendDialog3 = ({ data, updateText, text }) => {
 };
 
 /* Main */
-export default function AddFriendDialog() {
+export default function InforAccountdDialog({
+  userIDGuest,
+  chatIDToFind,
+  image,
+  forceRender,
+  setStatusF,
+}) {
   const defaultText = `Xin chào! Mình tìm thấy bạn bằng số điện thoại. Kết bạn với mình nhé!`;
   const [text, setText] = useState(defaultText);
   const [userID, setUserID] = useState("");
@@ -353,13 +402,7 @@ export default function AddFriendDialog() {
   const success = () => {
     messageApi.open({
       type: "success",
-      content: "This is a success message",
-    });
-  };
-  const warning = () => {
-    messageApi.open({
-      type: "warning",
-      content: "Số điện thoại chưa đăng ký tài khoản!",
+      content: "Thông báo thành công",
     });
   };
 
@@ -382,6 +425,20 @@ export default function AddFriendDialog() {
     return null;
   };
 
+  const [stateNotification, setStateNotification] = React.useState({
+    open: false,
+    Transition: Fade,
+    name: "",
+  });
+
+  const showMessage = (type, content) => {
+    messageApi.open({
+      type: type,
+      content: content,
+      duration: 10,
+    });
+  };
+
   useEffect(() => {
     if (userID) {
       const newSocket = new WebSocket(
@@ -396,7 +453,56 @@ export default function AddFriendDialog() {
       };
       newSocket.onmessage = (event) => {
         console.log("Message received:", event.data);
-        // Xử lý dữ liệu được gửi đến ở đây
+        const data = event.data;
+        function isJSON(data) {
+          try {
+            JSON.parse(data);
+            return true;
+          } catch (error) {
+            return false;
+          }
+        }
+        if (isJSON(data)) {
+          const jsonData = JSON.parse(data);
+          console.log("Message received:", jsonData);
+          console.log("senderName", jsonData.senderName);
+          console.log("tum>>>>>>>>>", jsonData.tum);
+          // Xử lý dữ liệu được gửi đến ở đây
+          if (jsonData && jsonData.tum === "TUM03") {
+            const content = `${jsonData.senderName} đã chấp nhận lời mời kết bạn!`;
+            console.log("content", content);
+            showMessage("success", content);
+            console.log("Runnn");
+            const conversations = JSON.parse(
+              localStorage.getItem("conversations"),
+            );
+
+            // Tìm và cập nhật phần tử trong mảng
+            const updatedConversations = conversations.map((conversation) => {
+              if (conversation.id_UserOrGroup === jsonData.senderID) {
+                // Cập nhật lại thuộc tính type thành 'friend'
+                return { ...conversation, type: "FRIEND" };
+              }
+              return conversation;
+            });
+
+            // Lưu trở lại localStorage nếu cần
+            localStorage.setItem(
+              "conversations",
+              JSON.stringify(updatedConversations),
+            );
+            setStatusF("Vừa đồng ý kết bạn với bạn");
+          } else if (jsonData) {
+            // setStateNotification({
+            //   open: true,
+            //   SlideTransition,
+            //   name: jsonData.senderName,
+            // });
+          }
+        } else {
+          // console.error("Received data is not valid JSON:", data);
+          // Xử lý dữ liệu không phải là JSON ở đây (nếu cần)
+        }
       };
       setSocket(newSocket);
 
@@ -405,10 +511,6 @@ export default function AddFriendDialog() {
       };
     }
   }, [userID]);
-
-  const [recentSearches, setRecentSearches] = useState(recentSearchesData);
-  const [suggestedFriends, setSuggestedFriends] =
-    useState(suggestedFriendsData);
 
   const [selectedCountryValue, setSelectedCountryValue] =
     useState(selectedCountry);
@@ -420,9 +522,8 @@ export default function AddFriendDialog() {
   const handleClose = () => {
     setCons(JSON.parse(localStorage.getItem("conversations")));
     setUserFound({});
-    setPhoneNumber("");
-    setOpenDialog("");
     setOpen(false);
+    setOpenDialog("dialog2");
   };
 
   const handleAddFriend = () => {
@@ -447,7 +548,9 @@ export default function AddFriendDialog() {
     console.log(selectedCountry);
   };
 
-  const handleFindUserByPhoneNumber = () => {
+  const handleFindUserByPhoneNumber = (id_UserOrGroup) => {
+    console.log("Runnnig");
+
     // Lấy token từ cookies
     const token = Cookies.get("token");
     // Kiểm tra xem token có tồn tại không
@@ -457,32 +560,67 @@ export default function AddFriendDialog() {
     }
 
     axios
-      .get(`${process.env.HOST}/api/v1/account/profile/${phoneNumber}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      .get(
+        `${process.env.HOST}/api/v1/account/profile/userID/${id_UserOrGroup}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      })
+      )
       .then((response) => {
         console.log(response.data);
         setUserFound(response.data);
         // Kiểm tra nếu tìm thấy người dùng
         if (response.data) {
-          setOpenDialog("dialog2"); // Mở dialog khác
+          console.log("=====================");
+          //   setOpenDialog("dialog2"); // Mở dialog khác
           // setOpenDialog("dialog2");
-        } else {
-          warning();
         }
       })
       .catch((error) => {
         // Bắt lỗi 404
         if (error.response && error.response.status === 404) {
-          warning();
           console.error("User not found with the provided phone number.");
         } else {
           console.error("Error searching user by phone number:", error);
         }
       });
   };
+
+  useEffect(() => {
+    setOpenDialog("dialog2");
+  }, []);
+
+  useEffect(() => {
+    const conservations = JSON.parse(localStorage.getItem("conversations"));
+    const conversation = conservations.find(
+      (item) => item.chatID === chatIDToFind,
+    );
+    var id_UserOrGroup = null;
+    if (conversation) {
+      id_UserOrGroup = conversation.id_UserOrGroup;
+      console.log("id_UserOrGroup:", id_UserOrGroup);
+    } else {
+      console.log("Không tìm thấy conversation với chatID:", chatIDToFind);
+    }
+    handleFindUserByPhoneNumber(id_UserOrGroup);
+  }, [chatIDToFind, forceRender]);
+
+  //   useEffect(() => {
+  //     const conservations = JSON.parse(localStorage.getItem("conversations"));
+  //     const conversation = conservations.find(
+  //       (item) => item.chatID === chatIDToFind,
+  //     );
+  //     var id_UserOrGroup = null;
+  //     if (conversation) {
+  //       id_UserOrGroup = conversation.id_UserOrGroup;
+  //       console.log("id_UserOrGroup:", id_UserOrGroup);
+  //     } else {
+  //       console.log("Không tìm thấy conversation với chatID:", chatIDToFind);
+  //     }
+  //     handleFindUserByPhoneNumber(id_UserOrGroup);
+  //   }, [userID]); // Chỉ sử dụng userID làm dependency
 
   const sendMessage = () => {
     const receiverID = userFound.userID;
@@ -540,19 +678,17 @@ export default function AddFriendDialog() {
   // const handleSendFriendRequest = () => {
   //   console.log("Send friend request to: ", text);
   // };
-
+  console.log(">>>>>>>>>>>>>>>>>>>>>>", openDialog);
   return (
     <ThemeProvider theme={theme}>
       {contextHolder}
-      <div className="relative ml-1 inline-block py-1">
+      <div className="relative inline-block">
         <Fragment>
-          <div className="w-8 px-1 hover:bg-gray-200">
+          <div className="">
             <img
-              src="/src/assets/user-plus.png"
-              alt=""
-              // className="w-[22px] cursor-pointer items-center justify-center"
-              className="cursor-pointer items-center justify-center"
-              style={{ width: "100%", height: "100%" }}
+              src={image}
+              alt="ZaloLite Logo"
+              className=" h-[56px] w-[56px] rounded-full"
             />
           </div>
           <Dialog open={open} onClose={handleClose}>
@@ -565,11 +701,7 @@ export default function AddFriendDialog() {
                 <span className="pl-2 text-base font-medium text-tblack">
                   Thông tin tài khoản
                 </span>
-              ) : (
-                <span className="pl-2 text-base font-medium text-tblack">
-                  Thêm bạn
-                </span>
-              )}
+              ) : null}
               <Button onClick={handleClose} style={{ color: "#000000" }}>
                 <CloseIcon />
               </Button>
@@ -581,6 +713,10 @@ export default function AddFriendDialog() {
                   // handleShowDialog3={handleOpenDialog3}
                   setOpenDialog={setOpenDialog}
                   phoneNumber={phoneNumber}
+                  chatName={userFound.userName}
+                  chatAvatar={userFound.avatar}
+                  setOpen={setOpen}
+                  setStatusF={setStatusF}
                 ></AddFriendDialog2>
               ) : openDialog === "dialog3" ? (
                 <AddFriendDialog3
@@ -588,100 +724,9 @@ export default function AddFriendDialog() {
                   updateText={updateDisplayText}
                   text={text}
                 ></AddFriendDialog3>
-              ) : (
-                <div className="flex items-center justify-center">
-                  <div className="mt-1 w-1/3">
-                    <Select
-                      size="small"
-                      value={selectedCountry.code}
-                      onChange={handleSelectCountry}
-                      renderValue={(selected) => {
-                        return (
-                          <div className="flex items-center py-[1.5px]">
-                            <span className="text-3xl text-tblack">
-                              {selectedCountry.flag}
-                            </span>
-                            <span className=" pl-1 text-sm text-tblack">
-                              ({selectedCountry.dial_code})
-                            </span>
-                          </div>
-                        );
-                      }}
-                      inputProps={{ "aria-label": "Without label" }}
-                    >
-                      {countries.map((country) => (
-                        <MenuItem key={country.code} value={country.code}>
-                          <div className="flex  w-full">
-                            <div className="flex-none">
-                              <span>{country.flag}</span>
-                            </div>
-                            <div className="flex-1">
-                              <span>{country.name}</span>
-                            </div>
-                            <div className="flex justify-end">
-                              <span>{country.dial_code}</span>
-                            </div>
-                          </div>
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </div>
-                  <div className="w-2/3">
-                    <TextField
-                      required
-                      margin="dense"
-                      id="phoneNumber"
-                      label="Số điện thoại"
-                      type="number"
-                      fullWidth
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      inputRef={phoneNumberInputRef} // Đặt ref của input
-                    />
-                  </div>
-                </div>
-              )}
-              <div
-                className={
-                  openDialog === "dialog2" || openDialog === "dialog3"
-                    ? "mt-3 hidden"
-                    : "mt-3"
-                }
-              >
-                <span className="text-[13px] text-[#7589A3]">
-                  Kết quả gần nhất
-                </span>
-                <ul>
-                  {recentSearches.map((data, index) => (
-                    <AvatarNameItem key={index} data={data} type={"AF"} />
-                  ))}
-                </ul>
-              </div>
-              <div
-                className={
-                  openDialog === "dialog2" || openDialog === "dialog3"
-                    ? "mt-3 hidden"
-                    : "mt-3"
-                }
-              >
-                <div className="flex">
-                  <span>
-                    <img src="/user2.png" alt="" />
-                  </span>
-                  <span className="ml-2 text-[13px] text-[#7589A3]">
-                    Có thể bạn quen
-                  </span>
-                </div>
-                <ul>
-                  {suggestedFriends.map((friend, index) => (
-                    <AvatarNameItem key={index} data={friend} type={"MS"} />
-                  ))}
-                </ul>
-              </div>
+              ) : null}
             </DialogContent>
-            {openDialog === "dialog2" ? (
-              <></>
-            ) : openDialog === "dialog3" ? (
+            {openDialog === "dialog2" ? null : openDialog === "dialog3" ? (
               <DialogActions className="border p-4">
                 <div className="py-1">
                   <Button
@@ -732,47 +777,11 @@ export default function AddFriendDialog() {
                   </Button>
                 </div>
               </DialogActions>
-            ) : (
-              <DialogActions className="border p-4">
-                <div className="py-1">
-                  <Button
-                    onClick={handleClose}
-                    variant="contained"
-                    color="silver"
-                    style={{
-                      textTransform: "none",
-                      color: "#081c36",
-                      fontSize: 16,
-                      fontWeight: 500,
-                      marginRight: 10,
-                    }}
-                  >
-                    Huỷ
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      // handleAddFriend();
-                      handleFindUserByPhoneNumber();
-                    }}
-                    variant="contained"
-                    color="primary"
-                    style={{
-                      textTransform: "none",
-                      color: "white",
-                      fontSize: 16,
-                      fontWeight: 500,
-                      marginRight: 10,
-                    }}
-                  >
-                    Tìm kiếm
-                  </Button>
-                </div>
-              </DialogActions>
-            )}
+            ) : null}
           </Dialog>
         </Fragment>
         <div
-          className="absolute inset-0 cursor-pointer rounded-md bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10"
+          className="absolute inset-0 cursor-pointer rounded-[50%] bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10"
           onClick={() => {
             handleClickOpen();
             setUserID(getUserIDFromCookie());
