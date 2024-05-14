@@ -1,23 +1,25 @@
-### frontend ###
-frontend/App/node_modules/
-frontend/App/.expo/
-frontend/App/dist/
-frontend/App/web-build/
-frontend/App/*.orig.*
-frontend/App/*.jks
-frontend/App/*.p8
-frontend/App/*.p12
-frontend/App/*.key
-frontend/App/*.mobileprovision
-frontend/App/.metro-health-check*
-frontend/App/npm-debug.*
-frontend/App/yarn-debug.*
-frontend/App/yarn-error.*
-frontend/App/.DS_Store
-frontend/App/*.pem
-frontend/App/.env*.local
-frontend/App/*.tsbuildinfo
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-backend/.idea
-shared
+node_modules
+dist
+dist-ssr
+*.local
 
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+env.js
