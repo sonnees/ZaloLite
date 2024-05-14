@@ -22,13 +22,30 @@ const FileLinkInfor = ({ fileName, fileSize, fileURL, fileKey, fileTime }) => {
     }
   };
 
+  function convertFileSizeToDisplay(fileSize) {
+    const sizeStr = fileSize.trim();
+    const sizeInKB = parseInt(sizeStr.slice(0, -2)); // Lấy phần số trừ 2 ký tự cuối cùng ("KB")
+    const megabytes = sizeInKB / 1024;
+    if (megabytes > 1) {
+      return megabytes.toFixed(2) + " MB";
+    } else {
+      return sizeInKB + " KB";
+    }
+  }
+
   // Hàm render icon dựa trên loại file
   const renderFileIcon = (fileType) => {
     switch (fileType) {
       case "zip":
         return <img src="/zip.png" alt="Zip Icon" className="h-10 w-10" />;
       case "rar":
-        return <img src="/src/assets/icons/rar-file-format.png" alt="rar Icon" className="h-10 w-10" />;
+        return (
+          <img
+            src="/src/assets/icons/rar-file-format.png"
+            alt="rar Icon"
+            className="h-10 w-10"
+          />
+        );
       case "doc":
         return (
           <img
@@ -85,7 +102,9 @@ const FileLinkInfor = ({ fileName, fileSize, fileURL, fileKey, fileTime }) => {
           <p className="w-[265px] truncate text-sm font-semibold text-tblack">
             {fileName}
           </p>
-          <p className="mt-[2px] text-[13px] text-[#7589A3]">{fileSize}</p>
+          <p className="mt-[2px] text-[13px] text-[#7589A3]">
+            {convertFileSizeToDisplay(fileSize)}
+          </p>
         </div>
         <div className="ml-auto flex h-full flex-col">
           <div className="mt-4 self-end">

@@ -6,6 +6,17 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
   const [showPdfContent, setShowPdfContent] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
 
+  function convertFileSizeToDisplay(fileSize) {
+    const sizeStr = fileSize.trim();
+    const sizeInKB = parseInt(sizeStr.slice(0, -2)); // Lấy phần số trừ 2 ký tự cuối cùng ("KB")
+    const megabytes = sizeInKB / 1024;
+    if (megabytes > 1) {
+      return megabytes.toFixed(2) + " MB";
+    } else {
+      return sizeInKB + " KB";
+    }
+  }
+
   const getFileType = (fileKey) => {
     const fileExtension = fileKey.split("|")[0].split(".").pop().toLowerCase();
     return fileExtension;
@@ -83,7 +94,9 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
               <p className="text-sm font-semibold text-tblack">{fileName}</p>
             </div>
             <div>
-              <p className="mt-[2px] text-[13px] text-[#7589A3]">{fileSize}</p>
+              <p className="mt-[2px] text-[13px] text-[#7589A3]">
+                {convertFileSizeToDisplay(fileSize)}
+              </p>
             </div>
           </div>
         </div>
@@ -102,7 +115,9 @@ const FileLink = ({ fileName, fileSize, fileURL, fileKey }) => {
           <a href={fileURL} target="_blank">
             <div className="ml-2 mr-6">
               <p className="text-sm font-semibold text-tblack">{fileName}</p>
-              <p className="mt-[6px] text-[13px] text-[#7589A3]">{fileSize}</p>
+              <p className="mt-[6px] text-[13px] text-[#7589A3]">
+                {convertFileSizeToDisplay(fileSize)}
+              </p>
             </div>
           </a>
 

@@ -166,6 +166,38 @@ const Conversation = () => {
     }
   };
 
+  const uploadMultiImageToS3 = async (files) => {
+    try {
+      const uploadPromises = files.map(async (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        const response = await fetch("http://localhost:4000/upload", {
+          method: "POST",
+          body: formData,
+        });
+        if (!response.ok) {
+          throw new Error("Failed to upload file");
+        }
+        const responseData = await response.json();
+        return responseData.fileUrl;
+      });
+
+      const imageUrls = await Promise.all(uploadPromises);
+      const imageMessageArray = imageUrls.map((url) => ({
+        key: "image",
+        value: url,
+      }));
+
+      console.log("Image message END:", typeof imageMessageArray);
+      console.log("Image message END:", Array.isArray(imageMessageArray));
+      console.log("Image message END:", imageMessageArray);
+      sendMessageWithTextViaSocket(imageMessageArray, "multiImage");
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Xử lý lỗi ở đây
+    }
+  };
+
   const handleFileUpload = (file) => {
     const preset_key = "huydev09";
     const cloud_name = "djs0jhrpz";
@@ -204,7 +236,7 @@ const Conversation = () => {
   };
 
   // Hàm xử lý khi người dùng chọn ảnh
-  const handleImageSelection = (e) => {
+  const handleImageSelection2 = (e) => {
     const file = e.target.files[0];
     if (file) {
       handleFileUpload(file);
@@ -484,17 +516,32 @@ const Conversation = () => {
             key: "link",
             value: messageContent,
           });
+        } else if (contentType === "multiImage") {
+          console.log("MessageContent>>>>>>>>>>>>>>:", messageContent);
+          const clonedContent = messageContent.map((element) => ({
+            ...element,
+          }));
+          clonedContent.forEach((element) => {
+            message.contents.push({
+              key: "image",
+              value: element.value,
+            });
+          });
         }
       }
+      console.log("Message:", message);
 
       if (socketNew) {
         console.log("WebSocketNew connected");
-        socketNew.send(JSON.stringify(message));
+        if (message.contents.length > 0)
+          socketNew.send(JSON.stringify(message));
+        else console.log("No content to send");
       } else {
         // console.log("WebSocket connected");
         setMessage(""); // Xóa nội dung của input message sau khi gửi
         setSentMessage(message); // Cập nhật state của sentMessage
-        socket.send(JSON.stringify(message));
+        if (message.contents.length > 0) socket.send(JSON.stringify(message));
+        else console.log("No content to send");
         console.log(message);
       }
     } else {
@@ -1089,6 +1136,29 @@ const Conversation = () => {
 
   const [statusF, setStatusF] = useState("");
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const files = Array.from(e.dataTransfer.files);
+    if (files && files.length > 0) {
+      console.log("Files:", files.toString());
+    }
+    uploadMultiImageToS3(files);
+  };
+
+  const handleImageSelection = (e) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      // console.log("Files:", files);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <>
@@ -1597,8 +1667,10 @@ const Conversation = () => {
                   : openSearchMessage && messages.length < 8
                     ? "h-[calc(100vh-176px)] pt-[90px]"
                     : "h-[calc(100vh-176px)]"
-              }  w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3`}
+              }  w-full flex-1 overflow-auto bg-[#A4BEEB] p-4 pr-3 `}
               // onScroll={handleScroll}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
             >
               {/* <Message sender="other" content="Xin chào!" timestamp="15:30" />
           <Message sender="me" content="Chào bạn!" timestamp="15:32" />
@@ -1678,21 +1750,24 @@ const Conversation = () => {
                       }}
                     />
                   </Box>
-                  <div className="mr-2 flex w-10 items-center justify-center">
-                    {/* Input file ẩn để chọn ảnh */}
+                  <div
+                    className="mr-2 flex w-10 items-center justify-center"
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                  >
                     <input
                       type="file"
                       accept="image/*"
+                      multiple
                       style={{ display: "none" }}
-                      onChange={handleImageSelection}
+                      onChange={handleImageSelection2}
                       id="fileInput2"
                     />
-                    {/* Hình ảnh để mở cửa sổ chọn tệp ảnh */}
                     <label htmlFor="fileInput2">
                       <img
                         src="/chatbar-photo.png"
                         alt=""
-                        className="h-[24px] w-[24px] cursor-pointer opacity-65  hover:opacity-100"
+                        className="h-[24px] w-[24px] cursor-pointer opacity-65 hover:opacity-100"
                       />
                     </label>
                   </div>
@@ -1846,7 +1921,7 @@ const Conversation = () => {
             </div>
           </div>
           {openRightBar && (
-            <div className="w-[440px] bg-[#FFFFFF] overflow-y-auto">
+            <div className="w-[440px] overflow-y-auto bg-[#FFFFFF]">
               <div className=" w-full flex-col items-center ">
                 <div className="flex h-[68px] w-full items-center justify-center border text-center">
                   <h1 className="m-2 p-3 text-[18px] font-[500] text-tblack">

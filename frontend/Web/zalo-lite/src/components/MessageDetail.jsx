@@ -111,16 +111,22 @@ const MessageDetail = ({
           Tin nhắn đã được thu hồi
         </div>
       );
-    } else if (contents && contents.length > 0) {
+    } else if (contents && contents.length == 1) {
       return contents.map((content, index) => {
         if (content.key === "image") {
           return (
-            <img
-              key={index}
-              src={content.value}
-              alt="Image"
-              className="-m-3 mb-3 mr-2 h-auto max-w-[500px] rounded-md"
-            />
+            <div key={index}>
+              <div className="absolute ml-3 mt-1 flex items-center justify-center rounded bg-[#787B7C] p-[1px] px-[2px]">
+                <span className="text-[10px] text-white">FHD</span>
+              </div>
+              <a href={content.value} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={content.value}
+                  alt="Image"
+                  className="-mr-3 h-auto max-w-[500px] rounded-md"
+                />
+              </a>
+            </div>
           );
         } else if (content.key === "text") {
           return (
@@ -158,7 +164,7 @@ const MessageDetail = ({
           content.key.startsWith("MP4")
         ) {
           return (
-            <video key={index} controls className="h-auto max-w-[500px]">
+            <video key={index} controls className="h-auto max-w-[300px]">
               <source src={content.value} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
@@ -167,6 +173,48 @@ const MessageDetail = ({
           return <p key={index}>{content.value}</p>;
         }
         // return null;
+      });
+    } else if (contents && contents.length == 2) {
+      return contents.map((content, index) => {
+        if (content.key === "image") {
+          return (
+            <div key={index}>
+              <div className="absolute ml-3 mt-1 flex items-center justify-center rounded bg-[#787B7C] p-[1px] px-[2px]">
+                <span className="text-[10px] text-white">FHD</span>
+              </div>
+              <a href={content.value} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={content.value}
+                  alt="Image"
+                  // className="-mr-3 h-auto max-w-[200px] rounded-md"
+                  className="ml-2 h-[305px] w-[305px] rounded-md object-cover"
+                  style={{ maxWidth: "100%", maxHeight: "100%" }}
+                />
+              </a>
+            </div>
+          );
+        }
+      });
+    } else if (contents && contents.length > 1) {
+      return contents.map((content, index) => {
+        if (content.key === "image") {
+          return (
+            <div key={index}>
+              <div className="absolute ml-3 mt-1 flex items-center justify-center rounded bg-[#787B7C] p-[1px] px-[2px]">
+                <span className="text-[10px] text-white">FHD</span>
+              </div>
+              <a href={content.value} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={content.value}
+                  alt="Image"
+                  // className="-mr-3 h-auto max-w-[200px] rounded-md"
+                  className="mb-2 ml-2 h-[200px] w-[200px] rounded-md object-cover"
+                  style={{ maxWidth: "100%", maxHeight: "100%" }}
+                />
+              </a>
+            </div>
+          );
+        }
       });
     }
   };
@@ -253,72 +301,86 @@ const MessageDetail = ({
       {userID === userIDFromCookies && (
         <div className="flex w-[155px] items-end">
           {isHovered ? (
-            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
+            <div className="">
               <div
-                className="cursor-pointer "
-                onClick={() => {
-                  setOpenCompReplyInput(true);
-                  setShareContent(message);
-                  // console.log("messageID", message.messageID);
-                  setParentIdMsg(message.messageID);
-                  setUserIDReplyForCompReply(message.userID);
-                }}
+                className={`mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2 `}
               >
-                <img
-                  src="/src/assets/icons/quotation-right-mark.png"
-                  alt=""
-                  className="mt-[2px] h-[13px] w-[13px]"
-                />
-              </div>
-
-              <div
-                onClick={() => {
-                  setOpenDialog(true);
-                  setShareContent(message);
-                  // setParentIdMsg(message.messageID);
-                }}
-                className="cursor-pointer px-[2px]"
-              >
-                <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
-              </div>
-              <a href="#">
-                <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
-              </a>
-              <div onClick={handleClick} className="cursor-pointer px-[2px]">
-                <img src="/src/assets/option.png" alt="" className="h-4 w-4" />
-              </div>
-              <Menu
-                id="fade-menu"
-                MenuListProps={{
-                  "aria-labelledby": "fade-button",
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                TransitionComponent={Fade}
-              >
-                <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
-                <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
-                <MenuItem
+                <div
+                  className="cursor-pointer "
                   onClick={() => {
-                    handleRecall(message.messageID);
-
-                    console.log("messageID thu hồi", message.messageID);
-                    setMessageDeletedID(message.messageID);
+                    setOpenCompReplyInput(true);
+                    setShareContent(message);
+                    // console.log("messageID", message.messageID);
+                    setParentIdMsg(message.messageID);
+                    setUserIDReplyForCompReply(message.userID);
                   }}
                 >
-                  Thu hồi
-                </MenuItem>
-                <MenuItem
+                  <img
+                    src="/src/assets/icons/quotation-right-mark.png"
+                    alt=""
+                    className="mt-[2px] h-[13px] w-[13px]"
+                  />
+                </div>
+
+                <div
                   onClick={() => {
-                    console.log("messageID thu hồi chỉ phía tôi là", message);
-                    handleHidenMessage(message.messageID);
-                    setMessageDeletedID(message.messageID);
+                    setOpenDialog(true);
+                    setShareContent(message);
+                    // setParentIdMsg(message.messageID);
                   }}
+                  className="cursor-pointer px-[2px]"
                 >
-                  Xoá chỉ ở phía tôi
-                </MenuItem>
-              </Menu>
+                  <img src="/src/assets/reply.png" alt="" className="h-4 w-4" />
+                </div>
+                <a href="#">
+                  <img src="/src/assets/todos.png" alt="" className="h-4 w-4" />
+                </a>
+                <div onClick={handleClick} className="cursor-pointer px-[2px]">
+                  <img
+                    src="/src/assets/option.png"
+                    alt=""
+                    className="h-4 w-4"
+                  />
+                </div>
+                <Menu
+                  id="fade-menu"
+                  MenuListProps={{
+                    "aria-labelledby": "fade-button",
+                  }}
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  TransitionComponent={Fade}
+                >
+                  <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
+                  <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleRecall(message.messageID);
+
+                      console.log("messageID thu hồi", message.messageID);
+                      setMessageDeletedID(message.messageID);
+                    }}
+                  >
+                    Thu hồi
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      console.log("messageID thu hồi chỉ phía tôi là", message);
+                      handleHidenMessage(message.messageID);
+                      setMessageDeletedID(message.messageID);
+                    }}
+                  >
+                    Xoá chỉ ở phía tôi
+                  </MenuItem>
+                </Menu>
+              </div>
+              {message.contents[0].key === "image" &&
+                message.contents.length > 1 && <div className="h-[40px]"></div>}
+              {message.contents[0].key === "image" &&
+                message.contents.length == 1 && (
+                  <div className="h-[40px]"></div>
+                )}
             </div>
           ) : (
             // <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
@@ -382,17 +444,39 @@ const MessageDetail = ({
                 <div className="text-[15px] text-[#98A1AC]">
                   Tin nhắn đã được thu hồi
                 </div>
+              ) : message.contents[0].key === "image" &&
+                message.contents.length == 2 ? (
+                <>
+                  <div
+                    className={`${message.parentID ? "mt-2" : ""} -mr-3 flex`}
+                  >
+                    {renderContent()}
+                  </div>
+                </>
+              ) : message.contents[0].key === "image" &&
+                message.contents.length > 1 ? (
+                <>
+                  <div
+                    className={`${
+                      message.parentID ? "mt-2" : ""
+                    } -mr-3 flex flex-wrap`}
+                  >
+                    {renderContent()}
+                  </div>
+                </>
               ) : (
-                <div className={`${message.parentID ? "mt-2" : ""}`}>
-                  {renderContent()}
-                </div>
+                <>
+                  <div className={`${message.parentID ? "mt-2" : ""}`}>
+                    {renderContent()}
+                  </div>
+                </>
               )}
             </div>
 
             <span
               className={`mt-3 text-xs text-gray-500 ${
                 message.contents[0].key === "image"
-                  ? "-mt-[6px] ml-auto rounded-lg bg-slate-400 px-2 py-1 text-white"
+                  ? "-mr-3 ml-auto mt-[4px] rounded-lg bg-slate-400 px-2 py-1 text-white"
                   : ""
               }`}
             >
@@ -445,6 +529,7 @@ const MessageDetail = ({
               <div onClick={handleClick} className="cursor-pointer px-[2px]">
                 <img src="/src/assets/option.png" alt="" className="h-4 w-4" />
               </div>
+
               <Menu
                 id="fade-menu"
                 MenuListProps={{

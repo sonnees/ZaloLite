@@ -50,7 +50,7 @@ function ChatElement({
   const [topChatToShow, setTopChatToShow] = useState("");
 
   const [messageContent, setMessageContent] = useState("");
-  const unreadCount = 1;
+  const unreadCount = 0;
 
   useEffect(() => {
     if (id) {
@@ -78,7 +78,7 @@ function ChatElement({
         }
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
-          // console.log("Message received in CHAT ELEMENT:", jsonData);
+          console.log("Message received in CHAT ELEMENT:", jsonData);
           if (jsonData.tcm === "TCM01") {
             // console.log(
             //   "Message received in CHAT ELEMENT:",
@@ -93,18 +93,16 @@ function ChatElement({
                 if (lastContent.key === "text") {
                   return lastContent.value;
                 } else if (lastContent.key === "image") {
-                  return (
-                    <span className="flex items-center">
-                      <img
-                        src="/src/assets/icons/image.png"
-                        alt=""
-                        className="h-[14px] w-[14px]"
-                      />
-                      &nbsp;Hình ảnh
-                    </span>
-                  );
-                } else if (lastContent.key === "file") {
-                  return "Tệp";
+                  return "Hình ảnh";
+                } else if (
+                  lastContent.key.startsWith("zip") ||
+                  lastContent.key.startsWith("pdf") ||
+                  lastContent.key.startsWith("xlsx") ||
+                  lastContent.key.startsWith("doc") ||
+                  lastContent.key.startsWith("docx") ||
+                  lastContent.key.startsWith("rar")
+                ) {
+                  return "File";
                 } else if (lastContent.key === "emoji") {
                   return lastContent.value;
                 } else {
@@ -157,7 +155,7 @@ function ChatElement({
         tokenFromCookies,
         timestamp,
       );
-      console.log(`>>>>>${chatName}>>>>>>>>`, fetchedMessages);
+      // console.log(`>>>>>${chatName}>>>>>>>>`, fetchedMessages);
       setTopChat(fetchedMessages[fetchedMessages.length - 1]);
       const topChat2 = fetchedMessages[fetchedMessages.length - 1];
       const topChatToShow = () => {
@@ -176,16 +174,31 @@ function ChatElement({
               &nbsp;Hình ảnh
             </span>
           );
-        } else if (lastContent.key === "file") {
-          return "Tệp";
+        } else if (
+          lastContent.key.startsWith("zip") ||
+          lastContent.key.startsWith("pdf") ||
+          lastContent.key.startsWith("xlsx") ||
+          lastContent.key.startsWith("doc") ||
+          lastContent.key.startsWith("docx") ||
+          lastContent.key.startsWith("rar")
+        ) {
+          return (
+            <span className="flex items-center">
+              <img
+                src="/src/assets/icons/file-default.png"
+                alt=""
+                className="h-[14px] w-[14px]"
+              />
+              &nbsp;File
+            </span>
+          );
         } else if (lastContent.key === "emoji") {
           return lastContent.value;
         } else {
           return "Tin nhắn mới";
         }
       };
-      if(topChat2)
-        setTopChatToShow(topChatToShow());
+      if (topChat2) setTopChatToShow(topChatToShow());
     };
     if (id && tokenFromCookies) fetchData();
   }, [id, tokenFromCookies]);
@@ -305,15 +318,14 @@ function ChatElement({
   const [readByOnClick, setReadByOnClick] = useState(false);
   const handOnClick = () => {
     setReadByOnClick(true);
-    console.log(">>>>>CHATNAME>>>>>>>>>", chatName);
-    console.log(">>>>>CHATID>>>>>>>>>", id);
+    // console.log(">>>>>CHATNAME>>>>>>>>>", chatName);
+    // console.log(">>>>>CHATID>>>>>>>>>", id);
     sessionStorage.setItem("chatID", id);
   };
 
   useEffect(() => {
     setReadByOnClick(false);
   }, [id]);
-
   return (
     <div
       onClick={() => {
@@ -323,7 +335,7 @@ function ChatElement({
         readByOnClick && id === sessionStorage.getItem("chatID")
           ? "bg-[#E1EDFE]"
           : ""
-      }  z-50 pl-4`}
+      }  z-50 pl-4 pr-1`}
     >
       {topChatActivity.length >= 0 ? (
         <div
@@ -359,7 +371,35 @@ function ChatElement({
                       <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
                         {/* {messageContent}
                         {newMessage} */}
-                        {newMessage.replace("t!@#%&*()_+", "")}
+                        {newMessage.includes("Hình ảnh") && (
+                          <>
+                            <span className="flex items-center">
+                              Bạn:&nbsp;
+                              <img
+                                src="/src/assets/icons/image.png"
+                                alt=""
+                                className="h-[14px] w-[14px]"
+                              />
+                              &nbsp;Hình ảnh
+                            </span>
+                          </>
+                        )}
+                        {newMessage.includes("File") && (
+                          <>
+                            <span className="flex items-center">
+                              Bạn:&nbsp;
+                              <img
+                                src="/src/assets/icons/file-default.png"
+                                alt=""
+                                className="h-[14px] w-[14px]"
+                              />
+                              &nbsp;File
+                            </span>
+                          </>
+                        )}
+                        {!newMessage.includes("Hình ảnh") &&
+                          !newMessage.includes("File") &&
+                          newMessage.replace("t!@#%&*()_+", "")}
                       </span>
                     </div>
                   </div>
@@ -425,9 +465,9 @@ function ChatElement({
               </div>
               {unreadCount != 0 ? (
                 <>
-                  {/* <div className="flex h-4 w-4 flex-grow items-center justify-center place-self-end rounded-full bg-[#C81A1F] text-white">
+                  <div className="flex h-4 w-4 flex-grow items-center justify-center place-self-end rounded-full bg-[#C81A1F] text-white">
                   <span className="text-xs">{unreadCount}</span>
-                </div> */}
+                </div>
                 </>
               ) : (
                 <></>
@@ -443,17 +483,3 @@ function ChatElement({
 }
 
 export default ChatElement;
-
-{
-  /* <div className="grid gap-y-1">
-  <div>
-    <span className="text-base text-[#081C36]">{userName}</span>
-  </div>
-  <div className="transition-min-width flex min-w-[calc(100vw-200px)] items-center text-sm text-[#7589A3] duration-200">
-    <span>Bạn:&nbsp;</span>
-    <span className="overflow-hidden truncate overflow-ellipsis whitespace-nowrap md:w-[175px]">
-      {messageContent}
-    </span>
-  </div>
-</div>; */
-}
