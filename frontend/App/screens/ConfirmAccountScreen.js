@@ -43,6 +43,7 @@ const CreatePasswordScreen = () => {
       if (response.status === 200) {
         // Quá trình đổi mật khẩu thành công
         // Hiển thị thông báo thành công ở đây
+        navigation.navigate('LoginNavigator', { screen: 'LoginScreen' });
         Alert.alert('Thành công', 'Đổi mật khẩu thành công.');
 
         // Đăng xuất tài khoản khi mật khẩu thay đổi (tùy thuộc vào logic ứng dụng của bạn)

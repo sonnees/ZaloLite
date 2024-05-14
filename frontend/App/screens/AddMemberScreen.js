@@ -212,7 +212,7 @@ const AddMemberScreen = () => {
 
 
   const saveGroupToBackend = async (newGroup) => {
-    const newSocket = new WebSocket('ws://192.168.1.10:8082/ws/group');
+    const newSocket = new WebSocket('ws://192.168.1.4:8082/ws/group');
 
     newSocket.onopen = () => {
       console.log("WebSocket connected");
