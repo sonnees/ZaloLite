@@ -5,9 +5,9 @@ import { host } from '../api/API';
 import { GlobalContext } from '../context/GlobalContext';
 import { findConversationByID } from '../utils/FindConservation';
 import uuid from 'react-native-uuid';
-export const MessageModal = ({ modalVisible, setModalVisible, item, conversationOpponent, myUserInfo, friend }) => {
+export const MessageModal = ({ modalVisible, setModalVisible, item, conversationOpponent, friend }) => {
     const [socket, setSocket] = useState(null);
-    const { setMyUserInfo, chatID, myProfile, setMyProfile, setComponentChatID, componentChatID } = useContext(GlobalContext);
+    const { setMyUserInfo, chatID, myProfile, setMyProfile, setComponentChatID, componentChatID,myUserInfo } = useContext(GlobalContext);
     let messageSocket = {};
     const firstMessageFlag = useRef(true);
 
@@ -63,7 +63,7 @@ export const MessageModal = ({ modalVisible, setModalVisible, item, conversation
                         const jsonData = JSON.parse(data);
                         if (jsonData.tcm === "TCM04" || jsonData.tcm === "TCM05") {
                             const newTopChatActivity = {
-                                messageID: jsonData.id,
+                                messageID: uuid.v4(),
                                 userID: jsonData.userID,
                                 timestamp: jsonData.timestamp,
                                 parentID: " ",
@@ -71,11 +71,10 @@ export const MessageModal = ({ modalVisible, setModalVisible, item, conversation
                                 hiden: [],
                                 recall: true,
                             }
-                            console.log("NEW MESSAGE", newTopChatActivity);
-                            if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
-                                conversationOpponent.topChatActivity.push(newTopChatActivity);
-                                console.log("ADD SUCCESS");
-                            }
+                            // if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
+                            //     conversationOpponent.topChatActivity.push(newTopChatActivity);
+                            //     console.log("ADD SUCCESS");
+                            // }
 
                             const updateConversationOpponentInUserInfo = () => {
                                 const updatedConversations = myUserInfo.conversations.map(conversation => {

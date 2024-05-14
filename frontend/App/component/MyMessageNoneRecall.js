@@ -45,7 +45,6 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                 setModalVisible={setModalVisible}
                 item={item}
                 conversationOpponent={conversationOpponent}
-                myUserInfo={myUserInfo}
                 friend={friend}
             />
             <TouchableOpacity
@@ -84,7 +83,6 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                 setModalVisible={setModalVisible}
                 item={item}
                 conversationOpponent={conversationOpponent}
-                myUserInfo={myUserInfo}
                 friend={friend}
             />
             <TouchableOpacity
@@ -205,7 +203,6 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                     setModalVisible={setModalVisible}
                     item={item}
                     conversationOpponent={conversationOpponent}
-                    myUserInfo={myUserInfo}
                     friend={friend}
                 />
                 <View>
@@ -265,7 +262,6 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                     setModalVisible={setModalVisible}
                     item={item}
                     conversationOpponent={conversationOpponent}
-                    myUserInfo={myUserInfo}
                     friend={friend}
                 />
                 <TouchableOpacity
@@ -378,7 +374,6 @@ const MyMessageNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                     setModalVisible={setModalVisible}
                     item={item}
                     conversationOpponent={conversationOpponent}
-                    myUserInfo={myUserInfo}
                     friend={friend}
                 />
                 <View>

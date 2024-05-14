@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
-import { API_PROFILE, API_UpdateProfile } from '../api/Api';
+import { API_PROFILE, API_UpdateProfile } from '../api/API';
 
 
 export default function ProfileScreen() {

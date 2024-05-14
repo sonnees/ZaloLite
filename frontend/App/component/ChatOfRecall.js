@@ -75,7 +75,6 @@ const ChatOfReCall = ({ item, conversationOpponent, friend }) => {
                     setModalVisible={setModalVisible}
                     item={item}
                     conversationOpponent={conversationOpponent}
-                    myUserInfo={myUserInfo}
                     friend={friend}
                 />
                 {item.contents.length > 1 ? (
@@ -147,7 +146,6 @@ const ChatOfReCall = ({ item, conversationOpponent, friend }) => {
                     setModalVisible={setModalVisible}
                     item={item}
                     conversationOpponent={conversationOpponent}
-                    myUserInfo={myUserInfo}
                     friend={friend}
                 />
                 <React.Fragment>
