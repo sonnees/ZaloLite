@@ -9,6 +9,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { message, Space } from "antd";
 import Cookies from "universal-cookie";
 import { useUser } from "../../context/UserContext";
+import axios from "axios";
 
 function SlideTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -23,7 +24,7 @@ function Message() {
   const [userIDFromCookies, setUserIDFromCookies] = useState(null);
   const [tokenFromCookies, setTokenFromCookies] = useState(null);
   const [flag, setFlag] = useState(false);
-  const { cons, setCons, userID } = useUser();
+  const { cons, setCons, userID, group, setGroup } = useUser();
 
   const [loadCons, setLoadCons] = useState(false);
 
@@ -78,7 +79,19 @@ function Message() {
           const jsonData = JSON.parse(data);
           console.log("Message received:", jsonData);
           // Xử lý dữ liệu được gửi đến ở đây
-          if (jsonData.tgm === "TGM01") {
+          if (jsonData.tgm === "TGM01"||jsonData.tgm=="TGM02"
+          ||jsonData.tgm=="TGM03"
+          ||jsonData.tgm=="TGM04"
+          ||jsonData.tgm=="TGM05"
+          ||jsonData.tgm=="TGM06"
+          ||jsonData.tgm=="TGM07"
+          ||jsonData.tgm=="TGM08"
+          ||jsonData.tgm=="TGM09"
+          ||jsonData.tgm=="TGM010"
+          ||jsonData.tgm=="TGM011"
+          ||jsonData.tgm=="TGM012"
+          ||jsonData.tgm=="TGM013"
+          ||jsonData.tgm=="TGM014") {
             setLoadCons(true);
           }
         } else {
@@ -110,21 +123,29 @@ function Message() {
 
       newSocket.onmessage = (event) => {
         const data = event.data;
-        function isJSON(data) {
-          try {
-            JSON.parse(data);
-            return true;
-          } catch (error) {
-            return false;
-          }
-        }
+        // let jsonData = JSON.parse(data);
+        // console.log("aaaaaaaaaa"+data);
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received:", jsonData);
           console.log("senderName", jsonData.senderName);
           console.log("tum>>>>>>>>>", jsonData.tum);
-          // Xử lý dữ liệu được gửi đến ở đây
-          if (jsonData && jsonData.tum === "TUM03") {
+          if (jsonData.tgm=="TGM02") {
+            navigate("/app")
+            setLoadCons(true);
+            fetchGroup(jsonData.idChat);
+            // fetchGroup(jsonData.idChat);
+          } else if (jsonData.tgm=="TGM06") {
+            if(jsonData.userID==userID) {
+              navigate("/app")
+            }
+            setLoadCons(true);
+            fetchGroup(jsonData.idChat);
+          } else if (jsonData.tgm=="TGM01"||jsonData.tgm=="TGM03"||jsonData.tgm=="TGM04"||jsonData.tgm=="TGM05"||jsonData.tgm=="TGM07"||jsonData.tgm=="TGM08"||jsonData.tgm=="TGM09"||jsonData.tgm=="TGM010"||jsonData.tgm=="TGM011"||jsonData.tgm=="TGM012"||jsonData.tgm=="TGM013"||jsonData.tgm=="TGM014") {
+            // console.log(jsonData);
+            setLoadCons(true);
+            fetchGroup(jsonData.idChat);
+          } else if (jsonData && jsonData.tum === "TUM03") {
             const content = `${jsonData.senderName} đã chấp nhận lời mời kết bạn!`;
             console.log("content", content);
             showMessage("success", content);
@@ -150,6 +171,55 @@ function Message() {
       setSocket(newSocket);
     }
   }, [userID]);
+
+  const fetchGroup = async(id) => {
+    try {
+      const response = await axios.get(
+        `${process.env.HOST}/api/v1/group/info?idGroup=${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+      console.log("Data:", response.data);
+      setGroup(response.data)
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      return [];
+    }
+  }
+
+  const reloadCons = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.HOST}/api/v1/user/info/${localStorage.getItem("userID")}`,
+        {
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          method: "GET",
+        },
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch conversations");
+      }
+      const data = await response.json();
+      // console.log(data);
+      localStorage.setItem(
+        "conversations",
+        JSON.stringify(data.conversations),
+      );
+      setCons(JSON.parse(localStorage.getItem("conversations")))
+      console.log(cons);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+    }
+  }
 
   const handleClose = () => {
     setStateNotification({
@@ -188,6 +258,7 @@ function Message() {
         // console.log("conversations", JSON.parse(conversations));
         setConversations(JSON.parse(conversations));
       }
+      reloadCons();
       setLoadCons(false);
     }
   }, [loadCons]);
@@ -347,9 +418,10 @@ function Message() {
     <>
       {contextHolder}
       <div className="h-[calc(100vh-95px)] w-full overflow-auto">
-        {conversations &&
-          conversations.map((conversation) => (
-            <Link
+        {conversations && conversations.map((conversation) => (
+          <Link key={conversation.chatID} to={{ pathname: conversation.type === 'GROUP' ? 'chatGroup' : 'chat', search: `?id=${conversation.chatID}&type=individual-chat&chatName=${conversation.chatName}&chatAvatar=${conversation.chatAvatar}`,}} className="block cursor-pointer hover:bg-slate-50">
+            <ChatElement
+              id={conversation.chatID}
               key={conversation.chatID}
               to={{
                 pathname: conversation.type === "GROUP" ? "chatGroup" : "chat",

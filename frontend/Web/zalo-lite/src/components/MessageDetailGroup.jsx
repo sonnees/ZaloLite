@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
 import queryString from "query-string";
 import { useUser } from "../context/UserContext";
+import { Box, Modal, Typography } from "@mui/material";
 
 const MessageDetailGroup = ({
   message,
@@ -179,6 +180,38 @@ const MessageDetailGroup = ({
     setIsHovered(true);
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleOpen = () => setIsOpen(true);
+  const toggleClose = () => {
+    setIsOpen(false)
+    setIsHovered(false);
+    handleClose();
+  };
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    return `${day}/${month}/${year} • ${hours}:${minutes}:${seconds}`;
+  };
+
   return (
     <div
       ref={messageRef}
@@ -221,6 +254,45 @@ const MessageDetailGroup = ({
               >
                 <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
                 <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
+                <MenuItem onClick={()=>{
+                  
+                  toggleOpen();
+                  // handleClose();
+                }}>Chi tiết tin nhắn</MenuItem>
+                
+                <Modal
+                  open={isOpen}
+                  onClose={toggleClose}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                      Thông tin tin nhắn
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                      {/* {JSON.stringify(message)} */}
+                      <div className="flex items-center mt-4">
+                        <img
+                          className="w-10 h-10 rounded-full mr-3"
+                          src={message.userAvatar}
+                          alt="User Avatar"
+                        />
+                        <div>
+                          <h3 className="font-bold">Nguyễn Văn Sơn</h3>
+                          <p className="text-gray-500 text-sm">{formatDate(message.timestamp)}</p>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-100 p-3 mt-4 rounded">
+                        { !message.recall ? <p>{message.contents[0].value}</p> : <p>Tin nhắn đã được thu hồi</p>}
+                      </div>
+                    </Typography>
+                  </Box>
+                </Modal>
+
+
+
                 <MenuItem
                   onClick={() => {
                     handleRecall(message.messageID);
@@ -315,6 +387,42 @@ const MessageDetailGroup = ({
               >
                 <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
                 <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
+                <MenuItem onClick={()=>{
+                  
+                  toggleOpen();
+                  // handleClose();
+                }}>Chi tiết tin nhắn</MenuItem>
+
+                <Modal
+                  open={isOpen}
+                  onClose={toggleClose}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                      Thông tin tin nhắn
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                      <div className="flex items-center mt-4">
+                        <img
+                          className="w-10 h-10 rounded-full mr-3"
+                          src={message.userAvatar}
+                          alt="User Avatar"
+                        />
+                        <div>
+                          <h3 className="font-bold">Nguyễn Văn Sơn</h3>
+                          <p className="text-gray-500 text-sm">{formatDate(message.timestamp)}</p>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-100 p-3 mt-4 rounded">
+                        { !message.recall ? <p>{message.contents[0].value}</p> : <p>Tin nhắn đã được thu hồi</p>}
+                      </div>
+                    </Typography>
+                  </Box>
+                </Modal>
+
                 <MenuItem
                   onClick={() => {
                     handleHidenMessage(message.messageID);
@@ -324,12 +432,15 @@ const MessageDetailGroup = ({
                   Xoá chỉ ở phía tôi
                 </MenuItem>
               </Menu>
-            </div>
+            </div> 
           ) : (
             <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
           )}
         </div>
+
+
       )}
+      
     </div>
   );
 };

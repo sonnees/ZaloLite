@@ -4,25 +4,32 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 import { faMobileScreen, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { useEffect } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Contact() {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/contact/listFriend")
+  }, [])
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
+    if (index ==0 ) {
+      navigate("/contact/listFriend")
+    } else if (index == 1 ) {
+      navigate("/contact/listGroup")
+    } else if (index == 2 ) {
+      navigate("/contact/listFriendRequest")
+    }
   };
 
   return (
-    <div className="h-full w-full flex-col border border-red-800 pr-4">
+    <div className="h-full w-full flex-col pr-4">
       <List className="my-0 p-0 ">
         <Link to="listFriend">
           <ListItemButton
@@ -35,7 +42,7 @@ function Contact() {
               <FontAwesomeIcon icon={faAddressBook} className="" />
             </ListItemIcon>
             <ListItemText
-              className="-ml-5 text-base font-bold"
+              className="-ml-5 text-base font-semibold text-tblack"
               primary="Danh sách bạn bè"
             />
           </ListItemButton>
@@ -51,7 +58,7 @@ function Contact() {
             <FontAwesomeIcon icon={faUserGroup} className="" />
           </ListItemIcon>
           <ListItemText
-            className="-ml-5 font-bold"
+            className="-ml-5 text-base font-semibold text-tblack"
             primary="Danh sách nhóm và cộng đồng"
           />
         </ListItemButton>
