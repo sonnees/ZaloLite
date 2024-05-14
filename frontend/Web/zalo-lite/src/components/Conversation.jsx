@@ -681,7 +681,8 @@ const Conversation = () => {
               });
               setMessages(updatedMessages);
             }
-            console.log("messageDeletedID ++++++++++", messageDeletedID);
+
+            // Recall One Side
             if (
               jsonData.tcm === "TCM00" &&
               messageDeletedID &&
@@ -692,8 +693,48 @@ const Conversation = () => {
               const updatedMessages = messages.filter(
                 (msg) => msg.messageID !== messageIDToDelete,
               );
+              setMessageDeletedID("");
               setMessages(updatedMessages);
               console.log("Updated messages after deleting:", updatedMessages);
+            }
+
+            if (
+              jsonData.tcm === "TCM00" &&
+              messageRecalledID &&
+              jsonData.typeNotify === "SUCCESS"
+            ) {
+              console.log(
+                "Recall message successfully>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+              );
+              // const messageIDToDelete = messageRecalledID;
+              // // Lọc ra các tin nhắn mà không có messageIDToDelete
+              // const updatedMessages = messages.filter(
+              //   (msg) => msg.messageID !== messageIDToDelete,
+              // );
+              // // setMessageRecalledID("");
+              // // setMessageDeletedID("");
+              // setMessages(updatedMessages);
+              // console.log("Updated messages after deleting:", updatedMessages);
+
+              const messageIDToRecall = messageRecalledID;
+              const updatedMessages = messages.map((msg) => {
+                if (
+                  msg.messageID === messageIDToRecall ||
+                  msg.id === messageIDToRecall
+                ) {
+                  // Thay đổi nội dung của tin nhắn thành "Tin nhắn đã được thu hồi"
+                  return {
+                    ...msg,
+                    contents: [
+                      { key: "text", value: "Tin nhắn đã được thu hồi" },
+                    ],
+                    recall: true, // Có thể đánh dấu tin nhắn này đã được thu hồi
+                  };
+                }
+                return msg;
+              });
+              setMessageRecalledID("");
+              setMessages(updatedMessages);
             }
           }
           // console.log("Message ++++++++++", messages);

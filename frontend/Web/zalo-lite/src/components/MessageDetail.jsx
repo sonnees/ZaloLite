@@ -442,7 +442,8 @@ const MessageDetail = ({
 
       {/* Content Hiển thị tin nhắn HuyDev */}
 
-      {message && message.hidden &&
+      {message &&
+      message.hidden &&
       message.hidden.includes(localStorage.getItem("userID")) ? null : (
         <>
           {userID !== userIDFromCookies && (
@@ -452,9 +453,14 @@ const MessageDetail = ({
             className={`${
               userID === userIDFromCookies ? "bg-[#E5EFFF]" : "bg-[#FFFFFF]"
             } ${
-              message.contents[0].key === "image"
-                ? "max-w-[500px] bg-[rgb(164,190,235)]"
-                : ""
+              message.contents[0].key === "image" &&
+              message.recall === true &&
+              userID === userIDFromCookies
+                ? "bg-[#E5EFFF]"
+                : message.contents[0].key === "image" &&
+                    message.recall === false
+                  ? "max-w-[500px] bg-[rgb(164,190,235)]"
+                  : "bg-[#E5EFFF]"
             } relative flex max-w-screen-sm flex-col items-start rounded-md p-3 transition-all duration-300`}
           >
             <div className="flex-1 items-center">
@@ -494,7 +500,7 @@ const MessageDetail = ({
                 </div>
               ) : null}
               {message.recall === true ? (
-                <div className="text-[15px] text-[#98A1AC]">
+                <div className="text-[15px] text-[#98A1AC] ">
                   Tin nhắn đã được thu hồi
                 </div>
               ) : message.contents[0].key === "image" &&
@@ -502,8 +508,8 @@ const MessageDetail = ({
                 <>
                   <div
                     className={`${message.parentID ? "mt-2" : ""} ${
-                      userID !== userIDFromCookies ? "-ml-5" : ""
-                    } ${userID === userIDFromCookies ? "-ml-2" : ""} flex`}
+                      userID !== userIDFromCookies ? "-ml-6" : ""
+                    } ${userID === userIDFromCookies ? "-mr-3" : ""} flex`}
                   >
                     {renderContent()}
                   </div>
@@ -527,7 +533,7 @@ const MessageDetail = ({
                   <div
                     className={`${
                       message.parentID ? "mt-2" : ""
-                    } -mr-3 flex flex-wrap ${
+                    }  flex flex-wrap ${
                       userID !== userIDFromCookies ? "-ml-3" : ""
                     }`}
                   >
@@ -549,7 +555,8 @@ const MessageDetail = ({
             {userID !== userIDFromCookies ? (
               <span
                 className={`mt-3 text-xs text-gray-500 ${
-                  message.contents[0].key === "image"
+                  message.contents[0].key === "image" &&
+                  message.recall === false
                     ? "-mr-3 mt-[4px] rounded-lg bg-slate-400 px-2 py-1 text-white"
                     : ""
                 }`}
@@ -559,7 +566,8 @@ const MessageDetail = ({
             ) : (
               <span
                 className={`mt-3 text-xs text-gray-500 ${
-                  message.contents[0].key === "image"
+                  message.contents[0].key === "image" &&
+                  message.recall === false
                     ? "-mr-3 ml-auto mt-[4px] rounded-lg bg-slate-400 px-2 py-1 text-white"
                     : ""
                 }`}
