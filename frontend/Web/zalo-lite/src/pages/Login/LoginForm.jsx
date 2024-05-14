@@ -65,16 +65,17 @@ export default function LoginForm() {
     }
   }
 
-  //=========================================================
-  function isJSON(str) {
-    try {
-      JSON.parse(str);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-  //=========================================================
+//=========================================================
+//   function isJSON(str) {
+//     try {
+//       JSON.parse(str);
+//       return true;
+//     } catch (e) {
+//       return false;
+//     }
+//   }
+// //=========================================================
+  
 
   useEffect(() => {
     // Gọi API ở đây
@@ -255,18 +256,16 @@ export default function LoginForm() {
               </div>
             </div>
 
-            <div className="-ml-2 w-full items-center">
-              <div className="mx-2 mb-2 flex w-full items-center border-b-2 py-4">
-                <FontAwesomeIcon icon={faLock} className="mx-3" />
-                <input
-                  id="input-password"
-                  placeholder="Mật khẩu"
-                  className="pr-17 mx-3 mr-1 w-full px-3 py-1 focus:outline-none"
-                  onChange={(event) => {
-                    setPassword(event.target.value);
-                  }}
-                ></input>
-              </div>
+            <div className="mx-2 mb-2 border-b-2 py-4">
+              <FontAwesomeIcon icon={faLock} className="mx-3" />
+              <input
+                id="input-password"
+                placeholder="Mật khẩu"
+                className="mx-3 px-3 w-64 focus:outline-none"
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                }}
+              ></input>
             </div>
 
             {flag && (
@@ -302,7 +301,13 @@ export default function LoginForm() {
 
             <p className="mt-8 flex-1 text-center text-xs font-light text-gray-700">
               <a
-                onClick={() => navigate("/auth/forgot-password")}
+                onClick={() => {
+                  if ( !flag ) {
+                    navigate('/auth/forgot-password')
+                  } else {
+                    navigate('/auth/forgot-password', {state: {phoneProp: phoneNumber}});
+                  }
+                }}
                 className="text-black-100 font-medium hover:underline"
               >
                 Quên mật khẩu?
