@@ -124,7 +124,7 @@ function Message() {
       newSocket.onmessage = (event) => {
         const data = event.data;
         // let jsonData = JSON.parse(data);
-        console.log("aaaaaaaaaa"+data);
+        // console.log("aaaaaaaaaa"+data);
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received:", jsonData);
