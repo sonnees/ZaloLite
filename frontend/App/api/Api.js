@@ -1,4 +1,4 @@
-export const Port = '192.168.0.246';
+export const Port = '192.168.1.4';
 
 export const API_AUTHENTICATE = `http://${Port}:8081/api/v1/auth/authenticate`;
 export const API_REGISTER = `http://${Port}:8081/api/v1/auth/register`;

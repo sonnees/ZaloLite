@@ -98,9 +98,10 @@ export default function Router() {
           path: "/contact",
           element: <SearchBox />,
           children: [
-            { path: "listFriend", element: <DetailContact /> },
-            { path: "", element: <DetailContact /> },
-            { path: "listGroup", element: <DetailContact /> },
+            { path: "listFriend", element: <DetailContact isListFriend={true}/> },
+            { path: "listGroup", element: <DetailContact isListFriend={false}/> },
+            { path: "listFriend/chat", element: <Conversation /> },
+            { path: "listGroup/chatGroup", element: <ConversationGroup /> },
             { path: "listfriendrequest", element: <TagFriendRequest /> },
           ],
         },
