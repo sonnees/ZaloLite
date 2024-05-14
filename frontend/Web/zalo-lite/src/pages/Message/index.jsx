@@ -150,8 +150,12 @@ function Message() {
             console.log("content", content);
             showMessage("success", content);
             console.log("Runnn");
-          } 
-          else if (jsonData) {
+          } else if (jsonData && jsonData.tum === "TUM04") {
+            // const content = `${jsonData.senderName} đã chấp nhận lời mời kết bạn!`;
+            console.log("content", jsonData);
+            // showMessage("success", content);
+            // console.log("Runnn");
+          } else if (jsonData) {
             setStateNotification({
               open: true,
               SlideTransition,
