@@ -87,12 +87,12 @@ const MessageDetail = ({
     // Replace this line with your WebSocket send function
 
     socket.send(JSON.stringify(recallMessage));
+    // setMessageDeletedID(recallMessage.id);
     console.log("Sending recall message:", recallMessage);
   };
 
   const hidenMessage = (messageID) => {
     const id = uuidv4();
-    setMessageRecalledID(id);
     const hiddenMessage = {
       id: id,
       tcm: "TCM04",
@@ -400,7 +400,8 @@ const MessageDetail = ({
                   <MenuItem
                     onClick={() => {
                       handleRecall(message.messageID);
-                      setMessageDeletedID(message.messageID);
+                      setMessageRecalledID(message.messageID);
+
                       console.log("messageID thu hồi", message.messageID);
                     }}
                   >
@@ -441,7 +442,8 @@ const MessageDetail = ({
 
       {/* Content Hiển thị tin nhắn HuyDev */}
 
-      {message && message.hidden && message.hidden.includes(userID) ? null : (
+      {message && message.hidden &&
+      message.hidden.includes(localStorage.getItem("userID")) ? null : (
         <>
           {userID !== userIDFromCookies && (
             <Avatar src={chatAvatar} alt="Avatar" className="mr-3" />
@@ -583,7 +585,11 @@ const MessageDetail = ({
       {userID !== userIDFromCookies && (
         <div className="flex w-[155px] items-end">
           {isHovered &&
-          !(message && message.hidden && message.hidden.includes(userID)) ? (
+          !(
+            message &&
+            message.hidden &&
+            message.hidden.includes(localStorage.getItem("userID"))
+          ) ? (
             <div>
               <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg bg-[#DDDBDB] p-1 px-2">
                 <div

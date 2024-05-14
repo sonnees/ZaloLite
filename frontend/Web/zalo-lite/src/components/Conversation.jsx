@@ -293,7 +293,7 @@ const Conversation = () => {
     const filteredConversations = conservation.filter(
       (chat) => chat.chatName === chatName,
     );
-    console.log("filteredConversations", filteredConversations);
+    // console.log("filteredConversations", filteredConversations);
     // setConservationFriend(filteredConversations);
     if (filteredConversations.length > 0) {
       setChatType(filteredConversations[0].type);
@@ -681,9 +681,10 @@ const Conversation = () => {
               });
               setMessages(updatedMessages);
             }
+            console.log("messageDeletedID ++++++++++", messageDeletedID);
             if (
               jsonData.tcm === "TCM00" &&
-              jsonData.id === messageRecalledID &&
+              messageDeletedID &&
               jsonData.typeNotify === "SUCCESS"
             ) {
               const messageIDToDelete = messageDeletedID;
@@ -713,6 +714,8 @@ const Conversation = () => {
     messageDeletedID,
     messageRecalledID,
   ]);
+
+  console.log("Messages:", messages);
 
   // Hàm cuộn xuống dưới cùng của khung chat
   const scrollToBottom = () => {
@@ -1106,7 +1109,7 @@ const Conversation = () => {
     console.log("ListImage:", messages);
   };
 
-  console.log("listLink:", listLink);
+  // console.log("listLink:", listLink);
 
   function formatDate(dateString) {
     const date = new Date(dateString);
