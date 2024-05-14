@@ -17,9 +17,9 @@ export default function DetailContact({isListFriend}) {
 
   const RenderItem = ({ data }) =>
     data.map((item, index) => (
-      <div key={index} className="py-4">
+      <div key={index} className="">
         <Link key={item.chatID} to={{ pathname: item.type === 'GROUP' ? 'chatGroup' : 'chat', search: `?id=${item.chatID}&type=individual-chat&chatName=${item.chatName}&chatAvatar=${item.chatAvatar}`, state: { prevPath: 'contact' },}} className="block cursor-pointer hover:bg-slate-50">
-          <div className="flex flex-row items-center p-4">
+          <div className="flex flex-row items-center p-2">
             <Avatar alt={item.chatAvatar} src={item.chatAvatar} className="m-4" />
             <div className="w-full border-b p-4 py-5">{item.chatName}</div>
           </div>
@@ -42,7 +42,7 @@ export default function DetailContact({isListFriend}) {
         </div>
 
         <div className="h-[700px] w-full overflow-auto bg-neutral-100 p-4 pr-2">
-          <div className="pb-4 font-medium">Bạn bè</div>
+          <div className="pb-4 font-medium">{isListFriend?(<span>Bạn bè</span>):(<span>Nhóm</span>)}</div>
 
           <div className="rounded-l bg-white p-4 ">
             <RenderItem data={data} />

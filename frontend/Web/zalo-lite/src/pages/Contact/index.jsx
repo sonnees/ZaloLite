@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Contact() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -29,7 +29,7 @@ function Contact() {
   };
 
   return (
-    <div className="h-full w-full flex-col border border-red-800 pr-4">
+    <div className="h-full w-full flex-col pr-4">
       <List className="my-0 p-0 ">
         <Link to="listFriend">
           <ListItemButton

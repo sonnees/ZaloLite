@@ -457,7 +457,7 @@ export default function AddFriendDialog() {
     }
 
     axios
-      .get(`http://localhost:8081/api/v1/account/profile/${phoneNumber}`, {
+      .get(`${process.env.HOST}/api/v1/account/profile/${phoneNumber}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

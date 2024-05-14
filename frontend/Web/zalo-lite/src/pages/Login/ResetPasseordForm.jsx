@@ -106,7 +106,7 @@
 
                 try {
                     const res = await fetch(
-                      "http://localhost:8081/api/v1/auth/authenticate",
+                      `${process.env.HOST}/api/v1/auth/authenticate`,
                       {
                         method: "POST",
                         headers: {

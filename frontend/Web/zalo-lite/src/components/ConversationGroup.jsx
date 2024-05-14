@@ -882,8 +882,8 @@ const ConversationGroup = () => {
       };
 
       socketGroup.send(JSON.stringify(outGroup));
-      sendMessageWithTextViaSocket(member.userName + " đã rời khỏi nhóm", "notify");
-      // console.log(create);
+      sendMessageWithTextViaSocket(user.userName + " đã rời khỏi nhóm", "notify");
+      console.log(create);
       reloadCons();
       fetchGroup();
       navigate("/App")
@@ -939,7 +939,7 @@ const ConversationGroup = () => {
       console.log(setAd);
       socketGroup.send(JSON.stringify(setAd));
       fetchGroup();
-      reloadCons();
+      // reloadCons();
       
     } else {
       console.error("WebSocket is not initialized.");
@@ -962,7 +962,7 @@ const ConversationGroup = () => {
       // console.log(create);
       
       fetchGroup();
-      reloadCons();
+      // reloadCons();
     } else {
       console.error("WebSocket is not initialized.");
     }
@@ -1010,8 +1010,6 @@ const ConversationGroup = () => {
         userName: member.userName,
         userAvatar: member.userAvatar,
       };
-
-      
 
       socketGroup.send(JSON.stringify(outGroup));
       // console.log(create);

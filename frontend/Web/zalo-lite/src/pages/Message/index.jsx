@@ -79,7 +79,19 @@ function Message() {
           const jsonData = JSON.parse(data);
           console.log("Message received:", jsonData);
           // Xử lý dữ liệu được gửi đến ở đây
-          if (jsonData.tgm === "TGM01") {
+          if (jsonData.tgm === "TGM01"||jsonData.tgm=="TGM02"
+          ||jsonData.tgm=="TGM03"
+          ||jsonData.tgm=="TGM04"
+          ||jsonData.tgm=="TGM05"
+          ||jsonData.tgm=="TGM06"
+          ||jsonData.tgm=="TGM07"
+          ||jsonData.tgm=="TGM08"
+          ||jsonData.tgm=="TGM09"
+          ||jsonData.tgm=="TGM010"
+          ||jsonData.tgm=="TGM011"
+          ||jsonData.tgm=="TGM012"
+          ||jsonData.tgm=="TGM013"
+          ||jsonData.tgm=="TGM014") {
             setLoadCons(true);
           }
         } else {
@@ -169,7 +181,7 @@ function Message() {
   const fetchGroup = async(id) => {
     try {
       const response = await axios.get(
-        `http://localhost:8082/api/v1/group/info?idGroup=${id}`,
+        `${process.env.HOST}/api/v1/group/info?idGroup=${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -189,7 +201,7 @@ function Message() {
   const reloadCons = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8082/api/v1/user/info/${localStorage.getItem("userID")}`,
+        `${process.env.HOST}/api/v1/user/info/${localStorage.getItem("userID")}`,
         {
           credentials: "include",
           headers: {
@@ -247,11 +259,11 @@ function Message() {
   // Sử dụng useEffect để lưu conversations vào localStorage khi component unmount
   useEffect(() => {
     if (loadCons) {
-      // const conversations = localStorage.getItem("conversations");
-      // if (conversations) {
-      //   // console.log("conversations", JSON.parse(conversations));
-      //   setConversations(JSON.parse(conversations));
-      // }
+      const conversations = localStorage.getItem("conversations");
+      if (conversations) {
+        // console.log("conversations", JSON.parse(conversations));
+        setConversations(JSON.parse(conversations));
+      }
       reloadCons();
       setLoadCons(false);
     }

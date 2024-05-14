@@ -100,7 +100,6 @@ export default function Router() {
           children: [
             { path: "listFriend", element: <DetailContact isListFriend={true}/> },
             { path: "listGroup", element: <DetailContact isListFriend={false}/> },
-            { path: "listFriendRequest", element: <DetailContact/> },
             { path: "listFriend/chat", element: <Conversation /> },
             { path: "listGroup/chatGroup", element: <ConversationGroup /> },
             { path: "listfriendrequest", element: <TagFriendRequest /> },
