@@ -117,7 +117,7 @@ const Conversation = () => {
 
   // Hàm xử lý khi chọn emoji từ picker
   const handleEmojiSelect = (emoji) => {
-    console.log("Emoji selected:", emoji);
+    // console.log("Emoji selected:", emoji);
     // Gửi emoji qua WebSocket
     sendMessageWithTextViaSocket(emoji, "emoji");
     // Đóng picker emoji sau khi chọn
@@ -129,7 +129,7 @@ const Conversation = () => {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:4000/upload", {
+      const response = await fetch(`${process.env.SERVICE_UPLOAD}`, {
         method: "POST",
         body: formData,
       });
@@ -171,7 +171,7 @@ const Conversation = () => {
       const uploadPromises = files.map(async (file) => {
         const formData = new FormData();
         formData.append("file", file);
-        const response = await fetch("http://localhost:4000/upload", {
+        const response = await fetch(`${process.env.SERVICE_UPLOAD}`, {
           method: "POST",
           body: formData,
         });
@@ -237,11 +237,16 @@ const Conversation = () => {
 
   // Hàm xử lý khi người dùng chọn ảnh
   const handleImageSelection2 = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handleFileUpload(file);
-      setContentType("image");
+    const file = e.target.files;
+    // if (file) {
+    //   handleFileUpload(file);
+    //   setContentType("image");
+    // }
+    const files = Array.from(file);
+    if (files && files.length > 0) {
+      console.log("Files:", files.toString());
     }
+    uploadMultiImageToS3(files);
   };
 
   // // Hàm xử lý khi người dùng chọn file
@@ -1754,9 +1759,15 @@ const Conversation = () => {
             {/* <div className="fixed z-30 -mt-[20px] flex w-full items-end justify-end bg-[#A4BEEB] ml-[850px] border pr-[1265px]"></div> */}
             {displayComposingMessage && (
               <div className="fixed z-30 -mt-[20px] flex w-full items-end justify-end bg-[#A4BEEB] pr-[415px]">
-                <span className="animate-wave text-sm text-white">
-                  {chatName}&nbsp;đang soạn tin...
-                </span>
+                {openCompReplyInput ? (
+                  <span className="animate-wave text-sm text-white">
+                    {chatName}&nbsp;đang soạn tin...
+                  </span>
+                ) : (
+                  <span className="animate-wave text-sm text-white">
+                    {chatName}&nbsp;đang soạn tin...
+                  </span>
+                )}
               </div>
             )}
             <div className="border-t">
@@ -1844,7 +1855,7 @@ const Conversation = () => {
                       type="file"
                       onChange={handleVideoChange}
                       className="hidden"
-                      accept=".mp4, .mov, .avi"
+                      accept=".mp4, .mov, .avi, .flv, .wmv, .mkv, .webm, .MP4"
                     />
                   </div>
                   <div className="mr-2 flex w-10 items-center justify-center">
