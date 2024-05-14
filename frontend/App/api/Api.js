@@ -12,6 +12,6 @@ export const API_PROFILE_BY_USERID = `http://${host}:8081/api/v1/account/profile
 export const API_INFOR_USER = `http://${host}:8082/api/v1/user/info/`;
 export const API_GET_LIST_CHATACTIVITY = `http://${host}:8082/api/v1/chat/x-to-y?id=`;
 
-export const CREATE_GROUP = `ws://${Port}:8082/ws/group`
+export const CREATE_GROUP = `ws://${host}:8082/ws/group`
 
 
