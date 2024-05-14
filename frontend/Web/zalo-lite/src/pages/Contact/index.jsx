@@ -42,7 +42,7 @@ function Contact() {
               <FontAwesomeIcon icon={faAddressBook} className="" />
             </ListItemIcon>
             <ListItemText
-              className="-ml-5 text-base font-bold"
+              className="-ml-5 text-base font-semibold text-tblack"
               primary="Danh sách bạn bè"
             />
           </ListItemButton>
@@ -58,7 +58,7 @@ function Contact() {
             <FontAwesomeIcon icon={faUserGroup} className="" />
           </ListItemIcon>
           <ListItemText
-            className="-ml-5 font-bold"
+            className="-ml-5 text-base font-semibold text-tblack"
             primary="Danh sách nhóm và cộng đồng"
           />
         </ListItemButton>

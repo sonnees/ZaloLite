@@ -883,7 +883,7 @@ const ConversationGroup = () => {
 
       socketGroup.send(JSON.stringify(outGroup));
       sendMessageWithTextViaSocket(user.userName + " đã rời khỏi nhóm", "notify");
-      console.log(create);
+      // console.log(create);
       reloadCons();
       fetchGroup();
       navigate("/App")

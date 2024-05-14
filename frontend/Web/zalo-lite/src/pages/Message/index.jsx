@@ -123,45 +123,35 @@ function Message() {
 
       newSocket.onmessage = (event) => {
         const data = event.data;
-        function isJSON(data) {
-          try {
-            JSON.parse(data);
-            return true;
-          } catch (error) {
-            return false;
-          }
-        }
-        if (jsonData && jsonData.tum === "TUM03") {
-          const content = `${jsonData.senderName} đã chấp nhận lời mời kết bạn!`;
-          console.log("content", content);
-          showMessage("success", content);
-          console.log("Runnn");
-        }
+        // let jsonData = JSON.parse(data);
+        console.log("aaaaaaaaaa"+data);
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
           console.log("Message received:", jsonData);
           console.log("senderName", jsonData.senderName);
           console.log("tum>>>>>>>>>", jsonData.tum);
-          // Xử lý dữ liệu được gửi đến ở đây
-          if (
-            jsonData.tgm=="TGM01"
-            ||jsonData.tgm=="TGM02"
-            ||jsonData.tgm=="TGM03"
-            ||jsonData.tgm=="TGM04"
-            ||jsonData.tgm=="TGM05"
-            ||jsonData.tgm=="TGM06"
-            ||jsonData.tgm=="TGM07"
-            ||jsonData.tgm=="TGM08"
-            ||jsonData.tgm=="TGM09"
-            ||jsonData.tgm=="TGM010"
-            ||jsonData.tgm=="TGM011"
-            ||jsonData.tgm=="TGM012"
-            ||jsonData.tgm=="TGM013"
-            ||jsonData.tgm=="TGM014"
-        ) {
+          if (jsonData.tgm=="TGM02") {
+            navigate("/app")
             setLoadCons(true);
             fetchGroup(jsonData.idChat);
-          } else if (jsonData) {
+            // fetchGroup(jsonData.idChat);
+          } else if (jsonData.tgm=="TGM06") {
+            if(jsonData.userID==userID) {
+              navigate("/app")
+            }
+            setLoadCons(true);
+            fetchGroup(jsonData.idChat);
+          } else if (jsonData.tgm=="TGM01"||jsonData.tgm=="TGM03"||jsonData.tgm=="TGM04"||jsonData.tgm=="TGM05"||jsonData.tgm=="TGM07"||jsonData.tgm=="TGM08"||jsonData.tgm=="TGM09"||jsonData.tgm=="TGM010"||jsonData.tgm=="TGM011"||jsonData.tgm=="TGM012"||jsonData.tgm=="TGM013"||jsonData.tgm=="TGM014") {
+            // console.log(jsonData);
+            setLoadCons(true);
+            fetchGroup(jsonData.idChat);
+          } else if (jsonData && jsonData.tum === "TUM03") {
+            const content = `${jsonData.senderName} đã chấp nhận lời mời kết bạn!`;
+            console.log("content", content);
+            showMessage("success", content);
+            console.log("Runnn");
+          } 
+          else if (jsonData) {
             setStateNotification({
               open: true,
               SlideTransition,
