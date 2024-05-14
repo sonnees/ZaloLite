@@ -8,7 +8,7 @@ export const GlobalProvider = ({ children }) => {
     const [myProfile, setMyProfile] = useState({})
     const [chatID, setChatID] = useState({})
     const [listChatID, setListChatID] = useState([])
-
+    const [componentChatID, setComponentChatID] = useState([])
     const logIn = async (token = "") => {
         if (!token.trim()) return;
 
@@ -31,10 +31,12 @@ export const GlobalProvider = ({ children }) => {
                 chatID,
                 listChatID,
                 myProfile,
+                componentChatID,
                 setMyProfile,
                 setMyUserInfo,
                 setChatID,
                 setListChatID,
+                setComponentChatID,
                 logIn,
                 logOut,
             }}

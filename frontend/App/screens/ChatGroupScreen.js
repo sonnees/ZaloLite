@@ -19,8 +19,11 @@ import BackgroundInChat from '../component/BackgroundInChat';
 const ChatGroupScreen = () => {
   let navigation = useNavigation();
   const route = useRoute();
-  const { myUserInfo, setMyUserInfo, chatID, myProfile, setMyProfile } = useContext(GlobalContext)
+  const { myUserInfo, setMyUserInfo, chatID, myProfile, setMyProfile,setComponentChatID } = useContext(GlobalContext)
   const componentChatID = route.params?.conversationOpponent.chatID;
+  useEffect(() => {
+    setComponentChatID(componentChatID);
+  }, [componentChatID]);
   // console.log("CHATID NE: ", componentChatID);
   const [conversationOpponent, setconversationOpponent] = useState([])
   // Xử lý ảnh và File
@@ -61,25 +64,25 @@ const ChatGroupScreen = () => {
 
   };
 
-
+  const fetchData = async () => {
+    const conversationData = findConversationByID(myUserInfo.conversations, componentChatID)
+    const fetchConversationOpponent = async (conversationOpponent) => {
+      const chatID = conversationOpponent.chatID;
+      const token = await AsyncStorage.getItem('token')
+      const chatData = await fetchAllChatbychatID(chatID, token);
+      const newChatData = getDataFromConversationsAndChatData(conversationOpponent, chatData);
+      if (newChatData) {
+        return newChatData;
+      }
+    }
+    const newData = await fetchConversationOpponent(conversationData)
+    setconversationOpponent(newData)
+    const token = await AsyncStorage.getItem('token');
+    // fetchProfileInfo(myUserInfo.id, token)
+  }
+  
   //Fectch Data
   useEffect(() => {
-    const fetchData = async () => {
-      const conversationData = findConversationByID(myUserInfo.conversations, componentChatID)
-      const fetchConversationOpponent = async (conversationOpponent) => {
-        const chatID = conversationOpponent.chatID;
-        const token = await AsyncStorage.getItem('token')
-        const chatData = await fetchAllChatbychatID(chatID, token);
-        const newChatData = getDataFromConversationsAndChatData(conversationOpponent, chatData);
-        if (newChatData) {
-          return newChatData;
-        }
-      }
-      const newData = await fetchConversationOpponent(conversationData)
-      setconversationOpponent(newData)
-      const token = await AsyncStorage.getItem('token');
-      // fetchProfileInfo(myUserInfo.id, token)
-    }
     fetchData()
   }, [myUserInfo]);
 
@@ -94,8 +97,34 @@ const ChatGroupScreen = () => {
         if (data.trim().startsWith('{')) {
           try {
             const jsonData = JSON.parse(data);
-            // console.log("Received JSON data:", jsonData);
-            if ((jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") || jsonData.tcm === "TCM01") {
+            if (jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") {
+              // console.log("NEW MESSAGE", messageSocket);
+              // // Kiểm tra nếu conversationOpponent.topChatActivity đã được khởi tạo và là một mảng
+              // if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
+              //   // Thực hiện phép toán push trên mảng
+              //   conversationOpponent.topChatActivity.push(messageSocket);
+              //   console.log("ADD SUCCESS");
+              // } else {
+              // }
+              // const updateConversationOpponentInUserInfo = () => {
+              //   const updatedConversations = myUserInfo.conversations.map(conversation => {
+              //     if (conversation.chatID === conversationOpponent.chatID) {
+              //       // Nếu tìm thấy conversationOpponent trong mảng conversations của myUserInfo
+              //       // Thực hiện cập nhật dữ liệu cho nó với dữ liệu mới từ conversationOpponent
+              //       return conversationOpponent;
+              //     } else {
+              //       // Nếu không tìm thấy, giữ nguyên dữ liệu
+              //       return conversation;
+              //     }
+              //   });
+              //   // Cập nhật lại mảng conversations trong myUserInfo với dữ liệu đã được cập nhật
+              //   setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
+              // };
+              // // Gọi hàm để cập nhật conversationOpponent trong myUserInfo
+              // updateConversationOpponentInUserInfo();
+              fetchData()
+            }
+            if (jsonData.tcm === "TCM01") {
               const newTopChatActivity = {
                 messageID: jsonData.id,
                 userID: jsonData.userID,
@@ -105,6 +134,39 @@ const ChatGroupScreen = () => {
                 hiden: [],
                 recall: false,
               }
+              console.log("NEW MESSAGE", newTopChatActivity);
+              // Kiểm tra nếu conversationOpponent.topChatActivity đã được khởi tạo và là một mảng
+              if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
+                // Thực hiện phép toán push trên mảng
+                conversationOpponent.topChatActivity.push(newTopChatActivity);
+                console.log("ADD SUCCESS");
+              } else {
+                // Nếu conversationOpponent.topChatActivity chưa được khởi tạo hoặc không phải là một mảng, thông báo lỗi
+                // console.log('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
+              }
+
+              const updateConversationOpponentInUserInfo = () => {
+                const updatedConversations = myUserInfo.conversations.map(conversation => {
+                  if (conversation.chatID === conversationOpponent.chatID) {
+                    // Nếu tìm thấy conversationOpponent trong mảng conversations của myUserInfo
+                    // Thực hiện cập nhật dữ liệu cho nó với dữ liệu mới từ conversationOpponent
+                    return conversationOpponent;
+                  } else {
+                    // Nếu không tìm thấy, giữ nguyên dữ liệu
+                    return conversation;
+                  }
+                });
+                // Cập nhật lại mảng conversations trong myUserInfo với dữ liệu đã được cập nhật
+                setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
+              };
+
+              // Gọi hàm để cập nhật conversationOpponent trong myUserInfo
+              updateConversationOpponentInUserInfo();
+            }
+            if (jsonData.tcm === "TCM02") {
+              fetchData()
+            }
+            if (jsonData.tcm === "TCM03") {
               fetchData()
             }
           } catch (error) {
@@ -335,7 +397,7 @@ const ChatGroupScreen = () => {
                 item={item}
                 friend={false}
                 conversationOpponent={conversationOpponent}
-                myUserInfo={myUserInfo} />}
+                 />}
 
             keyExtractor={(item) => item.messageID}
             refreshControl={

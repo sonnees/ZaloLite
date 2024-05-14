@@ -8,11 +8,15 @@ import { API_PROFILE_BY_USERID } from '../api/API';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MessageModalRecall } from '../modal/messageModalRecall';
-const ChatOfReCall = ({ item, myUserInfo, conversationOpponent, friend }) => {
+import { useContext } from 'react';
+import { GlobalContext } from '../context/GlobalContext';
+const ChatOfReCall = ({ item, conversationOpponent, friend }) => {
+    const { myUserInfo, setMyUserInfo, chatID, myProfile, setMyProfile,setComponentChatID } = useContext(GlobalContext)
     const myMessage = '#B0E2FF';
     const [textHeight, setTextHeight] = useState(40);
     const touchableRef = useRef(null);
     const [profile, setProfile] = useState({});
+    
     const fetchProfileInfo = async (userID, token) => {
         try {
             const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {

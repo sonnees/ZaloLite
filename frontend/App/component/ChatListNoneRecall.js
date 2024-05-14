@@ -1,12 +1,15 @@
 export { ChatListNoneRecall }
-import React, { memo, useState, useRef, useEffect, useMemo } from 'react';
+import React, { memo, useState, useRef, useEffect, useMemo, useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
 import { API_PROFILE_BY_USERID } from '../api/API';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const ChatListNoneRecall = memo(({ item, conversationOpponent, myUserInfo, friend }) => {
+import { MessageModal } from '../modal/messageModal';
+import { GlobalContext } from '../context/GlobalContext';
+const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
+    const { myUserInfo, setMyUserInfo, chatID, myProfile, setMyProfile,setComponentChatID } = useContext(GlobalContext)
     const [textHeight, setTextHeight] = useState(40);
     const touchableRef = useRef(null);
     const [videoKey, setVideoKey] = useState(0);

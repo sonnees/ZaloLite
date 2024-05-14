@@ -1,10 +1,13 @@
 export { MyMessageNoneRecall }
-import React, { memo, useState, useRef, useEffect, useMemo } from 'react';
+import React, { memo, useState, useRef, useEffect, useMemo, useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
 import { MessageModal } from '../modal/messageModal';
-const MyMessageNoneRecall = memo(({ item, conversationOpponent, myUserInfo, friend }) => {
+import { GlobalContext } from '../context/GlobalContext';
+const MyMessageNoneRecall = memo(({ item, conversationOpponent, friend }) => {
+  const { myUserInfo, setMyUserInfo, chatID, myProfile, setMyProfile,setComponentChatID } = useContext(GlobalContext)
+
     const [textHeight, setTextHeight] = useState(40);
     const touchableRef = useRef(null);
     const [videoKey, setVideoKey] = useState(0);

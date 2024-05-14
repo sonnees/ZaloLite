@@ -38,6 +38,7 @@ const MessagesScreen = () => {
       setModalChatVisible(false);
     } else {
       if (data.type !== "GROUP") {
+        // setSocket
         navigation.navigate("ChatScreen", { conversationOpponent: data });
       } else {
         navigation.navigate("ChatGroupScreen", { conversationOpponent: data });
@@ -127,8 +128,7 @@ const MessagesScreen = () => {
                 userAvatar: jsonData.userAvatar,
                 messageID: jsonData.messageID
               }
-            }
-            const previousMessageReader = data.reads.find(read => read.userID === myProfile.userID) || null;
+              const previousMessageReader = data.reads.find(read => read.userID === myProfile.userID) || null;
             if (previousMessageReader) {
               const newDataReads = data.reads.map(read => {
                 if (read.userID === myProfile.userID) {
@@ -141,9 +141,12 @@ const MessagesScreen = () => {
                 ...prevData,
                 reads: newDataReads
               }));
-              console.log("NEWDAATA: ", newDataReads);
+              // console.log("NEWDAATA: ", newDataReads);
             }
-          } else {
+            }
+            
+          } 
+          else {
             // Handle non-JSON data
           }
         };
@@ -232,16 +235,22 @@ const MessagesScreen = () => {
     let contentMessage = '';
     if (data.topChatActivity && data.topChatActivity.length > 0) {
       const lastContent = data.topChatActivity[data.topChatActivity.length - 1].contents[data.topChatActivity[data.topChatActivity.length - 1].contents.length - 1];
+      const recallMess = data.topChatActivity[data.topChatActivity.length - 1].recall;
+      const hidenMess = data.topChatActivity[data.topChatActivity.length - 1].hidden.includes(myProfile.userID);
       const key = lastContent.key;
-      if (lastContent && key.includes('|') && key.split('|').length >= 2) {
+      console.log("Hidden",hidenMess);
+      if (recallMess) {
+        contentMessage = "Message recalled";
+      }
+      else if (lastContent && key.includes('|') && key.split('|').length >= 2 && !hidenMess) {
         contentMessage = '[File]';
-      } else if (lastContent && (key === "text" || key === "emoji")) {
+      } else if (lastContent && (key === "text" || key === "emoji") && !hidenMess) {
         contentMessage = lastContent.value;
-      } else if (lastContent && key === "image") {
+      } else if (lastContent && key === "image" && !hidenMess) {
         contentMessage = "[Photo]";
-      } else if (lastContent && key === "mp4") {
+      } else if (lastContent && key === "mp4" && !hidenMess) {
         contentMessage = "[Video]";
-      } else if (lastContent && key === "link") {
+      } else if (lastContent && key === "link" && !hidenMess) {
         contentMessage = "[Link]";
       }
     } else {
