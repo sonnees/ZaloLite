@@ -85,8 +85,9 @@ const MessageDetail = ({
     };
 
     // Replace this line with your WebSocket send function
-    console.log("Sending recall message:", recallMessage);
+
     socket.send(JSON.stringify(recallMessage));
+    console.log("Sending recall message:", recallMessage);
   };
 
   const hidenMessage = (messageID) => {
@@ -310,7 +311,7 @@ const MessageDetail = ({
     <div
       ref={messageRef}
       id={message.messageID}
-      className={`relative mb-3 flex border ${isHovered ? "group" : ""} ${
+      className={`relative mb-3 flex ${isHovered ? "group" : ""} ${
         userID === userIDFromCookies ? "justify-end" : "justify-start"
       }`}
       onMouseEnter={handleMouseEnter}
@@ -375,17 +376,40 @@ const MessageDetail = ({
                   TransitionComponent={Fade}
                   className="rounded-lg"
                 >
-                  <MenuItem onClick={handleClose}>Copy tin nhắn</MenuItem>
-                  <MenuItem onClick={handleClose}>Ghim tin nhắn</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleCopyMessage();
+                      handleClose();
+                    }}
+                  >
+                    <img
+                      src="/src/assets/icons/copy.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className="text-tblack">Copy tin nhắn</span>
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <img
+                      src="/src/assets/icons/push-pin.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className="text-tblack">Ghim tin nhắn</span>
+                  </MenuItem>
                   <MenuItem
                     onClick={() => {
                       handleRecall(message.messageID);
-
-                      console.log("messageID thu hồi", message.messageID);
                       setMessageDeletedID(message.messageID);
+                      console.log("messageID thu hồi", message.messageID);
                     }}
                   >
-                    Thu hồi
+                    <img
+                      src="/src/assets/icons/refresh.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className=" text-red-600">Thu hồi</span>
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
@@ -394,7 +418,12 @@ const MessageDetail = ({
                       setMessageDeletedID(message.messageID);
                     }}
                   >
-                    Xoá chỉ ở phía tôi
+                    <img
+                      src="/src/assets/icons/delete.png"
+                      alt=""
+                      className="mr-3 h-4 w-4"
+                    />
+                    <span className=" text-red-600">Xoá chỉ ở phía tôi</span>
                   </MenuItem>
                 </Menu>
               </div>
@@ -409,9 +438,10 @@ const MessageDetail = ({
           null}
         </div>
       )}
-      {message && message.hidden && message.hidden.includes(userID) ? (
-        <span className="hidden">huy</span>
-      ) : (
+
+      {/* Content Hiển thị tin nhắn HuyDev */}
+
+      {message && message.hidden && message.hidden.includes(userID) ? null : (
         <>
           {userID !== userIDFromCookies && (
             <Avatar src={chatAvatar} alt="Avatar" className="mr-3" />
@@ -470,7 +500,7 @@ const MessageDetail = ({
                 <>
                   <div
                     className={`${message.parentID ? "mt-2" : ""} ${
-                      userID !== userIDFromCookies ? "-mr-3" : ""
+                      userID !== userIDFromCookies ? "-ml-5" : ""
                     } ${userID === userIDFromCookies ? "-ml-2" : ""} flex`}
                   >
                     {renderContent()}
@@ -482,14 +512,33 @@ const MessageDetail = ({
                   <div
                     className={`${
                       message.parentID ? "mt-2" : ""
-                    } -mr-3 flex flex-wrap`}
+                    } -mr-3 flex flex-wrap ${
+                      userID !== userIDFromCookies ? "-ml-5" : ""
+                    }`}
+                  >
+                    {renderContent()}
+                  </div>
+                </>
+              ) : message.contents[0].key === "image" &&
+                message.contents.length == 1 ? (
+                <>
+                  <div
+                    className={`${
+                      message.parentID ? "mt-2" : ""
+                    } -mr-3 flex flex-wrap ${
+                      userID !== userIDFromCookies ? "-ml-3" : ""
+                    }`}
                   >
                     {renderContent()}
                   </div>
                 </>
               ) : (
                 <>
-                  <div className={`${message.parentID ? "mt-2" : ""}`}>
+                  <div
+                    className={`${message.parentID ? "mt-2" : ""} ${
+                      userID !== userIDFromCookies ? "" : ""
+                    }`}
+                  >
                     {renderContent()}
                   </div>
                 </>
@@ -528,6 +577,8 @@ const MessageDetail = ({
           </div>
         </>
       )}
+
+      {/* Kết thúc Content Hiển thị tin nhắn HuyDev */}
 
       {userID !== userIDFromCookies && (
         <div className="flex w-[155px] items-end">
@@ -628,9 +679,8 @@ const MessageDetail = ({
                   <div className="h-[40px]"></div>
                 )}
             </div>
-          ) : (
-            <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
-          )}
+          ) : // <div className="mb-3 ml-7 mr-3 flex w-[116px] justify-between rounded-lg p-1 px-2"></div>
+          null}
         </div>
       )}
     </div>
