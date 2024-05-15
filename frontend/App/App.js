@@ -16,7 +16,7 @@ import { GlobalProvider } from './context/GlobalContext'; // Assuming GlobalProv
 import { SocketProvider } from './context/SocketContext'; // Assuming SocketProvider is defined in SocketContext.js
 import ChatGroupScreen from './screens/ChatGroupScreen';
 import AddMemberScreen from './screens/AddMemberScreen';
-
+import AddFriendRequestDetail from './screens/AddFriendRequestDetail';
 const Stack = createStackNavigator();
 
 function App() {
@@ -38,6 +38,7 @@ function App() {
             <Stack.Screen name='FriendRequestScreen' component={FriendRequestScreen} options={{ headerShown: false }} />
             <Stack.Screen name='ChatGroupScreen' component={ChatGroupScreen} options={{ headerShown: false }} />
             <Stack.Screen name='AddMemberScreen' component={AddMemberScreen} options={{ headerShown: false }} />
+            <Stack.Screen name='AddFriendRequestDetail' component={AddFriendRequestDetail} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>
       </SocketProvider>

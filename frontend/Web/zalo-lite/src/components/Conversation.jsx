@@ -298,7 +298,6 @@ const Conversation = () => {
     const filteredConversations = conservation.filter(
       (chat) => chat.chatName === chatName,
     );
-    // console.log("filteredConversations", filteredConversations);
     // setConservationFriend(filteredConversations);
     if (filteredConversations.length > 0) {
       setChatType(filteredConversations[0].type);
@@ -1154,8 +1153,6 @@ const Conversation = () => {
     // console.log("ListImage:", imageMessages);
     console.log("ListImage:", messages);
   };
-
-  // console.log("listLink:", listLink);
 
   function formatDate(dateString) {
     const date = new Date(dateString);

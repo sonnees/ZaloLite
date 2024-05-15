@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { API_RESET_PASS } from '../api/Api';
+import { API_RESET_PASS } from '../api/API';
 
 const CreatePasswordScreen = () => {
   const navigation = useNavigation();

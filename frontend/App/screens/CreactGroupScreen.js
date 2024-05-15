@@ -21,7 +21,7 @@ import {
 } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { GlobalContext } from '../context/GlobalContext';
-import CREATE_GROUP from '../api/Api';
+import CREATE_GROUP from '../api/API';
 
 const CreateGroupScreen = () => {
   let navigation = useNavigation();
@@ -131,7 +131,7 @@ const CreateGroupScreen = () => {
       userName: ownerInfo.userName,
       userAvatar: ownerInfo.userAvatar,
     };
-  
+
     const members = selectedIds.map((id) => ({
       userID: id,
       userName: chatGroupdata.find((user) => user.id === id)?.userName,
@@ -169,11 +169,11 @@ const CreateGroupScreen = () => {
     };
   
     console.log("Thông tin newGroup: ", newGroup);
-  
+
     try {
       // Lưu thông tin nhóm vào AsyncStorage
       await AsyncStorage.setItem(`group-${newGroup.id}`, JSON.stringify(newGroup));
-  
+
       // Lưu thông tin nhóm vào database backend
       await saveGroupToBackend(newGroup);
       console.log("Thông tin newGroup: ", newGroup);

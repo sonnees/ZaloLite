@@ -213,6 +213,8 @@ export default function LoginForm() {
     };
   };
 
+  const phoneRegex = /^\d{10}$/;
+
   return (
     <div>
       {!isSelectQR ? (
@@ -271,7 +273,7 @@ export default function LoginForm() {
               <div className="mx-2 mb-2 py-4">
                 <span>
                   <p className="text-red-600">
-                    Tài khoản hoặc mật khẩu không chính xác
+                    { phoneRegex.test(phoneNumber) ?'Tài khoản hoặc mật khẩu không chính xác':'Số điện thoại phải đủ 10 số và không bao gồm ký tự'}
                   </p>
                 </span>
               </div>
