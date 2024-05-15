@@ -420,15 +420,6 @@ function Message() {
       <div className="h-[calc(100vh-95px)] w-full overflow-auto">
         {conversations && conversations.map((conversation) => (
           <Link key={conversation.chatID} to={{ pathname: conversation.type === 'GROUP' ? 'chatGroup' : 'chat', search: `?id=${conversation.chatID}&type=individual-chat&chatName=${conversation.chatName}&chatAvatar=${conversation.chatAvatar}`,}} className="block cursor-pointer hover:bg-slate-50">
-            <ChatElement
-              id={conversation.chatID}
-              key={conversation.chatID}
-              to={{
-                pathname: conversation.type === "GROUP" ? "chatGroup" : "chat",
-                search: `?id=${conversation.chatID}&type=${conversation.type}&chatName=${conversation.chatName}&chatAvatar=${conversation.chatAvatar}`,
-              }}
-              className="block cursor-pointer hover:bg-slate-50"
-            >
               <ChatElement
                 id={conversation.chatID}
                 key={conversation.chatID}

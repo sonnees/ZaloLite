@@ -30,7 +30,6 @@ import ResetPasseordForm from "../pages/Login/ResetPasseordForm";
 // import VideoCall from "../pages/VideoCalll";
 import TagFriendRequest from "../pages/Contact/TagFriendRequest";
 
-
 import ConversationGroup from "../components/ConversationGroup";
 // import RegisterUser from "../pages/Login/RegisterUser";
 
@@ -79,7 +78,7 @@ export default function Router() {
       path: "/",
       element: <DashboardLayout component={comp}></DashboardLayout>,
       children: [
-        // { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
+        { element: <Navigate to="/app" replace />, index: true },
         {
           path: "/app",
           element: <MessageFilterBar />,
@@ -98,8 +97,14 @@ export default function Router() {
           path: "/contact",
           element: <SearchBox />,
           children: [
-            { path: "listFriend", element: <DetailContact isListFriend={true}/> },
-            { path: "listGroup", element: <DetailContact isListFriend={false}/> },
+            {
+              path: "listFriend",
+              element: <DetailContact isListFriend={true} />,
+            },
+            {
+              path: "listGroup",
+              element: <DetailContact isListFriend={false} />,
+            },
             { path: "listFriend/chat", element: <Conversation /> },
             { path: "listGroup/chatGroup", element: <ConversationGroup /> },
             { path: "listfriendrequest", element: <TagFriendRequest /> },

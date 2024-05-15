@@ -65,17 +65,16 @@ export default function LoginForm() {
     }
   }
 
-//=========================================================
-//   function isJSON(str) {
-//     try {
-//       JSON.parse(str);
-//       return true;
-//     } catch (e) {
-//       return false;
-//     }
-//   }
-// //=========================================================
-  
+  //=========================================================
+  //   function isJSON(str) {
+  //     try {
+  //       JSON.parse(str);
+  //       return true;
+  //     } catch (e) {
+  //       return false;
+  //     }
+  //   }
+  // //=========================================================
 
   useEffect(() => {
     // Gọi API ở đây
@@ -102,7 +101,7 @@ export default function LoginForm() {
         );
         // console.log(data.field1);
         newSocket.onopen = () => {
-          console.log("WebSocket connected");
+          // console.log("WebSocket connected");
         };
 
         setSocket(newSocket);
@@ -175,7 +174,7 @@ export default function LoginForm() {
         // console.log(token.field);
         setPhoneNumberInCookie(phoneNumber);
 
-        console.log("API call successful");
+        // console.log("API call successful");
       } else {
         // Xử lý khi API trả về lỗi
         navigate("/auth/login");
@@ -263,7 +262,7 @@ export default function LoginForm() {
               <input
                 id="input-password"
                 placeholder="Mật khẩu"
-                className="mx-3 px-3 w-64 focus:outline-none"
+                className="mx-3 w-64 px-3 focus:outline-none"
                 onChange={(event) => {
                   setPassword(event.target.value);
                 }}
@@ -304,10 +303,12 @@ export default function LoginForm() {
             <p className="mt-8 flex-1 text-center text-xs font-light text-gray-700">
               <a
                 onClick={() => {
-                  if ( !flag ) {
-                    navigate('/auth/forgot-password')
+                  if (!flag) {
+                    navigate("/auth/forgot-password");
                   } else {
-                    navigate('/auth/forgot-password', {state: {phoneProp: phoneNumber}});
+                    navigate("/auth/forgot-password", {
+                      state: { phoneProp: phoneNumber },
+                    });
                   }
                 }}
                 className="text-black-100 font-medium hover:underline"
