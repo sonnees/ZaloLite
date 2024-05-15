@@ -1464,7 +1464,7 @@ const Conversation = () => {
                           </div>
                           <div className="px-[80px] pb-8 pt-[80px]">
                             <img
-                              src="/search-empty.a19dba60677c95d6539d26d2dc363e4e.png"
+                              src="/src/assets/search-empty.a19dba60677c95d6539d26d2dc363e4e.png"
                               alt=""
                             />
                           </div>
