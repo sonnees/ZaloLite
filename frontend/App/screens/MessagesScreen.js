@@ -223,8 +223,8 @@ const MessagesScreen = () => {
       // console.log((readUserData &&
       //   readUserData.messageID !== data.topChatActivity[data.topChatActivity.length - 1].messageID));
       if (readUserData)
-        console.log("Value of findReadUser:", readUserData.messageID);
-      console.log("Value of topChatActivity:", data.topChatActivity[data.topChatActivity.length - 1].messageID);
+        // console.log("Value of findReadUser:", readUserData.messageID);
+      // console.log("Value of topChatActivity:", data.topChatActivity[data.topChatActivity.length - 1].messageID);
       textFontWeight = "bold";
     } else {
       textFontWeight = "400";
@@ -238,7 +238,7 @@ const MessagesScreen = () => {
       const recallMess = data.topChatActivity[data.topChatActivity.length - 1].recall;
       const hidenMess = data.topChatActivity[data.topChatActivity.length - 1].hidden.includes(myProfile.userID);
       const key = lastContent.key;
-      console.log("Hidden",hidenMess);
+      // console.log("Hidden",hidenMess);
       if (recallMess) {
         contentMessage = "Message recalled";
       }
@@ -254,7 +254,7 @@ const MessagesScreen = () => {
         contentMessage = "[Link]";
       }
     } else {
-      contentMessage = 'Chưa có cuộc trò chuyện nào';
+      contentMessage = 'No message';
     }
 
     return (

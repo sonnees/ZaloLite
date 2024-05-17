@@ -22,8 +22,10 @@ const FriendRequestScreen = () => {
     // Sử dụng useEffect để lắng nghe sự thay đổi của myUserInfo và cập nhật dataFriendRequest
     useEffect(() => {
         setDataFriendRequest(myUserInfo.friendRequests)
-    }, [myUserInfo]);
-    const fetchProfileInfo = async (userID, token) => {
+    }, [myUserInfo,profileFriendRequest]);
+    const fetchProfileInfo = async (userID) => {
+        console.log("ID:__________",userID);
+        const token = await AsyncStorage.getItem('token');
         try {
             const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
                 headers: {
@@ -31,7 +33,7 @@ const FriendRequestScreen = () => {
                 },
             });
             setProfileFriendRequest(response.data)
-            // console.log("PROFILE FRIEND REQUEST:\n", profileFriendRequest);
+            console.log("PROFILE FRIEND REQUEST:\n", profileFriendRequest);
             return response.data;
         } catch (error) {
             if (error.response) {
@@ -74,8 +76,7 @@ const FriendRequestScreen = () => {
         return count;
     };
     const openModal = async (friendRequest) => {
-        const token = await AsyncStorage.getItem('token');
-        fetchProfileInfo(friendRequest.userID, token)
+        fetchProfileInfo(friendRequest.userID)
         // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
         setSelectedFriendRequest(friendRequest);
         setModalChatVisible(true);
@@ -94,12 +95,7 @@ const FriendRequestScreen = () => {
             receiverAvatar: myProfile.avatar,
 
         };
-        const token = await AsyncStorage.getItem('token');
-        fetchProfileInfo(item.userID, token)
-        // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
-        // console.log("DATAFR:  ", profileFriendRequest);
-        setSelectedFriendRequest(item);
-        // console.log("ITEM: ", item);
+        
         if (item) {
             const newSocket = new WebSocket(
                 `ws://${host}:8082/ws/user/${item.userID}`,
@@ -117,7 +113,29 @@ const FriendRequestScreen = () => {
             //     console.log("Message received:", event.data);
             //     navigation.navigate("AddFriendScreen")
             // };
-
+            newSocket.onmessage = (event) => {
+                const data = event.data;
+                console.log("Received data:", data);
+                // Check if the data starts with an opening curly brace, indicating it's a JSON object
+                if (data.trim().startsWith('{')) {
+                  try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.tum === "TUM00" && jsonData.typeNotify === "SUCCESS") {
+                        
+                        fetchProfileInfo(item.userID)
+                        // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
+                        // console.log("DATAFR:  ", profileFriendRequest);
+                        setSelectedFriendRequest(item);
+                        // console.log("ITEM: ", item);
+                    }
+                    
+                  } catch (error) {
+                    console.error("Error parsing JSON data:", error);
+                  }
+                } else {
+                  console.log("Received data is not a JSON object, ignoring...");
+                }
+            };
             newSocket.onclose = () => {
                 console.log(
                     "WebSocket for UserID: ", item.userID, " CLOSED",
@@ -133,12 +151,6 @@ const FriendRequestScreen = () => {
             senderID: item.userID,
             receiverID: myProfile.userID,
         };
-        const token = await AsyncStorage.getItem('token');
-        fetchProfileInfo(item.userID, token)
-        // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
-        // console.log("DATAFR:  ", profileFriendRequest);
-        setSelectedFriendRequest(item);
-        // console.log("ITEM: ", item);
         if (item) {
             const newSocket = new WebSocket(
                 `ws://${host}:8082/ws/user/${item.userID}`,
@@ -152,10 +164,28 @@ const FriendRequestScreen = () => {
                 newSocket.send(JSON.stringify(message));
                 console.log("Message sent:", message);
             };
-            // newSocket.onmessage = (event) => {
-            //     console.log("Message received:", event.data);
-            //     navigation.navigate("AddFriendScreen")
-            // };
+            newSocket.onmessage = (event) => {
+                const data = event.data;
+                console.log("Received data:", data);
+                // Check if the data starts with an opening curly brace, indicating it's a JSON object
+                if (data.trim().startsWith('{')) {
+                  try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.tum === "TUM00" && jsonData.typeNotify === "SUCCESS") {
+                        fetchProfileInfo(item.userID)
+                        // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
+                        // console.log("DATAFR:  ", profileFriendRequest);
+                        setSelectedFriendRequest(item);
+                        // console.log("ITEM: ", item);
+                    }
+                    
+                  } catch (error) {
+                    console.error("Error parsing JSON data:", error);
+                  }
+                } else {
+                  console.log("Received data is not a JSON object, ignoring...");
+                }
+            };
 
             newSocket.onclose = () => {
                 console.log(
@@ -166,59 +196,57 @@ const FriendRequestScreen = () => {
         }
     };
     const chatStranger = async (item) => {
-        // console.log("HEHEE");
-        // const id = uuid.v4();
-        // const message = {
-        //     id: id,
-        //     tum: "TUM05",
-
-        //     senderID: item.userID,
-        //     senderName: item.userName,
-        //     senderAvatar: item.avatar,
-
-        //     receiverID: myProfile.userID,
-        //     receiverName: myProfile.userName,
-        //     receiverAvatar: myProfile.avatar,
-
-        // };
-
-        // const token = await AsyncStorage.getItem('token');
-        // fetchProfileInfo(item.userID, token)
-        // // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
-        // // console.log("DATAFR:  ", profileFriendRequest);
-        // setSelectedFriendRequest(item);
-        // // console.log("ITEM: ", item);
-        // if (item) {
-        //     const newSocket = new WebSocket(
-        //         `ws://${host}:8082/ws/user/${item.userID}`,
-        //     );
-        //     // console.log("Socket STATUS: ", newSocket);
-        //     newSocket.onopen = () => {
-        //         console.log(
-        //             "WebSocket for UserID: ", item.userID, " OPENED",
-        //         );
-        //         // Gửi tin nhắn khi kết nối thành công
-        //         newSocket.send(JSON.stringify(message));
-        //         console.log("Message sent:", message);
-        //     };
-        //     // newSocket.onmessage = (event) => {
-        //     //     console.log("Message received:", event.data);
-        //     //     navigation.navigate("AddFriendScreen")
-        //     // };
-
-        //     newSocket.onclose = () => {
-        //         console.log(
-        //             "WebSocket for UserID: ", item.userID, " CLOSED",
-        //         );
-        //     };
-        //     fetchUserInfo()
         const ID_UserOrGroup = item.userID;
-        // console.log("USERID_____: ", ID_UserOrGroup);
-        // console.log("DATA______", myUserInfo.conversations);
         const conversationOpponent = findConversationByUserID(myUserInfo, ID_UserOrGroup)
-        // console.log("CONVERSATIONOPPONENT:___", conversationOpponent);
-        navigation.navigate("ChatScreen", { conversationOpponent: conversationOpponent });
-        // }
+        if(conversationOpponent){
+            navigation.navigate("ChatScreen", { conversationOpponent: conversationOpponent });
+        }else
+        {
+            const id = uuid.v4();
+            const message = {
+                id: id,
+                tum: "TUM05",
+
+                senderID: item.userID,
+                senderName: item.userName,
+                senderAvatar: item.avatar,
+
+                receiverID: myProfile.userID,
+                receiverName: myProfile.userName,
+                receiverAvatar: myProfile.avatar,
+
+            };
+
+            const token = await AsyncStorage.getItem('token');
+            fetchProfileInfo(item.userID, token)
+            setSelectedFriendRequest(item);
+            // console.log("ITEM: ", item);
+                if (item) {
+                    const newSocket = new WebSocket(
+                        `ws://${host}:8082/ws/user/${item.userID}`,
+                    );
+                    // console.log("Socket STATUS: ", newSocket);
+                    newSocket.onopen = () => {
+                        console.log(
+                            "WebSocket for UserID: ", item.userID, " OPENED",
+                        );
+                        // Gửi tin nhắn khi kết nối thành công
+                        newSocket.send(JSON.stringify(message));
+                        console.log("Message sent:", message);
+                    };
+                    // newSocket.onmessage = (event) => {
+                    //     console.log("Message received:", event.data);
+                    //     navigation.navigate("AddFriendScreen")
+                    // };
+
+                    newSocket.onclose = () => {
+                        console.log(
+                            "WebSocket for UserID: ", item.userID, " CLOSED",
+                        );
+                    };
+                    fetchUserInfo()
+                }
+            }
     };
 
     const fetchUserInfo = async () => {
@@ -240,14 +268,15 @@ const FriendRequestScreen = () => {
         }
     };
     const toProfileFriend = async (item) => {
-        const token = await AsyncStorage.getItem('token');
-        const data = fetchProfileInfo(item.userID, token)
-        // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
-        // console.log("DATAFR:  ", data);
-        navigation.navigate('ProfileFriendScreen', { profile: data });
+        try {
+            const data = await fetchProfileInfo(item.userID);
+            // console.log("DATA-----------", data);
+            navigation.navigate('ProfileFriendScreen', { profile: data });
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin profile:", error);
+        }
     }
     const ReceivedFriendRequestElement = ({ item }) => {
-        // console.log("FRIENDREQUEST: \n", item);
         if (item.isSender !== true) {
             return (
                 <View>
@@ -299,7 +328,7 @@ const FriendRequestScreen = () => {
     }
     const SentFriendRequestElement = ({ item }) => {
         if (item.isSender === true) {
-            // console.log("FRIENDREQUEST: \n", item);
+            console.log("FRIENDREQUEST: \n", item);
             return (
                 <View>
                     <TouchableOpacity
@@ -359,6 +388,7 @@ const FriendRequestScreen = () => {
 
 
                     <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "flex-end", marginRight: 12 }}
+                    onPress={() => { navigation.navigate("AddFriendScreen", { typeScreen: 'FriendRequestScreen' }) }}
                     >
                         <Icon name='adduser' size={23} color={'white'} />
                     </TouchableOpacity>

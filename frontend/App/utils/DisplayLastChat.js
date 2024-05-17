@@ -15,4 +15,8 @@ function getDataFromConversationsAndChatData(conversations, chatData) {
 const findConversationByUserID = (data, userID) => {
     return data.conversations.find(conversation => conversation.id_UserOrGroup === userID) || null;
 };
-export { findConversationByUserID, getDataFromConversationsAndChatData };
+const findUserIDByConversation = (data, chatID) => {
+    const conversation = data.conversations.find(conversation => conversation.chatID === chatID);
+    return conversation ? conversation.id_UserOrGroup : null;
+};
+export { findConversationByUserID, getDataFromConversationsAndChatData,findUserIDByConversation };

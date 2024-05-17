@@ -1,4 +1,4 @@
-export const host = '192.168.1.36';
+export const host = '192.168.1.229';
 
 export const API_AUTHENTICATE = `http://${host}:8080/api/v1/auth/authenticate`;
 export const API_REGISTER = `http://${host}:8080/api/v1/auth/register`;

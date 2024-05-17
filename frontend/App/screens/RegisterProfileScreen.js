@@ -37,6 +37,8 @@ const RegisterProfileScreen = () => {
     data.append('upload_preset', 'ZaloLife');
     data.append('cloud_name', 'dbmkvqy3b');
 
+    console.log("?????????",data);
+
     fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
       method: 'post',
       body: data

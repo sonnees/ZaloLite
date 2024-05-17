@@ -23,8 +23,8 @@ const ChatScreen = () => {
   const { myUserInfo, setMyUserInfo, chatID, myProfile, setMyProfile,setComponentChatID } = useContext(GlobalContext)
   const componentChatID = route.params?.conversationOpponent.chatID;
   useEffect(() => {
-    setComponentChatID(componentChatID);
-  }, [componentChatID]);
+    setComponentChatID(route.params?.conversationOpponent.chatID);
+  }, [conversationOpponent]);
   // console.log("CHATID NE: ", componentChatID);
   const [conversationOpponent, setconversationOpponent] = useState([])
   // Xử lý ảnh và File
@@ -94,14 +94,29 @@ const ChatScreen = () => {
           try {
             const jsonData = JSON.parse(data);
             if (jsonData.tcm === "TCM00" && jsonData.typeNotify === "SUCCESS") {
-              // console.log("NEW MESSAGE", messageSocket);
+              fetchData()
+            }
+            if (jsonData.tcm === "TCM01") {
+              const newTopChatActivity = {
+                messageID: jsonData.id,
+                userID: jsonData.userID,
+                timestamp: jsonData.timestamp,
+                parentID: jsonData.parentID,
+                contents: jsonData.contents,
+                hiden: [],
+                recall: false,
+              }
+              // console.log("NEW MESSAGE", newTopChatActivity);
               // // Kiểm tra nếu conversationOpponent.topChatActivity đã được khởi tạo và là một mảng
               // if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
               //   // Thực hiện phép toán push trên mảng
-              //   conversationOpponent.topChatActivity.push(messageSocket);
+              //   conversationOpponent.topChatActivity.push(newTopChatActivity);
               //   console.log("ADD SUCCESS");
               // } else {
+              //   // Nếu conversationOpponent.topChatActivity chưa được khởi tạo hoặc không phải là một mảng, thông báo lỗi
+              //   // console.log('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
               // }
+
               // const updateConversationOpponentInUserInfo = () => {
               //   const updatedConversations = myUserInfo.conversations.map(conversation => {
               //     if (conversation.chatID === conversationOpponent.chatID) {
@@ -116,48 +131,10 @@ const ChatScreen = () => {
               //   // Cập nhật lại mảng conversations trong myUserInfo với dữ liệu đã được cập nhật
               //   setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
               // };
+
               // // Gọi hàm để cập nhật conversationOpponent trong myUserInfo
               // updateConversationOpponentInUserInfo();
               fetchData()
-            }
-            if (jsonData.tcm === "TCM01") {
-              const newTopChatActivity = {
-                messageID: jsonData.id,
-                userID: jsonData.userID,
-                timestamp: jsonData.timestamp,
-                parentID: jsonData.parentID,
-                contents: jsonData.contents,
-                hiden: [],
-                recall: false,
-              }
-              console.log("NEW MESSAGE", newTopChatActivity);
-              // Kiểm tra nếu conversationOpponent.topChatActivity đã được khởi tạo và là một mảng
-              if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
-                // Thực hiện phép toán push trên mảng
-                conversationOpponent.topChatActivity.push(newTopChatActivity);
-                console.log("ADD SUCCESS");
-              } else {
-                // Nếu conversationOpponent.topChatActivity chưa được khởi tạo hoặc không phải là một mảng, thông báo lỗi
-                // console.log('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
-              }
-
-              const updateConversationOpponentInUserInfo = () => {
-                const updatedConversations = myUserInfo.conversations.map(conversation => {
-                  if (conversation.chatID === conversationOpponent.chatID) {
-                    // Nếu tìm thấy conversationOpponent trong mảng conversations của myUserInfo
-                    // Thực hiện cập nhật dữ liệu cho nó với dữ liệu mới từ conversationOpponent
-                    return conversationOpponent;
-                  } else {
-                    // Nếu không tìm thấy, giữ nguyên dữ liệu
-                    return conversation;
-                  }
-                });
-                // Cập nhật lại mảng conversations trong myUserInfo với dữ liệu đã được cập nhật
-                setMyUserInfo({ ...myUserInfo, conversations: updatedConversations });
-              };
-
-              // Gọi hàm để cập nhật conversationOpponent trong myUserInfo
-              updateConversationOpponentInUserInfo();
             }
             if (jsonData.tcm === "TCM02") {
               fetchData()
@@ -195,77 +172,7 @@ const ChatScreen = () => {
     setShowEmojiPicker(false);
   };
 
-  // Xử lý hình ảnh
-  const handleChoosePhoto = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      multiple: true,
-      maxFiles: 50,
-    });
-    console.log(result);
-    if (!result.cancelled) {
-      try {
-        const imageUrl = await handleUpload(result.assets[0].uri);
-        setSelectedImage(imageUrl);
-      } catch (error) {
-        console.error('Lỗi khi xử lý ảnh:', error);
-        Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi xử lý ảnh.');
-      }
-    }
-  };
-  const handleUpload = async (imageUri) => {
-    try {
-      const data = new FormData();
-      data.append('file', {
-        uri: imageUri,
-        type: 'image/jpeg',
-        name: 'avatar.jpg',
-      });
-      data.append('upload_preset', 'ZaloLife');
-      data.append('cloud_name', 'dbmkvqy3b');
 
-      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
-        method: 'POST',
-        body: data,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to upload image to Cloudinary');
-      }
-
-      const responseData = await response.json();
-      // console.log('Upload successful:', responseData);
-
-      const imageUrl = responseData.secure_url;
-      return imageUrl;
-    } catch (error) {
-      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
-      throw error;
-    }
-  };
-  //Xử lý file
-  const handleChooseFiles = async () => {
-    try {
-      const results = await DocumentPicker.pickMultiple({
-        type: [DocumentPicker.types.allFiles],
-      });
-
-      const files = results.map((result, index) => ({
-        uri: result.uri,
-        type: result.type,
-        name: `file_${index + 1}.${result.uri.split('.').pop()}`,
-      }));
-
-      setSelectedFiles(files);
-    } catch (error) {
-      if (DocumentPicker.isCancel(error)) {
-        console.log('Hủy chọn tệp');
-      } else {
-        console.error('Lỗi khi chọn tệp:', error);
-        Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi chọn tệp.');
-      }
-    }
-  };
 
   // Xử lý Reload dữ liệu
   const fetchAllChatbychatID = async (chatID, token) => {
@@ -320,50 +227,15 @@ const ChatScreen = () => {
           key: fileContent.key,
           value: fileContent.value, // Đây là đường dẫn URL của file
         });
-      } else if (contentType === "emoji") {
-        messageSocket.contents.push({
-          key: "emoji",
-          value: messageContent,
-        });
-      } else if (contentType === "link") {
-        messageSocket.contents.push({
-          key: "link",
-          value: messageContent,
-        });
-      }
-      // console.log("MESSAGE:__________", messageSocket);
-      socket.send(JSON.stringify(messageSocket));
-      setMessage(""); // Xóa nội dung của input message sau khi gửi
-    } else {
-      console.error("WebSocket is not initialized.");
-    }
-  };
-  const sendMessageDelivery = (messageContent, contentType, parentID) => {
-    if (socket) {
-      const messageSocket = {
-        id: uuid.v4(),
-        tcm: "TCM02",
-        userID: myProfile.userID,
-        userAvatar: myProfile.avatar,
-        userName: myProfile.userName,
-        timestamp: new Date().toISOString(),
-        parentID: parentID,
-        contents: [],
-      };
-      // Thêm nội dung tương ứng vào tin nhắn
-      if (contentType === "text") {
-        messageSocket.contents.push({
-          key: "text",
-          value: messageContent,
-        });
-      } else if (contentType === "file") {
+        
+      } else if (contentType === "image") {
         // Lấy phần tử đầu tiên trong mảng contents
-        const fileContent = messageContent.contents[0];
         messageSocket.contents.push({
-          key: fileContent.key,
-          value: fileContent.value, // Đây là đường dẫn URL của file
+          key: "image",
+          value: messageContent, // Đây là đường dẫn URL của file
         });
-      } else if (contentType === "emoji") {
+        
+      }else if (contentType === "emoji") {
         messageSocket.contents.push({
           key: "emoji",
           value: messageContent,
@@ -381,6 +253,49 @@ const ChatScreen = () => {
       console.error("WebSocket is not initialized.");
     }
   };
+  // const sendMessageDelivery = (messageContent, contentType, parentID) => {
+  //   if (socket) {
+  //     const messageSocket = {
+  //       id: uuid.v4(),
+  //       tcm: "TCM02",
+  //       userID: myProfile.userID,
+  //       userAvatar: myProfile.avatar,
+  //       userName: myProfile.userName,
+  //       timestamp: new Date().toISOString(),
+  //       parentID: parentID,
+  //       contents: [],
+  //     };
+  //     // Thêm nội dung tương ứng vào tin nhắn
+  //     if (contentType === "text") {
+  //       messageSocket.contents.push({
+  //         key: "text",
+  //         value: messageContent,
+  //       });
+  //     } else if (contentType === "file") {
+  //       // Lấy phần tử đầu tiên trong mảng contents
+  //       const fileContent = messageContent.contents[0];
+  //       messageSocket.contents.push({
+  //         key: fileContent.key,
+  //         value: fileContent.value, // Đây là đường dẫn URL của file
+  //       });
+  //     } else if (contentType === "emoji") {
+  //       messageSocket.contents.push({
+  //         key: "emoji",
+  //         value: messageContent,
+  //       });
+  //     } else if (contentType === "link") {
+  //       messageSocket.contents.push({
+  //         key: "link",
+  //         value: messageContent,
+  //       });
+  //     }
+  //     // console.log("MESSAGE:__________", messageSocket);
+  //     socket.send(JSON.stringify(messageSocket));
+  //     setMessage(""); // Xóa nội dung của input message sau khi gửi
+  //   } else {
+  //     console.error("WebSocket is not initialized.");
+  //   }
+  // };
   const handleSendMessage = () => {
     if (message.startsWith("http://") || message.startsWith("https://")) {
       setKeyTypeMessage("link");
@@ -393,7 +308,57 @@ const ChatScreen = () => {
       sendMessageWithTextViaSocket(imageUrl, "file", null);
     }
   };
+  // Xử lý hình ảnh
+  const handleChoosePhoto = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      multiple: true,
+      maxFiles: 50,
+    });
+    console.log(result);
+    if (!result.cancelled) {
+      try {
+        const imageUrl = await handleUpload(result.assets[0].uri);
+        setSelectedImage(imageUrl);
+      } catch (error) {
+        // console.error('Lỗi khi xử lý ảnh:', error);
+      }
+    }
+  };
+  const handleUpload = async (imageUri) => {
+    try {
+      const data = new FormData();
+      data.append('file', {
+        uri: imageUri,
+        type: 'image/jpeg',
+        name: 'avatar.jpg',
+      });
+      data.append('upload_preset', 'ZaloLife');
+      data.append('cloud_name', 'dbmkvqy3b');
 
+      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image to Cloudinary');
+      }
+
+      const responseData = await response.json();
+      // console.log('Upload successful:', responseData);
+
+      const imageUrl = responseData.secure_url;
+      console.log(">>>>>>>>>>",responseData.secure_url);
+      sendMessageWithTextViaSocket(imageUrl,"image",null)
+      return imageUrl;
+
+    } catch (error) {
+      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
+      throw error;
+    }
+  };
+ 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar></StatusBar>
@@ -505,7 +470,7 @@ const ChatScreen = () => {
         />
         {message.length === 0 && (
           <View style={{ flexDirection: 'row', flex: 0.8, justifyContent: 'space-between', marginBottom: 5, width: 80, marginRight: -15 }}>
-            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'flex-start' }} onPress={handleChooseFiles}>
+            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'flex-start' }}>
               <Image
                 style={{ width: 30, height: 30, resizeMode: "contain", marginLeft: 2 }}
                 source={require("../assets/morechat.png")}

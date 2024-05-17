@@ -217,78 +217,6 @@ const ChatGroupScreen = () => {
   const handleTextInputFocus = () => {
     setShowEmojiPicker(false);
   };
-
-  // Xử lý hình ảnh
-  const handleChoosePhoto = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      multiple: true,
-      maxFiles: 50,
-    });
-    console.log(result);
-    if (!result.cancelled) {
-      try {
-        const imageUrl = await handleUpload(result.assets[0].uri);
-        setSelectedImage(imageUrl);
-      } catch (error) {
-        console.error('Lỗi khi xử lý ảnh:', error);
-        Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi xử lý ảnh.');
-      }
-    }
-  };
-  const handleUpload = async (imageUri) => {
-    try {
-      const data = new FormData();
-      data.append('file', {
-        uri: imageUri,
-        type: 'image/jpeg',
-        name: 'avatar.jpg',
-      });
-      data.append('upload_preset', 'ZaloLife');
-      data.append('cloud_name', 'dbmkvqy3b');
-
-      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
-        method: 'POST',
-        body: data,
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to upload image to Cloudinary');
-      }
-
-      const responseData = await response.json();
-      // console.log('Upload successful:', responseData);
-
-      const imageUrl = responseData.secure_url;
-      return imageUrl;
-    } catch (error) {
-      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
-      throw error;
-    }
-  };
-  //Xử lý file
-  const handleChooseFiles = async () => {
-    try {
-      const results = await DocumentPicker.pickMultiple({
-        type: [DocumentPicker.types.allFiles],
-      });
-
-      const files = results.map((result, index) => ({
-        uri: result.uri,
-        type: result.type,
-        name: `file_${index + 1}.${result.uri.split('.').pop()}`,
-      }));
-
-      setSelectedFiles(files);
-    } catch (error) {
-      if (DocumentPicker.isCancel(error)) {
-        console.log('Hủy chọn tệp');
-      } else {
-        console.error('Lỗi khi chọn tệp:', error);
-        Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi chọn tệp.');
-      }
-    }
-  };
   useEffect(() => {
     const newSocket = new WebSocket(`ws://${host}:8082/ws/chat/${componentChatID}`);
     newSocket.onopen = () => {
@@ -299,7 +227,7 @@ const ChatGroupScreen = () => {
 
   const sendMessageWithTextViaSocket = (messageContent, contentType, parentID) => {
     if (socket) {
-      const messageSocket = {
+      messageSocket = {
         id: uuid.v4(),
         tcm: "TCM01",
         userID: myProfile.userID,
@@ -322,7 +250,15 @@ const ChatGroupScreen = () => {
           key: fileContent.key,
           value: fileContent.value, // Đây là đường dẫn URL của file
         });
-      } else if (contentType === "emoji") {
+        
+      } else if (contentType === "image") {
+        // Lấy phần tử đầu tiên trong mảng contents
+        messageSocket.contents.push({
+          key: "image",
+          value: messageContent, // Đây là đường dẫn URL của file
+        });
+        
+      }else if (contentType === "emoji") {
         messageSocket.contents.push({
           key: "emoji",
           value: messageContent,
@@ -352,7 +288,55 @@ const ChatGroupScreen = () => {
       sendMessageWithTextViaSocket(imageUrl, "file", null);
     }
   };
+  const handleChoosePhoto = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      multiple: true,
+      maxFiles: 50,
+    });
+    console.log(result);
+    if (!result.cancelled) {
+      try {
+        const imageUrl = await handleUpload(result.assets[0].uri);
+        setSelectedImage(imageUrl);
+      } catch (error) {
+        // console.error('Lỗi khi xử lý ảnh:', error);
+      }
+    }
+  };
+  const handleUpload = async (imageUri) => {
+    try {
+      const data = new FormData();
+      data.append('file', {
+        uri: imageUri,
+        type: 'image/jpeg',
+        name: 'avatar.jpg',
+      });
+      data.append('upload_preset', 'ZaloLife');
+      data.append('cloud_name', 'dbmkvqy3b');
 
+      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image to Cloudinary');
+      }
+
+      const responseData = await response.json();
+      // console.log('Upload successful:', responseData);
+
+      const imageUrl = responseData.secure_url;
+      console.log(">>>>>>>>>>",responseData.secure_url);
+      sendMessageWithTextViaSocket(imageUrl,"image",null)
+      return imageUrl;
+
+    } catch (error) {
+      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
+      throw error;
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar></StatusBar>
