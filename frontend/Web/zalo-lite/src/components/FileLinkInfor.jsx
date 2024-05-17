@@ -94,12 +94,14 @@ const FileLinkInfor = ({ fileName, fileSize, fileURL, fileKey, fileTime }) => {
     <div className="flex w-full items-center  py-[10px] hover:bg-[#F1F3F4] ">
       <a
         href={fileURL}
+        target="_blank"
+        rel="noreferrer"
         download
         className="flex w-full items-center  hover:bg-[#F1F3F4]"
       >
         {renderFileIcon(fileType)}
         <div className="ml-2 w-[185px]">
-          <p className="w-[265px] truncate text-sm font-semibold text-tblack">
+          <p className="w-[255px] truncate text-sm font-semibold text-tblack">
             {fileName}
           </p>
           <p className="mt-[2px] text-[13px] text-[#7589A3]">

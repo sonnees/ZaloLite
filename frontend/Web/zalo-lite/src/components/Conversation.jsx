@@ -117,7 +117,7 @@ const Conversation = () => {
 
   // Hàm xử lý khi chọn emoji từ picker
   const handleEmojiSelect = (emoji) => {
-    console.log("Emoji selected:", emoji);
+    // console.log("Emoji selected:", emoji);
     // Gửi emoji qua WebSocket
     sendMessageWithTextViaSocket(emoji, "emoji");
     // Đóng picker emoji sau khi chọn
@@ -129,7 +129,7 @@ const Conversation = () => {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:4000/upload", {
+      const response = await fetch(`${process.env.SERVICE_UPLOAD}`, {
         method: "POST",
         body: formData,
       });
@@ -171,7 +171,7 @@ const Conversation = () => {
       const uploadPromises = files.map(async (file) => {
         const formData = new FormData();
         formData.append("file", file);
-        const response = await fetch("http://localhost:4000/upload", {
+        const response = await fetch(`${process.env.SERVICE_UPLOAD}`, {
           method: "POST",
           body: formData,
         });
@@ -237,11 +237,16 @@ const Conversation = () => {
 
   // Hàm xử lý khi người dùng chọn ảnh
   const handleImageSelection2 = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handleFileUpload(file);
-      setContentType("image");
+    const file = e.target.files;
+    // if (file) {
+    //   handleFileUpload(file);
+    //   setContentType("image");
+    // }
+    const files = Array.from(file);
+    if (files && files.length > 0) {
+      console.log("Files:", files.toString());
     }
+    uploadMultiImageToS3(files);
   };
 
   // // Hàm xử lý khi người dùng chọn file
@@ -293,7 +298,6 @@ const Conversation = () => {
     const filteredConversations = conservation.filter(
       (chat) => chat.chatName === chatName,
     );
-    console.log("filteredConversations", filteredConversations);
     // setConservationFriend(filteredConversations);
     if (filteredConversations.length > 0) {
       setChatType(filteredConversations[0].type);
@@ -628,7 +632,7 @@ const Conversation = () => {
               messageFromOtherUser &&
               jsonData.contents
             ) {
-              console.log("Message____________________:", messages);
+              // console.log("Message____________________:", messages);
               setIdA(jsonData.id);
               if (jsonData) {
                 // Kiểm tra xem tin nhắn đã tồn tại trong mảng messages chưa
@@ -681,9 +685,11 @@ const Conversation = () => {
               });
               setMessages(updatedMessages);
             }
+
+            // Recall One Side
             if (
               jsonData.tcm === "TCM00" &&
-              jsonData.id === messageRecalledID &&
+              messageDeletedID &&
               jsonData.typeNotify === "SUCCESS"
             ) {
               const messageIDToDelete = messageDeletedID;
@@ -691,8 +697,48 @@ const Conversation = () => {
               const updatedMessages = messages.filter(
                 (msg) => msg.messageID !== messageIDToDelete,
               );
+              setMessageDeletedID("");
               setMessages(updatedMessages);
               console.log("Updated messages after deleting:", updatedMessages);
+            }
+
+            if (
+              jsonData.tcm === "TCM00" &&
+              messageRecalledID &&
+              jsonData.typeNotify === "SUCCESS"
+            ) {
+              console.log(
+                "Recall message successfully>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+              );
+              // const messageIDToDelete = messageRecalledID;
+              // // Lọc ra các tin nhắn mà không có messageIDToDelete
+              // const updatedMessages = messages.filter(
+              //   (msg) => msg.messageID !== messageIDToDelete,
+              // );
+              // // setMessageRecalledID("");
+              // // setMessageDeletedID("");
+              // setMessages(updatedMessages);
+              // console.log("Updated messages after deleting:", updatedMessages);
+
+              const messageIDToRecall = messageRecalledID;
+              const updatedMessages = messages.map((msg) => {
+                if (
+                  msg.messageID === messageIDToRecall ||
+                  msg.id === messageIDToRecall
+                ) {
+                  // Thay đổi nội dung của tin nhắn thành "Tin nhắn đã được thu hồi"
+                  return {
+                    ...msg,
+                    contents: [
+                      { key: "text", value: "Tin nhắn đã được thu hồi" },
+                    ],
+                    recall: true, // Có thể đánh dấu tin nhắn này đã được thu hồi
+                  };
+                }
+                return msg;
+              });
+              setMessageRecalledID("");
+              setMessages(updatedMessages);
             }
           }
           // console.log("Message ++++++++++", messages);
@@ -713,6 +759,8 @@ const Conversation = () => {
     messageDeletedID,
     messageRecalledID,
   ]);
+
+  // console.log("Messages:", messages);
 
   // Hàm cuộn xuống dưới cùng của khung chat
   const scrollToBottom = () => {
@@ -1106,8 +1154,6 @@ const Conversation = () => {
     console.log("ListImage:", messages);
   };
 
-  console.log("listLink:", listLink);
-
   function formatDate(dateString) {
     const date = new Date(dateString);
     const day = date.getDate();
@@ -1415,7 +1461,7 @@ const Conversation = () => {
                           </div>
                           <div className="px-[80px] pb-8 pt-[80px]">
                             <img
-                              src="/search-empty.a19dba60677c95d6539d26d2dc363e4e.png"
+                              src="/src/assets/search-empty.a19dba60677c95d6539d26d2dc363e4e.png"
                               alt=""
                             />
                           </div>
@@ -1710,9 +1756,15 @@ const Conversation = () => {
             {/* <div className="fixed z-30 -mt-[20px] flex w-full items-end justify-end bg-[#A4BEEB] ml-[850px] border pr-[1265px]"></div> */}
             {displayComposingMessage && (
               <div className="fixed z-30 -mt-[20px] flex w-full items-end justify-end bg-[#A4BEEB] pr-[415px]">
-                <span className="animate-wave text-sm text-white">
-                  {chatName}&nbsp;đang soạn tin...
-                </span>
+                {openCompReplyInput ? (
+                  <span className="animate-wave text-sm text-white">
+                    {chatName}&nbsp;đang soạn tin...
+                  </span>
+                ) : (
+                  <span className="animate-wave text-sm text-white">
+                    {chatName}&nbsp;đang soạn tin...
+                  </span>
+                )}
               </div>
             )}
             <div className="border-t">
@@ -1800,7 +1852,7 @@ const Conversation = () => {
                       type="file"
                       onChange={handleVideoChange}
                       className="hidden"
-                      accept=".mp4, .mov, .avi"
+                      accept=".mp4, .mov, .avi, .flv, .wmv, .mkv, .webm, .MP4"
                     />
                   </div>
                   <div className="mr-2 flex w-10 items-center justify-center">
