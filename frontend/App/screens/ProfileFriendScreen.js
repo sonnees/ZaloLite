@@ -50,7 +50,7 @@ export default function ProfileFriendScreen() {
         
         if (profileFriendRequest) {
             const newSocket = new WebSocket(
-                `ws://${host}:8082/ws/user/${profileFriendRequest.userID}`,
+                `${ACCOUNT}/ws/user/${profileFriendRequest.userID}`,
             );
             newSocket.onopen = () => {
                 // console.log("WebSocket for UserID: ", profileFriendRequest.userID, " OPENED");
@@ -95,7 +95,7 @@ export default function ProfileFriendScreen() {
         
         if (profileFriendRequest) {
             const newSocket = new WebSocket(
-                `ws://${host}:8082/ws/user/${profileFriendRequest.userID}`,
+                `${ACCOUNT}/ws/user/${profileFriendRequest.userID}`,
             );
             newSocket.onopen = () => {
                 // console.log("WebSocket for UserID: ", profileFriendRequest.userID, " OPENED");

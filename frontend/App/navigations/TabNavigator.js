@@ -34,19 +34,19 @@ function TabNavigator() {
             if (route.name === 'Messages' && color==='gray') {
               labelText = '';
             }else if (route.name === 'Messages' && color==='blue') {
-              labelText = 'Messages';
+              labelText = 'Tin nhắn';
             } else if (route.name === 'Me' && color==='gray') {
               labelText = '';
             }else if (route.name === 'Me' && color==='blue') {
-              labelText = 'Me';
+              labelText = 'Cá nhân';
             }else if (route.name === 'Timeline' && color==='gray') {
               labelText = '';
             }else if (route.name === 'Timeline' && color==='blue') {
-              labelText = 'Timeline';
+              labelText = 'Nhật ký';
             }else if (route.name === 'Contacts' && color==='gray') {
               labelText = '';
             }else if (route.name === 'Contacts' && color==='blue') {
-              labelText = 'Contacts';
+              labelText = 'Danh bạ';
             }
 
             return <Text style={{ color }}>{labelText}</Text>;

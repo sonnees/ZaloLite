@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import { getTimeDifference } from '../utils/CalTime';
 import { findConversationByUserID } from '../utils/DisplayLastChat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_INFOR_USER, API_PROFILE_BY_USERID, host } from '../api/API';
+import { ACCOUNT, API_INFOR_USER, API_PROFILE_BY_USERID, CHAT_SERVER, host } from '../api/API';
 import axios from 'axios';
 import { GlobalContext } from '../context/GlobalContext';
 import uuid from 'react-native-uuid'
@@ -24,7 +24,7 @@ const FriendRequestScreen = () => {
         setDataFriendRequest(myUserInfo.friendRequests)
     }, [myUserInfo,profileFriendRequest]);
     const fetchProfileInfo = async (userID) => {
-        console.log("ID:__________",userID);
+        // console.log("ID:__________",userID);
         const token = await AsyncStorage.getItem('token');
         try {
             const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
@@ -98,10 +98,12 @@ const FriendRequestScreen = () => {
         
         if (item) {
             const newSocket = new WebSocket(
-                `ws://${host}:8082/ws/user/${item.userID}`,
+                `${CHAT_SERVER}/ws/user/${item.userID}`,
             );
             // console.log("Socket STATUS: ", newSocket);
             newSocket.onopen = () => {
+                console.log('HIhi');
+                
                 console.log(
                     "WebSocket for UserID: ", item.userID, " OPENED",
                 );
@@ -109,10 +111,7 @@ const FriendRequestScreen = () => {
                 newSocket.send(JSON.stringify(message));
                 console.log("Message sent:", message);
             };
-            // newSocket.onmessage = (event) => {
-            //     console.log("Message received:", event.data);
-            //     navigation.navigate("AddFriendScreen")
-            // };
+
             newSocket.onmessage = (event) => {
                 const data = event.data;
                 console.log("Received data:", data);
@@ -136,6 +135,7 @@ const FriendRequestScreen = () => {
                   console.log("Received data is not a JSON object, ignoring...");
                 }
             };
+
             newSocket.onclose = () => {
                 console.log(
                     "WebSocket for UserID: ", item.userID, " CLOSED",
@@ -153,7 +153,7 @@ const FriendRequestScreen = () => {
         };
         if (item) {
             const newSocket = new WebSocket(
-                `ws://${host}:8082/ws/user/${item.userID}`,
+                `${CHAT_SERVER}/ws/user/${item.userID}`,
             );
             // console.log("Socket STATUS: ", newSocket);
             newSocket.onopen = () => {
@@ -223,9 +223,9 @@ const FriendRequestScreen = () => {
             // console.log("ITEM: ", item);
                 if (item) {
                     const newSocket = new WebSocket(
-                        `ws://${host}:8082/ws/user/${item.userID}`,
+                        `${CHAT_SERVER}/ws/user/${item.userID}`,
                     );
-                    // console.log("Socket STATUS: ", newSocket);
+                    console.log("Socket STATUS: ", newSocket);
                     newSocket.onopen = () => {
                         console.log(
                             "WebSocket for UserID: ", item.userID, " OPENED",
@@ -292,7 +292,7 @@ const FriendRequestScreen = () => {
                             <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'black', marginTop: 5 }}>
                                 {item.userName}</Text>
                             <Text style={{ fontSize: 13, color: '#B5B5B5', fontWeight: '400', margin: 4 }}>
-                                {getTimeDifference(item.sendAt)}       Wants to be friends
+                                {getTimeDifference(item.sendAt)}       Muốn kết Bạn
                             </Text>
                             <View style={{
                                 borderWidth: 0.5, borderColor: '#B5B5B5', height: 50, width: 250,
@@ -307,7 +307,7 @@ const FriendRequestScreen = () => {
                                     height: 30, width: 120, backgroundColor: '#B5B5B5', marginLeft: 5,
                                     borderRadius: 10, alignItems: 'center', justifyContent: 'center'
                                 }}>
-                                    <Text style={{ fontSize: 14, fontWeight: '500' }}>DECLINE</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: '500' }}>TỪ CHỐI</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{
                                     height: 30, width: 120, backgroundColor: '#87CEFF', marginLeft: 5,
@@ -315,7 +315,7 @@ const FriendRequestScreen = () => {
                                 }}
                                     onPress={() => acceptFriend(item)}
                                 >
-                                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#1E90FF' }}>ACCEPT</Text>
+                                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#1E90FF' }}>CHẤP NHẬN</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -328,7 +328,7 @@ const FriendRequestScreen = () => {
     }
     const SentFriendRequestElement = ({ item }) => {
         if (item.isSender === true) {
-            console.log("FRIENDREQUEST: \n", item);
+            // console.log("FRIENDREQUEST: \n", item);
             return (
                 <View>
                     <TouchableOpacity
@@ -354,7 +354,7 @@ const FriendRequestScreen = () => {
                         }}
                             onPress={() => recallFriendRequest(item)}
                         >
-                            <Text style={{ fontSize: 14, fontWeight: '500' }}>RECALL</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500' }}>THU HỒI</Text>
                         </TouchableOpacity>
                     </TouchableOpacity>
                     <View style={{ height: 5 }}></View>
@@ -383,7 +383,7 @@ const FriendRequestScreen = () => {
                     <TouchableOpacity style={{ flex: 7, borderRadius: 5, backgroundColor: "transparent", height: 40, width: 300, justifyContent: "center", alignItems: "flex-start" }}
                         onPress={() => navigation.navigate("SearchScreen")}
                     >
-                        <Text style={{ marginLeft: 20, fontSize: 15.5, color: "#CCCCCC" }}>Search</Text>
+                        <Text style={{ marginLeft: 20, fontSize: 15.5, color: "#CCCCCC" }}>Tìm kiếm</Text>
                     </TouchableOpacity>
 
 
@@ -401,7 +401,7 @@ const FriendRequestScreen = () => {
                             setViews("received")
                         }}
                     >
-                        <Text style={{ fontSize: 16, color: views === "received" ? "black" : "gray", fontWeight: views === "received" ? "700" : "300" }}> Received {countFalseSenders(dataFriendRequest)}</Text>
+                        <Text style={{ fontSize: 16, color: views === "received" ? "black" : "gray", fontWeight: views === "received" ? "500" : "300" }}> Đã nhận {countFalseSenders(dataFriendRequest)}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
                         onPress={() => {
@@ -409,7 +409,7 @@ const FriendRequestScreen = () => {
                             setViews("sent")
                         }}
                     >
-                        <Text style={{ fontSize: 16, color: views === "sent" ? "black" : "gray", fontWeight: views === "sent" ? "700" : "300" }}> Sent {countTrueSenders(dataFriendRequest)}</Text>
+                        <Text style={{ fontSize: 16, color: views === "sent" ? "black" : "gray", fontWeight: views === "sent" ? "500" : "300" }}> Đã gửi {countTrueSenders(dataFriendRequest)}</Text>
                     </TouchableOpacity>
 
                 </View>
@@ -461,7 +461,7 @@ const FriendRequestScreen = () => {
                                 <Text style={{ fontSize: 19, fontWeight: '700', marginTop: 12, marginLeft: 10, textAlign: 'center' }}>
                                     {selectedFriendRequest && selectedFriendRequest.userName ? selectedFriendRequest.userName : null}</Text>
                                 <Text style={{ fontSize: 15, marginTop: 7, marginLeft: 10, textAlign: 'center', color: '#8B8989', fontWeight: '500' }}>
-                                    {getTimeDifference(selectedFriendRequest && selectedFriendRequest.sendAt ? selectedFriendRequest.sendAt : null)}  Wants to be friends</Text>
+                                    {getTimeDifference(selectedFriendRequest && selectedFriendRequest.sendAt ? selectedFriendRequest.sendAt : null)}Muốn kết bạn</Text>
                                 <Text style={{ fontSize: 15, marginTop: 7, marginLeft: 10, textAlign: 'center' }}>
                                     {selectedFriendRequest && selectedFriendRequest.description ? selectedFriendRequest.description : null}</Text>
                                 <View style={{ flexDirection: 'row', marginTop: 5, justifyContent: 'space-around', marginTop: 80 }}>
@@ -474,7 +474,7 @@ const FriendRequestScreen = () => {
                                             chatStranger(selectedFriendRequest)
                                         }}
                                     >
-                                        <Text style={{ fontSize: 14, fontWeight: '600', color: 'blue' }}>MESSAGE</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '600', color: 'blue' }}>NHẮN TIN</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={{
                                         height: 30, width: 105, backgroundColor: '#1C86EE', marginLeft: 5,
@@ -484,7 +484,7 @@ const FriendRequestScreen = () => {
                                             acceptFriend(selectedFriendRequest)
                                         }}
                                     >
-                                        <Text style={{ fontSize: 14, fontWeight: '600', color: 'white' }}>ACCEPT</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '600', color: 'white' }}>CHẤP NHẬN</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

@@ -6,7 +6,7 @@ import axios from 'axios';
 import uuid from 'react-native-uuid';
 import { useNavigation } from '@react-navigation/native';
 import { GlobalContext } from '../context/GlobalContext';
-import {  API_INFOR_USER, API_PROFILE_BY_USERID, host } from '../api/API';
+import {  ACCOUNT, API_INFOR_USER, API_PROFILE_BY_USERID, host } from '../api/API';
 import { findUserIDByConversation } from '../utils/DisplayLastChat';
 
 const NavbarFriendRequest = ({ conversationOpponent }) => {
@@ -36,7 +36,7 @@ const NavbarFriendRequest = ({ conversationOpponent }) => {
         
         if (profileFriendRequest) {
             const newSocket = new WebSocket(
-                `ws://${host}:8082/ws/user/${profileFriendRequest.userID}`,
+                `${ACCOUNT}/ws/user/${profileFriendRequest.userID}`,
             );
             newSocket.onopen = () => {
                 // console.log("WebSocket for UserID: ", profileFriendRequest.userID, " OPENED");
@@ -78,7 +78,7 @@ const NavbarFriendRequest = ({ conversationOpponent }) => {
         
         if (profileFriendRequest) {
             const newSocket = new WebSocket(
-                `ws://${host}:8082/ws/user/${profileFriendRequest.userID}`,
+                `${ACCOUNT}/ws/user/${profileFriendRequest.userID}`,
             );
             newSocket.onopen = () => {
                 // console.log("WebSocket for UserID: ", profileFriendRequest.userID, " OPENED");
@@ -164,7 +164,7 @@ const NavbarFriendRequest = ({ conversationOpponent }) => {
                         zIndex: 1,
                     }}
                 >
-                    <Text style={{ marginLeft: 20 }}>Sent you a friend request</Text>
+                    <Text style={{ marginLeft: 20 }}>Đang chờ được đồng ý kết bạn</Text>
                     <TouchableOpacity
                         style={{
                             height: 30,
@@ -178,7 +178,7 @@ const NavbarFriendRequest = ({ conversationOpponent }) => {
                         }}
                         onPress={() => acceptFriend(profileFriendRequest)}
                     >
-                        <Text style={{ color: 'white', fontSize: 12 }}>ACCEPT</Text>
+                        <Text style={{ color: 'white', fontSize: 12 }}>ĐỒNG Ý</Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -199,7 +199,7 @@ const NavbarFriendRequest = ({ conversationOpponent }) => {
                     }}
                 >
                     <Icon name="adduser" size={20} color={'gray'}></Icon>
-                    <Text style={{ marginLeft: 10 }}>Friend request has been sent</Text>
+                    <Text style={{ marginLeft: 10 }}>Đã gửi lời mời kết bạn</Text>
                 </View>
             )}
             {type === 'STRANGER' && (
@@ -220,7 +220,7 @@ const NavbarFriendRequest = ({ conversationOpponent }) => {
                     onPress={addFriend}
                 >
                     <Icon name="adduser" size={20} color={'gray'}></Icon>
-                    <Text style={{ marginLeft: 10 }}>Add friend</Text>
+                    <Text style={{ marginLeft: 10 }}>Kết bạn</Text>
                 </TouchableOpacity>
             )}
         </>

@@ -7,7 +7,7 @@ import InformationScreen from '../screens/InformationScreen';
 import InformationDetailScreen from '../screens/InformationDetailScreen';
 import SwitchAccountScreen from '../screens/SwitchAccountScreen';
 import SettingScreen from '../screens/SettingScreen';
-import QRScreen from '../screens/QRScreen';
+import QRScannerScreen from '../screens/QRScreen';
 import ConfirmQRScreen from '../screens/ConfrimQRScreen';
 const Stack = createStackNavigator();
 function MeNavigator() {
@@ -19,7 +19,7 @@ function MeNavigator() {
         <Stack.Screen name='InformationDetailScreen' component={InformationDetailScreen} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='SwitchAccountScreen' component={SwitchAccountScreen} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='SettingScreen' component={SettingScreen} options={{ headerShown: false }}></Stack.Screen>
-        <Stack.Screen name='QRScreen' component={QRScreen} options={{ headerShown: false }}></Stack.Screen>
+        <Stack.Screen name='QRScreen' component={QRScannerScreen} options={{ headerShown: false }}></Stack.Screen>
         <Stack.Screen name='ConfirmQRScreen' component={ConfirmQRScreen} options={{ headerShown: false }}></Stack.Screen>
       </Stack.Navigator>
   );

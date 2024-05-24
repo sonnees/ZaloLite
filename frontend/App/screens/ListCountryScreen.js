@@ -59,7 +59,7 @@ const ListCountryScreen = () => {
             <Icon name='arrowleft' size={22} color={'white'} />
           </TouchableOpacity>
           <View style={{ flex: 7, flexDirection: 'column', borderRadius: 8, height: 32, paddingHorizontal: 5 }}>
-            <TextInput style={{ flex: 1, fontSize: 17, color: 'white' }} placeholder="Search" placeholderTextColor="white" />
+            <TextInput style={{ flex: 1, fontSize: 17, color: 'white' }} placeholder="Tìm kiếm" placeholderTextColor="white" />
             <View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 0.2, width: '100%' }} />
           </View>
         </View>
