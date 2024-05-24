@@ -67,7 +67,7 @@ export const PlusModal = ({ modalVisible, setModalVisible }) => {
                                         color={"gray"}
                                         style={{ marginRight: 5 }}
                                     ></Icon>
-                                    <Text style={styles.textInModal}>Add friend</Text>
+                                    <Text style={styles.textInModal}>Thêm bạn</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={styles.buttonInModal}
@@ -84,7 +84,7 @@ export const PlusModal = ({ modalVisible, setModalVisible }) => {
                                         color={"gray"}
                                         style={{ marginRight: 5 }}
                                     ></Icon>
-                                    <Text style={styles.textInModal}>Create group</Text>
+                                    <Text style={styles.textInModal}>Tạo nhóm</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -97,7 +97,7 @@ export const PlusModal = ({ modalVisible, setModalVisible }) => {
                                         color={"gray"}
                                         style={{ marginRight: 5 }}
                                     ></Icon>
-                                    <Text style={styles.textInModal}>My Cloud</Text>
+                                    <Text style={styles.textInModal}>Cloud của tôi</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={styles.buttonInModal}
@@ -109,7 +109,7 @@ export const PlusModal = ({ modalVisible, setModalVisible }) => {
                                         color={"gray"}
                                         style={{ marginRight: 5 }}
                                     ></Icon>
-                                    <Text style={styles.textInModal}>Zalo Calendar</Text>
+                                    <Text style={styles.textInModal}>Lịch ZaloLIte</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={styles.buttonInModal}
@@ -121,7 +121,7 @@ export const PlusModal = ({ modalVisible, setModalVisible }) => {
                                         color={"gray"}
                                         style={{ marginRight: 5 }}
                                     ></Icon>
-                                    <Text style={styles.textInModal}>Create group call</Text>
+                                    <Text style={styles.textInModal}>Tạo cuộc gọi nhóm</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={styles.buttonInModal}
@@ -133,7 +133,7 @@ export const PlusModal = ({ modalVisible, setModalVisible }) => {
                                         color={"gray"}
                                         style={{ marginRight: 5 }}
                                     ></Icon>
-                                    <Text style={styles.textInModal}>Logged-in devices</Text>
+                                    <Text style={styles.textInModal}>Thiết bị đăng nhập</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

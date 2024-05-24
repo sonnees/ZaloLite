@@ -10,15 +10,15 @@ function getTimeDifference(timestamp) {
         if (timeDifference <= 60) {
             return '1 minute';
         } else if (timeDifference <= 3600) { // 60 * 60 seconds
-            return `${Math.floor(timeDifference / 60)} minutes`;
+            return `${Math.floor(timeDifference / 60)} phút`;
         } else if (timeDifference <= 7200) { // 2 * 3600 seconds
             return '1 hour';
         } else if (timeDifference <= 84600) { // 60 * 60 seconds
-            return `${Math.floor(timeDifference / 3600)} hours`;
+            return `${Math.floor(timeDifference / 3600)} giờ`;
         } else if (timeDifference <= 86400) { // 24 * 3600 seconds và cùng ngày
             return '1 day';
         } else if (timeDifference <= 172800) { // 2 * 86400 seconds
-            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
             return days[sentTimeVN.getDay()];
         } else if (sentTimeVN.getFullYear() === currentTimeVN.getFullYear()) {
             if (sentTimeVN.getMonth() === currentTimeVN.getMonth()) {

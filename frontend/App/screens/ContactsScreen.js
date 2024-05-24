@@ -23,7 +23,7 @@ const ContactsScreen = () => {
           <TouchableOpacity style={{ flex: 7, borderRadius: 5, backgroundColor: "transparent", height: 40, width: 300, justifyContent: "center", alignItems: "flex-start" }}
             onPress={() => navigation.navigate("SearchScreen")}
           >
-            <Text style={{ marginLeft: 20, fontSize: 15.5, color: "#CCCCCC" }}>Tiềm kiếm m</Text>
+            <Text style={{ marginLeft: 20, fontSize: 15.5, color: "#CCCCCC" }}>Tìm kiếm</Text>
           </TouchableOpacity>
 
 
@@ -42,7 +42,7 @@ const ContactsScreen = () => {
               setOAViews(false)
             }}
           >
-            <Text style={{ fontSize: 16 }}> Friends</Text>
+            <Text style={{ fontSize: 16 }}> Bạn bè</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
             onPress={() => {
@@ -51,7 +51,7 @@ const ContactsScreen = () => {
               setOAViews(false)
             }}
           >
-            <Text style={{ fontSize: 16 }}> Groups</Text>
+            <Text style={{ fontSize: 16 }}> Nhóm</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
             onPress={() => {
@@ -82,7 +82,7 @@ const ContactsScreen = () => {
                     style={{
                       marginLeft: 20, color: 'black', alignSelf: 'center',
                       fontWeight: '500', fontSize: 15, marginBottom: 8
-                    }}> Friend request</Text>
+                    }}> Lời mời kết bạn</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{ height: 40, flexDirection: 'row', marginTop: 10 }}
@@ -97,7 +97,7 @@ const ContactsScreen = () => {
                     style={{
                       marginLeft: 20, color: 'black', alignSelf: 'center',
                       fontWeight: '500', fontSize: 15, marginBottom: 8
-                    }}> Phonebook</Text>
+                    }}> Danh bạ máy</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={{ height: 40, flexDirection: 'row', marginTop: 10 }}
@@ -112,7 +112,7 @@ const ContactsScreen = () => {
                     style={{
                       marginLeft: 20, color: 'black', alignSelf: 'center',
                       fontWeight: '500', fontSize: 15, marginBottom: 8
-                    }}> Birthday clendar</Text>
+                    }}> Lịch sinh nhật</Text>
                 </TouchableOpacity>
 
               </View>
@@ -136,7 +136,7 @@ const ContactsScreen = () => {
                     style={{
                       marginLeft: 20, color: 'black', alignSelf: 'center',
                       fontWeight: '400', fontSize: 15, marginTop: 5
-                    }}> Create new group</Text>
+                    }}> Tạo nhóm mới</Text>
                 </TouchableOpacity>
               </View>
               <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 8, width: '100%' }} />

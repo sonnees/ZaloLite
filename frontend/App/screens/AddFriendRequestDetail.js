@@ -6,7 +6,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import { GlobalContext } from '../context/GlobalContext';
 import { TextInput } from 'react-native-gesture-handler';
 import uuid from 'react-native-uuid'
-import { API_INFOR_USER, host } from '../api/Api';
+import { ACCOUNT, API_INFOR_USER, CHAT_SERVER, host } from '../api/API';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AddListChatID } from '../utils/AddListChatID';
@@ -37,7 +37,7 @@ const AddFriendRequestDetail = () => {
 
         if (profile) {
             const newSocket = new WebSocket(
-                `ws://${host}:8082/ws/user/${profile.userID}`,
+                `${CHAT_SERVER}/ws/user/${profile.userID}`,
             );
 
             newSocket.onopen = () => {

@@ -12,7 +12,7 @@ import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/Api';
+import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, CHAT_SERVER, host } from '../api/API';
 import uuid from 'react-native-uuid'
 import BackgroundInChat from '../component/BackgroundInChat';
 // import DocumentPicker from 'react-native-document-picker';
@@ -218,7 +218,7 @@ const ChatGroupScreen = () => {
     setShowEmojiPicker(false);
   };
   useEffect(() => {
-    const newSocket = new WebSocket(`ws://${host}:8082/ws/chat/${componentChatID}`);
+    const newSocket = new WebSocket(`${CHAT_SERVER}/ws/chat/${componentChatID}`);
     newSocket.onopen = () => {
       console.log("WebSocket connected >>>>>>>>");
     };
@@ -422,7 +422,7 @@ const ChatGroupScreen = () => {
         />
         {message.length === 0 && (
           <View style={{ flexDirection: 'row', flex: 0.8, justifyContent: 'space-between', marginBottom: 5, width: 80, marginRight: -15 }}>
-            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'flex-start' }} onPress={handleChooseFiles}>
+            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'flex-start' }} >
               <Image
                 style={{ width: 30, height: 30, resizeMode: "contain", marginLeft: 2 }}
                 source={require("../assets/morechat.png")}

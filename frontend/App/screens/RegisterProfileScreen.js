@@ -100,7 +100,7 @@ const RegisterProfileScreen = () => {
         </View>
 
         <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 12, backgroundColor: "#DDDDDD", height: 45 }}>
-          <Text style={{ fontSize: 14, marginLeft: "6%" }}>Cập nhật ảnh đại diện đẹp nhất c</Text>
+          <Text style={{ fontSize: 14, marginLeft: "6%" }}>Cập nhật ảnh đại diện đẹp nhất </Text>
         </View>
         <View style={{ borderBottomColor: 'gray', borderBottomWidth: 1, width: '100%' }} />
         <View style={{ flex: 5, backgroundColor: "#fff", justifyContent: "center", alignItems: "center" }}>
@@ -114,8 +114,8 @@ const RegisterProfileScreen = () => {
             />
           </TouchableOpacity>
 
-          <Text style={{ fontSize: 14, color: "#999999", top: "3%" }}>Bạn có thể chỉnh sủa ảnh với nhiều tùy c</Text>
-          <Text style={{ fontSize: 14, color: "#999999", top: "3%" }}>và chọn bộ lọc màu thú vị v</Text>
+          <Text style={{ fontSize: 14, color: "#999999", top: "3%" }}>Bạn có thể chỉnh sủa ảnh với nhiều tùy ý</Text>
+          <Text style={{ fontSize: 14, color: "#999999", top: "3%" }}>và chọn bộ lọc màu thú vị</Text>
         </View>
         <View style={{ flex: 3, backgroundColor: "#fff" }}></View>
         <View style={{ flex: 2, justifyContent: "center", paddingLeft: "70%", backgroundColor: "#fff" }}>

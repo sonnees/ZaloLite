@@ -22,7 +22,7 @@ export default function ConfirmQRScreen({route}) {
       socket.close();
     }
   
-    const newSocket = new WebSocket('wss://zalolite-account-server-production.up.railway.app/ws/auth/' + data);
+    const newSocket = new WebSocket(`ws://${host}:8081/ws/auth/` + data);
     setSocket(newSocket);
   
     newSocket.onmessage = async (event) => {

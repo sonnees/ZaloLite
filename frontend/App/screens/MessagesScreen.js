@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { getTimeDifference } from '../utils/CalTime';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
-import { API_GET_LIST_CHATACTIVITY, host } from '../api/Api';
+import { API_GET_LIST_CHATACTIVITY, CHAT_SERVER, host } from '../api/API';
 import { GlobalContext } from '../context/GlobalContext';
 import { PlusModal } from '../modal/plusModal';
 import { ChatModal } from '../modal/chatModal';
@@ -101,7 +101,7 @@ const MessagesScreen = () => {
 
     useEffect(() => {
       if (itemRef.current.chatID) {
-        const newSocket = new WebSocket(`ws://${host}:8082/ws/chat/${itemRef.current.chatID}`);
+        const newSocket = new WebSocket(`${CHAT_SERVER}/ws/chat/${itemRef.current.chatID}`);
         newSocket.onopen = () => {
           // console.log("WebSocket for chatID: ", itemRef.current.chatID, " OPENED");
         };
@@ -247,7 +247,7 @@ const MessagesScreen = () => {
       } else if (lastContent && (key === "text" || key === "emoji") && !hidenMess) {
         contentMessage = lastContent.value;
       } else if (lastContent && key === "image" && !hidenMess) {
-        contentMessage = "[Photo]";
+        contentMessage = "[Hình Ảnh]";
       } else if (lastContent && key === "mp4" && !hidenMess) {
         contentMessage = "[Video]";
       } else if (lastContent && key === "link" && !hidenMess) {
@@ -269,26 +269,25 @@ const MessagesScreen = () => {
 
           <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>
             <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{data.chatName ? data.chatName : null}</Text>
-            <Text style={{ fontSize: 14, fontWeight: textFontWeight, color: textColor, marginBottom: 10 }}>
+            {/* <Text style={{ fontSize: 14, fontWeight: textFontWeight, color: textColor, marginBottom: 10}}> */}
+            <Text style={{ fontSize: 14, color: "gray", marginBottom: 10}}>
+            
               {contentMessage}
             </Text>
 
           </View>
 
-          <View style={{ justifyContent: 'flex-end', alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: 30, marginRight: -20 }}>
-            <Icon name='pushpin' size={13} color={'#d9d9d9'} style={{ marginRight: 5 }}></Icon>
-            <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>
-              <Text style={{ fontSize: 12.5, fontWeight: '600', color: 'black' }}>
+          <View style={{ justifyContent: 'flex-end', alignItems: 'center', flex: 1, flexDirection: 'row', marginBottom: 30,width:60,marginRight:10 }}>
+            {/* <Icon name='pushpin' size={13} color={'#d9d9d9'} style={{ marginRight: 5 }}></Icon> */}
+            <Text style={{ fontSize: 12.5, color: 'black'}}>
                 {timeDifference}
-                {/* {data.topChatActivity && data.topChatActivity.length > 0 ? getTimeDifference(data.topChatActivity[data.topChatActivity.length - 1].timestamp) : ''} */}
-              </Text>
 
             </Text>
           </View>
 
-          <View style={{ height: 17, width: 20, borderRadius: 45, backgroundColor: '#BBBBBB', marginTop: 45, marginRight: 15, alignItems: 'center', justifyContent: 'center' }}>
+          {/* <View style={{ height: 17, width: 20, borderRadius: 45, backgroundColor: '#BBBBBB', marginTop: 45, marginRight: 15, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontSize: 10, fontWeight: '500', color: 'white', textAlign: 'center' }}>2+</Text>
-          </View>
+          </View> */}
 
         </TouchableOpacity>
         <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 0.45, width: '100%', marginLeft: 100 }} />
@@ -341,7 +340,7 @@ const MessagesScreen = () => {
             onPress={() => navigation.navigate("SearchScreen")}
           >
             <Text style={{ marginLeft: 20, fontSize: 15.5, color: "#CCCCCC" }}>
-              Tìm kiếm m
+              Tìm kiếm
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -395,10 +394,10 @@ const MessagesScreen = () => {
             }}
           >
             <TouchableOpacity style={styles.buttonNav}>
-              <Text style={{ fontSize: 15.5, color: "gray", fontWeight: '500' }}>Focused</Text>
+              <Text style={{ fontSize: 15.5, color: "gray", fontWeight: '500' }}>Ưu tiên</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.buttonNav}>
-              <Text style={{ fontSize: 15.5, color: "gray", fontWeight: '500' }}> Other</Text>
+              <Text style={{ fontSize: 15.5, color: "gray", fontWeight: '500' }}> Khác</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity

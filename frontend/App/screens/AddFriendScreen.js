@@ -70,10 +70,11 @@ const AddFriendScreen = () => {
 
 
   const handleCheckProfile = async () => {
-    if (phoneNumber.length !== 10) {
+    if ((phoneNumber.length !== 9 && phoneNumber.length !== 10) || (phoneNumber.length === 10 && !phoneNumber.startsWith('0'))) {
       setModalInvalidPhone(true);
       return;
     }
+
     const token = await getToken();
     const myPhoneNumber = await AsyncStorage.getItem('phoneNumber');
 
@@ -81,11 +82,17 @@ const AddFriendScreen = () => {
       console.log("Lỗi không tìm thấy token");
     }
 
-    // console.log("MY PHONE NUMBER : ", myPhoneNumber);
     if (phoneNumber === myPhoneNumber) {
       navigation.navigate('MeNavigator', { screen: 'ProfileScreen' });
       return;
     }
+
+    // Kiểm tra nếu độ dài của phoneNumber bằng 9 và thêm số 0 ở đầu
+    if (phoneNumber.length === 9) {
+      a = '0' + phoneNumber;
+      setPhoneNumber(a)
+    }
+
     const userInfo = await fetchUserInfo(phoneNumber, token);
     if (userInfo.status === 404) {
       setModalPhoneNotLinked(true);
@@ -94,14 +101,10 @@ const AddFriendScreen = () => {
       }, 5000);
       return;
     }
-    // Xử lý các trường hợp lỗi khác
-    // if (userInfo.status !== 200) {
-    //   console.log("Lỗi khi lấy thông tin cá nhân:", userInfo.message);
-    //   // Xử lý lỗi ở đây nếu cần thiết
-    //   return;
-    // }
+
     navigation.navigate('ProfileFriendScreen', { profile: userInfo });
-  }
+}
+
   const handleNavi = (typeScreen) => {
     if (typeScreen === 'PofileFriendScreen') {
       navigation.navigate("PofileFriendScreen")
@@ -130,7 +133,7 @@ const AddFriendScreen = () => {
         >
           <Icon name='arrowleft' size={22} color={'black'} />
         </TouchableOpacity>
-        <Text style={{ fontSize: 17, fontWeight: '500' }}>Add friends</Text>
+        <Text style={{ fontSize: 17, fontWeight: '500' }}>Thêm bạn bè</Text>
       </View>
 
       <View style={{ borderBottomColor: '#CCCCCC', borderBottomWidth: 1, width: '100%' }} />
@@ -161,7 +164,7 @@ const AddFriendScreen = () => {
                   <Icon name='down' size={22} style={{ marginLeft: 10 }}></Icon>
                 </TouchableOpacity>
                 <TextInput style={{ flex: 2.5, marginLeft: 15, }}
-                  placeholder='Enter phone number'
+                  placeholder='Nhập số điện thoại'
                   keyboardType='numeric'
                   onFocus={changeColor}
                   onBlur={revertColor}
@@ -169,7 +172,10 @@ const AddFriendScreen = () => {
                 ></TextInput>
               </View>
               <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: '#DDDDDD', borderRadius: 50, width: 45, height: 45, justifyContent: 'center', alignItems: 'center', margin: 10, marginRight: 20 }}
-                onPress={handleCheckProfile}
+                onPress={() => {
+                    handleCheckProfile();
+                }}
+                disabled={phoneNumber.length <1}
               >
                 <Icon name='arrowright' size={22} color={'black'} />
               </TouchableOpacity>
@@ -181,7 +187,7 @@ const AddFriendScreen = () => {
               onPress={() => navigation.navigate('MeNavigator', { screen: 'QRScreen' })}
             >
               <Image source={require("../assets/qr-code_blue.png")} style={{ width: 25, height: 25, borderRadius: 2, margin: 15 }} />
-              <Text style={{ fontSize: 16 }}>Scan QR Code</Text>
+              <Text style={{ fontSize: 16 }}>Quét mã QR</Text>
             </TouchableOpacity>
 
           </View>
@@ -191,12 +197,12 @@ const AddFriendScreen = () => {
           <View style={{ flex: 1 }}>
             <TouchableOpacity style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 5 }}>
               <Icon name='contacts' size={25} color={'#002c8c'} style={{ margin: 15 }}></Icon>
-              <Text style={{ fontSize: 16 }}>Phonebook</Text>
+              <Text style={{ fontSize: 16 }}>Danh bạ máy</Text>
             </TouchableOpacity>
             <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 1, width: '100%', marginLeft: 20 }} />
             <TouchableOpacity style={{ flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 5 }}>
               <Image source={require("../assets/peoplemayknow.png")} style={{ width: 25, height: 25, borderRadius: 2, margin: 15 }} />
-              <Text style={{ fontSize: 16 }}>People you may know</Text>
+              <Text style={{ fontSize: 16 }}>Bạn bè có thể quen</Text>
             </TouchableOpacity>
           </View>
 
@@ -204,7 +210,7 @@ const AddFriendScreen = () => {
         </View>
         <View style={{ backgroundColor: '#EEEEEE', alignItems: 'center', flex: 2.3 }}>
           <Text style={{ color: '#999', marginTop: 20 }}>
-            View sent friend requests in Contacts
+            Bạn bè có thể quen
           </Text>
 
         </View>
@@ -217,15 +223,15 @@ const AddFriendScreen = () => {
       >
         <View style={{ height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
           <View style={{ height: '25%', width: '90%', backgroundColor: 'white', padding: 10 }}>
-            <Text style={{ fontSize: 20, alignSelf: 'flex-start', fontWeight: '600', margin: 10 }}>Notification</Text>
+            <Text style={{ fontSize: 20, alignSelf: 'flex-start', fontWeight: '600', margin: 10 }}>Thông báo</Text>
             <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 0.2, width: '100%' }} />
-            <Text style={{ fontSize: 14, color: '#555555', alignSelf: 'flex-start' }}>The phone number is invalid. Please check again</Text>
+            <Text style={{ fontSize: 14, color: '#555555', alignSelf: 'flex-start' }}>Số điện thoại không hợp lệ. Vui lòng kiểm tra lại</Text>
             <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: '18%' }}>
               <TouchableOpacity
                 onPress={() => setModalInvalidPhone(false)}
                 style={{ height: 50, width: 100, alignItems: 'center', justifyContent: 'center' }}
               >
-                <Text style={{ fontSize: 15, alignSelf: 'center', textAlign: 'center', fontWeight: '600' }}>CLOSE</Text>
+                <Text style={{ fontSize: 15, alignSelf: 'center', textAlign: 'center', fontWeight: '600' }}>ĐÓNG</Text>
               </TouchableOpacity>
 
             </View>
@@ -240,7 +246,7 @@ const AddFriendScreen = () => {
       >
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <View style={{ backgroundColor: '#222222', padding: 20, borderRadius: 10 }}>
-            <Text style={{ fontSize: 16, color: 'white' }}>This phone number has not been linked to{"\n"} an account or does not allow searching</Text>
+            <Text style={{ fontSize: 16, color: 'white' }}>Số điện thoại chưa được đăng ký tài khoản hoặc không cho phép tìm kiếm</Text>
           </View>
         </View>
       </Modal>

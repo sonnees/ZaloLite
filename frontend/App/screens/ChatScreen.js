@@ -12,7 +12,7 @@ import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, host } from '../api/Api';
+import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, CHAT_SERVER, host } from '../api/API';
 import uuid from 'react-native-uuid'
 import BackgroundInChat from '../component/BackgroundInChat';
 import NavBarFriendRequest from '../component/NavbarFriendRequest';
@@ -195,7 +195,7 @@ const ChatScreen = () => {
     }
   }
   useEffect(() => {
-    const newSocket = new WebSocket(`ws://${host}:8082/ws/chat/${componentChatID}`);
+    const newSocket = new WebSocket(`${CHAT_SERVER}/ws/chat/${componentChatID}`);
     newSocket.onopen = () => {
       console.log("WebSocket connected >>>>>>>>");
     };
@@ -372,7 +372,7 @@ const ChatScreen = () => {
           <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>
             {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}
           </Text>
-          <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Last 5 hours</Text>
+          {/* <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Last 5 hours</Text> */}
         </View>
 
         <View style={{ flex: 3 }}></View>
@@ -462,7 +462,7 @@ const ChatScreen = () => {
         <TextInput
           style={[styles.textInput, { height: textInputHeight }]}
           multiline={true}
-          placeholder="Message"
+          placeholder="Tin nhắn"
           placeholderTextColor={'gray'}
           onChangeText={(text) => setMessage(text)}
           value={message}

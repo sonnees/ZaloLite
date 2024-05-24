@@ -46,6 +46,8 @@ const QRScannerScreen = () => {
       } else {
         socket.addEventListener('open', () => resolve(socket));
         socket.addEventListener('error', (error) => reject(error));
+        socket.addEventListener('open', () => resolve(socket));
+        socket.addEventListener('error', (error) => reject(error));
       }
     });
   };

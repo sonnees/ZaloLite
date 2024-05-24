@@ -67,25 +67,22 @@ export const ChatModal = ({ modalChatVisible, setModalChatVisible, data }) => {
                             }}
                         />
                         <TouchableOpacity style={styles.buttonInChatModal}>
-                            <Text style={styles.textInModal}>Move to Other</Text>
+                            <Text style={styles.textInModal}>Chuyển sang mục khác</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonInChatModal}>
-                            <Text style={styles.textInModal}>Hide conversation</Text>
+                            <Text style={styles.textInModal}>Ẩn trò chuyện</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonInChatModal}>
-                            <Text style={styles.textInModal}>Manage blocking</Text>
+                            <Text style={styles.textInModal}>Xóa trò chuyện</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonInChatModal}>
-                            <Text style={styles.textInModal}>Delete</Text>
+                            <Text style={styles.textInModal}>Đánh dấu đã đọc</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonInChatModal}>
-                            <Text style={styles.textInModal}>Mark as read</Text>
+                            <Text style={styles.textInModal}>Bật chế độ Bong Bóng Chat</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.buttonInChatModal}>
-                            <Text style={styles.textInModal}>Enable Bubble Chat mode</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonInChatModal}>
-                            <Text style={styles.textInModal}>Mute</Text>
+                            <Text style={styles.textInModal}>Tắt thông báo</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
