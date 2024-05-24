@@ -21,7 +21,7 @@ import {
 } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { GlobalContext } from '../context/GlobalContext';
-import { host } from "../api/API";
+import { GROUP_SOCKET, host } from "../api/API";
 
 const AddMemberScreen = () => {
   let navigation = useNavigation();
@@ -213,7 +213,7 @@ const AddMemberScreen = () => {
 
 
   const saveGroupToBackend = async (newGroup) => {
-    const newSocket = new WebSocket(`ws://${host}:8082/ws/group`);
+    const newSocket = new WebSocket(`${GROUP_SOCKET}`);
 
     newSocket.onopen = () => {
       console.log("WebSocket connected");

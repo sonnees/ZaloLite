@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { Camera } from 'expo-camera';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { host } from '../api/API';
+import { ACCOUNT_SOCKET } from '../api/API';
 
 const QRScannerScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -24,7 +24,7 @@ const QRScannerScreen = () => {
     }
 
     try {
-      const newSocket = new WebSocket(`ws://${host}:8081/ws/auth/` + data);
+      const newSocket = new WebSocket(ACCOUNT_SOCKET + data);
       setScanned(true);
       navigation.navigate('ConfirmQRScreen', { data: data });
       await waitForWebSocketOpen(newSocket);

@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { getTimeDifference } from '../utils/CalTime';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
-import { API_GET_LIST_CHATACTIVITY, CHAT_SERVER, host } from '../api/API';
+import { API_GET_LIST_CHATACTIVITY, CHAT_SOCKET } from '../api/API';
 import { GlobalContext } from '../context/GlobalContext';
 import { PlusModal } from '../modal/plusModal';
 import { ChatModal } from '../modal/chatModal';
@@ -101,7 +101,7 @@ const MessagesScreen = () => {
 
     useEffect(() => {
       if (itemRef.current.chatID) {
-        const newSocket = new WebSocket(`${CHAT_SERVER}/ws/chat/${itemRef.current.chatID}`);
+        const newSocket = new WebSocket(`${CHAT_SOCKET}/${itemRef.current.chatID}`);
         newSocket.onopen = () => {
           // console.log("WebSocket for chatID: ", itemRef.current.chatID, " OPENED");
         };

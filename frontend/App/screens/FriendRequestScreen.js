@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import { getTimeDifference } from '../utils/CalTime';
 import { findConversationByUserID } from '../utils/DisplayLastChat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ACCOUNT, API_INFOR_USER, API_PROFILE_BY_USERID, CHAT_SERVER, host } from '../api/API';
+import { ACCOUNT, ADDFRIEND_SOCKET, API_INFOR_USER, API_PROFILE_BY_USERID } from '../api/API';
 import axios from 'axios';
 import { GlobalContext } from '../context/GlobalContext';
 import uuid from 'react-native-uuid'
@@ -98,7 +98,7 @@ const FriendRequestScreen = () => {
         
         if (item) {
             const newSocket = new WebSocket(
-                `${CHAT_SERVER}/ws/user/${item.userID}`,
+                `${ADDFRIEND_SOCKET}/${item.userID}`,
             );
             // console.log("Socket STATUS: ", newSocket);
             newSocket.onopen = () => {
@@ -153,7 +153,7 @@ const FriendRequestScreen = () => {
         };
         if (item) {
             const newSocket = new WebSocket(
-                `${CHAT_SERVER}/ws/user/${item.userID}`,
+                `${ADDFRIEND_SOCKET}/${item.userID}`,
             );
             // console.log("Socket STATUS: ", newSocket);
             newSocket.onopen = () => {
@@ -223,7 +223,7 @@ const FriendRequestScreen = () => {
             // console.log("ITEM: ", item);
                 if (item) {
                     const newSocket = new WebSocket(
-                        `${CHAT_SERVER}/ws/user/${item.userID}`,
+                        `${ADDFRIEND_SOCKET}/${item.userID}`,
                     );
                     console.log("Socket STATUS: ", newSocket);
                     newSocket.onopen = () => {

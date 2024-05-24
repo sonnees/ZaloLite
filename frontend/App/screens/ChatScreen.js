@@ -12,7 +12,7 @@ import { findConversationByID } from '../utils/FindConservation';
 import { getDataFromConversationsAndChatData } from '../utils/DisplayLastChat';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, CHAT_SERVER, host } from '../api/API';
+import { API_GET_LIST_CHATACTIVITY, API_PROFILE_BY_USERID, CHAT_SOCKET } from '../api/API';
 import uuid from 'react-native-uuid'
 import BackgroundInChat from '../component/BackgroundInChat';
 import NavBarFriendRequest from '../component/NavbarFriendRequest';
@@ -195,7 +195,7 @@ const ChatScreen = () => {
     }
   }
   useEffect(() => {
-    const newSocket = new WebSocket(`${CHAT_SERVER}/ws/chat/${componentChatID}`);
+    const newSocket = new WebSocket(`${CHAT_SOCKET}/${componentChatID}`);
     newSocket.onopen = () => {
       console.log("WebSocket connected >>>>>>>>");
     };

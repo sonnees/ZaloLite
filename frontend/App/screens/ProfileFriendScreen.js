@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { GlobalContext } from '../context/GlobalContext';
 import uuid from 'react-native-uuid'
-import { API_INFOR_USER, host } from '../api/API';
+import { ADDFRIEND_SOCKET, API_INFOR_USER } from '../api/API';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 export default function ProfileFriendScreen() {
@@ -50,7 +50,7 @@ export default function ProfileFriendScreen() {
         
         if (profileFriendRequest) {
             const newSocket = new WebSocket(
-                `${ACCOUNT}/ws/user/${profileFriendRequest.userID}`,
+                `${ADDFRIEND_SOCKET}/${profileFriendRequest.userID}`,
             );
             newSocket.onopen = () => {
                 // console.log("WebSocket for UserID: ", profileFriendRequest.userID, " OPENED");
@@ -95,7 +95,7 @@ export default function ProfileFriendScreen() {
         
         if (profileFriendRequest) {
             const newSocket = new WebSocket(
-                `${ACCOUNT}/ws/user/${profileFriendRequest.userID}`,
+                `${ADDFRIEND_SOCKET}/${profileFriendRequest.userID}`,
             );
             newSocket.onopen = () => {
                 // console.log("WebSocket for UserID: ", profileFriendRequest.userID, " OPENED");
