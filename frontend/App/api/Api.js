@@ -16,12 +16,12 @@ export const API_INFOR_ACCOUNT = `${GATEWAY}/api/v1/account/info`;
 export const API_PROFILE_BY_USERID = `${GATEWAY}/api/v1/account/profile/userID/`;
 export const API_INFOR_USER = `${GATEWAY}/api/v1/user/info/`;
 export const API_GET_LIST_CHATACTIVITY = `${GATEWAY}/api/v1/chat/x-to-y?id=`;
+export const API_CHANGE_AVATAR = `${GATEWAY}/api/v1/account/change-avatar`;
 
 export const GROUP_SOCKET = `${CHAT_SERVER}/ws/group`
 export const CHAT_SOCKET=`${CHAT_SERVER}/ws/chat`
 export const ADDFRIEND_SOCKET=`${CHAT_SERVER}/ws/user`
 export const ACCOUNT_SOCKET=`${ACCOUNT}/ws/auth/`
-
 
 
 // export const API_AUTHENTICATE = `${host}/api/v1/auth/authenticate`;

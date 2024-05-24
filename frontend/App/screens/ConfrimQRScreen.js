@@ -28,7 +28,7 @@ export default function ConfirmQRScreen({route}) {
     newSocket.onmessage = async (event) => {
       if (isJSON(event.data)) {
         const data = JSON.parse(event.data);
-        console.log(data);
+        console.log(data + "fhhdfahfahfhahfhahfhafhahfhadhf");
         // Cập nhật state từ dữ liệu nhận được từ socket
         if (data.device != null) {
           setDevice(data.device);

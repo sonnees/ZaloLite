@@ -58,13 +58,13 @@ const MessagesScreen = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const allChatActivity = await response.data;
+      const allChatActivity = response.data;
       // console.log("ALL CHATACTIVITY: ", allChatActivity);
-      if (allChatActivity)
+      if (allChatActivity) {
         return allChatActivity;
-      else
+      } else {
         return null;
-
+      }
     } catch (error) {
       console.error('Lỗi khi lấy thông tin tất cả đoạn chat:', error);
       return null;
@@ -73,15 +73,19 @@ const MessagesScreen = () => {
   const fetchConversationOpponent = async (conversationOpponent) => {
     // console.log("CONVERSATION", conversationOpponent);
     const chatID = conversationOpponent.chatID;
-    const token = await AsyncStorage.getItem('token')
+    const token = await AsyncStorage.getItem('token');
+    if (!token) {
+      console.error('Token không tồn tại');
+      return null;
+    }
     const chatData = await fetchAllChatbychatID(chatID, token);
-    const newChatData = getDataFromConversationsAndChatData(conversationOpponent, chatData);
+    const newChatData = chatData ? getDataFromConversationsAndChatData(conversationOpponent, chatData) : null;
     if (newChatData) {
       // console.log("CONVERSATION WITH ALL CHATACTIVITY:\n", newChatData);
       return newChatData;
-    }
-    else {
+    } else {
       console.log("ERROR WHEN GET CONVERSATION WITH ALL CHATACTIVITY\n");
+      return null;
     }
   }
   const ChatElement = memo(({ item, onLongPress }) => {
@@ -117,46 +121,21 @@ const MessagesScreen = () => {
           }
           if (isJSON(data)) {
             const jsonData = JSON.parse(data);
-            // console.log("Message received in CHAT ELEMENT:", jsonData);
-            if (jsonData.tcm === "TCM01") {
+    
+            console.log("Message received in CHAT ELEMENT:", jsonData);
+            if (jsonData.tcm === "TCM00" || jsonData.tcm === "TCM01") {
               fetchData();
             }
-            if (jsonData.tcm === "TCM02") {
-              const messageReader = {
-                userID: jsonData.userID,
-                userName: jsonData.userName,
-                userAvatar: jsonData.userAvatar,
-                messageID: jsonData.messageID
-              }
-              const previousMessageReader = data.reads.find(read => read.userID === myProfile.userID) || null;
-            if (previousMessageReader) {
-              const newDataReads = data.reads.map(read => {
-                if (read.userID === myProfile.userID) {
-                  return { ...read, messageID: jsonData.messageID }; // Thay đổi messageID thành giá trị mới
-                }
-                return read;
-              });
-
-              setData(prevData => ({
-                ...prevData,
-                reads: newDataReads
-              }));
-              // console.log("NEWDAATA: ", newDataReads);
-            }
-            }
-            
-          } 
-          else {
-            // Handle non-JSON data
           }
         };
         setSocket(newSocket);
-
+    
         return () => {
           newSocket.close();
         };
       }
     }, []);
+    
 
     useEffect(() => {
       fetchData();
@@ -424,6 +403,19 @@ const MessagesScreen = () => {
                 onRefresh={onRefresh}
               />
             }
+            ListFooterComponent={(
+              <View style={{height:50}}>
+                <TouchableOpacity style={{flex:1,borderRadius:20,backgroundColor:'#1E90FF',margin:5,marginHorizontal:70,justifyContent:'center'}}
+                onPress={() => {
+                  navigation.navigate("AddFriendScreen", {
+                      typeScreen: "MessagesScreen",
+                  });
+              }}
+                >
+                  <Text style={{textAlign:'center',fontSize:16,fontWeight:'500',color:'white'}}>Thêm bạn để trò chuyện</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           />
         </View>
 

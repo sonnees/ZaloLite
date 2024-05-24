@@ -9,7 +9,7 @@ import { API_REGISTER } from '../api/API';
 const RegisterProfileScreen = () => {
   let navigation = useNavigation();
   let route = useRoute();
-
+  let imageUrl='';
   // Nhận các giá trị từ tham số được truyền qua
   const { userName, phoneNumber, gender, birthDate } = route.params;
 
@@ -31,22 +31,37 @@ const RegisterProfileScreen = () => {
   };
 
   //Upload ảnh lên Cloudinary
-  const handleUpload = (image) => {
-    const data = new FormData();
-    data.append('file', image);
-    data.append('upload_preset', 'ZaloLife');
-    data.append('cloud_name', 'dbmkvqy3b');
+  const handleUpload = async (imageUri) => {
+    try {
+      const data = new FormData();
+      data.append('file', {
+        uri: imageUri,
+        type: 'image/jpeg',
+        name: 'avatar.jpg',
+      });
+      data.append('upload_preset', 'ZaloLife');
+      data.append('cloud_name', 'dbmkvqy3b');
 
-    console.log("?????????",data);
+      const response = await fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
+        method: 'POST',
+        body: data,
+      });
 
-    fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
-      method: 'post',
-      body: data
-    }).then(res => res.json())
-      .then(data => {
-        console.log(data);
-      })
-  }
+      if (!response.ok) {
+        throw new Error('Failed to upload image to Cloudinary');
+      }
+
+      const responseData = await response.json();
+      // console.log('Upload successful:', responseData);
+
+      imageUrl = responseData.secure_url;
+      return imageUrl;
+
+    } catch (error) {
+      console.error('Lỗi khi tải ảnh lên Cloudinary:', error);
+      throw error;
+    }
+  };
 
   const handleRegister = async () => {
     // Nếu người dùng đã chọn ảnh mới, thực hiện upload ảnh lên Cloudinary trước khi đăng ký
@@ -65,7 +80,7 @@ const RegisterProfileScreen = () => {
       phoneNumber: phoneNumber,
       password: "123", // Giá trị mặc định cho password
       userName: userName,
-      avatar: selectedImage ? selectedImage : "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712158193/bihirvugrglydydg1htz.jpg", // Sử dụng ảnh đã chọn hoặc ảnh mặc định nếu không có ảnh đã chọn
+      avatar: imageUrl ? imageUrl : "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712158193/bihirvugrglydydg1htz.jpg", // Sử dụng ảnh đã chọn hoặc ảnh mặc định nếu không có ảnh đã chọn
       gender: gender === "male" ? "true" : "false", // Chuyển đổi giá trị gender thành true hoặc false
       birthday: birthDate,
       role: "USER"

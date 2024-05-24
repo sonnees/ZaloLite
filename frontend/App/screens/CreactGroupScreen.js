@@ -22,12 +22,11 @@ import {
 import Icon from "react-native-vector-icons/AntDesign";
 import { GlobalContext } from '../context/GlobalContext';
 import CREATE_GROUP, { GROUP_SOCKET } from '../api/API';
-
+import uuid from 'react-native-uuid'
 const CreateGroupScreen = () => {
   let navigation = useNavigation();
-  let route = useRoute();
   const isFocused = useIsFocused();
-  const { myUserInfo, setMyUserInfo } = useContext(GlobalContext);
+  const { myUserInfo, setMyUserInfo,myProfile, setMyProfile, } = useContext(GlobalContext);
   const [selectedIds, setSelectedIds] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState(null);
@@ -125,42 +124,20 @@ const CreateGroupScreen = () => {
     }
   
     // Lấy thông tin của chủ nhóm
-    const ownerInfo = chatGroupdata.find((user) => user.id === selectedIds[0]);
     const owner = {
-      userID: ownerInfo.id,
-      userName: ownerInfo.userName,
-      userAvatar: ownerInfo.userAvatar,
+      userID: myProfile.userID,
+      userName: myProfile.userName,
+      userAvatar: myProfile.avatar,
     };
-
+  
     const members = selectedIds.map((id) => ({
       userID: id,
       userName: chatGroupdata.find((user) => user.id === id)?.userName,
       userAvatar: chatGroupdata.find((user) => user.id === id)?.userAvatar,
     }));
-  
-    const generateUUID = () => {
-      const randomPart = () => {
-        return Math.floor((1 + Math.random()) * 0x10000)
-          .toString(16)
-          .substring(1);
-      };
-  
-      return (
-        randomPart() +
-        randomPart() +
-        '-' +
-        randomPart() +
-        '-0000-' +
-        randomPart() +
-        '-' +
-        randomPart() +
-        randomPart() +
-        randomPart()
-      );
-    };
-  
+   
     const newGroup = {
-      id: generateUUID(),
+      id: uuid.v4(),
       tgm: "TGM01",
       chatName: groupName,
       owner,
@@ -169,11 +146,11 @@ const CreateGroupScreen = () => {
     };
   
     console.log("Thông tin newGroup: ", newGroup);
-
+  
     try {
       // Lưu thông tin nhóm vào AsyncStorage
       await AsyncStorage.setItem(`group-${newGroup.id}`, JSON.stringify(newGroup));
-
+  
       // Lưu thông tin nhóm vào database backend
       await saveGroupToBackend(newGroup);
       console.log("Thông tin newGroup: ", newGroup);
@@ -389,7 +366,7 @@ const CreateGroupScreen = () => {
                       style={{ alignItems: "center", top: 15 }}
                       onPress={() =>
                         handleChoosePhoto(
-                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652089/inup7ki7zxzwo90dwfhv.jpg"
+                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/yxucqgdxbgdvqtpud8j3.jpg"
                         )
                       }
                     >
@@ -402,7 +379,7 @@ const CreateGroupScreen = () => {
                           marginBottom: 10,
                         }}
                         source={{
-                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652089/inup7ki7zxzwo90dwfhv.jpg",
+                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/yxucqgdxbgdvqtpud8j3.jpg",
                         }}
                       />
                     </TouchableOpacity>
@@ -410,7 +387,7 @@ const CreateGroupScreen = () => {
                       style={{ alignItems: "center", top: 15, marginLeft: 15 }}
                       onPress={() =>
                         handleChoosePhoto(
-                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652089/axrbkyueasx5pniemkvn.jpg"
+                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/xbdfysnomrwycbzfhs0w.jpg"
                         )
                       }
                     >
@@ -423,7 +400,7 @@ const CreateGroupScreen = () => {
                           marginBottom: 10,
                         }}
                         source={{
-                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652089/axrbkyueasx5pniemkvn.jpg",
+                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/xbdfysnomrwycbzfhs0w.jpg",
                         }}
                       />
                     </TouchableOpacity>
@@ -431,7 +408,7 @@ const CreateGroupScreen = () => {
                       style={{ alignItems: "center", top: 15, marginLeft: 15 }}
                       onPress={() =>
                         handleChoosePhoto(
-                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652090/ewvanu0x7gbweck2y63j.jpg"
+                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/sc2inxytcdpztner8w9d.jpg"
                         )
                       }
                     >
@@ -444,7 +421,7 @@ const CreateGroupScreen = () => {
                           marginBottom: 10,
                         }}
                         source={{
-                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652090/ewvanu0x7gbweck2y63j.jpg",
+                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/sc2inxytcdpztner8w9d.jpg",
                         }}
                       />
                     </TouchableOpacity>
@@ -452,7 +429,7 @@ const CreateGroupScreen = () => {
                       style={{ alignItems: "center", top: 15, marginLeft: 15 }}
                       onPress={() =>
                         handleChoosePhoto(
-                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652090/en6wlbvhw9dudqwk46tu.jpg"
+                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/rabox4ofu9scr5f0hubd.jpg"
                         )
                       }
                     >
@@ -465,7 +442,7 @@ const CreateGroupScreen = () => {
                           marginBottom: 10,
                         }}
                         source={{
-                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652090/en6wlbvhw9dudqwk46tu.jpg",
+                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/rabox4ofu9scr5f0hubd.jpg",
                         }}
                       />
                     </TouchableOpacity>

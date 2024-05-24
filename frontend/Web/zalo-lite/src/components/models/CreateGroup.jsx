@@ -53,7 +53,7 @@ export default function CreateGroup({ image }) {
   useEffect(() => {
     const newSocket = new WebSocket(`${process.env.SOCKET_CHAT}/ws/group`);
     newSocket.onopen = () => {
-      console.log("WebSocket connected");
+      // console.log("WebSocket connected");
     };
     setSocket(newSocket);
     // return () => {

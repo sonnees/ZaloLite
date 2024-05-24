@@ -60,18 +60,19 @@ class ChatRepositoryTest {
     }
 
     @Test
-    void getIndexOfMessageID(){
-        SearchDTO searchDTO = chatRepository.
-                getIndexOfMessageID(
-                        UUID.fromString("49a9768c-a2a8-1234-9653-5291b9718dc9"),
-                        UUID.fromString("256e6bc8-c2d3-2312-9b8c-af8836f47c3d")
-                )
-                .blockFirst();
+    void getIndexOfMessageID() {
+        Flux<SearchDTO> searchDTOFlux = chatRepository.getIndexOfMessageID(
+                UUID.fromString("49a9768c-a2a8-1234-9653-5291b9718dc9"),
+                UUID.fromString("256e6bc8-c2d3-2312-9b8c-af8836f47c3d")
+        );
 
-        assert searchDTO != null;
-        System.out.println("** "+ searchDTO.getIndex());
-
-
+        searchDTOFlux.collectList().subscribe(searchDTOList -> {
+            SearchDTO searchDTO = searchDTOList.get(0); // Assuming you expect only one SearchDTO
+            assertNotNull(searchDTO);
+            System.out.println("** " + searchDTO.getIndex());
+        });
     }
+
+
 
 }

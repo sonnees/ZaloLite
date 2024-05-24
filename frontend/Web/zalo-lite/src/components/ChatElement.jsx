@@ -78,7 +78,7 @@ function ChatElement({
         }
         if (isJSON(data)) {
           const jsonData = JSON.parse(data);
-          console.log("Message received in CHAT ELEMENT:", jsonData);
+          // console.log("Message received in CHAT ELEMENT:", jsonData);
           if (jsonData.tcm === "TCM01") {
             // console.log(
             //   "Message received in CHAT ELEMENT:",

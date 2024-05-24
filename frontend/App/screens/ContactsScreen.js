@@ -1,13 +1,72 @@
-import React, { useState } from 'react';
-import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, ScrollView, Text, StatusBar } from 'react-native';
+import React, { memo, useContext, useEffect, useState } from 'react';
+import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, ScrollView, Text, StatusBar, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native'
+import { GlobalContext } from '../context/GlobalContext';
 const ContactsScreen = () => {
   const navigation = useNavigation();
+  const { myUserInfo, myProfile } = useContext(GlobalContext)
+
   const [friendViews, setFriendViews] = useState(true)
   const [groupsViews, setGroupsViews] = useState(false)
   const [OAViews, setOAViews] = useState(false)
+  const [allConversation, setAllConversation] = useState([]);
+  useEffect(() => {
+    loadData()
+  }, [myUserInfo]);
+
+  const loadData = () => {
+    setAllConversation(myUserInfo.conversations)
+  }
+  const FriendElement = ((item ) => {
+    console.log('type',item.item.type);
+    console.log('chatName',item.item.chatName);
+    console.log('chatAvatar',item.item.chatAvatar);
+
+    if (item.item.type === 'FRIEND') {
+    return (
+      <View style={{ alignItems: 'center' }}>
+        <TouchableOpacity
+          style={{ height: 75, flexDirection: 'row', width: '100%' }}
+        >
+          <Image style={{ width: 55, height: 55, resizeMode: "contain", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
+            source={{ uri: item.item.chatAvatar ? item.item.chatAvatar : null }} />
+
+          <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>
+            <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{item.item.chatName ? item.item.chatName : null}</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 0.45, width: '100%', marginLeft: 100 }} />
+      </View>
+
+    );
+  }
+  })
+  const GroupElement = ((item ) => {
+    console.log('type',item.item.type);
+    console.log('chatName',item.item.chatName);
+    console.log('chatAvatar',item.item.chatAvatar);
+
+    if (item.item.type === 'GROUP') {
+    return (
+      <View style={{ alignItems: 'center' }}>
+        <TouchableOpacity
+          style={{ height: 75, flexDirection: 'row', width: '100%' }}
+        >
+          <Image style={{ width: 55, height: 55, resizeMode: "contain", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
+            source={{ uri: item.item.chatAvatar ? item.item.chatAvatar : null }} />
+
+          <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>
+            <Text style={{ fontSize: 18, fontWeight: '400', marginBottom: 10 }}>{item.item.chatName ? item.item.chatName : null}</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 0.45, width: '100%', marginLeft: 100 }} />
+      </View>
+
+    );
+  }
+  })
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -117,7 +176,14 @@ const ContactsScreen = () => {
 
               </View>
               <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 8, width: '100%' }} />
-              <View></View>
+              <View>
+              <FlatList
+            data={allConversation}
+            renderItem={({ item }) => <FriendElement item={item} />} // Truyền handleLongPress vào ChatElement
+            keyExtractor={(item) => item.chatID}
+          />
+
+              </View>
             </View>
           )}
           {groupsViews && (
@@ -140,7 +206,13 @@ const ContactsScreen = () => {
                 </TouchableOpacity>
               </View>
               <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 8, width: '100%' }} />
-              <View></View>
+              <View>
+              <FlatList
+            data={allConversation}
+            renderItem={({ item }) => <GroupElement item={item} />} // Truyền handleLongPress vào ChatElement
+            keyExtractor={(item) => item.chatID}
+          />
+              </View>
             </View>
           )}
           {OAViews && (

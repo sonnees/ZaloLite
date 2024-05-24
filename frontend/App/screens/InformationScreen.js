@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { GlobalContext } from '../context/GlobalContext';
 
 export default function InformationScreen() {
   let navigation = useNavigation();
+  const {myProfile} = useContext(GlobalContext)
   return (
     <View style={styles.container}>
       
@@ -11,7 +13,7 @@ export default function InformationScreen() {
         <Image style={{width: "15%", height: "40%", resizeMode: "contain"}} source={require("../assets/back1.png")}
             onStartShouldSetResponder={() => navigation.navigate("ProfileScreen")}
         ></Image>
-        <Text style={{fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color:"white"}}>Lê Hữu Bằng</Text>
+        <Text style={{fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color:"white"}}>{myProfile.userName}</Text>
       </View>
       <View style={{flex: 1, backgroundColor: "#FFFFFF",justifyContent:"center",  paddingLeft: "5%",}}>
         <TouchableOpacity onPress={() => navigation.navigate("InformationDetailScreen")}>
