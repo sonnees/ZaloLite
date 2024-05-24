@@ -6,6 +6,7 @@ import Message from "../pages/Message";
 import OtherMessage from "../pages/Message/OtherMessage";
 import Sidebar from "../layouts/dashboard/Sidebar";
 import Welcome from "../pages/Home/Welcome";
+import MessageLayout from "../layouts/dashboard/Message";
 
 import { Suspense, lazy, useEffect, useState } from "react";
 import { Navigate, useLocation, useRoutes } from "react-router-dom";
@@ -26,6 +27,10 @@ import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import ForgotPasswordForm from "../pages/Login/ForgotPasswordForm";
 import ResetPasseordForm from "../pages/Login/ResetPasseordForm";
+// import VideoCall from "../pages/VideoCalll";
+import TagFriendRequest from "../pages/Contact/TagFriendRequest";
+
+import ConversationGroup from "../components/ConversationGroup";
 // import RegisterUser from "../pages/Login/RegisterUser";
 
 const Loadable = (Component) => (props) => {
@@ -39,20 +44,24 @@ const Loadable = (Component) => (props) => {
 export default function Router() {
   const [comp, setComp] = useState(<Conversation />);
 
-  function handleComp() {
-    setComp(<DetailContact />);
-  }
-
   const location = useLocation();
 
-  useEffect(() => {
-    if (location.pathname === "/app") {
-      // setComp(<Conversation />);
-      setComp(<Welcome />);
-    } else if (location.pathname === "/contact") {
-      setComp(<DetailContact />);
-    }
-  }, [location.pathname]);
+  const [openSearchMessage, setOpenSearchMessage] = useState(false);
+
+  // useEffect(() => {
+  //   if (location.pathname === "/app") {
+  //     // setComp(<Conversation />);
+  //     setComp(<Welcome />);
+  //   } else if (location.pathname === "/contact") {
+  //     setComp(<DetailContact />);
+  //   } else if (
+  //     location.pathname === "/app" &&
+  //     new URLSearchParams(location.search).get("id") === "2" &&
+  //     new URLSearchParams(location.search).get("type") === "individual-chat"
+  //   ) {
+  //     setComp(<Conversation />);
+  //   }
+  // }, [location]);
 
   return useRoutes([
     {
@@ -69,23 +78,46 @@ export default function Router() {
       path: "/",
       element: <DashboardLayout component={comp}></DashboardLayout>,
       children: [
-        { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
+        { element: <Navigate to="/app" replace />, index: true },
         {
           path: "/app",
           element: <MessageFilterBar />,
           children: [
-            { path: "", element: <Message /> },
-            { path: "other-message", element: <OtherMessage /> },
+            { path: "", element: <Welcome /> },
+            {
+              path: "chat",
+              element: (
+                <Conversation setOpenSearchMessage={setOpenSearchMessage} />
+              ),
+            },
+            { path: "chatGroup", element: <ConversationGroup /> },
           ],
         },
-        { path: "/contact", element: [<SearchBox />, <Contact />] },
+        {
+          path: "/contact",
+          element: <SearchBox />,
+          children: [
+            {
+              path: "listFriend",
+              element: <DetailContact isListFriend={true} />,
+            },
+            {
+              path: "listGroup",
+              element: <DetailContact isListFriend={false} />,
+            },
+            { path: "listFriend/chat", element: <Conversation /> },
+            { path: "listGroup/chatGroup", element: <ConversationGroup /> },
+            { path: "listfriendrequest", element: <TagFriendRequest /> },
+          ],
+        },
         { path: "todo", element: <Todo /> },
+        // { path: "videocall", element: <VideoCall/> },
       ],
     },
-
-    // { path: "*", element: <Navigate to="/404" replace /> },
   ]);
 }
+
+// { path: "/contact", element: [<SearchBox />, <Contact />] },
 
 // const GeneralApp = Loadable(
 //   lazy(() => import("../pages/dashboard/GeneralApp"))

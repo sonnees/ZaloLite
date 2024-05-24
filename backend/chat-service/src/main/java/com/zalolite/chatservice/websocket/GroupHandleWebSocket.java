@@ -5,6 +5,7 @@ import com.zalolite.chatservice.entity.*;
 import com.zalolite.chatservice.repository.ChatRepository;
 import com.zalolite.chatservice.repository.GroupRepository;
 import com.zalolite.chatservice.repository.UserRepository;
+import com.zalolite.chatservice.serialization.JsonConverter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,54 +27,54 @@ public class GroupHandleWebSocket {
     private GroupRepository groupRepository;
     private UserHandleWebSocket userHandleWebSocket;
     private ChatHandleWebSocket chatHandleWebSocket;
+    private JsonConverter jsonConverter;
 
     @Autowired
-    public GroupHandleWebSocket(UserRepository userRepository, ChatRepository chatRepository, GroupRepository groupRepository, UserHandleWebSocket userHandleWebSocket, ChatHandleWebSocket chatHandleWebSocket) {
+    public GroupHandleWebSocket(UserRepository userRepository, ChatRepository chatRepository, GroupRepository groupRepository, UserHandleWebSocket userHandleWebSocket, ChatHandleWebSocket chatHandleWebSocket, JsonConverter jsonConverter) {
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.groupRepository = groupRepository;
         this.userHandleWebSocket = userHandleWebSocket;
         this.chatHandleWebSocket = chatHandleWebSocket;
+        this.jsonConverter = jsonConverter;
     }
 
     public Mono<Void> create(String[] arrayID, CreateGroupDTO info){
-        log.info("** create group: {}",info.getId());
+        log.info("*** enter create group ***");
+        log.info("* arrayID: {} info: {} *", jsonConverter.objToString(arrayID), jsonConverter.objToString(info));
         Group group = new Group(info);
         return groupRepository.save(group)
                 .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("create group failed"))).then(Mono.empty()))
                 .flatMap(group1 -> {
                     Conversation conversation = new Conversation(
                             info.getId(),
+                            group.getId(),
                             info.getChatName(),
                             info.getAvatar(),
                             Type.GROUP
                     );
                     return userHandleWebSocket.appendConversation(arrayID, conversation)
-                            .then(Mono.defer(() -> {
-                                return chatHandleWebSocket.create(info.getId().toString());
-                            }));
+                            .then(Mono.defer(() -> chatHandleWebSocket.create(info.getId().toString())));
                 });
     }
 
     public Mono<String[]> delete(String idChat){
-        log.info("** delete group:");
+        log.info("*** enter delete group ***");
+        log.info("* idChat: {}*", idChat);
         return groupRepository.findById(UUID.fromString(idChat))
                 .switchIfEmpty(Mono.defer(()->Mono.error(() -> new Throwable("delete group failed"))).then(Mono.empty()))
                         .flatMap(group -> {
                             String[] arrayID = getListID(group);
                             return userHandleWebSocket.removeConversation(arrayID, idChat)
-                                    .then(Mono.defer(() -> {
-                                        return chatHandleWebSocket.delete(idChat)
-                                                .then(Mono.defer(() -> {
-                                                    return groupRepository.deleteById(UUID.fromString(idChat))
-                                                            .then(Mono.defer(()-> getMonoListID(group)));
-                                                }));
-                                    }));
+                                    .then(Mono.defer(() -> chatHandleWebSocket.delete(idChat)
+                                            .then(Mono.defer(() -> groupRepository.deleteById(UUID.fromString(idChat))
+                                                    .then(Mono.defer(()-> getMonoListID(group)))))));
                         });
     }
 
     public Mono<String[]> appendMember(AppendMemberGroupDTO info){
-        log.info("** append Member: {} {}", info.getIdChat(), info.getUserID());
+        log.info("*** enter append member group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         PersonInfo personInfo = new PersonInfo(info.getUserID(), info.getUserName(), info.getUserAvatar());
         return groupRepository
                 .findById(info.getIdChat())
@@ -89,6 +90,7 @@ public class GroupHandleWebSocket {
                                         info.getUserID().toString(),
                                         new Conversation(
                                                 info.getIdChat(),
+                                                group.getId(),
                                                 group.getChatName(),
                                                 group.getAvatar(),
                                                 Type.GROUP
@@ -99,7 +101,8 @@ public class GroupHandleWebSocket {
     }
 
     public Mono<String[]> appendAdmin(AppendMemberGroupDTO info){
-        log.info("** append Admin: {}",info.getUserID());
+        log.info("*** enter append admin group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         PersonInfo personInfo = new PersonInfo(info.getUserID(), info.getUserName(), info.getUserAvatar());
         return groupRepository
                 .findById(info.getIdChat())
@@ -113,7 +116,7 @@ public class GroupHandleWebSocket {
                                 if(aLong<=0) return Mono.error(() -> new Throwable("append Admin"));
                                 return groupRepository.removeMember(info.getIdChat().toString(),personInfo.getUserID().toString())
                                         .flatMap(aLong1 ->  {
-                                            if (aLong1<=0) return Mono.error(() -> new Throwable("group not found"));
+                                            if (aLong1<=0) return Mono.error(() -> new Throwable("remove member"));
                                             return Mono.empty();
                                         })
                                         .then(Mono.defer(()-> getMonoListID(group)));
@@ -122,7 +125,8 @@ public class GroupHandleWebSocket {
     }
 
     public Mono<String[]> changeOwner(AppendMemberGroupDTO info){
-        log.info("** append Owner: {}",info.getUserID());
+        log.info("*** enter change owner group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         PersonInfo personInfo = new PersonInfo(info.getUserID(), info.getUserName(), info.getUserAvatar());
         return groupRepository
                 .findById(info.getIdChat())
@@ -146,75 +150,76 @@ public class GroupHandleWebSocket {
     }
 
     public Mono<String[]> removeMember(AppendMemberGroupDTO info){
-        log.info("** remove Member: {}",info.getUserID());
+        log.info("*** enter remove member group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         PersonInfo personInfo = new PersonInfo(info.getUserID(), info.getUserName(), info.getUserAvatar());
         return groupRepository
                 .findById(info.getIdChat())
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
-                .flatMap(group -> {
-                    return groupRepository.removeMember(info.getIdChat().toString(),personInfo.getUserID().toString())
-                            .flatMap(aLong1 ->  {
-                                if (aLong1<=0) return Mono.error(() -> new Throwable("group not found"));
-                                return userHandleWebSocket.removeConversation(personInfo.getUserID().toString(),info.getIdChat().toString())
-                                        .then(Mono.defer(()-> getMonoListID(group)));
-                            });
-                });
+                .flatMap(group ->
+                        groupRepository.removeMember(info.getIdChat().toString(),personInfo.getUserID().toString())
+                        .flatMap(aLong1 ->  {
+                            if (aLong1<=0) return Mono.error(() -> new Throwable("remove member"));
+                            return userHandleWebSocket.removeConversation(personInfo.getUserID().toString(),info.getIdChat().toString())
+                                    .then(Mono.defer(()-> getMonoListID(group)));
+                        }));
     }
 
     public Mono<String[]> removeAdmin(AppendMemberGroupDTO info){
-        log.info("** remove Admin: {}",info.getUserID());
+        log.info("*** enter remove member group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         PersonInfo personInfo = new PersonInfo(info.getUserID(), info.getUserName(), info.getUserAvatar());
         return groupRepository
                 .findById(info.getIdChat())
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
-                .flatMap(group -> {
-                    return groupRepository.removeAdmin(info.getIdChat().toString(),personInfo.getUserID().toString())
-                            .flatMap(aLong -> {
-                                if(aLong<=0) return Mono.error(() -> new Throwable("remove Admin"));
-                                return groupRepository.appendMember(info.getIdChat().toString(),personInfo)
-                                        .flatMap(aLong1 ->  {
-                                            if (aLong1<=0) return Mono.error(() -> new Throwable("append admin"));
-                                            return Mono.empty();
-                                        })
-                                        .then(Mono.defer(()-> getMonoListID(group)));
-                            });
-                });
+                .flatMap(group ->
+                        groupRepository.removeAdmin(info.getIdChat().toString(),personInfo.getUserID().toString())
+                        .flatMap(aLong -> {
+                            if(aLong<=0) return Mono.error(() -> new Throwable("remove Admin"));
+                            return groupRepository.appendMember(info.getIdChat().toString(),personInfo)
+                                    .flatMap(aLong1 ->  {
+                                        if (aLong1<=0) return Mono.error(() -> new Throwable("append member"));
+                                        return Mono.empty();
+                                    })
+                                    .then(Mono.defer(()-> getMonoListID(group)));
+                        }));
     }
 
     public Mono<String[]> updateNameChat(ChangeNameChatGroupDTO info){
-        log.info("** update NameChat: {} {}",info.getIdChat(), info.getChatName());
+        log.info("*** enter remove member group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         return groupRepository
                 .findById(UUID.fromString(info.getIdChat()))
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
-                .flatMap(group -> {
-                    return groupRepository.updateNameChat(info.getIdChat(), info.getChatName())
-                            .flatMap(aLong -> {
-                                if(aLong<=0) return Mono.error(() -> new Throwable("update name chat"));
-                                String[] arrId = getListID(group);
-                                return userHandleWebSocket.updateChatNameInConversation(arrId, info.getIdChat(),info.getChatName())
-                                        .then(Mono.just(arrId));
-                            });
-                });
+                .flatMap(group ->
+                        groupRepository.updateNameChat(info.getIdChat(), info.getChatName())
+                        .flatMap(aLong -> {
+                            if(aLong<=0) return Mono.error(() -> new Throwable("update name chat"));
+                            String[] arrId = getListID(group);
+                            return userHandleWebSocket.updateChatNameInConversation(arrId, info.getIdChat(),info.getChatName())
+                                    .then(Mono.just(arrId));
+                        }));
     }
 
     public Mono<String[]> updateAvatar(ChangeAvatarGroupDTO info){
-        log.info("** update Avatar: {} {}",info.getIdChat(), info.getAvatar());
+        log.info("*** enter remove member group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         return groupRepository
                 .findById(UUID.fromString(info.getIdChat()))
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
-                .flatMap(group -> {
-                    return groupRepository.updateAvatar(info.getIdChat(), info.getAvatar())
-                            .flatMap(aLong -> {
-                                if(aLong<=0) return Mono.error(() -> new Throwable("update avatar chat"));
-                                String[] arrId = getListID(group);
-                                return userHandleWebSocket.updateAvatarInConversation(arrId, info.getIdChat(),info.getAvatar())
-                                        .then(Mono.just(arrId));
-                            });
-                });
+                .flatMap(group ->
+                        groupRepository.updateAvatar(info.getIdChat(), info.getAvatar())
+                        .flatMap(aLong -> {
+                            if(aLong<=0) return Mono.error(() -> new Throwable("update avatar chat"));
+                            String[] arrId = getListID(group);
+                            return userHandleWebSocket.updateAvatarInConversation(arrId, info.getIdChat(),info.getAvatar())
+                                    .then(Mono.just(arrId));
+                        }));
     }
 
     public Mono<String[]> updateSetting_changeChatNameAndAvatar(UpdateSettingGroupDTO info){
-        log.info("** update setting change chat name and avatar: {} {}",info.getIdChat(), info.isValue());
+        log.info("*** enter update setting change chat name and avatar group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         return groupRepository
                 .findById(UUID.fromString(info.getIdChat()))
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
@@ -230,7 +235,8 @@ public class GroupHandleWebSocket {
     }
 
     public Mono<String[]> updateSetting_pinMessages(UpdateSettingGroupDTO info){
-        log.info("** update setting pin messages: {} {}",info.getIdChat(), info.isValue());
+        log.info("*** enter update setting pin messages group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         return groupRepository
                 .findById(UUID.fromString(info.getIdChat()))
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
@@ -246,7 +252,8 @@ public class GroupHandleWebSocket {
     }
 
     public Mono<String[]> updateSetting_sendMessages(UpdateSettingGroupDTO info){
-        log.info("** update setting send messages: {} {}",info.getIdChat(), info.isValue());
+        log.info("*** enter update setting send messages group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         return groupRepository
                 .findById(UUID.fromString(info.getIdChat()))
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
@@ -262,7 +269,8 @@ public class GroupHandleWebSocket {
     }
 
     public Mono<String[]> updateSetting_membershipApproval(UpdateSettingGroupDTO info){
-        log.info("** update setting membership approval: {} {}",info.getIdChat(), info.isValue());
+        log.info("*** enter update setting membership approval group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         return groupRepository
                 .findById(UUID.fromString(info.getIdChat()))
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
@@ -278,7 +286,8 @@ public class GroupHandleWebSocket {
     }
 
     public Mono<String[]> updateSetting_createNewPolls(UpdateSettingGroupDTO info){
-        log.info("** update setting create new polls: {} {}",info.getIdChat(), info.isValue());
+        log.info("*** enter update setting create new polls group ***");
+        log.info("* info: {}*", jsonConverter.objToString(info));
         return groupRepository
                 .findById(UUID.fromString(info.getIdChat()))
                 .switchIfEmpty(Mono.defer(()-> Mono.error(() -> new Throwable("group not found"))).then(Mono.empty()))
@@ -316,6 +325,5 @@ public class GroupHandleWebSocket {
         group.getAdmin().forEach(p -> listID.add(p.getUserID().toString()));
         return listID.toArray(new String[0]);
     }
-
 
 }

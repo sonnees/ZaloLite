@@ -1,0 +1,27 @@
+export const uploadFileToS3 = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response = await fetch('http://localhost:4000/upload', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to upload file');
+        }
+
+        // Trích xuất đường link từ phản hồi của server
+        const responseData = await response.json();
+        const fileUrl = responseData.fileUrl;
+
+        console.log('File uploaded successfully. File URL:', fileUrl);
+        // Xử lý thành công ở đây, ví dụ: lưu đường link vào cơ sở dữ liệu hoặc hiển thị cho người dùng
+        return fileUrl;
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        // Xử lý lỗi ở đây
+        throw error;
+    }
+};

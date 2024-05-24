@@ -1,12 +1,17 @@
-const Port = 'http://192.168.103.63:8081';
-export const API_AUTHENTICATE = `${Port}/api/v1/auth/authenticate`;
-export const API_REGISTER = `${Port}/api/v1/auth/register`;
-export const API_PROFILE = `${Port}/api/v1/account/profile/`;
-export const API_CHECKPHONE = `${Port}/api/v1/auth/check-uniqueness-phone-number/`;
-export const API_CHANGE_PASS = `${Port}/api/v1/account/change-password`;
-export const API_RESET_PASS = `${Port}/api/v1/auth/reset-password`;
-export const API_INFOR_ACCOUNT = `${Port}/api/v1/account/info`;
+export const host = '192.168.1.4';
 
-const PortChat = 'http://192.168.103.63:8082';
-export const API_INFOR_USER = `${PortChat}/api/v1/user/info/`;
+export const API_AUTHENTICATE = `http://${host}:8080/api/v1/auth/authenticate`;
+export const API_REGISTER = `http://${host}:8080/api/v1/auth/register`;
+export const API_PROFILE = `http://${host}:8080/api/v1/account/profile/`;
+export const API_CHECKPHONE = `http://${host}:8080/api/v1/auth/check-uniqueness-phone-number/`;
+export const API_CHANGE_PASS = `http://${host}:8080/api/v1/account/change-password`;
+export const API_RESET_PASS = `http://${host}:8080/api/v1/auth/reset-password`;
+export const API_INFOR_ACCOUNT = `http://${host}:8080/api/v1/account/info`;
+export const API_PROFILE_BY_USERID = `http://${host}:8080/api/v1/account/profile/userID/`;
+
+export const API_INFOR_USER = `http://${host}:8080/api/v1/user/info/`;
+export const API_GET_LIST_CHATACTIVITY = `http://${host}:8080/api/v1/chat/x-to-y?id=`;
+
+export const CREATE_GROUP = `ws://${host}:8082/ws/group`
+
 

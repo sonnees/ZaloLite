@@ -19,7 +19,7 @@ const RegisterProfileScreen = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [4, 4],
       quality: 1,
     });
 
@@ -36,6 +36,8 @@ const RegisterProfileScreen = () => {
     data.append('file', image);
     data.append('upload_preset', 'ZaloLife');
     data.append('cloud_name', 'dbmkvqy3b');
+
+    console.log("?????????",data);
 
     fetch('https://api.cloudinary.com/v1_1/dbmkvqy3b/image/upload', {
       method: 'post',

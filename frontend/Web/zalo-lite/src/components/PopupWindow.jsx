@@ -5,6 +5,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function PopupWindow ({ isOpen, onClose, data, phoneNumber, token }) {
+  if(!data){
+    return null;
+  }
   const [loadAvt, setLoadAvt] = useState(data.avatar);
   const inputFileRef = useRef(null);
   const navigate = useNavigate();
@@ -42,7 +45,7 @@ export default function PopupWindow ({ isOpen, onClose, data, phoneNumber, token
       const jsonAvt = {field: newAvatar}
 
       const res = await fetch(
-        "http://localhost:8081/api/v1/account/change-avatar",
+        `${process.env.HOST}/api/v1/account/change-avatar`,
         {
           method: "POST",
           headers: {

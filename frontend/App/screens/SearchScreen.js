@@ -20,7 +20,7 @@ const SearchScreen = () => {
             </TouchableOpacity>
             <View style={{ flex: 7, flexDirection:'row',borderRadius: 8, backgroundColor: "#fff", height: 32, paddingHorizontal: 5,alignItems:'center'}}>
                 <Icon name='search1' size={25} color={'gray'} style={{paddingLeft:5,justifyContent:'center'}} />
-                <TextInput style={{ flex: 1,paddingLeft:10 }} placeholder="Search" />
+                <TextInput style={{ flex: 1,paddingLeft:10 }} placeholder="Tìm kiếm" />
             </View>
             
             <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center",paddingRight:'4%',paddingLeft:'5%'}}

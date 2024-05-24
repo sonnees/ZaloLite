@@ -11,7 +11,6 @@ function Sidebar({ onItemSelected }) {
   return (
     // <MessageFilterBar onItemSelected={onItemSelected} />
     <Outlet />
-    
   );
 }
 
