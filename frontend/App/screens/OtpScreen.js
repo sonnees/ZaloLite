@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { firebaseConfig } from '../config/config';
@@ -19,7 +19,7 @@ const OtpScreen = () => {
     const routePhoneNumber = params ? params.phoneNumber : ''; // Lấy phoneNumber từ params, nếu không tồn tại thì gán là chuỗi rỗng
 
     // Set giá trị phoneNumber từ route.params vào state khi màn hình được tạo
-    useState(() => {
+    useEffect(() => {
         // Loại bỏ số 0 ở đầu và thêm +84 vào trước
         const formattedPhoneNumber = routePhoneNumber.startsWith('0')
             ? '+84' + routePhoneNumber.slice(1)
@@ -28,26 +28,35 @@ const OtpScreen = () => {
     }, [routePhoneNumber]);
 
     const sendVerification = () => {
-        const phoneProvider = new firebase.auth.PhoneAuthProvider()
+        const phoneProvider = new firebase.auth.PhoneAuthProvider();
         phoneProvider.verifyPhoneNumber(phoneNumber, recaptchaVerifier.current)
             .then(setVerificationId)
-            .catch(console.error)
+            .catch(console.error);
     }
 
     const confirmCode = () => {
+        if (code.trim() === '') {
+            Alert.alert('Lỗi', 'Mã OTP không được để trống.');
+            return;
+        }
+        if (code.length !== 6) {
+            Alert.alert('Lỗi', 'Mã OTP phải đúng 6 kí tự.');
+            return;
+        }
+
         const credential = firebase.auth.PhoneAuthProvider.credential(
             verificationId,
             code
         );
         firebase.auth().signInWithCredential(credential)
             .then(() => {
-                setCode('')
+                setCode('');
                 navigation.navigate('LoginNavigator', { screen: 'LoginScreen' });
+                Alert.alert('Xác thực thành công', 'Đăng nhập thành công.');
             })
             .catch(error => {
-                alert(error)
-            })
-        Alert.alert('Phone authentication successful 👍')
+                Alert.alert('Lỗi', 'Mã OTP không chính xác.');
+            });
     }
 
     return (
@@ -68,6 +77,7 @@ const OtpScreen = () => {
                 onChangeText={setPhoneNumber}
                 keyboardType='phone-pad'
                 editable={false} // Không cho phép chỉnh sửa số điện thoại
+                placeholderTextColor="#1E90FF"
             />
 
             <TouchableOpacity style={styles.sendVerification} onPress={sendVerification}>
@@ -80,6 +90,8 @@ const OtpScreen = () => {
                 placeholder="Confirmation Code"
                 onChangeText={setCode}
                 keyboardType='phone-pad'
+                value={code}
+                placeholderTextColor="#1E90FF"
             />
 
             <TouchableOpacity style={styles.sendCode} onPress={confirmCode}>
@@ -88,16 +100,15 @@ const OtpScreen = () => {
                 </Text>
             </TouchableOpacity>
         </View>
-    )
+    );
 }
 
-export default OtpScreen
+export default OtpScreen;
 
 const styles = StyleSheet.create({
-
     container: {
         flex: 1,
-        backgroundColor: '#000',
+        backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -106,11 +117,11 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
         paddingHorizontal: 20,
         fontSize: 24,
-        borderBottomColor: '#fff',
+        borderBottomColor: '#1E90FF',
         borderBottomWidth: 2,
         marginBottom: 20,
         textAlign: 'center',
-        color: '#fff'
+        color: '#000'
     },
     sendVerification: {
         backgroundColor: '#3498db',
@@ -128,9 +139,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     optText: {
-        color: '#fff',
+        color: '#000',
         fontSize: 24,
         fontWeight: 'bold',
         margin: 20
     }
-})
+});

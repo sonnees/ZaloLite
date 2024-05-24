@@ -389,7 +389,7 @@ const CreateGroupScreen = () => {
                       style={{ alignItems: "center", top: 15 }}
                       onPress={() =>
                         handleChoosePhoto(
-                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652089/inup7ki7zxzwo90dwfhv.jpg"
+                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/yxucqgdxbgdvqtpud8j3.jpg"
                         )
                       }
                     >
@@ -402,7 +402,7 @@ const CreateGroupScreen = () => {
                           marginBottom: 10,
                         }}
                         source={{
-                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652089/inup7ki7zxzwo90dwfhv.jpg",
+                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/yxucqgdxbgdvqtpud8j3.jpg",
                         }}
                       />
                     </TouchableOpacity>
@@ -410,7 +410,7 @@ const CreateGroupScreen = () => {
                       style={{ alignItems: "center", top: 15, marginLeft: 15 }}
                       onPress={() =>
                         handleChoosePhoto(
-                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652089/axrbkyueasx5pniemkvn.jpg"
+                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/xbdfysnomrwycbzfhs0w.jpg"
                         )
                       }
                     >
@@ -423,7 +423,7 @@ const CreateGroupScreen = () => {
                           marginBottom: 10,
                         }}
                         source={{
-                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652089/axrbkyueasx5pniemkvn.jpg",
+                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/xbdfysnomrwycbzfhs0w.jpg",
                         }}
                       />
                     </TouchableOpacity>
@@ -431,7 +431,7 @@ const CreateGroupScreen = () => {
                       style={{ alignItems: "center", top: 15, marginLeft: 15 }}
                       onPress={() =>
                         handleChoosePhoto(
-                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652090/ewvanu0x7gbweck2y63j.jpg"
+                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/sc2inxytcdpztner8w9d.jpg"
                         )
                       }
                     >
@@ -444,7 +444,7 @@ const CreateGroupScreen = () => {
                           marginBottom: 10,
                         }}
                         source={{
-                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652090/ewvanu0x7gbweck2y63j.jpg",
+                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/sc2inxytcdpztner8w9d.jpg",
                         }}
                       />
                     </TouchableOpacity>
@@ -452,7 +452,7 @@ const CreateGroupScreen = () => {
                       style={{ alignItems: "center", top: 15, marginLeft: 15 }}
                       onPress={() =>
                         handleChoosePhoto(
-                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652090/en6wlbvhw9dudqwk46tu.jpg"
+                          "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/rabox4ofu9scr5f0hubd.jpg"
                         )
                       }
                     >
@@ -465,7 +465,7 @@ const CreateGroupScreen = () => {
                           marginBottom: 10,
                         }}
                         source={{
-                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1712652090/en6wlbvhw9dudqwk46tu.jpg",
+                          uri: "https://res.cloudinary.com/dbmkvqy3b/image/upload/v1716212628/rabox4ofu9scr5f0hubd.jpg",
                         }}
                       />
                     </TouchableOpacity>

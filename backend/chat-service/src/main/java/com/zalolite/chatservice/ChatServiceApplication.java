@@ -32,7 +32,7 @@ import java.util.UUID;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableReactiveMongoRepositories
-public class ChatServiceApplication implements CommandLineRunner{
+public class 	ChatServiceApplication implements CommandLineRunner{
 	@Autowired
 	UserRepository userRepository;
 	@Autowired

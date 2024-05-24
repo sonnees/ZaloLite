@@ -22,13 +22,13 @@ export default function ConfirmQRScreen({route}) {
       socket.close();
     }
   
-    const newSocket = new WebSocket('ws://192.168.137.235:8081/ws/auth/' + data);
+    const newSocket = new WebSocket('wss://zalolite-account-server-production.up.railway.app/ws/auth/' + data);
     setSocket(newSocket);
   
     newSocket.onmessage = async (event) => {
       if (isJSON(event.data)) {
         const data = JSON.parse(event.data);
-        console.log(data);
+        console.log(data + "fhhdfahfahfhahfhahfhafhahfhadhf");
         // Cập nhật state từ dữ liệu nhận được từ socket
         if (data.device != null) {
           setDevice(data.device);

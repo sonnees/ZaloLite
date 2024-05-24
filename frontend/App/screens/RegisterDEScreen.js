@@ -9,6 +9,7 @@ import {
   Image,
   Text,
   StatusBar,
+  Alert
 } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -19,14 +20,15 @@ const RegisterDEScreen = () => {
   const [isFemaleChecked, setIsFemaleChecked] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [gender, setGender] = useState(null);
   const [birthDate, setBirthDate] = useState(null);
 
   let navigation = useNavigation();
   let route = useRoute();
-  // Nhận giá trị userName từ tham số được truyền qua
-  const { userName, phoneNumber } = route.params;
+  // Nhận giá trị userName và phoneNumber từ tham số được truyền qua, với giá trị mặc định là rỗng
+  const { userName = '', phoneNumber = '' } = route.params || {};
 
   const handleMaleCheckbox = () => {
     setIsMaleChecked(true);
@@ -41,6 +43,7 @@ const RegisterDEScreen = () => {
   };
 
   const showDatePicker = () => {
+    setErrorMessage('');
     setDatePickerVisibility(true);
   };
 
@@ -49,9 +52,21 @@ const RegisterDEScreen = () => {
   };
 
   const handleConfirm = (date) => {
+    const currentDate = moment();
+    const selectedDateMoment = moment(date);
+    const age = currentDate.diff(selectedDateMoment, 'years');
+
+    if (age < 16) {
+      setErrorMessage("Bạn phải đủ 16 tuổi trở lên để đăng ký.");
+    } else if (!selectedDateMoment.isBefore(currentDate)) {
+      setErrorMessage("Ngày tháng năm sinh phải nhỏ hơn ngày tháng năm hiện tại.");
+    } else {
+      setErrorMessage('');
+      setSelectedDate(date);
+      setBirthDate(moment(date).format('YYYY-MM-DD'));
+    }
+
     hideDatePicker();
-    setSelectedDate(date);
-    setBirthDate(moment(date).format('YYYY-MM-DD'));
   };
 
   const handleNextScreen = () => {
@@ -110,7 +125,7 @@ const RegisterDEScreen = () => {
           }}
         >
           <Text style={{ fontSize: 14, marginLeft: "6%" }}>
-            Hãy chọn ngày sinh và giới tính của bạn
+            Hãy chọn ngày sinh và giới tính của bạn n
           </Text>
         </View>
         <View
@@ -211,7 +226,7 @@ const RegisterDEScreen = () => {
             <Text
               style={{
                 borderBottomWidth: 1,
-                borderBottomColor: "#1E90FF",
+                borderBottomColor: errorMessage ? 'red' : '#1E90FF',
                 fontSize: 16,
                 fontFamily: "Roboto",
                 padding: 10,
@@ -228,6 +243,7 @@ const RegisterDEScreen = () => {
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
           />
+          {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
         </View>
         <View style={{ flex: 3 }}></View>
         <View style={{ flex: 2, justifyContent: "center", paddingLeft: "70%" }}>
@@ -253,6 +269,11 @@ const RegisterDEScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 30,
   },
 });
 

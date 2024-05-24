@@ -23,7 +23,7 @@ const ContactsScreen = () => {
           <TouchableOpacity style={{ flex: 7, borderRadius: 5, backgroundColor: "transparent", height: 40, width: 300, justifyContent: "center", alignItems: "flex-start" }}
             onPress={() => navigation.navigate("SearchScreen")}
           >
-            <Text style={{ marginLeft: 20, fontSize: 15.5, color: "#CCCCCC" }}>Search</Text>
+            <Text style={{ marginLeft: 20, fontSize: 15.5, color: "#CCCCCC" }}>Tiềm kiếm m</Text>
           </TouchableOpacity>
 
 

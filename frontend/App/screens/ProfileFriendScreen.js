@@ -1,28 +1,160 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { UserInfoContext } from '../App';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-
+import { GlobalContext } from '../context/GlobalContext';
+import uuid from 'react-native-uuid'
+import { API_INFOR_USER, host } from '../api/Api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 export default function ProfileFriendScreen() {
     const navigation = useNavigation();
     let route = useRoute();
     const profile = route.params?.profile;
-    const { userInfo, setUserInfo, chatID, setChatID } = useContext(UserInfoContext)
-    console.log("USER INFOR:\n", userInfo);
-    console.log("Du lieu tu ADDFRIEND: \n", profile);
-    const [allfriendRequests, setAllFriendRequest] = useState(userInfo.friendRequests);
+    const { myUserInfo, setMyUserInfo, chatID, setChatID,myProfile} = useContext(GlobalContext)
+    // console.log("Du lieu tu ADDFRIEND: \n", profile);
+    const [allfriendRequests, setAllFriendRequest] = useState(myUserInfo.friendRequests);
     const [friendRequests, setFriendRequests] = useState({});
     const [status, setStatus] = useState("");
+    
+    const fetchUserInfo = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            const response = await axios.get(`${API_INFOR_USER}${myProfile.userID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const dataUserInfor = await response.data;
+
+            // console.log("User Infor:", dataUserInfor);
+            setMyUserInfo(dataUserInfor);
+            return dataUserInfor;
+        } catch (error) {
+            console.error('Lỗi khi lấy thông tin User:', error);
+            return null;
+        }
+    };
+    const acceptFriend = async (profileFriendRequest) => {
+        const message = {
+            id: uuid.v4(),
+            tum: "TUM03",
+            senderID: profileFriendRequest.userID,
+            senderName: profileFriendRequest.userName,
+            senderAvatar: profileFriendRequest.avatar,
+            receiverID: myProfile.userID,
+            receiverName: myProfile.userName,
+            receiverAvatar: myProfile.avatar,
+        };
+        
+        if (profileFriendRequest) {
+            const newSocket = new WebSocket(
+                `ws://${host}:8082/ws/user/${profileFriendRequest.userID}`,
+            );
+            newSocket.onopen = () => {
+                // console.log("WebSocket for UserID: ", profileFriendRequest.userID, " OPENED");
+                newSocket.send(JSON.stringify(message));
+                // console.log("Message sent:", message);
+            };
+            
+            newSocket.onmessage = (event) => {
+                const data = event.data;
+                console.log("Received data:", data);
+                // Check if the data starts with an opening curly brace, indicating it's a JSON object
+                if (data.trim().startsWith('{')) {
+                  try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.tum === "TUM00" && jsonData.typeNotify === "SUCCESS") {
+                        fetchUserInfo()
+                        navigation.navigate('FriendRequestScreen');
+
+                        // navigation.navigate('ProfileFriendScreen', { profile: profile });
+                    }
+                    
+                  } catch (error) {
+                    console.error("Error parsing JSON data:", error);
+                  }
+                } else {
+                  console.log("Received data is not a JSON object, ignoring...");
+                }
+            };
+
+                newSocket.onclose = () => {
+                console.log("WebSocket for UserID: ", profileFriendRequest.userID, " CLOSED");
+            };
+        }
+    };
+    const recallFriend = async (profileFriendRequest) => {
+        const message = {
+            id: uuid.v4(),
+            tum: "TUM02",
+            senderID: profileFriendRequest.userID,
+            receiverID: myProfile.userID,
+        };
+        
+        if (profileFriendRequest) {
+            const newSocket = new WebSocket(
+                `ws://${host}:8082/ws/user/${profileFriendRequest.userID}`,
+            );
+            newSocket.onopen = () => {
+                // console.log("WebSocket for UserID: ", profileFriendRequest.userID, " OPENED");
+                newSocket.send(JSON.stringify(message));
+                // console.log("Message sent:", message);
+            };
+            
+            newSocket.onmessage = (event) => {
+                const data = event.data;
+                console.log("Received data:", data);
+                // Check if the data starts with an opening curly brace, indicating it's a JSON object
+                if (data.trim().startsWith('{')) {
+                  try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.tum === "TUM00" && jsonData.typeNotify === "SUCCESS") {
+                        fetchUserInfo()
+                        navigation.navigate('FriendRequestScreen');
+                        // navigation.navigate('ProfileFriendScreen', { profile: profile });
+                    }
+                    
+                  } catch (error) {
+                    console.error("Error parsing JSON data:", error);
+                  }
+                } else {
+                  console.log("Received data is not a JSON object, ignoring...");
+                }
+            };
+
+                newSocket.onclose = () => {
+                console.log("WebSocket for UserID: ", profileFriendRequest.userID, " CLOSED");
+            };
+        }
+    };
+    const fetchProfileInfo = async (userID) => {
+        const token = await AsyncStorage.getItem('token');
+        // console.log('TOKEN ', token);
+        // console.log("ID ",userID);
+        try {
+            const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            console.log("Fetched Profile Data:", response.data);
+            setProfileFriendRequest(response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+        }
+    };
+    
     useEffect(() => {
         const fetchData = async () => {
             setStatus(handleFriendRequest(allfriendRequests, profile.userID))
-            console.log(status);
+            console.log("STATUS: \n", status);
         };
         fetchData();
-    }, [profile, userInfo]);
-
+    }, [profile, myUserInfo]);
+    
     function checkDuplicateUser(data, userId) {
         for (let i = 0; i < data.length; i++) {
             if (data[i].userID === userId) {
@@ -47,6 +179,9 @@ export default function ProfileFriendScreen() {
         const type = checkType(checkDuplicateUser(data, userId))
         return type;
     }
+    const handleAddFriendRequest = () => {
+        navigation.navigate("AddFriendRequestDetail", { profile: profile });
+    }
 
     return (
         <View style={{ backgroundColor: '#BBBBBB', flexDirection: 'column', height: '100%', width: '100%' }}>
@@ -57,7 +192,7 @@ export default function ProfileFriendScreen() {
             >
                 <View style={{ height: 48, flexDirection: "row", marginTop: 10 }}>
                     <Image style={{ width: 20, height: 20, resizeMode: "contain", marginLeft: "5%", marginTop: "1%" }} source={require("../assets/back1.png")}
-                        onStartShouldSetResponder={() => navigation.navigate('TabNavigator', { screen: 'Me' })}
+                        onStartShouldSetResponder={() => navigation.goBack()}
                     ></Image>
                     <View style={{ flex: 1.5 }}></View>
                     <Image style={{ width: 20, height: 20, resizeMode: "contain", marginTop: "1%", marginRight: "5%" }} source={require("../assets/more.png")}
@@ -124,7 +259,9 @@ export default function ProfileFriendScreen() {
                                         <TouchableOpacity style={{
                                             height: 35, width: 120, backgroundColor: '#0000EE', marginLeft: 5,
                                             borderRadius: 20, alignItems: 'center', justifyContent: 'center'
-                                        }}>
+                                        }}
+                                        onPress={()=>acceptFriend(profile)}
+                                        >
                                             <Text style={{ fontSize: 14, fontWeight: '500', color: 'white' }}>Accept</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -154,7 +291,9 @@ export default function ProfileFriendScreen() {
                                 <TouchableOpacity style={{
                                     height: 40, width: 160, backgroundColor: 'white', marginLeft: 20,
                                     borderRadius: 20, alignItems: 'center', justifyContent: 'center'
-                                }}>
+                                }}
+                                onPress={()=>recallFriend(profile)}
+                                >
                                     <Text style={{ fontSize: 16, fontWeight: '500' }}>Recall request</Text>
                                 </TouchableOpacity>
                             </View>
@@ -180,7 +319,9 @@ export default function ProfileFriendScreen() {
                                 <TouchableOpacity style={{
                                     height: 40, width: 70, backgroundColor: 'white', marginLeft: 30,
                                     borderRadius: 20, alignItems: 'center', justifyContent: 'center'
-                                }}>
+                                }}
+                                    onPress={handleAddFriendRequest}
+                                >
                                     <Icon name='adduser' size={22}></Icon>
                                 </TouchableOpacity>
                             </View>

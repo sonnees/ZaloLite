@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -50,7 +49,7 @@ export default function ProfileScreen() {
   let result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: true,
-    aspect: [4, 3],
+    aspect: [4, 4],
     quality: 1,
   });
 

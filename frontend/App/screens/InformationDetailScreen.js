@@ -70,7 +70,6 @@ export default function InformationDetail() {
     getNewAvatar();
   }, []);
 
-
   return (
     <View style={styles.container}>
       {userInfo && (
@@ -79,7 +78,7 @@ export default function InformationDetail() {
             <Image source={require('../assets/Cover.jpg')} style={{ width: '100%', height: '100%' }} />
             <View style={{ flex: 3, position: "absolute", top: "65%", width: "50%", paddingLeft: "5%" }}>
               {/* Sử dụng avatar mới nếu có, nếu không sử dụng avatar từ userInfo */}
-              <Image style={{ width: 60, height: 60, borderRadius: 60, }} source={{ uri: userInfo.avatar || newAvatar }} />
+              <Image style={{ width: 60, height: 60, borderRadius: 60, }} source={{ uri: newAvatar || userInfo.avatar }} />
             </View>
             <Image style={{ position: "absolute", width: "16%", height: "8%", resizeMode: "contain", top: "10%" }}
               source={require("../assets/back1.png")}
@@ -92,7 +91,7 @@ export default function InformationDetail() {
             <View style={{ flex: 1, flexDirection: "row", paddingLeft: "5%", alignItems: "center" }}>
               <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>Giới tính</Text>
               <View style={{ flex: 0.2 }}></View>
-              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.gender === true ? 'Nam' : 'Nữ'}</Text>
+              <Text style={{ fontFamily: "Roboto", fontSize: 15 }}>{userInfo.gender === 'Nữ' ? 'Nữ' : 'Nam'}</Text>
             </View>
             <View style={{ flex: 0.02, backgroundColor: "#CCCCCC", paddingLeft: "5%" }}></View>
             <View style={{ flex: 1, flexDirection: "row", paddingLeft: "5%", alignItems: "center" }}>
