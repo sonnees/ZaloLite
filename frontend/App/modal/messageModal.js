@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { View, Modal, StyleSheet, TouchableOpacity, Image, Text, TouchableWithoutFeedback } from 'react-native';
 import { ChatItem } from '../component/ChatVIewElement';
-import { host } from '../api/API';
+import { CHAT_SOCKET, host } from '../api/API';
 import { GlobalContext } from '../context/GlobalContext';
 import { findConversationByID } from '../utils/FindConservation';
 import uuid from 'react-native-uuid';
@@ -36,7 +36,7 @@ export const MessageModal = ({ modalVisible, setModalVisible, item, conversation
     
     };
     useEffect(() => {
-        const newSocket = new WebSocket(`ws://${host}:8082/ws/chat/${componentChatID}`);
+        const newSocket = new WebSocket(`${CHAT_SOCKET}/${componentChatID}`);
         newSocket.onopen = () => {
           console.log("WebSocket connected >>>>>>>>");
         };

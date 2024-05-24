@@ -4,7 +4,7 @@ import { ChatItem } from '../component/ChatVIewElement';
 import { GlobalContext } from '../context/GlobalContext';
 import { findConversationByID } from '../utils/FindConservation';
 import uuid from 'react-native-uuid';
-import { host } from '../api/API';
+import { CHAT_SOCKET, host } from '../api/API';
 
 export const MessageModalRecall = ({ modalVisible, setModalVisible, item, conversationOpponent, friend }) => {
     const [socket, setSocket] = useState(null);
@@ -24,7 +24,7 @@ export const MessageModalRecall = ({ modalVisible, setModalVisible, item, conver
     }
     };
     useEffect(() => {
-        const newSocket = new WebSocket(`ws://${host}:8082/ws/chat/${componentChatID}`);
+        const newSocket = new WebSocket(`${CHAT_SOCKET}/${componentChatID}`);
         newSocket.onopen = () => {
           console.log("WebSocket connected >>>>>>>>");
         };
