@@ -30,7 +30,7 @@ const ContactsScreen = () => {
         <TouchableOpacity
           style={{ height: 75, flexDirection: 'row', width: '100%' }}
         >
-          <Image style={{ width: 55, height: 55, resizeMode: "contain", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
+          <Image style={{ width: 55, height: 55, resizeMode: "cover", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
             source={{ uri: item.item.chatAvatar ? item.item.chatAvatar : null }} />
 
           <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>
@@ -54,7 +54,7 @@ const ContactsScreen = () => {
         <TouchableOpacity
           style={{ height: 75, flexDirection: 'row', width: '100%' }}
         >
-          <Image style={{ width: 55, height: 55, resizeMode: "contain", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
+          <Image style={{ width: 55, height: 55, resizeMode: "cover", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
             source={{ uri: item.item.chatAvatar ? item.item.chatAvatar : null }} />
 
           <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>

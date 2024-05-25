@@ -15,7 +15,7 @@ const AddFriendRequestDetail = () => {
     let route = useRoute();
     const profile = route.params?.profile;
     const { myProfile, setMyUserInfo, setListChatID } = useContext(GlobalContext)
-    const [request, setRequest] = useState(` Hi I'm ${myProfile.userName}. Let's be friends!`)
+    const [request, setRequest] = useState(` Xin chào, mình là ${myProfile.userName}. Kết bạn với mình nhé!`)
     const [isOn, setIsOn] = useState(false);
     const [socket, setSocket] = useState(null);
     const handleToggle = () => {

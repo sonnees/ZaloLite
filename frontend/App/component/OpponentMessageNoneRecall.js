@@ -108,11 +108,9 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                     friend={friend}
                 />
                 <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                    {!friend && (
-                        <ChatAatar
-                            profile={profile}
-                        />
-                    )}
+                <ChatAatar
+                                            profile={profile}
+                                        />
                     <TouchableOpacity
                         style={{
                             flexDirection: 'row',
@@ -121,7 +119,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                             marginHorizontal: 10,
                             ...alignmentStyle,
                             paddingHorizontal: 10,
-                            width: imageSize.width,
+                            width: textHeight.width,
                             maxHeight: 300,
                             maxWidth: '60%',
                             flexDirection: 'column'
@@ -159,11 +157,9 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                 />
                 <View style={{}}>
                     <View style={{ flexDirection: 'row' }}>
-                        {!friend && (
-                            <ChatAatar
-                                profile={profile}
-                            />
-                        )}
+                    <ChatAatar
+                                            profile={profile}
+                                        />
                         <TouchableOpacity
                             style={{
                                 flexDirection: 'column',
@@ -186,11 +182,11 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                             )}
                             <Image
                                 source={{ uri: imageUrl }}
-                                style={{ width: '100%', height: '100%', maxHeight: 500 }}
+                                style={{ width: '100%', height: '100%', maxHeight: 500,marginBottom:30 }}
                                 resizeMode="contain"
                                 onLoad={handleImageLoad}
                             />
-                            <Text style={{ fontSize: 8, alignSelf: 'flex-start', color: '#888888', marginTop: -15 }}>{getTime(item.timestamp)}</Text>
+                            <Text style={{ fontSize: 8, alignSelf: 'flex-start', color: '#888888', marginTop: -45 }}>{getTime(item.timestamp)}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -226,7 +222,9 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
               <View style={{}}>
                 <View style={{}}>
                   <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                    {!friend && <ChatAatar profile={profile} />}
+                  <ChatAatar
+                                            profile={profile}
+                                        />
                     {linkPreview ? (
                       <TouchableOpacity
                         onPress={() => Linking.openURL(linkUrl)}
@@ -295,11 +293,9 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                 />
                 <View style={{ flexDirection: 'column' }}>
                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                        {!friend && (
-                            <ChatAatar
-                                profile={profile}
-                            />
-                        )}
+                    <ChatAatar
+                                            profile={profile}
+                                        />
                         <TouchableOpacity
                             onPress={() => {
                             }}
@@ -372,11 +368,9 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                     <View>
                         <View style={{ flexDirection: 'column' }}>
                             <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                {!friend && (
-                                    <ChatAatar
-                                        profile={profile}
-                                    />
-                                )}
+                            <ChatAatar
+                                            profile={profile}
+                                        />
                                 
                                 <TouchableOpacity
                                     onPress={() => Linking.openURL(fileUrl)}

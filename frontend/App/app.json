@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "6e95bf4d-2400-44e9-9cea-c52356317070"
+      }
+    },
+    "android": {
+      "package": "com.tranthiendatlagi.app"
+    }
+  }
+}

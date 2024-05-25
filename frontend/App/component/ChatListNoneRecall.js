@@ -85,11 +85,9 @@ const maxImageWidth = screenWidth * 0.6;
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        {!friend && (
-                                            <ChatAatar
-                                                profile={profile}
-                                            />
-                                        )}
+                                    <ChatAatar
+                                            profile={profile}
+                                        />
                                         <TouchableOpacity
                                             key={contentIndex}
                                             style={{
@@ -150,11 +148,9 @@ const maxImageWidth = screenWidth * 0.6;
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        {!friend && (
-                                            <ChatAatar
-                                                profile={profile}
-                                            />
-                                        )}
+                                    <ChatAatar
+                                            profile={profile}
+                                        />
                                         <TouchableOpacity
                                             key={contentIndex}
                                             style={{
@@ -219,11 +215,9 @@ const maxImageWidth = screenWidth * 0.6;
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        {!friend && (
-                                            <ChatAatar
-                                                profile={profile}
-                                            />
-                                        )}
+                                    <ChatAatar
+                                            profile={profile}
+                                        />
                                         <TouchableOpacity
                                             key={contentIndex}
                                             onPress={() => Linking.openURL(fileUrl)} // Mở liên kết khi người dùng chạm vào
@@ -293,11 +287,9 @@ const maxImageWidth = screenWidth * 0.6;
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        {!friend && (
-                                            <ChatAatar
-                                                profile={profile}
-                                            />
-                                        )}
+                                    <ChatAatar
+                                            profile={profile}
+                                        />
                                         {linkPreview ? (
                                             <TouchableOpacity
                                                 key={contentIndex}
@@ -366,11 +358,9 @@ const maxImageWidth = screenWidth * 0.6;
                                         friend={friend}
                                     />
                                     <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                        {!friend && (
-                                            <ChatAatar
-                                                profile={profile}
-                                            />
-                                        )}
+                                    <ChatAatar
+                                            profile={profile}
+                                        />
                                         <TouchableOpacity
                                             key={contentIndex}
                                             onPress={() => {
@@ -480,11 +470,9 @@ const maxImageWidth = screenWidth * 0.6;
                                     friend={friend}
                                 />
                                 <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                    {!friend && (
-                                        <ChatAatar
+                                <ChatAatar
                                             profile={profile}
                                         />
-                                    )}
                                     <TouchableOpacity
                                         key={contentIndex}
                                         style={{
@@ -561,7 +549,7 @@ const maxImageWidth = screenWidth * 0.6;
                                         ...alignmentStyle,
                                         paddingHorizontal: 10,
                                         maxWidth: 280,
-                                        maxHeight: maxHeight, height: 100
+                                        maxHeight: 80, height: 100
                                     }}
                                 >
                                     <View style={{ flexDirection: 'row', marginTop: 8 }}>
