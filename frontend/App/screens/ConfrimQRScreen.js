@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { API_PROFILE } from '../api/API';
+import { ACCOUNT_SOCKET, API_PROFILE } from '../api/API';
 
 export default function ConfirmQRScreen({route}) {
   const [socket, setSocket] = useState(null);
@@ -22,7 +22,7 @@ export default function ConfirmQRScreen({route}) {
       socket.close();
     }
   
-    const newSocket = new WebSocket(`ws://${host}:8081/ws/auth/` + data);
+    const newSocket = new WebSocket(ACCOUNT_SOCKET + data);
     setSocket(newSocket);
   
     newSocket.onmessage = async (event) => {

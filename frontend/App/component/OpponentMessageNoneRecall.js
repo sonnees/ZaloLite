@@ -1,6 +1,6 @@
 export { OpponentMessageNoneRecall }
-import React, { memo, useState, useRef, useEffect, useMemo, useContext } from 'react';
-import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import React, { memo, useState, useRef, useEffect, useMemo, useContext, useCallback } from 'react';
+import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
 import { API_PROFILE_BY_USERID } from '../api/API';
@@ -16,8 +16,25 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
     const [videoKey, setVideoKey] = useState(0);
     const myMessage = '#B0E2FF';
     const [modalVisible, setModalVisible] = useState(false);
+    const screenWidth = Dimensions.get('window').width;
+  const maxImageWidth = screenWidth * 0.6;
+  const handleImageLoad = (event) => {
+    const { width, height } = event.nativeEvent.source;
+    const aspectRatio = width / height;
+
+    let finalWidth = width;
+    let finalHeight = height;
+
+    if (width > maxImageWidth) {
+      finalWidth = maxImageWidth;
+      finalHeight = maxImageWidth / aspectRatio;
+    }
+
+    setImageSize({ width: finalWidth, height: finalHeight });
+  };
     const [profile, setProfile] = useState({});
     const fetchProfileInfo = async (userID, token) => {
+        
         try {
             const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
                 headers: {
@@ -50,11 +67,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
     useEffect(() => {
         const fetchData = async () => {
             const token = await AsyncStorage.getItem('token');
-            // console.log("USER ID IN HE____________________________", item.userID);
-            // console.log("ToKen____________________________", token);
             const data = fetchProfileInfo(item.userID, token)
-            // setProfile(data);
-            // console.log("DATAPROFILE:  ", data);
         }
         fetchData()
     }, [item]);
@@ -62,19 +75,19 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
         const { height } = e.nativeEvent.layout;
         setTextHeight(height);
     };
+    
     const renderContent = () => {
         const key = item.contents[0].key;
         const value = item.contents[0].value;
-
-        switch (key) {
-            case 'text':
-            case 'emoji':
+    
+        switch (true) {
+            case key === 'text' || key === 'emoji':
                 return renderTextContent(value);
-            case 'image':
+            case key === 'image':
                 return renderImageContent(value);
-            case 'link':
+            case key === 'link':
                 return renderLinkContent(value);
-            case 'mp4':
+            case key.startsWith('MP4|'):
                 return renderVideoContent(value);
             default:
                 if (containsDoublePipe(key)) {
@@ -134,223 +147,6 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
             </React.Fragment>
         </TouchableWithoutFeedback>
     );
-
-    //Origin
-    // const renderImageContent = (imageUrl) => (
-    //     <View style={{}}>
-    //         <View style={{ flexDirection: 'row' }}>
-    //             <ChatAatar
-    //                 profile={profile}
-    //             />
-    //             <TouchableOpacity
-    //                 style={{
-    //                     flexDirection: 'column',
-    //                     borderRadius: 12,
-    //                     backgroundColor: 'white',
-    //                     marginHorizontal: 10,
-    //                     marginBottom: 8,
-    //                     ...alignmentStyle,
-    //                     paddingHorizontal: 10,
-    //                     maxWidth: '60%',
-    //                     width: '60%',
-    //                     height: 300,
-    //                     maxHeight: 300
-    //                 }}
-    //             >
-    //                 <ChatName
-    //                     profile={profile}
-    //                 />
-    //                 <Image
-    //                     source={{ uri: imageUrl }}
-    //                     style={{ width: '100%', height: '100%', maxHeight: 500, }}
-    //                     resizeMode="contain"
-    //                     onLoad={e => {
-    //                         const { width, height } = e.nativeEvent.source;
-
-    //                     }}
-    //                 />
-    //                 <Text style={{ fontSize: 8, alignSelf: 'flex-start', color: '#888888', marginTop: -15 }}>{getTime(item.timestamp)}</Text>
-    //             </TouchableOpacity>
-    //         </View>
-    //     </View>
-    // );
-    //Origin
-    // const renderLinkContent = (linkUrl) => {
-    //     const [linkPreview, setLinkPreview] = useState(null);
-    //     useEffect(() => {
-    //         fetch(`https://api.linkpreview.net/?key=94bc443dd1d2ec0588af9aff4e012f6d&q=${encodeURIComponent(linkUrl)}`)
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 const { title, description, image } = data;
-    //                 setLinkPreview({ title, description, image });
-    //             })
-    //             .catch(error => {
-    //                 console.error('Error fetching link preview:', error);
-    //             });
-    //     }, [linkUrl]);
-
-    //     return (
-    //         <View style={{}}>
-    //             <View style={{}}>
-    //                 <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-    //                     <ChatAatar
-    //                         profile={profile}
-    //                     />
-    //                     {linkPreview ? (
-    //                         <TouchableOpacity
-    //                             onPress={() => Linking.openURL(linkUrl)}
-    //                             style={{
-    //                                 flexDirection: 'row',
-    //                                 borderRadius: 12,
-    //                                 backgroundColor: 'white',
-    //                                 marginHorizontal: 10,
-    //                                 alignItems: 'center',
-    //                                 ...alignmentStyle,
-    //                                 paddingHorizontal: 10,
-    //                                 maxWidth: 280,
-    //                                 marginLeft: 50
-    //                             }}
-    //                         >
-    //                             <ChatName
-    //                                 profile={profile}
-    //                             />
-    //                             <View style={{ flex: 1 }}>
-    //                                 <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15, marginTop: 10, marginHorizontal: 10 }}>{linkPreview.title}</Text>
-    //                                 <View style={{ margin: 10, backgroundColor: 'white' }}>
-    //                                     {linkPreview.image && <Image source={{ uri: linkPreview.image }} style={{ width: '100%', height: 100, resizeMode: 'contain' }} />}
-    //                                 </View>
-    //                                 <Text style={{ fontSize: 15, marginHorizontal: 10, marginVertical: '10', marginBottom: 10 }}>{linkPreview.description}</Text>
-    //                             </View>
-    //                         </TouchableOpacity>
-    //                     ) : (
-    //                         <TouchableOpacity
-    //                             style={{
-    //                                 flexDirection: 'row',
-    //                                 borderRadius: 12,
-    //                                 backgroundColor: 'white',
-    //                                 marginHorizontal: 10,
-    //                                 alignItems: 'center',
-    //                                 ...alignmentStyle,
-    //                                 paddingHorizontal: 10,
-    //                                 maxWidth: 280,
-    //                                 marginLeft: 50
-    //                             }}
-    //                         >
-    //                             <ChatName
-    //                                 profile={profile}
-    //                             />
-    //                             <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15 }}>{linkUrl}</Text>
-    //                         </TouchableOpacity>
-    //                     )}
-    //                 </View>
-    //                 <View style={{ height: 8 }} />
-    //             </View>
-    //         </View>
-    //     );
-    // };
-    //Origin
-    // const renderVideoContent = (videoUrl) => (
-    //     <View style={{ flexDirection: 'column' }}>
-    //         <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-    //             <ChatAatar
-    //                 profile={profile}
-    //             />
-    //             <TouchableOpacity
-    //                 onPress={() => {
-    //                 }}
-    //                 style={{
-    //                     flexDirection: 'column',
-    //                     marginHorizontal: 10,
-    //                     ...alignmentStyle,
-    //                     maxHeight: 400,
-    //                     maxWidth: '60%',
-    //                     backgroundColor: 'white'
-    //                 }}
-    //             >
-    //                 <ChatName
-    //                     profile={profile}
-    //                 />
-    //                 <Video
-    //                     key={videoKey}
-    //                     source={{ uri: videoUrl }}
-    //                     shouldPlay
-    //                     style={{ width: 200, height: 300 }}
-    //                 />
-    //             </TouchableOpacity>
-    //         </View>
-    //         <View style={{ height: 8 }} />
-    //     </View>
-    // );
-    //Origin
-    // const renderFileContent = (key, value) => {
-    //     const typeFile = useMemo(() => {
-    //         const file = {};
-    //         if (key.startsWith('docx|') || key.startsWith('doc|'))
-    //             file.icon = require('../assets/doc.png');
-    //         else if (key.startsWith('xlsx|') || key.startsWith('xls|'))
-    //             file.icon = require('../assets/xlsx.png');
-    //         else if (key.startsWith('pdf|'))
-    //             file.icon = require('../assets/pdf.png');
-    //         else if (key.startsWith('zip|'))
-    //             file.icon = require('../assets/zip-folder.png');
-    //         else if (key.startsWith('rar|'))
-    //             file.icon = require('../assets/rar.png');
-    //         else
-    //             file.icon = require('../assets/attachfile.png');
-    //         return file;
-    //     }, [key]);
-
-    //     const parts = key.split('|');
-    //     const fileName = parts[1];
-    //     const fileSize = parts[2];
-    //     const fileUrl = value;
-
-    //     return (
-    //         <View>
-    //             <View style={{ flexDirection: 'column' }}>
-    //                 <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-
-    //                     <ChatAatar
-    //                         profile={profile}
-    //                     />
-    //                     <TouchableOpacity
-    //                         onPress={() => Linking.openURL(fileUrl)}
-    //                         style={{
-    //                             flexDirection: 'column',
-    //                             borderRadius: 12,
-    //                             backgroundColor: 'white',
-    //                             marginHorizontal: 10,
-    //                             ...alignmentStyle,
-    //                             paddingHorizontal: 10,
-    //                             maxWidth: 280,
-    //                             maxHeight: 90,
-    //                             height: 90
-    //                         }}
-    //                     >
-    //                         <ChatName
-    //                             profile={profile}
-    //                         />
-    //                         <View style={{ flexDirection: 'row', marginBottom: 5 }}>
-    //                             <Image source={typeFile.icon} style={{ width: 50, height: 50, marginRight: 10 }} />
-    //                             <View style={{ flexDirection: 'column' }}>
-    //                                 <Text
-    //                                     onLayout={handleTextLayout}
-    //                                     style={{ flexWrap: 'wrap', fontSize: 15, fontWeight: '400', maxWidth: 150 }}
-    //                                 >{fileName}</Text>
-    //                                 <Text
-    //                                     onLayout={handleTextLayout}
-    //                                     style={{ flexWrap: 'wrap', fontSize: 11, fontWeight: '400' }}
-    //                                 >{fileSize}</Text>
-    //                             </View>
-    //                         </View>
-    //                         <Text style={{ fontSize: 8, alignSelf: 'flex-start', color: '#888888' }}>{getTime(item.timestamp)}</Text>
-    //                     </TouchableOpacity>
-    //                 </View>
-    //                 <View style={{ height: 8 }} />
-    //             </View>
-    //         </View>
-    //     );
-    // };
     const renderImageContent = (imageUrl) => (
         <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
             <React.Fragment>
@@ -378,8 +174,8 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                                 ...alignmentStyle,
                                 paddingHorizontal: 10,
                                 maxWidth: '60%',
-                                width: '60%',
-                                height: 300,
+                                width: imageSize.width,
+                                height: imageSize.height+25,
                                 maxHeight: 300
                             }}
                         >
@@ -392,9 +188,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                                 source={{ uri: imageUrl }}
                                 style={{ width: '100%', height: '100%', maxHeight: 500 }}
                                 resizeMode="contain"
-                                onLoad={e => {
-                                    const { width, height } = e.nativeEvent.source;
-                                }}
+                                onLoad={handleImageLoad}
                             />
                             <Text style={{ fontSize: 8, alignSelf: 'flex-start', color: '#888888', marginTop: -15 }}>{getTime(item.timestamp)}</Text>
                         </TouchableOpacity>
@@ -404,96 +198,91 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
         </TouchableWithoutFeedback>
     );
 
-    const renderLinkContent = (linkUrl) => {
+    const renderLinkContent = useCallback((linkUrl) => {
         const [linkPreview, setLinkPreview] = useState(null);
+    
         useEffect(() => {
-            fetch(`https://api.linkpreview.net/?key=94bc443dd1d2ec0588af9aff4e012f6d&q=${encodeURIComponent(linkUrl)}`)
-                .then(response => response.json())
-                .then(data => {
-                    const { title, description, image } = data;
-                    setLinkPreview({ title, description, image });
-                })
-                .catch(error => {
-                    console.error('Error fetching link preview:', error);
-                });
+          fetch(`https://api.linkpreview.net/?key=94bc443dd1d2ec0588af9aff4e012f6d&q=${encodeURIComponent(linkUrl)}`)
+            .then(response => response.json())
+            .then(data => {
+              const { title, description, image } = data;
+              setLinkPreview({ title, description, image });
+            })
+            .catch(error => {
+              console.error('Error fetching link preview:', error);
+            });
         }, [linkUrl]);
-
+    
         return (
-            <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
-                <React.Fragment>
-                    <MessageModal
-                        modalVisible={modalVisible}
-                        setModalVisible={setModalVisible}
-                        item={item}
-                        conversationOpponent={conversationOpponent}
-                        friend={friend}
-                    />
-                    <View style={{}}>
-                        <View style={{}}>
-                            <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                {!friend && (
-                                    <ChatAatar
-                                        profile={profile}
-                                    />
-                                )}
-                                {linkPreview ? (
-                                    <TouchableOpacity
-                                        onPress={() => Linking.openURL(linkUrl)}
-                                        style={{
-                                            flexDirection: 'row',
-                                            borderRadius: 12,
-                                            backgroundColor: 'white',
-                                            marginHorizontal: 10,
-                                            alignItems: 'center',
-                                            ...alignmentStyle,
-                                            paddingHorizontal: 10,
-                                            maxWidth: 280,
-                                            marginLeft: 50
-                                        }}
-                                    >
-                                        {!friend && (
-                                            <ChatName
-                                                profile={profile}
-                                            />
-                                        )}
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15, marginTop: 10, marginHorizontal: 10 }}>{linkPreview.title}</Text>
-                                            <View style={{ margin: 10, backgroundColor: 'white' }}>
-                                                {linkPreview.image && <Image source={{ uri: linkPreview.image }} style={{ width: '100%', height: 100, resizeMode: 'contain' }} />}
-                                            </View>
-                                            <Text style={{ fontSize: 15, marginHorizontal: 10, marginVertical: '10', marginBottom: 10 }}>{linkPreview.description}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                ) : (
-                                    <TouchableOpacity
-                                        style={{
-                                            flexDirection: 'row',
-                                            borderRadius: 12,
-                                            backgroundColor: 'white',
-                                            marginHorizontal: 10,
-                                            alignItems: 'center',
-                                            ...alignmentStyle,
-                                            paddingHorizontal: 10,
-                                            maxWidth: 280,
-                                            marginLeft: 50
-                                        }}
-                                    >
-                                        {!friend && (
-                                            <ChatName
-                                                profile={profile}
-                                            />
-                                        )}
-                                        <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15 }}>{linkUrl}</Text>
-                                    </TouchableOpacity>
-                                )}
-                            </View>
-                            <View style={{ height: 8 }} />
+          <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+            <>
+              <MessageModal
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                item={item}
+                conversationOpponent={conversationOpponent}
+                friend={friend}
+              />
+              <View style={{}}>
+                <View style={{}}>
+                  <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                    {!friend && <ChatAatar profile={profile} />}
+                    {linkPreview ? (
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL(linkUrl)}
+                        style={{
+                          flexDirection: 'row',
+                          borderRadius: 12,
+                          backgroundColor: 'white',
+                          marginHorizontal: 10,
+                          alignItems: 'center',
+                          ...alignmentStyle,
+                          paddingHorizontal: 10,
+                          maxWidth: 280,
+                          marginLeft: 50,
+                        }}
+                      >
+                        {!friend && <ChatName profile={profile} />}
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15, marginTop: 10, marginHorizontal: 10 }}>
+                            {linkPreview.title}
+                          </Text>
+                          <View style={{ margin: 10, backgroundColor: 'white' }}>
+                            {linkPreview.image && (
+                              <Image source={{ uri: linkPreview.image }} style={{ width: '100%', height: 100, resizeMode: 'contain' }} />
+                            )}
+                          </View>
+                          <Text style={{ fontSize: 15, marginHorizontal: 10, marginVertical: '10', marginBottom: 10 }}>
+                            {linkPreview.description}
+                          </Text>
                         </View>
-                    </View>
-                </React.Fragment>
-            </TouchableWithoutFeedback>
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        style={{
+                          flexDirection: 'row',
+                          borderRadius: 12,
+                          backgroundColor: 'white',
+                          marginHorizontal: 10,
+                          alignItems: 'center',
+                          ...alignmentStyle,
+                          paddingHorizontal: 10,
+                          maxWidth: 280,
+                          marginLeft: 50,
+                        }}
+                      >
+                        {!friend && <ChatName profile={profile} />}
+                        <Text style={{ color: 'blue', textDecorationLine: 'underline', fontSize: 15 }}>{linkUrl}</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <View style={{ height: 8 }} />
+                </View>
+              </View>
+            </>
+          </TouchableWithoutFeedback>
         );
-    };
+      }, [modalVisible, item, conversationOpponent, friend, profile]);
     const renderVideoContent = (videoUrl) => (
         <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
             <React.Fragment>
@@ -520,7 +309,8 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                                 ...alignmentStyle,
                                 maxHeight: 400,
                                 maxWidth: '60%',
-                                backgroundColor: 'white'
+                                backgroundColor: 'white',
+                                marginLeft:20
                             }}
                         >
                             {!friend && (
@@ -532,6 +322,9 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                                 key={videoKey}
                                 source={{ uri: videoUrl }}
                                 shouldPlay
+                                isLooping
+                                isMuted={true}
+                                resizeMode="cover"
                                 style={{ width: 200, height: 300 }}
                             />
                         </TouchableOpacity>
@@ -558,12 +351,14 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                 file.icon = require('../assets/attachfile.png');
             return file;
         }, [key]);
-
+    
         const parts = key.split('|');
         const fileName = parts[1];
         const fileSize = parts[2];
         const fileUrl = value;
-
+    
+        const maxHeight = friend ? 80 : 100;
+    
         return (
             <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
                 <React.Fragment>
@@ -582,6 +377,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                                         profile={profile}
                                     />
                                 )}
+                                
                                 <TouchableOpacity
                                     onPress={() => Linking.openURL(fileUrl)}
                                     style={{
@@ -591,10 +387,10 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                                         marginHorizontal: 10,
                                         ...alignmentStyle,
                                         paddingHorizontal: 10,
-                                        marginLeft:1000,
-                                        maxWidth: 280,
-                                        maxHeight: 90,
-                                        height: 90
+                                        marginLeft: 10,
+                                        maxWidth: '60%',
+                                        maxHeight: maxHeight,
+                                        height: 200
                                     }}
                                 >
                                     {!friend && (
@@ -603,8 +399,8 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
                                         />
                                     )}
                                     <View style={{ flexDirection: 'row', marginBottom: 5 }}>
-                                        <Image source={typeFile.icon} style={{ width: 50, height: 50, marginRight: 10 }} />
-                                        <View style={{ flexDirection: 'column' }}>
+                                        <Image source={typeFile.icon} style={{ width: 50, height: 50, marginRight: 10, marginTop: 10 }} />
+                                        <View style={{ flexDirection: 'column', marginTop: 10 }}>
                                             <Text
                                                 onLayout={handleTextLayout}
                                                 style={{ flexWrap: 'wrap', fontSize: 15, fontWeight: '400', maxWidth: 150 }}
@@ -625,6 +421,7 @@ const OpponentMessageNoneRecall = memo(({ item, conversationOpponent, friend }) 
             </TouchableWithoutFeedback>
         );
     };
+    
 
 
     const [imageSize, setImageSize] = useState({ width: null, height: null });

@@ -1,6 +1,6 @@
 export { ChatListNoneRecall }
 import React, { memo, useState, useRef, useEffect, useMemo, useContext } from 'react';
-import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, Modal, StyleSheet, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import { Video } from 'expo-av';
 import { getTime } from '../utils/CalTime';
 import { API_PROFILE_BY_USERID } from '../api/API';
@@ -16,6 +16,8 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
     const myMessage = '#B0E2FF';
     const [modalVisible, setModalVisible] = useState(false);
     const [profile, setProfile] = useState({});
+    const screenWidth = Dimensions.get('window').width;
+const maxImageWidth = screenWidth * 0.6;
     const fetchProfileInfo = async (userID, token) => {
         try {
             const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
@@ -121,6 +123,23 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                 </View>
                             );
                         } else if (content.key === 'image') {
+                            const [imageSize, setImageSize] = useState(null);
+                        
+                            const handleImageLoad = (event) => {
+                                const { width, height } = event.nativeEvent.source;
+                                const aspectRatio = width / height;
+                        
+                                let finalWidth = width;
+                                let finalHeight = height;
+                        
+                                if (width > maxImageWidth) {
+                                    finalWidth = maxImageWidth;
+                                    finalHeight = maxImageWidth / aspectRatio;
+                                }
+                        
+                                setImageSize({ width: finalWidth, height: finalHeight });
+                            };
+                        
                             return (
                                 <View style={{ flexDirection: 'column' }}>
                                     <MessageModal
@@ -145,16 +164,9 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                                 marginHorizontal: 10,
                                                 ...alignmentStyle,
                                                 paddingHorizontal: 10,
-                                                width: 200,
-                                                height: 300, // Sử dụng kích thước thực của hình ảnh
-                                                maxHeight: 300,
+                                                width: imageSize ? imageSize.width : 'auto',
+                                                height: imageSize ? imageSize.height : 'auto',
                                                 maxWidth: '60%',
-                                            }}
-
-                                            onLayout={(event) => {
-                                                const { width, height } = event.nativeEvent.layout;
-                                                // Cập nhật kích thước của TouchableOpacity dựa trên kích thước thực của hình ảnh
-                                                setImageSize({ width, height });
                                             }}
                                         >
                                             {!friend && (
@@ -164,9 +176,9 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                             )}
                                             <Image
                                                 source={{ uri: content.value }}
-                                                style={{ height: '100%', width: '100%' }}
+                                                style={{ height: imageSize ? imageSize.height : 'auto', width: imageSize ? imageSize.width : 'auto' }}
                                                 resizeMode="contain"
-                                            // onLoad={handleImageLoad}
+                                                onLoad={handleImageLoad}
                                             />
                                             {/* <Text style={{ fontSize: 8, alignSelf: 'flex-start', color: '#888888',flex }}>{getTime(item.timestamp)}</Text> */}
                                         </TouchableOpacity>
@@ -174,7 +186,7 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                     <View style={{ height: 8 }} />
                                 </View>
                             );
-                        } else if (containsDoublePipe(content.key)) {
+                        }else if (containsDoublePipe(content.key)) {
                             const typeFile = useMemo(() => {
                                 const file = {};
                                 if (content.key.startsWith('docx|') || content.key.startsWith('doc|'))
@@ -196,6 +208,7 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                             const fileName = parts[1];
                             const fileSize = parts[2];
                             const fileUrl = content.value;
+                            const maxHeight = friend ? 80 : 100;
                             return (
                                 <View style={{ flexDirection: 'column' }}>
                                     <MessageModal
@@ -223,7 +236,7 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                                 ...alignmentStyle,
                                                 paddingHorizontal: 10,
                                                 maxWidth: 280,
-                                                maxHeight: 80, height: 100
+                                                maxHeight: maxHeight, height: 100
                                             }}
                                         >
                                             {!friend && (
@@ -380,6 +393,9 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                                 key={videoKey} // Sử dụng videoKey ở đây để kích hoạt việc rerender
                                                 source={{ uri: content.value }}
                                                 shouldPlay
+                                                isLooping
+                                                isMuted={true}
+                                                resizeMode="cover"
                                                 style={{ width: 200, height: 300 }}
                                             />
                                         </TouchableOpacity>
@@ -437,8 +453,25 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                             </View>
                         );
                     } else if (content.key === 'image') {
+                        const [imageSize, setImageSize] = useState(null);
+                    
+                        const handleImageLoad = (event) => {
+                            const { width, height } = event.nativeEvent.source;
+                            const aspectRatio = width / height;
+                    
+                            let finalWidth = width;
+                            let finalHeight = height;
+                    
+                            if (width > maxImageWidth) {
+                                finalWidth = maxImageWidth;
+                                finalHeight = maxImageWidth / aspectRatio;
+                            }
+                    
+                            setImageSize({ width: finalWidth, height: finalHeight });
+                        };
+                    
                         return (
-                            <View style={{ alignItems: 'center' }}>
+                            <View style={{ flexDirection: 'column' }}>
                                 <MessageModal
                                     modalVisible={modalVisible}
                                     setModalVisible={setModalVisible}
@@ -446,38 +479,45 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                     conversationOpponent={conversationOpponent}
                                     friend={friend}
                                 />
-                                <TouchableOpacity
-                                    key={contentIndex}
-                                    style={{
-                                        flexDirection: 'column',
-                                        borderRadius: 12,
-                                        backgroundColor: 'white',
-                                        marginHorizontal: 10,
-                                        ...alignmentStyle,
-                                        paddingHorizontal: 10,
-                                        width: 200,
-                                        height: 300, // Sử dụng kích thước thực của hình ảnh
-                                        maxHeight: 300,
-                                        maxWidth: '60%',
-                                    }}
-                                    onLayout={(event) => {
-                                        const { width, height } = event.nativeEvent.layout;
-                                        // Cập nhật kích thước của TouchableOpacity dựa trên kích thước thực của hình ảnh
-                                        setImageSize({ width, height });
-                                    }}
-                                >
-                                    <Text style={{ fontSize: 8, alignSelf: 'flex-start', color: '#888888' }}>{getTime(item.timestamp)}</Text>
-                                    <Image
-                                        source={{ uri: content.value }}
-                                        style={{ height: '100%', width: '100%' }}
-                                        resizeMode="contain"
-                                    // onLoad={handleImageLoad}
-                                    />
-                                </TouchableOpacity>
+                                <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                                    {!friend && (
+                                        <ChatAatar
+                                            profile={profile}
+                                        />
+                                    )}
+                                    <TouchableOpacity
+                                        key={contentIndex}
+                                        style={{
+                                            flexDirection: 'column',
+                                            borderRadius: 12,
+                                            backgroundColor: 'white',
+                                            marginHorizontal: 10,
+                                            ...alignmentStyle,
+                                            paddingHorizontal: 10,
+                                            width: imageSize ? imageSize.width : 'auto',
+                                            height: imageSize ? imageSize.height : 'auto',
+                                            maxWidth: '60%',
+                                            marginLeft:120
+                                        }}
+                                    >
+                                        {!friend && (
+                                            <ChatName
+                                                profile={profile}
+                                            />
+                                        )}
+                                        <Image
+                                            source={{ uri: content.value }}
+                                            style={{ height: imageSize ? imageSize.height : 'auto', width: imageSize ? imageSize.width : 'auto' }}
+                                            resizeMode="contain"
+                                            onLoad={handleImageLoad}
+                                        />
+                                        {/* <Text style={{ fontSize: 8, alignSelf: 'flex-start', color: '#888888',flex }}>{getTime(item.timestamp)}</Text> */}
+                                    </TouchableOpacity>
+                                </View>
                                 <View style={{ height: 8 }} />
                             </View>
                         );
-                    } else if (containsDoublePipe(content.key)) {
+                    }else if (containsDoublePipe(content.key)) {
                         const typeFile = useMemo(() => {
                             const file = {};
                             if (content.key.startsWith('docx|') || content.key.startsWith('doc|'))
@@ -499,6 +539,7 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                         const fileName = parts[1];
                         const fileSize = parts[2];
                         const fileUrl = content.value;
+                        const maxHeight = friend ? 80 : 100;
                         return (
                             <View style={{ flexDirection: 'column' }}>
                                 <MessageModal
@@ -520,7 +561,7 @@ const ChatListNoneRecall = memo(({ item, conversationOpponent, friend }) => {
                                         ...alignmentStyle,
                                         paddingHorizontal: 10,
                                         maxWidth: 280,
-                                        maxHeight: 80, height: 100
+                                        maxHeight: maxHeight, height: 100
                                     }}
                                 >
                                     <View style={{ flexDirection: 'row', marginTop: 8 }}>

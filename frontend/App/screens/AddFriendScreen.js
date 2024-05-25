@@ -115,14 +115,14 @@ const AddFriendScreen = () => {
       navigation.navigate("TabNavigator", { screen: typeScreen })
     }
   }
-  const changeColor = () => {
-    setBorderColor('#0033CC');
-    setBackgroundPhone('#99CCFF')
-  }
-  const revertColor = () => {
-    setBorderColor('gray');
-    setBackgroundPhone('#DDDDDD');
-  }
+  // const changeColor = () => {
+  //   setBorderColor('#0033CC');
+  //   setBackgroundPhone('#99CCFF')
+  // }
+  // const revertColor = () => {
+  //   setBorderColor('gray');
+  //   setBackgroundPhone('#DDDDDD');
+  // }
   return (
 
     <KeyboardAwareScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -166,8 +166,8 @@ const AddFriendScreen = () => {
                 <TextInput style={{ flex: 2.5, marginLeft: 15, }}
                   placeholder='Nhập số điện thoại'
                   keyboardType='numeric'
-                  onFocus={changeColor}
-                  onBlur={revertColor}
+                  // onFocus={changeColor}
+                  // onBlur={revertColor}
                   onChangeText={text => setPhoneNumber(text)}
                 ></TextInput>
               </View>

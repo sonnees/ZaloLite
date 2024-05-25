@@ -26,7 +26,7 @@ const QRScannerScreen = () => {
     }
 
     try {
-      const newSocket = new WebSocket(`ws://${host}:8081/ws/auth/` + data);
+      const newSocket = new WebSocket(ACCOUNT_SOCKET + data);
       setScanned(true);
       navigation.navigate('ConfirmQRScreen', { data: data });
       await waitForWebSocketOpen(newSocket);

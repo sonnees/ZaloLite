@@ -243,7 +243,7 @@ const MessagesScreen = () => {
           onLongPress={() => onLongPress(data)}
           style={{ height: 75, flexDirection: 'row', width: '100%' }}
         >
-          <Image style={{ width: 55, height: 55, resizeMode: "contain", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
+          <Image style={{ width: 55, height: 55, resizeMode: "cover", borderRadius: 50, margin: 12, marginLeft: 20, marginRight: 20 }}
             source={{ uri: item.chatAvatar ? data.chatAvatar : null }} />
 
           <View style={{ flexDirection: 'column', justifyContent: 'center', flex: 4 }}>

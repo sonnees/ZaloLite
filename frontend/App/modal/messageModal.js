@@ -6,6 +6,8 @@ import { GlobalContext } from '../context/GlobalContext';
 import { findConversationByID } from '../utils/FindConservation';
 import uuid from 'react-native-uuid';
 export const MessageModal = ({ modalVisible, setModalVisible, item, conversationOpponent, friend }) => {
+    // console.log('>>>>>>>',item);
+    
     const [socket, setSocket] = useState(null);
     const { setMyUserInfo, chatID, myProfile, setMyProfile, setComponentChatID, componentChatID,myUserInfo } = useContext(GlobalContext);
     let messageSocket = {};
@@ -139,12 +141,16 @@ export const MessageModal = ({ modalVisible, setModalVisible, item, conversation
                                 <Image style={styles.imageInTouch} source={require('../assets/forward.png')}></Image>
                                 <Text style={styles.textInModal}>Forward</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.buttonInModal}
-                            onPress={handleRecallMessage}
-                            >
-                                <Image style={styles.imageInTouch} source={require('../assets/rotate-left.png')}></Image>
-                                <Text style={styles.textInModal}>Recall</Text>
-                            </TouchableOpacity>
+                        {
+                            item.userID===myProfile.userID &&(
+                                <TouchableOpacity style={styles.buttonInModal}
+                                onPress={handleRecallMessage}
+                                >
+                                    <Image style={styles.imageInTouch} source={require('../assets/rotate-left.png')}></Image>
+                                    <Text style={styles.textInModal}>Recall</Text>
+                                </TouchableOpacity>
+                            )
+                        }
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                             <TouchableOpacity style={styles.buttonInModal}>

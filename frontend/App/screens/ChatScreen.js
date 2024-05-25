@@ -177,7 +177,7 @@ const ChatScreen = () => {
   // Xử lý Reload dữ liệu
   const fetchAllChatbychatID = async (chatID, token) => {
     try {
-      const response = await axios.get(`${API_GET_LIST_CHATACTIVITY}${chatID}&x=0&y=1000`, {
+      const response = await axios.get(`${API_GET_LIST_CHATACTIVITY}${chatID}&x=0&y=400`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -389,7 +389,7 @@ const ChatScreen = () => {
             <Image
               style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
               source={require("../assets/list.png")}
-              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
+              // onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
             />
           </View>
         )}
@@ -401,7 +401,7 @@ const ChatScreen = () => {
             <Image
               style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
               source={require("../assets/list.png")}
-              onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionGroupScreen" })}
+              // onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionGroupScreen" })}
             />
           </View>
         )}

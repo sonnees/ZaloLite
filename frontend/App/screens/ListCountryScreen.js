@@ -12,9 +12,6 @@ const sortedCountries = [
   { name: "Myanmar", flag: "🇲🇲", code: "MM", dial_code: "+95" },
   ...countries.filter(country => !["Vietnam", "China", "Myanmar", "South Korean"].includes(country.name))
 ];
-
-
-
 const ListCountryScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -54,7 +51,7 @@ const ListCountryScreen = () => {
       <View style={{ flex: 1 }}>
         <View style={{ backgroundColor: "#1E90FF", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingVertical: 8, height: 50 }}>
           <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingLeft: '2%', paddingRight: '4%' }}
-            onPress={() => navigation.navigate("AddFriendScreen", { phoneCountry: item.dial_code })}
+            onPress={() => navigation.navigate("AddFriendScreen", { phoneCountry: item.dial_code? item.dial_code:+84})}
           >
             <Icon name='arrowleft' size={22} color={'white'} />
           </TouchableOpacity>

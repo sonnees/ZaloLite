@@ -92,7 +92,7 @@ const ChatGroupScreen = () => {
       // console.log("Socket", socket);
       socket.onmessage = (event) => {
         const data = event.data;
-        console.log("Received data:", data);
+        // console.log("Received data:", data);
         // Check if the data starts with an opening curly brace, indicating it's a JSON object
         if (data.trim().startsWith('{')) {
           try {
@@ -139,7 +139,7 @@ const ChatGroupScreen = () => {
               if (conversationOpponent.topChatActivity && Array.isArray(conversationOpponent.topChatActivity)) {
                 // Thực hiện phép toán push trên mảng
                 conversationOpponent.topChatActivity.push(newTopChatActivity);
-                console.log("ADD SUCCESS");
+                // console.log("ADD SUCCESS");
               } else {
                 // Nếu conversationOpponent.topChatActivity chưa được khởi tạo hoặc không phải là một mảng, thông báo lỗi
                 // console.log('ERR: conversationOpponent.topChatActivity is not initialized or not an array');
@@ -173,7 +173,7 @@ const ChatGroupScreen = () => {
             console.error("Error parsing JSON data:", error);
           }
         } else {
-          console.log("Received data is not a JSON object, ignoring...");
+          // console.log("Received data is not a JSON object, ignoring...");
         }
       };
       return () => {
@@ -220,7 +220,7 @@ const ChatGroupScreen = () => {
   useEffect(() => {
     const newSocket = new WebSocket(`${CHAT_SOCKET}/${componentChatID}`);
     newSocket.onopen = () => {
-      console.log("WebSocket connected >>>>>>>>");
+      // console.log("WebSocket connected >>>>>>>>");
     };
     setSocket(newSocket);
   }, [componentChatID]);
@@ -350,7 +350,7 @@ const ChatGroupScreen = () => {
           <Text style={{ fontSize: 15, fontWeight: "bold", fontFamily: "Roboto", color: "white" }}>
             {conversationOpponent && conversationOpponent.chatName ? conversationOpponent.chatName : null}
           </Text>
-          <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Last 5 hours</Text>
+          {/* <Text style={{ fontSize: 12, fontFamily: "Roboto", color: "white" }}>Last 5 hours</Text> */}
         </View>
 
         <View style={{ flex: 3 }}></View>
@@ -360,7 +360,7 @@ const ChatGroupScreen = () => {
           <Image
             style={{ width: 20, height: 20, resizeMode: "contain", margin: 10 }}
             source={require("../assets/list.png")}
-            onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
+            // onStartShouldSetResponder={() => navigation.navigate("OpionNavigator", { screen: "OptionScreen" })}
           />
         </View>
       </View>
