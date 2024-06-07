@@ -19,10 +19,9 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 
-
-export default function CreateGroup() {
+export default function CreateGroup({ image }) {
   const navigate = useNavigate();
-  const {cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
+  const { cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
   const [loadAvt, setLoadAvt] = useState(loadDefaultAvt);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [nameGroup, setNameGroup] = useState("");
@@ -35,31 +34,31 @@ export default function CreateGroup() {
   // const [token, setToken] = useState(null);
   const [check, setCheck] = useState(false);
 
-  useEffect(()=>{
-    if(selectedOptions.length>=2) {
+  useEffect(() => {
+    if (selectedOptions.length >= 2) {
       setCheck(true);
-    } 
-    if(selectedOptions.length<2) {
+    }
+    if (selectedOptions.length < 2) {
       setCheck(false);
-    } 
-  })
-  
+    }
+  });
 
-  const storedData  = JSON.parse(localStorage.getItem("conversations"));
-  const conversations = storedData ? storedData.filter(conversation => conversation.type !== "GROUP") : null
-  
+  const storedData = JSON.parse(localStorage.getItem("conversations"));
+  const conversations = storedData
+    ? storedData.filter((conversation) => conversation.type !== "GROUP")
+    : null;
+
   /* Fix lỗi hiển thị avatar khi load lại dữ liệu */
 
   useEffect(() => {
-    const newSocket = new WebSocket("ws://localhost:8082/ws/group");
+    const newSocket = new WebSocket(`${process.env.SOCKET_CHAT}/ws/group`);
     newSocket.onopen = () => {
-      console.log("WebSocket connected");
+      // console.log("WebSocket connected");
     };
     setSocket(newSocket);
     // return () => {
     //   newSocket.close();
     // };
-    
   }, [open]);
 
   function isJSON(str) {
@@ -77,23 +76,21 @@ export default function CreateGroup() {
         if (isJSON(event.data)) {
           let data = JSON.parse(event.data);
           // console.log(data);
-        try {
-          const jsonData = JSON.parse(data);
-          console.log("Received JSON data:", jsonData);
-          
-          
-        } catch (error) {
-          console.error("Error parsing JSON data:", error);
+          try {
+            const jsonData = JSON.parse(data);
+            console.log("Received JSON data:", jsonData);
+          } catch (error) {
+            console.error("Error parsing JSON data:", error);
+          }
         }
-      };
 
         // Ensure that the socket is closed when the component unmounts
         return () => {
           socket.onmessage = null;
         };
-      } 
+      };
     }
-    setLoadAvt(loadDefaultAvt)
+    setLoadAvt(loadDefaultAvt);
   }, [socket, loadDefaultAvt]);
 
   const handleClickOpen = () => {
@@ -108,7 +105,9 @@ export default function CreateGroup() {
     socket.close();
     try {
       const response = await fetch(
-        `http://localhost:8082/api/v1/user/info/${localStorage.getItem("userID")}`,
+        `${process.env.HOST}/api/v1/user/info/${localStorage.getItem(
+          "userID",
+        )}`,
         {
           credentials: "include",
           headers: {
@@ -123,11 +122,8 @@ export default function CreateGroup() {
       }
       const data = await response.json();
       console.log(data);
-      localStorage.setItem(
-        "conversations",
-        JSON.stringify(data.conversations),
-      );
-      setCons(JSON.parse(localStorage.getItem("conversations")))
+      localStorage.setItem("conversations", JSON.stringify(data.conversations));
+      setCons(JSON.parse(localStorage.getItem("conversations")));
       console.log(cons);
     } catch (error) {
       console.error("Error fetching conversations:", error);
@@ -138,10 +134,10 @@ export default function CreateGroup() {
     const user = JSON.parse(localStorage.getItem("user"));
     const data = getSelectedItems();
     console.log(data);
-    const desiredFieldsArray = data.map(item => ({
+    const desiredFieldsArray = data.map((item) => ({
       userID: item.id_UserOrGroup,
       userName: item.chatName,
-      userAvatar: item.chatAvatar
+      userAvatar: item.chatAvatar,
     }));
 
     if (socket && user) {
@@ -149,13 +145,13 @@ export default function CreateGroup() {
         id: uuidv4(),
         tgm: "TGM01",
         chatName: nameGroup,
-        owner:{
+        owner: {
           userID: user.userID,
           userName: user.userName,
-          userAvatar: user.avatar
+          userAvatar: user.avatar,
         },
         members: desiredFieldsArray,
-        avatar: loadAvt
+        avatar: loadAvt,
       };
 
       socket.send(JSON.stringify(create));
@@ -164,7 +160,6 @@ export default function CreateGroup() {
     } else {
       console.error("WebSocket is not initialized.");
     }
-    
   };
 
   const handleFocusNameGroup = () => {
@@ -193,7 +188,9 @@ export default function CreateGroup() {
   };
 
   const getSelectedItems = () => {
-    return conversations.filter((conversations) => selectedOptions.includes(conversations.chatID));
+    return conversations.filter((conversations) =>
+      selectedOptions.includes(conversations.chatID),
+    );
   };
 
   const handleAvatarClick = () => {
@@ -203,10 +200,10 @@ export default function CreateGroup() {
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'bsqsytxl');
+    formData.append("file", file);
+    formData.append("upload_preset", "bsqsytxl");
     try {
-      let newAvatar = '';
+      let newAvatar = "";
       const response = await fetch(
         "https://api.cloudinary.com/v1_1/du73a0oen/image/upload",
         {
@@ -217,32 +214,31 @@ export default function CreateGroup() {
           body: formData,
         },
       )
-      .then(response=>response.json())
-      .then(data=>newAvatar=data.secure_url);
+        .then((response) => response.json())
+        .then((data) => (newAvatar = data.secure_url));
 
       console.log(newAvatar);
-      setLoadAvt(newAvatar)
-      
+      setLoadAvt(newAvatar);
     } catch (error) {
-      console.error('Error uploading avatar:', error);
+      console.error("Error uploading avatar:", error);
     }
   };
   return (
     <div className="relative ml-1 inline-block py-1">
       <Fragment>
-        <div className="w-8 px-1 hover:bg-gray-200">
+        <div className={`w-8 px-1 ${image ? "" : "hover:bg-gray-200"} `}>
           <img
-            src="/src/assets/group-user-plus.png"
+            src={image ? image : "/src/assets/group-user-plus.png"}
             alt=""
             className="cursor-pointer items-center justify-center"
             style={{ width: "100%", height: "100%" }}
           />
         </div>
 
-        <Dialog fullWidth  open={open} onClose={handleClose}>
+        <Dialog fullWidth open={open} onClose={handleClose}>
           <div className="flex items-center justify-between border-b p-2">
-            <DialogTitle sx={{ padding:0 }} >
-              <span className="text-base font-medium text-tblack pl-4">
+            <DialogTitle sx={{ padding: 0 }}>
+              <span className="pl-4 text-base font-medium text-tblack">
                 Tạo nhóm
               </span>
             </DialogTitle>
@@ -253,45 +249,82 @@ export default function CreateGroup() {
           <DialogContent>
             <div className="flex-col items-center border-b">
               <div className="flex items-center">
-                <input ref={inputFileRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }}/>
-                <img onClick={handleAvatarClick} className="w-12 h-12 rounded-full border" src={loadAvt} alt="Avatar" />
-                <input onFocus={handleFocusNameGroup} onBlur={handleBlurNameGroup} onChange={(event) => {setNameGroup(event.target.value);}} className={`w-full mx-3 focus:outline-none ${nameGroupClick?'border-b border-b-blue-600':'border-b'} p-2`} type="text" placeholder="Nhập tên nhóm..."/>
+                <input
+                  ref={inputFileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: "none" }}
+                />
+                <img
+                  onClick={handleAvatarClick}
+                  className="h-12 w-12 rounded-full border"
+                  src={loadAvt}
+                  alt="Avatar"
+                />
+                <input
+                  onFocus={handleFocusNameGroup}
+                  onBlur={handleBlurNameGroup}
+                  onChange={(event) => {
+                    setNameGroup(event.target.value);
+                  }}
+                  className={`mx-3 w-full focus:outline-none ${
+                    nameGroupClick ? "border-b border-b-blue-600" : "border-b"
+                  } p-2`}
+                  type="text"
+                  placeholder="Nhập tên nhóm..."
+                />
               </div>
 
-              <div className={`flex items-center ${tfPhoneNumberClick?'border border-blue-600':'border'} rounded-full p-2 m-2`}>
+              <div
+                className={`flex items-center ${
+                  tfPhoneNumberClick ? "border border-blue-600" : "border"
+                } m-2 rounded-full p-2`}
+              >
                 <FontAwesomeIcon className="px-2" icon={faMagnifyingGlass} />
-                <input onFocus={handleFocusPhoneClick} onBlur={handleBlurPhoneClick} onChange={(event) => {setTFPhoneNumber(event.target.value);}}  className="w-full focus:outline-none font-normal text-sm" type="text" placeholder="Nhập tên, số điện thoại, hoặc danh sách số điện thoại"/>
+                <input
+                  onFocus={handleFocusPhoneClick}
+                  onBlur={handleBlurPhoneClick}
+                  onChange={(event) => {
+                    setTFPhoneNumber(event.target.value);
+                  }}
+                  className="w-full text-sm font-normal focus:outline-none"
+                  type="text"
+                  placeholder="Nhập tên, số điện thoại, hoặc danh sách số điện thoại"
+                />
               </div>
-              
             </div>
-
 
             <div className="h-[calc(65vh-70px)] w-full overflow-auto">
               <h6 className="p-2 text-sm font-semibold">Danh sách bạn bè</h6>
 
               <ul>
-                {conversations?conversations.map((conversation) => (
-                  <li
-                    key={conversation.chatID}
-                    className="flex items-center px-4 py-3"
-                    onClick={() => handleOptionToggle(conversation.chatID)}
-                  >
-                    <input
-                      type="checkbox"
-                      className="form-checkbox h-4 w-4 mr-2"
-                      checked={selectedOptions.includes(conversation.chatID)}
-                      onChange={() => {}}
-                    />
-                    <img src={conversation.chatAvatar} alt={conversation.chatName} className="h-8 w-8 rounded-full mr-2" />
-                    <span>{conversation.chatName}</span>
-                  </li>
-                )):null}
+                {conversations
+                  ? conversations.map((conversation) => (
+                      <li
+                        key={conversation.chatID}
+                        className="flex items-center px-4 py-3"
+                        onClick={() => handleOptionToggle(conversation.chatID)}
+                      >
+                        <input
+                          type="checkbox"
+                          className="form-checkbox mr-2 h-4 w-4"
+                          checked={selectedOptions.includes(
+                            conversation.chatID,
+                          )}
+                          onChange={() => {}}
+                        />
+                        <img
+                          src={conversation.chatAvatar}
+                          alt={conversation.chatName}
+                          className="mr-2 h-8 w-8 rounded-full"
+                        />
+                        <span>{conversation.chatName}</span>
+                      </li>
+                    ))
+                  : null}
               </ul>
-
-
-
             </div>
-            
           </DialogContent>
           <DialogActions className="p-4">
             <Button onClick={handleClose}>Hủy</Button>
@@ -307,7 +340,9 @@ export default function CreateGroup() {
         </Dialog>
       </Fragment>
       <div
-        className="absolute inset-0 rounded-md bg-black bg-opacity-0 transition-opacity duration-300 hover:bg-opacity-10 cursor-pointer"
+        className={`absolute inset-0 cursor-pointer rounded-md bg-black bg-opacity-0 transition-opacity duration-300  ${
+          image ? "" : "hover:bg-opacity-10"
+        }`}
         onClick={handleClickOpen}
       ></div>
     </div>

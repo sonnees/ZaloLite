@@ -3,7 +3,7 @@ import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Ima
 import PhoneNumberInput from './PhoneNumberInput'; // Import component PhoneNumberInput
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
-import { API_CHECKPHONE } from '../api/Api';
+import { API_CHECKPHONE } from '../api/API';
 
 const RegisterScreen = () => {
   let navigation = useNavigation();
@@ -49,8 +49,7 @@ const RegisterScreen = () => {
 
     // Gọi hàm kiểm tra số điện thoại
     checkPhoneNumber();
-    // Gọi hàm kiểm tra số điện thoại
-    checkPhoneNumber();
+ 
   };
 
   return (

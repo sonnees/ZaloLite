@@ -6,7 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { API_PROFILE } from '../api/Api';
+import { API_PROFILE } from '../api/API';
 
 const AddFriendScreen = () => {
   const navigation = useNavigation();
@@ -81,7 +81,7 @@ const AddFriendScreen = () => {
       console.log("Lỗi không tìm thấy token");
     }
 
-    console.log("MY PHONE NUMBER : ", myPhoneNumber);
+    // console.log("MY PHONE NUMBER : ", myPhoneNumber);
     if (phoneNumber === myPhoneNumber) {
       navigation.navigate('MeNavigator', { screen: 'ProfileScreen' });
       return;

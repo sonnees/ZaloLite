@@ -6,9 +6,9 @@ export const UserProvider = ({ children }) => {
   const [userID, setUserID] = useState("");
   const [cons, setCons] = useState("");
   const [loadDefaultAvt, setLoadDefaultAvt] = useState("https://res.cloudinary.com/du73a0oen/image/upload/v1713020468/Zalo-Lite/juqqm5zgxjaamjw41lvz.png");
-
+  const [group, setGroup] = useState(null);
   return (
-    <UserContext.Provider value={{ userID, setUserID, cons, setCons, loadDefaultAvt, setLoadDefaultAvt}}>
+    <UserContext.Provider value={{ userID, setUserID, cons, setCons, loadDefaultAvt, setLoadDefaultAvt, group, setGroup}}>
       {children}
     </UserContext.Provider>
   );

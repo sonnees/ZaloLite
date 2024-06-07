@@ -21,7 +21,7 @@ class AccountRepositoryTest {
     @Test
     void searchByPhoneNumber() {
         AccountCreateDTO dto = new AccountCreateDTO(
-                "1212121212",
+                "0123456666",
                 "123",
                 "Son",
                 "link",
@@ -40,7 +40,7 @@ class AccountRepositoryTest {
     @Test
     void changePassword() {
         AccountCreateDTO dto = new AccountCreateDTO(
-                "1212121212",
+                "0123456788",
                 "123",
                 "Son",
                 "link",
@@ -63,7 +63,7 @@ class AccountRepositoryTest {
     @Test
     void changeAvatar() {
         AccountCreateDTO dto = new AccountCreateDTO(
-                "1212121212",
+                "0123456999",
                 "123",
                 "Son",
                 "link",
@@ -87,7 +87,7 @@ class AccountRepositoryTest {
     @Test
     void searchByUserID() {
         AccountCreateDTO dto = new AccountCreateDTO(
-                "13141515",
+                "0123456777",
                 "123",
                 "Son",
                 "link",

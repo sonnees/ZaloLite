@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpacity, Image, Text, StatusBar, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
-import { API_CHANGE_PASS } from '../api/Api';
+import { API_CHANGE_PASS } from '../api/API';
 
 const CreatePasswordScreen = () => {
   const navigation = useNavigation();
@@ -43,6 +43,7 @@ const CreatePasswordScreen = () => {
       if (response.status === 200) {
         // Quá trình đổi mật khẩu thành công
         // Hiển thị thông báo thành công ở đây
+        navigation.navigate('LoginNavigator', { screen: 'LoginScreen' });
         Alert.alert('Thành công', 'Đổi mật khẩu thành công.');
 
         // Đăng xuất tài khoản khi mật khẩu thay đổi (tùy thuộc vào logic ứng dụng của bạn)

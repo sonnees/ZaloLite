@@ -3,35 +3,37 @@ import { View, Modal, KeyboardAvoidingView, StyleSheet, Platform, TouchableOpaci
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native'
 import { getTimeDifference } from '../utils/CalTime';
-import { findChatIDByUserID } from '../utils/DisplayLastChat';
+import { findConversationByUserID } from '../utils/DisplayLastChat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_PROFILE_BY_USERID } from '../api/Api';
+import { API_INFOR_USER, API_PROFILE_BY_USERID, host } from '../api/API';
 import axios from 'axios';
 import { GlobalContext } from '../context/GlobalContext';
-
+import uuid from 'react-native-uuid'
 const FriendRequestScreen = () => {
-    const { myUserInfo, setmyUserInfo, chatID, setChatID } = useContext(GlobalContext)
-    console.log('DATA FRIENDREQUESTS', myUserInfo.friendRequests);
+    const { myUserInfo, setMyUserInfo, chatID, setChatID, myProfile } = useContext(GlobalContext)
+    // console.log('DATA FRIENDREQUESTS', myUserInfo.friendRequests);
     const navigation = useNavigation();
     const [isSender, setIsSender] = useState(true);
     const [views, setViews] = useState("received");
     const [modalChatVisible, setModalChatVisible] = useState(false);
     const [selectedFriendRequest, setSelectedFriendRequest] = useState(null);
     const [profileFriendRequest, setProfileFriendRequest] = useState({});
-
+    const [dataFriendRequest, setDataFriendRequest] = useState(myUserInfo.friendRequests)
     // Sử dụng useEffect để lắng nghe sự thay đổi của myUserInfo và cập nhật dataFriendRequest
-    // useEffect(() => {
-    // }, [myUserInfo]);
-    const fetchProfileInfo = async (userID, token) => {
+    useEffect(() => {
+        setDataFriendRequest(myUserInfo.friendRequests)
+    }, [myUserInfo,profileFriendRequest]);
+    const fetchProfileInfo = async (userID) => {
+        console.log("ID:__________",userID);
+        const token = await AsyncStorage.getItem('token');
         try {
             const response = await axios.get(`${API_PROFILE_BY_USERID}${userID}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log("PROFILE FRIEND REQUEST:\n", response.data);
             setProfileFriendRequest(response.data)
-            console.log("PROFILE FRIEND REQUEST HEHE:\n", profileFriendRequest);
+            console.log("PROFILE FRIEND REQUEST:\n", profileFriendRequest);
             return response.data;
         } catch (error) {
             if (error.response) {
@@ -74,37 +76,208 @@ const FriendRequestScreen = () => {
         return count;
     };
     const openModal = async (friendRequest) => {
-        const token = await AsyncStorage.getItem('token');
-        fetchProfileInfo(friendRequest.userID, token)
-        console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
-        console.log("DATAFR:  ", profileFriendRequest);
+        fetchProfileInfo(friendRequest.userID)
+        // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
         setSelectedFriendRequest(friendRequest);
         setModalChatVisible(true);
     }
-    const handleOpenChat = async (userID) => {
-        if (selectedFriendRequest) {
-            console.log("selectedFriendRequest:", selectedFriendRequest);
+    const acceptFriend = async (item) => {
+        const message = {
+            id: uuid.v4(),
+            tum: "TUM03",
 
-            if (myUserInfo.id && userID) {
-                const data = findChatIDByUserID(myUserInfo, myUserInfo.id, userID);
-                console.log("DATA IN FRIENDREQUESTSCREEN", data);
-                setChatID(data)
-                if (chatID) {
-                    // navigation.navigate("ChatScreen");
+            senderID: item.userID,
+            senderName: item.userName,
+            senderAvatar: item.avatar,
+
+            receiverID: myProfile.userID,
+            receiverName: myProfile.userName,
+            receiverAvatar: myProfile.avatar,
+
+        };
+        
+        if (item) {
+            const newSocket = new WebSocket(
+                `ws://${host}:8082/ws/user/${item.userID}`,
+            );
+            // console.log("Socket STATUS: ", newSocket);
+            newSocket.onopen = () => {
+                console.log(
+                    "WebSocket for UserID: ", item.userID, " OPENED",
+                );
+                // Gửi tin nhắn khi kết nối thành công
+                newSocket.send(JSON.stringify(message));
+                console.log("Message sent:", message);
+            };
+            // newSocket.onmessage = (event) => {
+            //     console.log("Message received:", event.data);
+            //     navigation.navigate("AddFriendScreen")
+            // };
+            newSocket.onmessage = (event) => {
+                const data = event.data;
+                console.log("Received data:", data);
+                // Check if the data starts with an opening curly brace, indicating it's a JSON object
+                if (data.trim().startsWith('{')) {
+                  try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.tum === "TUM00" && jsonData.typeNotify === "SUCCESS") {
+                        
+                        fetchProfileInfo(item.userID)
+                        // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
+                        // console.log("DATAFR:  ", profileFriendRequest);
+                        setSelectedFriendRequest(item);
+                        // console.log("ITEM: ", item);
+                    }
+                    
+                  } catch (error) {
+                    console.error("Error parsing JSON data:", error);
+                  }
                 } else {
-                    console.log("Không thể tìm thấy chatID");
+                  console.log("Received data is not a JSON object, ignoring...");
                 }
-            } else {
-                console.log("userID hoặc myUserID không hợp lệ");
+            };
+            newSocket.onclose = () => {
+                console.log(
+                    "WebSocket for UserID: ", item.userID, " CLOSED",
+                );
+            };
+            fetchUserInfo()
+        }
+    };
+    const recallFriendRequest = async (item) => {
+        const message = {
+            id: uuid.v4(),
+            tum: "TUM02",
+            senderID: item.userID,
+            receiverID: myProfile.userID,
+        };
+        if (item) {
+            const newSocket = new WebSocket(
+                `ws://${host}:8082/ws/user/${item.userID}`,
+            );
+            // console.log("Socket STATUS: ", newSocket);
+            newSocket.onopen = () => {
+                console.log(
+                    "WebSocket for UserID: ", item.userID, " OPENED",
+                );
+                // Gửi tin nhắn khi kết nối thành công
+                newSocket.send(JSON.stringify(message));
+                console.log("Message sent:", message);
+            };
+            newSocket.onmessage = (event) => {
+                const data = event.data;
+                console.log("Received data:", data);
+                // Check if the data starts with an opening curly brace, indicating it's a JSON object
+                if (data.trim().startsWith('{')) {
+                  try {
+                    const jsonData = JSON.parse(data);
+                    if (jsonData.tum === "TUM00" && jsonData.typeNotify === "SUCCESS") {
+                        fetchProfileInfo(item.userID)
+                        // console.log("FRIEND REQUEST USERID:  ", friendRequest.userID);
+                        // console.log("DATAFR:  ", profileFriendRequest);
+                        setSelectedFriendRequest(item);
+                        // console.log("ITEM: ", item);
+                    }
+                    
+                  } catch (error) {
+                    console.error("Error parsing JSON data:", error);
+                  }
+                } else {
+                  console.log("Received data is not a JSON object, ignoring...");
+                }
+            };
+
+            newSocket.onclose = () => {
+                console.log(
+                    "WebSocket for UserID: ", item.userID, " CLOSED",
+                );
+            };
+            fetchUserInfo()
+        }
+    };
+    const chatStranger = async (item) => {
+        const ID_UserOrGroup = item.userID;
+        const conversationOpponent = findConversationByUserID(myUserInfo, ID_UserOrGroup)
+        if(conversationOpponent){
+            navigation.navigate("ChatScreen", { conversationOpponent: conversationOpponent });
+        }else
+        {
+            const id = uuid.v4();
+            const message = {
+                id: id,
+                tum: "TUM05",
+
+                senderID: item.userID,
+                senderName: item.userName,
+                senderAvatar: item.avatar,
+
+                receiverID: myProfile.userID,
+                receiverName: myProfile.userName,
+                receiverAvatar: myProfile.avatar,
+
+            };
+
+            const token = await AsyncStorage.getItem('token');
+            fetchProfileInfo(item.userID, token)
+            setSelectedFriendRequest(item);
+            // console.log("ITEM: ", item);
+                if (item) {
+                    const newSocket = new WebSocket(
+                        `ws://${host}:8082/ws/user/${item.userID}`,
+                    );
+                    // console.log("Socket STATUS: ", newSocket);
+                    newSocket.onopen = () => {
+                        console.log(
+                            "WebSocket for UserID: ", item.userID, " OPENED",
+                        );
+                        // Gửi tin nhắn khi kết nối thành công
+                        newSocket.send(JSON.stringify(message));
+                        console.log("Message sent:", message);
+                    };
+                    // newSocket.onmessage = (event) => {
+                    //     console.log("Message received:", event.data);
+                    //     navigation.navigate("AddFriendScreen")
+                    // };
+
+                    newSocket.onclose = () => {
+                        console.log(
+                            "WebSocket for UserID: ", item.userID, " CLOSED",
+                        );
+                    };
+                    fetchUserInfo()
+                }
             }
-        } else {
-            console.log("selectedFriendRequest không tồn tại hoặc không hợp lệ");
+    };
+
+    const fetchUserInfo = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            const response = await axios.get(`${API_INFOR_USER}${myProfile.userID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const dataUserInfor = await response.data;
+
+            // console.log("User Infor:", dataUserInfor);
+            setMyUserInfo(dataUserInfor);
+            return dataUserInfor;
+        } catch (error) {
+            console.error('Lỗi khi lấy thông tin User:', error);
+            return null;
+        }
+    };
+    const toProfileFriend = async (item) => {
+        try {
+            const data = await fetchProfileInfo(item.userID);
+            // console.log("DATA-----------", data);
+            navigation.navigate('ProfileFriendScreen', { profile: data });
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin profile:", error);
         }
     }
-
-    const FriendRequestElement = ({ item }) => {
-        console.log("FRIENDREQUEST: \n", item);
-        if (item.isSender !== isSender) {
+    const ReceivedFriendRequestElement = ({ item }) => {
+        if (item.isSender !== true) {
             return (
                 <View>
                     <TouchableOpacity
@@ -139,13 +312,52 @@ const FriendRequestScreen = () => {
                                 <TouchableOpacity style={{
                                     height: 30, width: 120, backgroundColor: '#87CEFF', marginLeft: 5,
                                     borderRadius: 10, alignItems: 'center', justifyContent: 'center'
-                                }}>
+                                }}
+                                    onPress={() => acceptFriend(item)}
+                                >
                                     <Text style={{ fontSize: 14, fontWeight: '500', color: '#1E90FF' }}>ACCEPT</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
                     </TouchableOpacity>
                     <View style={{ height: 10 }}></View>
+                    <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 0.5, width: '100%' }} />
+                </View>
+            )
+        }
+    }
+    const SentFriendRequestElement = ({ item }) => {
+        if (item.isSender === true) {
+            console.log("FRIENDREQUEST: \n", item);
+            return (
+                <View>
+                    <TouchableOpacity
+                        style={{
+                            height: 60, flexDirection: 'row', margin: 10
+                        }}
+                        onPress={() => {
+                            toProfileFriend(item)
+                        }}
+                    >
+                        <Image source={{ uri: item.userAvatar }}
+                            style={{ height: 50, width: 50, borderRadius: 50, marginLeft: 10, marginRight: 20 }} />
+                        <View style={{ flexDirection: 'column', width: '45%' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'black', marginTop: 5 }}>
+                                {item.userName}</Text>
+                            <Text style={{ fontSize: 13, color: '#B5B5B5', fontWeight: '400', margin: 4 }}>
+                                Wants to be friends
+                            </Text>
+                        </View>
+                        <TouchableOpacity style={{
+                            height: 30, width: 100, backgroundColor: '#B5B5B5', marginLeft: 5,
+                            borderRadius: 10, alignItems: 'center', justifyContent: 'center', alignSelf: 'center'
+                        }}
+                            onPress={() => recallFriendRequest(item)}
+                        >
+                            <Text style={{ fontSize: 14, fontWeight: '500' }}>RECALL</Text>
+                        </TouchableOpacity>
+                    </TouchableOpacity>
+                    <View style={{ height: 5 }}></View>
                     <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 0.5, width: '100%' }} />
                 </View>
             )
@@ -176,6 +388,7 @@ const FriendRequestScreen = () => {
 
 
                     <TouchableOpacity style={{ flex: 1, justifyContent: "center", alignItems: "flex-end", marginRight: 12 }}
+                    onPress={() => { navigation.navigate("AddFriendScreen", { typeScreen: 'FriendRequestScreen' }) }}
                     >
                         <Icon name='adduser' size={23} color={'white'} />
                     </TouchableOpacity>
@@ -188,7 +401,7 @@ const FriendRequestScreen = () => {
                             setViews("received")
                         }}
                     >
-                        <Text style={{ fontSize: 16 }}> Received {countFalseSenders(myUserInfo.friendRequests)}</Text>
+                        <Text style={{ fontSize: 16, color: views === "received" ? "black" : "gray", fontWeight: views === "received" ? "700" : "300" }}> Received {countFalseSenders(dataFriendRequest)}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ flex: 1, borderRadius: 20, justifyContent: "center", alignItems: "center" }}
                         onPress={() => {
@@ -196,7 +409,7 @@ const FriendRequestScreen = () => {
                             setViews("sent")
                         }}
                     >
-                        <Text style={{ fontSize: 16 }}> Sent {countTrueSenders(myUserInfo.friendRequests)}</Text>
+                        <Text style={{ fontSize: 16, color: views === "sent" ? "black" : "gray", fontWeight: views === "sent" ? "700" : "300" }}> Sent {countTrueSenders(dataFriendRequest)}</Text>
                     </TouchableOpacity>
 
                 </View>
@@ -205,8 +418,8 @@ const FriendRequestScreen = () => {
                     <View style={{ flex: 1, backgroundColor: "#fff" }}>
                         <FlatList
                             style={{ flex: 1 }}
-                            data={myUserInfo.friendRequests}
-                            renderItem={({ item }) => <FriendRequestElement item={item} />}
+                            data={dataFriendRequest}
+                            renderItem={({ item }) => <ReceivedFriendRequestElement item={item} />}
                             keyExtractor={(item) => item.userID}
                             ListFooterComponent={(
                                 <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 8, width: '100%' }} />
@@ -218,8 +431,8 @@ const FriendRequestScreen = () => {
                     <View style={{ flex: 1, backgroundColor: "#fff" }}>
                         <FlatList
                             style={{ flex: 1 }}
-                            data={myUserInfo.friendRequests}
-                            renderItem={({ item }) => <FriendRequestElement item={item} />}
+                            data={dataFriendRequest}
+                            renderItem={({ item }) => <SentFriendRequestElement item={item} />}
                             keyExtractor={(item) => item.userID}
                             ListFooterComponent={(
                                 <View style={{ borderBottomColor: '#EEEEEE', borderBottomWidth: 8, width: '100%' }} />
@@ -258,13 +471,7 @@ const FriendRequestScreen = () => {
                                             borderRadius: 15, alignItems: 'center', justifyContent: 'center'
                                         }}
                                         onPress={() => {
-                                            const userId = selectedFriendRequest && selectedFriendRequest.userID;
-                                            console.log("USERID NE \n", userId);
-                                            if (userId) {
-                                                handleOpenChat(userId);
-                                            } else {
-                                                console.error("Invalid userID:", userId);
-                                            }
+                                            chatStranger(selectedFriendRequest)
                                         }}
                                     >
                                         <Text style={{ fontSize: 14, fontWeight: '600', color: 'blue' }}>MESSAGE</Text>
@@ -272,7 +479,11 @@ const FriendRequestScreen = () => {
                                     <TouchableOpacity style={{
                                         height: 30, width: 105, backgroundColor: '#1C86EE', marginLeft: 5,
                                         borderRadius: 15, alignItems: 'center', justifyContent: 'center'
-                                    }}>
+                                    }}
+                                        onPress={() => {
+                                            acceptFriend(selectedFriendRequest)
+                                        }}
+                                    >
                                         <Text style={{ fontSize: 14, fontWeight: '600', color: 'white' }}>ACCEPT</Text>
                                     </TouchableOpacity>
                                 </View>

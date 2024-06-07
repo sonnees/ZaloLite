@@ -100,7 +100,7 @@ function handleOpenDialog3(setOpenDialog) {
   setOpenDialog("dialog3");
 }
 
-const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber}) => {
+const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber }) => {
   const dateTime = new Date(data.birthday);
   const conservation = JSON.parse(localStorage.getItem("conversations"));
   const [type, setType] = useState("");
@@ -168,7 +168,7 @@ const AddFriendDialog2 = ({ data, setOpenDialog, phoneNumber}) => {
             ) : type === "FRIEND" ? (
               <div className="flex flex-1 items-center justify-center pt-[227px]">
                 <a
-                  href={`http://localhost:5173/app/chat?id=${conservationFriend[0].chatID}&type=individual-chat&chatName=${conservationFriend[0].chatName}&chatAvatar=${conservationFriend[0].chatAvatar}`}
+                  href={`${process.env.SEFL_HOST}/app/chat?id=${conservationFriend[0].chatID}&type=individual-chat&chatName=${conservationFriend[0].chatName}&chatAvatar=${conservationFriend[0].chatAvatar}`}
                   className="block w-full"
                 >
                   <button className="h-8 w-full rounded border bg-[#E5EFFF] text-base font-medium text-[#005ae0]">
@@ -341,7 +341,7 @@ export default function AddFriendDialog() {
 
   const [userFound, setUserFound] = useState({});
   const [openDialog, setOpenDialog] = useState("");
-  const {cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
+  const { cons, setCons, loadDefaultAvt, setLoadDefaultAvt } = useUser();
 
   const [selectedCountry, setSelectedCountry] = useState({
     name: "Vietnam",
@@ -354,6 +354,12 @@ export default function AddFriendDialog() {
     messageApi.open({
       type: "success",
       content: "This is a success message",
+    });
+  };
+  const warning = () => {
+    messageApi.open({
+      type: "warning",
+      content: "Số điện thoại chưa đăng ký tài khoản!",
     });
   };
 
@@ -378,10 +384,12 @@ export default function AddFriendDialog() {
 
   useEffect(() => {
     if (userID) {
-      const newSocket = new WebSocket(`ws://localhost:8082/ws/user/${userID}`);
+      const newSocket = new WebSocket(
+        `${process.env.SOCKET_CHAT}/ws/user/${userID}`,
+      );
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
           userID,
           " OPENED",
         );
@@ -449,7 +457,7 @@ export default function AddFriendDialog() {
     }
 
     axios
-      .get(`http://localhost:8081/api/v1/account/profile/${phoneNumber}`, {
+      .get(`${process.env.HOST}/api/v1/account/profile/${phoneNumber}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -460,12 +468,19 @@ export default function AddFriendDialog() {
         // Kiểm tra nếu tìm thấy người dùng
         if (response.data) {
           setOpenDialog("dialog2"); // Mở dialog khác
+          // setOpenDialog("dialog2");
         } else {
-          // Hiển thị thông báo hoặc xử lý khác khi không tìm thấy người dùng
+          warning();
         }
       })
       .catch((error) => {
-        console.error("Error searching user by phone number:", error);
+        // Bắt lỗi 404
+        if (error.response && error.response.status === 404) {
+          warning();
+          console.error("User not found with the provided phone number.");
+        } else {
+          console.error("Error searching user by phone number:", error);
+        }
       });
   };
 
@@ -485,12 +500,12 @@ export default function AddFriendDialog() {
 
     if (userFound) {
       const newSocket = new WebSocket(
-        `ws://localhost:8082/ws/user/${receiverID}`,
+        `${process.env.SOCKET_CHAT}/ws/user/${receiverID}`,
       );
 
       newSocket.onopen = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          `WebSocket ${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
           receiverID,
           " OPENED",
         );
@@ -507,7 +522,7 @@ export default function AddFriendDialog() {
 
       newSocket.onclose = () => {
         console.warn(
-          "WebSocket 'ws://localhost:8082/ws/user/' for UserID: ",
+          `WebSocket '${process.env.SOCKET_CHAT}/ws/user/' for UserID: `,
           receiverID,
           " CLOSED",
         );
@@ -738,7 +753,6 @@ export default function AddFriendDialog() {
                     onClick={() => {
                       // handleAddFriend();
                       handleFindUserByPhoneNumber();
-                      setOpenDialog("dialog2");
                     }}
                     variant="contained"
                     color="primary"

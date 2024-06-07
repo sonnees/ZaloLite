@@ -5,9 +5,10 @@ export const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
     const [myUserInfo, setMyUserInfo] = useState({})
+    const [myProfile, setMyProfile] = useState({})
     const [chatID, setChatID] = useState({})
     const [listChatID, setListChatID] = useState([])
-
+    const [componentChatID, setComponentChatID] = useState([])
     const logIn = async (token = "") => {
         if (!token.trim()) return;
 
@@ -29,9 +30,13 @@ export const GlobalProvider = ({ children }) => {
                 myUserInfo,
                 chatID,
                 listChatID,
+                myProfile,
+                componentChatID,
+                setMyProfile,
                 setMyUserInfo,
                 setChatID,
                 setListChatID,
+                setComponentChatID,
                 logIn,
                 logOut,
             }}
