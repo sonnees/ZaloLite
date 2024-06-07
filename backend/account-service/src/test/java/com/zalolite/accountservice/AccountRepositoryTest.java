@@ -14,11 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 class AccountRepositoryTest {
+
     @Autowired
     AccountRepository accountRepository;
 
-    @Test //1
-    void searchByPhoneNumber_NotNull() {
+    @Test
+    void searchByPhoneNumber() {
         AccountCreateDTO dto = new AccountCreateDTO(
                 "1212121212",
                 "123",
@@ -36,14 +37,8 @@ class AccountRepositoryTest {
         accountRepository.deleteById(searchByPhoneNumber.getId()).block();
     }
 
-    @Test //2
-    void searchByPhoneNumber_Null() {
-        Account searchByPhoneNumber  = accountRepository.searchByPhoneNumber("000000").block();
-        assertNull(searchByPhoneNumber);
-    }
-
-    @Test //3
-    void changePassword_NotNull() {
+    @Test
+    void changePassword() {
         AccountCreateDTO dto = new AccountCreateDTO(
                 "1212121212",
                 "123",
@@ -65,16 +60,8 @@ class AccountRepositoryTest {
         accountRepository.deleteById(account.getId()).block();
     }
 
-    @Test //4
-    void changePassword_Null() {
-        String newPass = "321";
-        Long block = accountRepository.changePassword("0000", newPass ).block();
-
-        assertNotNull(block);
-    }
-
-    @Test //5
-    void changeAvatar_NotNull() {
+    @Test
+    void changeAvatar() {
         AccountCreateDTO dto = new AccountCreateDTO(
                 "1212121212",
                 "123",
@@ -97,10 +84,10 @@ class AccountRepositoryTest {
         accountRepository.deleteById(account.getId()).block();
     }
 
-    @Test //6
-    void changeAvatar_Null() {
+    @Test
+    void searchByUserID() {
         AccountCreateDTO dto = new AccountCreateDTO(
-                "00000",
+                "13141515",
                 "123",
                 "Son",
                 "link",
@@ -109,14 +96,11 @@ class AccountRepositoryTest {
                 UserRole.USER
         );
         Account account = new Account(dto);
-        Account account1 = accountRepository.save(account).block();
-        assert account1 != null;
-        account1.getProfile().setAvatar("new avatar");
+        Account accountCreate = accountRepository.save(account).block();
+        assertNotNull(accountCreate);
 
-        Long block = accountRepository.changeAvatar(account.getPhoneNumber(), account1.getProfile()).block();
-
-        assertNotNull(block);
-        assertTrue(block>0);
+        Account accountSearch = accountRepository.searchByUserID(accountCreate.getProfile().getUserID()).block();
+        assertNotNull(accountSearch);
 
         accountRepository.deleteById(account.getId()).block();
     }

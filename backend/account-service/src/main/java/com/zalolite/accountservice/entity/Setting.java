@@ -10,10 +10,14 @@ import lombok.Setter;
 import java.util.Date;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 public class Setting {
     private AllowMessaging allowMessaging;
     private ShowBirthday showBirthday;
+
+    public Setting() {
+        this.allowMessaging = AllowMessaging.EVERYONE;
+        this.showBirthday = ShowBirthday.SHOW_DMY;
+    }
 }
