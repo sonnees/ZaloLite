@@ -91,7 +91,7 @@ public class AuthController {
         log.info("# {} #", jsonConverter.objToString(accountLoginDTO));
         return accountRepository.searchByPhoneNumber(accountLoginDTO.getPhoneNumber())
                 .flatMap(account -> {
-                    if (!new BCryptPasswordEncoder().matches(accountLoginDTO.getPassword(), account.getPassword()))
+                    if (!passwordEncoder.matches(accountLoginDTO.getPassword(), account.getPassword()))
                         return Mono.just(ResponseEntity.status(401).body(""));
                     String token = jwtService.generateToken(account);
                     FieldDTO oneFieldDTO = new FieldDTO(token);
