@@ -21,8 +21,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.*;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Document(collection = "account")
@@ -58,6 +58,17 @@ public class Account implements UserDetails {
                 AllowMessaging.EVERYONE,
                 ShowBirthday.SHOW_DMY
         );
+    }
+
+    public Account(String phoneNumber) {
+        this.id = UUID.randomUUID();
+        this.phoneNumber = phoneNumber;
+        this.pw = "";
+        this.createAt = new Date();
+        this.type = Type.personal;
+        this.profile = new Profile();
+        this.role = UserRole.USER;
+        this.setting = new Setting();
     }
 
     @Override
