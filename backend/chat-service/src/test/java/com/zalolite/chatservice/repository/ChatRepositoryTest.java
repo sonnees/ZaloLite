@@ -11,7 +11,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class ChatRepositoryTest {
     @Autowired private ChatRepository chatRepository;
 
